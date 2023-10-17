@@ -13,7 +13,8 @@ all the required steps in order.
 
 ------------------------------------------------------------------------------------------------------------------------
 
-
+# Before Running this workflow make sure to download GWF from here: 
+# And activate the slurm backend using the following command: gwf config set backend slurm
 
 ------------------------------------------------------------------------------------------------------------------------
 Author: Oscar Wrisberg
@@ -86,8 +87,8 @@ def download_data(path_out,
     echo "Were trying to download $filename_smb"
 
     #Then i am checking if file exists
-    if [ -f $filename_SmB ]; then
-        echo "$filename_SmB is already downloaded"
+    if [ -f $filename_smb ]; then
+        echo "$filename_smb is already downloaded"
     else
         echo "starting download of Smith & Brown Angiosperm Phylogeny data at: "
         date
@@ -143,28 +144,33 @@ def download_data(path_out,
     return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
 
 
-##############################################################
-##########---- Function for downloading data ----#############
-##############################################################
+#######################################################################
+#######---- Function for Running ESSE on entire SmB tree ----##########
+#######################################################################
 
-# def (path_out):
-#     """This function should download all the necessary files for the project"""
-#     inputs = []
-#     outputs = [path_out]
-#     options = {
-#         'cores': 5,
-#         'memory': '10g',
-#         'account':"Trf_models",
-#         'walltime': "01:00:00"
-#     }
+def Esse():
+    """Function for running ESSE on the Smith and Brown phylogeny"""
+    inputs = []
+    outputs = [path_out]
+    options = {
+        'cores': 5,
+        'memory': '10g',
+        'account':"Trf_models",
+        'walltime': "10:00:00"
+    }
 
-#     spec = '''
+    spec = '''
+
+    source /home/owrisberg/miniconda3/etc/profile.d/conda.sh
+    conda activate julia_env
+
+    echo " Starting to run Julia script \n "
 
 
 
-#     '''.format(path_out = path_out)
+    '''.format(path_out = path_out)
 
-#     return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
+    return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
 
 
 ########################################################################################################################
