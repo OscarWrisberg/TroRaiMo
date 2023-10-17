@@ -96,8 +96,8 @@ def download_data(path_out,
         date
     fi
 
-    # Unzipping GBIF data
-    if [ -f {path_out}{output_gbif} ]; then
+    # Unzipping SmB data
+    if [ -f {path_out}{output_smb} ]; then
         echo "Files from 
         Smith & Brown Angiosperm Phylogeny have already been unzipped"
     else
@@ -105,6 +105,35 @@ def download_data(path_out,
         date
         unzip -o {path_out}$filename_gbif
         echo " Finished unzipping Smith & Brown Angiosperm Phylogeny data at :"
+        date
+    fi
+
+    # Checking if file has already been downloaded. if not download it at  # "http://sftp.kew.org/pub/data-repositories/WCVP/wcvp.zip"
+
+    # First im extracting the name of the downloaded file.
+    filename_kew=$(echo "http://sftp.kew.org/pub/data-repositories/WCVP/wcvp.zip" | awk -F "/" '{{print $NF}}')
+    echo "Were trying to download $filename_kew"
+    
+
+    #Then i am checking if the file exists    
+    if [ -f $filename_kew ]; then
+        echo " $filename_kew is already downloaded \n"
+    else
+        echo "starting download of Kew data at: "
+        date
+        wget {kew_doi}
+        echo " Finished downloading Kew data at :"
+        date
+    fi
+
+    # Unzipping Kew data
+    if [ -f {path_out}{output_kew}]; then
+        echo "Files from Kew have already been unzipped"
+    else
+        echo "\n  starting to unzip at Kew data at: "
+        date
+        unzip -o {path_out}$filename_kew
+        echo " Finished unzipping Kew data at :"
         date
     fi
 
@@ -118,24 +147,24 @@ def download_data(path_out,
 ##########---- Function for downloading data ----#############
 ##############################################################
 
-def (path_out):
-    """This function should download all the necessary files for the project"""
-    inputs = []
-    outputs = [path_out]
-    options = {
-        'cores': 5,
-        'memory': '10g',
-        'account':"Trf_models",
-        'walltime': "01:00:00"
-    }
+# def (path_out):
+#     """This function should download all the necessary files for the project"""
+#     inputs = []
+#     outputs = [path_out]
+#     options = {
+#         'cores': 5,
+#         'memory': '10g',
+#         'account':"Trf_models",
+#         'walltime': "01:00:00"
+#     }
 
-    spec = '''
+#     spec = '''
 
 
 
-    '''.format(path_out = path_out)
+#     '''.format(path_out = path_out)
 
-    return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
+#     return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
 
 
 ########################################################################################################################
@@ -143,7 +172,7 @@ def (path_out):
 ########################################################################################################################
 
 # Setting up some global variables with relative paths 
-script_dir = os.path.dirname(getsourcefile(Rm_cols)) + "/"
+script_dir = os.path.dirname(getsourcefile(download_data)) + "/"
 data_dir = os.path.normpath(os.path.join(script_dir, "../data/")) +"/"
 workflow_dir = os.path.normpath(os.path.join(script_dir, "../workflow/")) +"/"
 
@@ -152,9 +181,9 @@ workflow_dir = os.path.normpath(os.path.join(script_dir, "../workflow/")) +"/"
 gwf.target_from_template(name = "Download_Data",
                           template=download_data(
                             path_out = data_dir,
-                            smb_doi = ,
-                            kew_doi = ,
-                            output_gbif ="occurrence.txt",
+                            smb_doi = "https://github.com/FePhyFoFum/big_seed_plant_trees/releases/download/v0.1/v0.1.zip",
+                            kew_doi = "http://sftp.kew.org/pub/data-repositories/WCVP/wcvp.zip",
+                            output_smb ="GBMB.tre",
                             output_kew = "wcvp_names.csv"
                           ))
 
