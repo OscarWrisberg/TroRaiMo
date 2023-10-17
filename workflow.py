@@ -49,11 +49,11 @@ gwf = Workflow()
 def download_data(path_out,
                   smb_doi,
                   kew_doi,
-                  output_gbif,
+                  output_smb,
                   output_kew):
     """This function should download all the necessary files for the project"""
     inputs = []
-    outputs = [path_out+output_kew,path_out+output_gbif]
+    outputs = [path_out+output_kew,path_out+output_smb]
     options = {
         'cores': 5,
         'memory': '40g',
@@ -76,14 +76,14 @@ def download_data(path_out,
     cd {path_out}
 
     # Writing expected output
-    echo "Expected output is: \n \n {path_out}{output_gbif} \n \n and: \n \n {path_out}{output_kew} \n \n "
+    echo "Expected output is: \n \n {path_out}{output_smb} \n \n and: \n \n {path_out}{output_kew} \n \n "
 
 
     # Checking if file has already been downloaded. If not download it at # https://github.com/FePhyFoFum/big_seed_plant_trees/releases/download/v0.1/v0.1.zip
 
     # First im extracting the name of the downloaded file.
-    filename_gbif=$(echo "https://github.com/FePhyFoFum/big_seed_plant_trees/releases/download/v0.1/v0.1.zip" | awk -F "/" '{{print $NF}}')
-    echo "Were trying to download $filename_gbif"
+    filename_smb=$(echo "https://github.com/FePhyFoFum/big_seed_plant_trees/releases/download/v0.1/v0.1.zip" | awk -F "/" '{{print $NF}}')
+    echo "Were trying to download $filename_smb"
 
     #Then i am checking if file exists
     if [ -f $filename_SmB ]; then
@@ -103,7 +103,7 @@ def download_data(path_out,
     else
         echo "\n  starting to unzip at Smith & Brown Angiosperm Phylogeny data at: "
         date
-        unzip -o {path_out}$filename_gbif
+        unzip -o {path_out}$filename_smb
         echo " Finished unzipping Smith & Brown Angiosperm Phylogeny data at :"
         date
     fi
@@ -138,7 +138,7 @@ def download_data(path_out,
     fi
 
 
-    '''.format(path_out = path_out, smb_doi = smb_doi, kew_doi = kew_doi, output_gbif=output_gbif, output_kew=output_kew)
+    '''.format(path_out = path_out, smb_doi = smb_doi, kew_doi = kew_doi, output_smb=output_smb, output_kew=output_kew)
 
     return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
 
