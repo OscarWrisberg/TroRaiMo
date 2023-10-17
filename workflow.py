@@ -148,25 +148,35 @@ def download_data(path_out,
 #######---- Function for Running ESSE on entire SmB tree ----##########
 #######################################################################
 
-def Esse():
+def Esse(path_in, path_out, script_dir, ):
     """Function for running ESSE on the Smith and Brown phylogeny"""
-    inputs = []
+    inputs = [path_in]
     outputs = [path_out]
     options = {
         'cores': 5,
-        'memory': '10g',
+        'memory': '25g',
         'account':"Trf_models",
-        'walltime': "10:00:00"
+        'walltime': "03:00:00"
     }
 
     spec = '''
+
+    # Going to input folder
+    cd {path_in}
+
+    #Checking if output dir exists
+    [ -d {path_out} ] && echo "{path_out} exist." || {{ echo "{path_out} does not exist."; mkdir {path_out}; }}
 
     source /home/owrisberg/miniconda3/etc/profile.d/conda.sh
     conda activate julia_env
 
     echo " Starting to run Julia script \n "
+    date
 
+    julia {script_dir}Esse_test.jl
 
+    echo " Finished running Julia script \n "
+    date
 
     '''.format(path_out = path_out)
 
