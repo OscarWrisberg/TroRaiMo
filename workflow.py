@@ -178,7 +178,7 @@ def Esse(path_in, path_out, script_dir, ):
     echo " Finished running Julia script \n "
     date
 
-    '''.format(path_out = path_out)
+    '''.format(path_out = path_out, script_dir = script_dir, path_in = path_in)
 
     return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
 
@@ -203,3 +203,9 @@ gwf.target_from_template(name = "Download_Data",
                             output_kew = "wcvp_names.csv"
                           ))
 
+gwf.target_from_template(name = "Esse",
+                          template=Esse(
+                            path_in = data_dir
+                            path_out = "/home/owrisberg/Trf_models/Esse_test",
+                            script_dir = script_dir
+                          ))

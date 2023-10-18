@@ -22,8 +22,8 @@ envdata_file = joinpath(dirname(pathof(Tapestree)), "..", "data", "env_data_2.tx
 println(envdata_file)
 
 # Specifying out folder
-out_file = *(homedir(),"/Trf_models/file_out.txt")
-out_states = *(homedir(),"/Trf_models/states_out.txt")
+out_file = *(homedir(),"/Trf_models/Esse_test/file_out_gwf.txt")
+out_states = *(homedir(),"/Trf_models/Esse_test/states_out_gwf.txt")
 
 esse(tree_file, out_file, 2, envdata_file = envdata_file, 
   states_file = states_file, out_states = out_states, cov_mod = ("s",))
