@@ -292,11 +292,11 @@ gwf.target_from_template(name = "Load_tree",
                             path_out = data_dir,
                             script_dir = script_dir
                           ))
-for i in range(1,10):
+for i in ["1","2","3","4","5","6","7","8","9","10"]:
     gwf.target_from_template(name = "Simulate_state_data",
                                 template=sim_state_data(
                                     input_file = "GBMB_tips.txt",
-                                    output_file = "GBMB_states_"+i+"_.txt",
+                                    output_file = "GBMB_states_" + i + "_.txt",
                                     path_in = data_dir,
                                     path_out = workflow_dir+"01_adding_states/",
                                     script_dir = script_dir,
