@@ -16,6 +16,7 @@ tree <- read.tree(input_file)
 # Creating an object which is the tip names in this tree
 tips <- tree$tip.label
 
-#! save the tips object as a csv file	
-write.txt(tips[,2], output_file_tips)
+#! save the tips object as a csv file
+write.table(tips[,2], output_file_tips, sep = "\t", row.names = FALSE, col.names = FALSE)
+
 
