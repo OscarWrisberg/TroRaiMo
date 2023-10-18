@@ -58,7 +58,7 @@ def download_data(path_out,
     options = {
         'cores': 5,
         'memory': '40g',
-        'account':"Biome_estimation",
+        'account':"Trf_models",
         'walltime': "04:00:00"
     }
 
@@ -155,8 +155,8 @@ def Load_tree(input_file, output_file, path_in,path_out, script_dir):
     options = {
         'cores': 1,
         'memory': '5g',
-        'account':"Biome_estimation",
-        'walltime': "00:10:00"
+        'account':"Trf_models",
+        'walltime': "00:30:00"
     }
 
     spec = '''
@@ -188,7 +188,34 @@ def Load_tree(input_file, output_file, path_in,path_out, script_dir):
 ##############################################################
 #############---- Loading the SmB tree tips ----##############
 ##############################################################
-# def 
+def sim_state_data(input_file, output_file, path_in,path_out, script_dir, nr_states):
+    """This function should be used to simulate state data for the tips of the SmB tree
+    by writing 0 or 1 for each state defined by nr_states and each tip in the input_file"""
+    inputs = [path_in+input_file]
+    outputs = [path_out+output_file]
+    options = {
+        'cores': 5,
+        'memory': '20g',
+        'account':"Trf_models",
+        'walltime': "01:00:00"
+    }
+
+    spec = '''
+
+    source /home/owrisberg/miniconda3/etc/profile.d/conda.sh
+    conda activate R_env
+
+    # Going to input folder
+    cd {path_in}
+
+    #Checking if output dir exists
+    [ -d {path_out} ] && echo "{path_out} exist." || {{ echo "{path_out} does not exist."; mkdir {path_out}; }}
+
+    # Loading the input file which is the file containing the tips of the SmB tree
+    #Q! How would you add random 1's and 0's to a txt file in bash?    
+
+    '''.format(path_out = path_out, script_dir = script_dir, path_in = path_in)
+
 
 
 #######################################################################
@@ -258,6 +285,9 @@ gwf.target_from_template(name = "Load_tree",
                             path_out = data_dir,
                             script_dir = script_dir
                           ))
+
+
+
 
 gwf.target_from_template(name = "Esse",
                           template=Esse(
