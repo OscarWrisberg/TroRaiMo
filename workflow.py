@@ -205,7 +205,7 @@ gwf.target_from_template(name = "Download_Data",
 
 gwf.target_from_template(name = "Esse",
                           template=Esse(
-                            path_in = data_dir
+                            path_in = data_dir,
                             path_out = "/home/owrisberg/Trf_models/Esse_test",
                             script_dir = script_dir
                           ))
