@@ -203,7 +203,7 @@ def sim_state_data(input_file, output_file, path_in,path_out, script_dir, nr_sta
     spec = '''
 
     source /home/owrisberg/miniconda3/etc/profile.d/conda.sh
-    conda activate R_env
+    conda activate python3_env
 
     # Going to input folder
     cd {path_in}
@@ -211,12 +211,19 @@ def sim_state_data(input_file, output_file, path_in,path_out, script_dir, nr_sta
     #Checking if output dir exists
     [ -d {path_out} ] && echo "{path_out} exist." || {{ echo "{path_out} does not exist."; mkdir {path_out}; }}
 
+    echo Starting the Adding states script
+    date
+
     # Loading the input file which is the file containing the tips of the SmB tree
-    #Q! How would you add random 1's and 0's to a txt file in bash?    
+    python3 {script_dir}adding_states.py {input_file} {nr_states} {output_file}
 
-    '''.format(path_out = path_out, script_dir = script_dir, path_in = path_in)
+    echo Ended the Adding states script
+    date
 
 
+    '''.format(path_out = path_out, script_dir = script_dir, path_in = path_in, nr_states = nr_states)
+
+    return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
 
 #######################################################################
 #######---- Function for Running ESSE on entire SmB tree ----##########
@@ -280,12 +287,21 @@ gwf.target_from_template(name = "Download_Data",
 gwf.target_from_template(name = "Load_tree",
                           template=Load_tree(
                             input_file = "GBMB.tre",
-                            output_file = "GBMB_tips.rds",
+                            output_file = "GBMB_tips.txt",
                             path_in = data_dir,
                             path_out = data_dir,
                             script_dir = script_dir
                           ))
-
+for i in range(1,10):
+    gwf.target_from_template(name = "Simulate_state_data",
+                                template=sim_state_data(
+                                    input_file = "GBMB_tips.txt",
+                                    output_file = "GBMB_states_"+i"_.csv",
+                                    path_in = data_dir,
+                                    path_out = workflow_dir+"01_adding_states/",
+                                    script_dir = script_dir,
+                                    nr_states = i
+                                ))
 
 
 
