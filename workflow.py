@@ -153,8 +153,8 @@ def Load_tree(input_file, output_file, path_in,path_out, script_dir):
     inputs = [path_in+input_file]
     outputs = [path_out+output_file]
     options = {
-        'cores': 1,
-        'memory': '5g',
+        'cores': 10,
+        'memory': '15g',
         'account':"Trf_models",
         'walltime': "00:30:00"
     }
@@ -186,11 +186,51 @@ def Load_tree(input_file, output_file, path_in,path_out, script_dir):
     return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
 
 ##############################################################
-#############---- Loading the SmB tree tips ----##############
+#########---- Adding random states to tips file ----##########
 ##############################################################
 def sim_state_data(input_file, output_file, path_in,path_out, script_dir, nr_states):
     """This function should be used to simulate state data for the tips of the SmB tree
     by writing 0 or 1 for each state defined by nr_states and each tip in the input_file"""
+    inputs = [path_in+input_file]
+    outputs = [path_out+output_file]
+    options = {
+        'cores': 5,
+        'memory': '20g',
+        'account':"Trf_models",
+        'walltime': "01:00:00"
+    }
+
+    spec = '''
+
+    source /home/owrisberg/miniconda3/etc/profile.d/conda.sh
+    conda activate python3_env
+
+    # Going to input folder
+    cd {path_in}
+
+    #Checking if output dir exists
+    [ -d {path_out} ] && echo "{path_out} exist." || {{ echo "{path_out} does not exist."; mkdir {path_out}; }}
+
+    echo Starting the Adding states script
+    date
+
+    # Loading the input file which is the file containing the tips of the SmB tree
+    python3 {script_dir}adding_states.py {input_file} {nr_states} {output_file}
+
+    echo Ended the Adding states script
+    date
+
+
+    '''.format(path_out = path_out, script_dir = script_dir, path_in = path_in, nr_states = nr_states, input_file = input_file, output_file = output_file)
+
+    return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
+
+
+##############################################################
+#############---- Creating covariate files ----##############
+##############################################################
+def sim_covariate_data(input_file, output_file, path_in,path_out, script_dir, nr_states):
+    """This function should be used to simulate the covariate data table through time for the states in the """
     inputs = [path_in+input_file]
     outputs = [path_out+output_file]
     options = {
@@ -293,6 +333,7 @@ gwf.target_from_template(name = "Load_tree",
                             path_out = data_dir,
                             script_dir = script_dir
                           ))
+
 for i in ["1","2","3","4","5","6","7","8","9","10"]:
     gwf.target_from_template(name = "Simulate_state_data_"+i,
                                 template=sim_state_data(
@@ -303,13 +344,14 @@ for i in ["1","2","3","4","5","6","7","8","9","10"]:
                                     script_dir = script_dir,
                                     nr_states = i
                                 ))
+    
 
 
 
 
-gwf.target_from_template(name = "Esse",
-                          template=Esse(
-                            path_in = data_dir,
-                            path_out = "/home/owrisberg/Trf_models/Esse_test",
-                            script_dir = script_dir
-                          ))
+# gwf.target_from_template(name = "Esse",
+#                           template=Esse(
+#                             path_in = data_dir,
+#                             path_out = "/home/owrisberg/Trf_models/Esse_test",
+#                             script_dir = script_dir
+#                           ))
