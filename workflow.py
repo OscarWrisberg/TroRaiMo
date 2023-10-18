@@ -107,6 +107,8 @@ def download_data(path_out,
         unzip -o {path_out}$filename_smb
         echo " Finished unzipping Smith & Brown Angiosperm Phylogeny data at :"
         date
+        cd $filename_smb
+        mv * ../.
     fi
 
     # Checking if file has already been downloaded. if not download it at  # "http://sftp.kew.org/pub/data-repositories/WCVP/wcvp.zip"
@@ -140,6 +142,46 @@ def download_data(path_out,
 
 
     '''.format(path_out = path_out, smb_doi = smb_doi, kew_doi = kew_doi, output_smb=output_smb, output_kew=output_kew)
+
+    return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
+
+##############################################################
+#############---- Loading the SmB tree tips ----##############
+##############################################################
+def Load_tree(input_file, output_file, path_in,path_out, script_dir):
+    """Here I load the SmB tree and save it as an rds file for further analysis."""
+    inputs = [path_in+input_file]
+    outputs = [path_out+output_file]
+    options = {
+        'cores': 1,
+        'memory': '5g',
+        'account':"Biome_estimation",
+        'walltime': "00:10:00"
+    }
+
+    spec = '''
+
+    [ -d {path_out} ] && echo "{path_out} exist." || {{ echo "{path_out} does not exist."; mkdir {path_out}; }}
+
+    source /home/owrisberg/miniconda3/etc/profile.d/conda.sh
+    conda activate R_env
+
+    cd {path_in}
+
+    echo Starting the R script
+    
+    date
+
+    # Using the R script to load the tree into R and save the tips as a csv file.
+    Rscript --vanilla {script_dir}R_tree_loading.r {input_file} {output_file}
+
+    echo Ended the R script
+
+    date
+    
+    mv {output_file} {path_out}
+
+    '''.format(input_file=input_file, output_file=output_file, path_in = path_in,script_dir = script_dir, path_out = path_out)
 
     return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
 
@@ -207,5 +249,14 @@ gwf.target_from_template(name = "Esse",
                           template=Esse(
                             path_in = data_dir,
                             path_out = "/home/owrisberg/Trf_models/Esse_test",
+                            script_dir = script_dir
+                          ))
+
+gwf.target_from_template(name = "Load_tree",
+                          template=Load_tree(
+                            input_file = "GBMB.tre",
+                            output_file = "GBMB_tips.csv",
+                            path_in = data_dir,
+                            path_out = data_dir,
                             script_dir = script_dir
                           ))
