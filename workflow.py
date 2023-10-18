@@ -185,6 +185,11 @@ def Load_tree(input_file, output_file, path_in,path_out, script_dir):
 
     return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
 
+##############################################################
+#############---- Loading the SmB tree tips ----##############
+##############################################################
+# def 
+
 
 #######################################################################
 #######---- Function for Running ESSE on entire SmB tree ----##########
@@ -245,18 +250,18 @@ gwf.target_from_template(name = "Download_Data",
                             output_kew = "wcvp_names.csv"
                           ))
 
+gwf.target_from_template(name = "Load_tree",
+                          template=Load_tree(
+                            input_file = "GBMB.tre",
+                            output_file = "GBMB_tips.rds",
+                            path_in = data_dir,
+                            path_out = data_dir,
+                            script_dir = script_dir
+                          ))
+
 gwf.target_from_template(name = "Esse",
                           template=Esse(
                             path_in = data_dir,
                             path_out = "/home/owrisberg/Trf_models/Esse_test",
-                            script_dir = script_dir
-                          ))
-
-gwf.target_from_template(name = "Load_tree",
-                          template=Load_tree(
-                            input_file = "GBMB.tre",
-                            output_file = "GBMB_tips.csv",
-                            path_in = data_dir,
-                            path_out = data_dir,
                             script_dir = script_dir
                           ))

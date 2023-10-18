@@ -16,9 +16,6 @@ tree <- read.tree(input_file)
 # Creating an object which is the tip names in this tree
 tips <- tree$tip.label
 
-# Saving the tips as an RDS file
-saveRDS(tips,output_file_tips)
-
 #! save the tips object as a csv file	
-write.csv(tips, "tips_smb.csv")
+write.txt(tips[,2], output_file_tips)
 
