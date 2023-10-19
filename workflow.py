@@ -387,7 +387,7 @@ gwf.target_from_template(name = "Load_tree",
 #                                     nr_states = i
 #                                 ))
     
-gwf.target_from_template(name = "Adding_orders",
+gwf.target_from_template(name = "slicing_orders",
                         template=finding_orders(
                             input_file = "GBMB_tips.txt",
                             output_file = "GBMB_orders.txt",
