@@ -5,7 +5,7 @@
 
 # Loading the required packages
 import pandas as pd
-import phylopandas as ph
+import Bio.Phylo.NewickIO as NewickIO
 
 
 # Command line argument which is the file name
@@ -25,7 +25,7 @@ with open(args.input_file_wcvp, 'r') as input_file_wcvp:
 	lines_wcvp = pd.read_csv(input_file_wcvp, sep = '|', header = 0)
 
 # Open the file containing the GBMB tree using phylopandas
-tree = ph.read_newick(args.input_file_tree)
+tree = NewickIO.read(args.input_file_tree)
 
 # Find the tips in the tree
 tips = tree.tips()
@@ -35,6 +35,8 @@ matching_tips = [tip for tip in tips if tip in lines_wcvp]
 
 # Find the tips which are not in the WCVP names file
 not_matching_tips = [tip for tip in tips if tip not in lines_wcvp]
+print("These tips are not in the WCVP \n" , not_matching_tips)
+
 
 # Loop through the matching tips and find the order of each tip by looking it up in the WCVP names file.
 # Then append each species name and order pair to a pandas dataframe.
@@ -62,6 +64,16 @@ print(tips_orders)
 
 # write tips orders to a txt file
 tips_orders.to_csv('tips_orders.txt', sep = '\t', index = False)
+
+
+# Find the unique orders in the tips_orders dataframe and which tips belong to each order
+# Then prune the tree for each order and save the pruned tree to a file with the order name and GBMB as a part of the file name.
+
+# Find the unique orders in the tips_orders dataframe
+unique_orders = tips_orders.order.unique()
+print("Unique orders", unique_orders)
+
+# Find which tips belong to each order
 
 
 

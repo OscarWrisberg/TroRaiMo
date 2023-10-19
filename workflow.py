@@ -314,7 +314,7 @@ def finding_orders(input_file, output_file, path_in,path_out, script_dir, wcvp_f
     outputs = [path_out+output_file]
     options = {
         'cores': 5,
-        'memory': '20g',
+        'memory': '10g',
         'account':"Trf_models",
         'walltime': "01:00:00"
     }
