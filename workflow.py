@@ -382,11 +382,6 @@ for i in range(1,10):
                                     script_dir = script_dir,
                                     nr_states = i
                                 ))
-    
-
-
-#python function for converting integer to character
-as.character(1)
 
 
 # gwf.target_from_template(name = "Esse",
