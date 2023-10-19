@@ -373,7 +373,7 @@ gwf.target_from_template(name = "Load_tree",
                           ))
 
 for i in range(1,10):
-    gwf.target_from_template(name = "Simulate_state_data_"+as.character(i),
+    gwf.target_from_template(name = "Simulate_state_data_" + as.character(i),
                                 template=sim_state_data(
                                     input_file = "GBMB_tips.txt",
                                     output_file = "GBMB_states_" + as.character(i) + "_.txt",
