@@ -389,8 +389,8 @@ gwf.target_from_template(name = "Load_tree",
     
 gwf.target_from_template(name = "Adding_orders",
                         template=finding_orders(
-                            input_file =GBMB_tips.txt,
-                            output_file = GBMB_orders.txt,
+                            input_file = "GBMB_tips.txt",
+                            output_file = "GBMB_orders.txt",
                             path_in = data_dir,
                             path_out = workflow_dir+"02_adding_orders/",
                             script_dir = script_dir,
