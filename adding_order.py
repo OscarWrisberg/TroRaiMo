@@ -85,7 +85,7 @@ print("Unique orders", unique_orders)
 
 # Find which tips belong to each order
 # Loop through the unique orders and find the tips which belong to each order
-df_number_tips = pd.DataFrame('order': [], 'number_tips': [])
+df_number_tips = pd.DataFrame(columns = ['order', 'number_tips'])
 for order in unique_orders:
 	# Find the tips which belong to each order
 	tips_order = tips_orders.loc[tips_orders['order'] == order, 'name']
