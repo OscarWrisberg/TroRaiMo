@@ -27,8 +27,10 @@ with open(args.input_file_wcvp, 'r') as input_file_wcvp:
 # Open the file containing the GBMB tree using phylopandas
 tree = Phylo.read(args.input_file_tree, "newick")
 
-# Find the tips in the tree 
-tips = tree.tips()
+# Find the tips in the tree
+#Q is .get_terminals() a method in phylopandas?
+#A  
+tips = tree.get_terminals()
 
 # Find the tips which are in the WCVP names file  
 matching_tips = [tip for tip in tips if tip in lines_wcvp]
