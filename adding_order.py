@@ -29,8 +29,16 @@ tree = Phylo.read(args.input_file_tree, "newick")
 
 # Find the tips in the tree
 #Q is .get_terminals() a method in phylopandas?
-#A  
+#A Yes, it is a method in Phylo  
 tips = tree.get_terminals()
+
+# I need to remove _ from the each tip and replace it with a space and remove ""'s around the name
+#Q what is the .name function and what does it do?
+#A .name is a method in Phylo which returns the name of the tip
+for tip in tips:
+	tip.name = tip.name.replace("_", " ")
+	tip.name = tip.name.replace('"', '')
+
 
 # Find the tips which are in the WCVP names file  
 matching_tips = [tip for tip in tips if tip in lines_wcvp]
