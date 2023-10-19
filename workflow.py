@@ -215,7 +215,7 @@ def sim_state_data(input_file, output_file, path_in,path_out, script_dir, nr_sta
     date
 
     # Loading the input file which is the file containing the tips of the SmB tree
-    python3 {script_dir}adding_states.py {input_file} {nr_states} {output_file}
+    python3 {script_dir}adding_states.py input_file = {input_file} states = {nr_states} output_file = {output_file}
 
     echo Ended the Adding states script
     date
@@ -269,6 +269,48 @@ def sim_covariate_data(input_file, output_file, path_in,path_out, script_dir, nr
 #######################################################################
 #######---- Function for Running ESSE on entire SmB tree ----##########
 #######################################################################
+"""
+From the supplement material of the The build-up of the present-day tropical diversity of tetrapods: Line 215-220
+
+_______________________________________________________________________________________________________________________
+As a practical estimate, the inference procedure of the G+E+H ESSE model on mammals
+(4001 species tree with 6 states and 20 free parameters) takes about 2 weeks of computation
+time to estimate a MCMC chain with sufficient Effective Sample Sizes (ESS). Since there are
+|K| - 1 states for |K| regions (see above), adding a region or adding more hidden states
+doubles the number of states, with an exponential increase in the number of coupled equations
+220 and parameters and thus of computational time.
+_______________________________________________________________________________________________________________________
+
+SOOOoooooo if 4001 species with 6 states (2 hidden, in 3 different regions (Tropical, Extratropical, Both)) takes 2 weeks, 
+and a phylogeny with 50 species, 3 different regions and 2 hidden states takes 1 hour to run.
+
+Then I can estimate that:
+50 species = 1 hour
+4001 species = 336 hours
+
+
+then each species added to the tree increases the computation time by 0.5 hours.
+
+then it is undoubtedly unfeasible 
+to run a tree with 80000 species as it would not be able to acquire a sufficient ESS.
+
+I dont know how big an impact the number of species has on the computation time.
+but I know that a phylogeny with 50 species, 3 different regions and 2 hidden states takes 1 hour to run.
+
+
+
+
+This means I have to cut my tree into smaller pieces and run them separately.
+I think I should aim at getting trees with around 2000 species in them in order to get a reasonable computation time.
+
+I could do this by cutting the tree into smaller pieces based on either
+1. The order of the species (i.e taxonomy of the species)
+2. The geographic location of the species (i.e. the region they are found in) (Tropical, Extratropical, Both)
+3. Time cut off ( i.e. cut the tree into smaller pieces by taking all the branches which )
+
+"""
+
+
 
 def Esse(path_in, path_out, script_dir, ):
     """Function for running ESSE on the Smith and Brown phylogeny"""
