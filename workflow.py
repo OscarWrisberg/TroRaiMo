@@ -215,7 +215,7 @@ def sim_state_data(input_file, output_file, path_in,path_out, script_dir, nr_sta
     date
 
     # Loading the input file which is the file containing the tips of the SmB tree
-    python3 {script_dir}adding_states.py input_file={input_file} states={nr_states} output_file={output_file}
+    python3 {script_dir}adding_states.py {input_file} {nr_states} {output_file}
 
     echo Ended the Adding states script
     date
