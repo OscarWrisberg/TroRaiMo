@@ -284,44 +284,45 @@ ________________________________________________________________________________
 
 SOOOoooooo if 4001 species with 6 states (2 hidden, in 3 different regions (Tropical, Extratropical, Both)) takes 2 weeks, 
 and a phylogeny with 50 species, 3 different regions and 2 hidden states takes 1 hour to run.
-
-Then I can estimate that:
-50 species = 1 hour
-4001 species = 336 hours
-
-
-then each species added to the tree increases the computation time by 0.5 hours.
-
-then it is undoubtedly unfeasible 
-to run a tree with 80000 species as it would not be able to acquire a sufficient ESS.
-
-I dont know how big an impact the number of species has on the computation time.
-but I know that a phylogeny with 50 species, 3 different regions and 2 hidden states takes 1 hour to run.
+Then a phylogeny with 80000 species, 3 different regions and 2 hidden states takes 1600 hours to run. which is 66 days.....
 
 This means I have to cut my tree into smaller pieces and run them separately.
+cutting the tree into smaller 
 I think I should aim at getting trees with around 2000 species in them in order to get a reasonable computation time.
 
 I could do this by cutting the tree into smaller pieces based on either
 1. The order of the species (i.e taxonomy of the species)
-2. The geographic location of the species (i.e. the region they are found in) (Tropical, Extratropical, Both)
+    I could potentially use the World checklist of vascular plants to infer the order of the species in the tree and then prune the tree based on this
+
+2. The geographic location of the species (i.e. the region they are found in) (Tropical rainforest, , Both)
+    I.e. by finding subtrees in the phylogeny with a proportion of species in Tropical rainforest over a certain threshold.
+
 3. Time cut off ( i.e. cut the tree into smaller pieces by taking all the branches which )
+    What time cut offs would make sense to use in regards to Tropical rainforest?
+    And how would I find out if this results in some subtrees with more than 2000 species in them?
+
+I think I need to try out all three and compare the results between them.
 
 """
 
-
-
-def Esse(path_in, path_out, script_dir, ):
-    """Function for running ESSE on the Smith and Brown phylogeny"""
-    inputs = [path_in]
-    outputs = [path_out]
+##############################################################
+#############---- Approach 1 finding the orders ----##############
+##############################################################
+def finding_orders(input_file, output_file, path_in,path_out, script_dir, wcvp_file):
+    """This function should be used to simulate the covariate data table through time for the states in the """
+    inputs = [path_in+input_file]
+    outputs = [path_out+output_file]
     options = {
         'cores': 5,
-        'memory': '25g',
+        'memory': '20g',
         'account':"Trf_models",
-        'walltime': "03:00:00"
+        'walltime': "01:00:00"
     }
 
     spec = '''
+
+    source /home/owrisberg/miniconda3/etc/profile.d/conda.sh
+    conda activate python3_env
 
     # Going to input folder
     cd {path_in}
@@ -329,20 +330,21 @@ def Esse(path_in, path_out, script_dir, ):
     #Checking if output dir exists
     [ -d {path_out} ] && echo "{path_out} exist." || {{ echo "{path_out} does not exist."; mkdir {path_out}; }}
 
-    source /home/owrisberg/miniconda3/etc/profile.d/conda.sh
-    conda activate julia_env
-
-    echo " Starting to run Julia script \n "
+    echo Starting the Adding orders script
     date
 
-    julia {script_dir}Esse_test.jl
+    # Loading the input file which is the file containing the tips of the SmB tree
+    python3 {script_dir}adding_order.py {input_file} {output_file} {wcvp_file}
 
-    echo " Finished running Julia script \n "
+    echo Ended the Adding orders script
     date
 
-    '''.format(path_out = path_out, script_dir = script_dir, path_in = path_in)
+
+    '''.format(path_out = path_out, script_dir = script_dir, path_in = path_in, input_file = input_file, output_file = output_file, wcvp_file = wcvp_file)
+
 
     return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
+
 
 
 ########################################################################################################################
@@ -384,6 +386,18 @@ for i in range(1,10):
                                     script_dir = script_dir,
                                     nr_states = i
                                 ))
+    
+gwf.target_from_template(name = "Adding_orders",
+                        template=finding_orders(
+                            input_file =GBMB_tips.txt,
+                            output_file = GBMB_orders.txt,
+                            path_in = data_dir,
+                            path_out = workflow_dir+"02_adding_orders/",
+                            script_dir = script_dir,
+                            wcvp_file = "wcvp_names.csv"
+                            ))
+
+
 
 
 # gwf.target_from_template(name = "Esse",
