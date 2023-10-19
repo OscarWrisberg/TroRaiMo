@@ -77,6 +77,7 @@ print("Unique orders", unique_orders)
 
 # Find which tips belong to each order
 # Loop through the unique orders and find the tips which belong to each order
+df_number_tips = pd.DataFrame('order': [], 'number_tips': [])
 for order in unique_orders:
 	# Find the tips which belong to each order
 	tips_order = tips_orders.loc[tips_orders['order'] == order, 'name']
@@ -91,7 +92,7 @@ for order in unique_orders:
 	number_tips = len(pruned_tree.tips())
 
 	# Append the number of tips and the order name to a pandas dataframe
-	df_number_tips = pd.DataFrame({'order': order, 'number_tips': number_tips})
+	df_number_tips.append({'order': order, 'number_tips': number_tips})
 
 	# Save the pruned tree to a file with the order name and GBMB as a part of the file name
 	# Save the pruned tree to a file with the order name and GBMB as a part of the file name
