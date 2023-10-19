@@ -6,7 +6,7 @@
 # Loading the required packages
 import pandas as pd
 import Bio.Phylo.NewickIO as NewickIO
-
+import argparse
 
 # Command line argument which is the file name
 parser = argparse.ArgumentParser()
@@ -27,7 +27,7 @@ with open(args.input_file_wcvp, 'r') as input_file_wcvp:
 # Open the file containing the GBMB tree using phylopandas
 tree = NewickIO.read(args.input_file_tree)
 
-# Find the tips in the tree
+# Find the tips in the tree 
 tips = tree.tips()
 
 # Find the tips which are in the WCVP names file  
@@ -74,6 +74,33 @@ unique_orders = tips_orders.order.unique()
 print("Unique orders", unique_orders)
 
 # Find which tips belong to each order
+# Loop through the unique orders and find the tips which belong to each order
+for order in unique_orders:
+	# Find the tips which belong to each order
+	tips_order = tips_orders.loc[tips_orders['order'] == order, 'name']
+	print("Tips in order", order, tips_order)
+
+	# Prune the tree for each order
+	# Prune the tree for the tips which belong to each order
+	pruned_tree = tree.prune(tips_order)
+	print("Pruned tree", pruned_tree)
+
+	# Calculate the number of tips in the pruned tree
+	number_tips = len(pruned_tree.tips())
+
+	# Append the number of tips and the order name to a pandas dataframe
+	df_number_tips = pd.DataFrame({'order': order, 'number_tips': number_tips})
+
+	# Save the pruned tree to a file with the order name and GBMB as a part of the file name
+	# Save the pruned tree to a file with the order name and GBMB as a part of the file name
+	NewickIO.write([pruned_tree], 'pruned_tree_' + order + '.txt')
+
+# Save the pandas dataframe to a file, include the number of subtrees in the name
+df_number_tips.to_csv('nr_subtrees_order_slicing_' + str(len(unique_orders)) + '.txt', sep = '\t', index = False)
+
+
+
+
 
 
 
