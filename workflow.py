@@ -376,16 +376,16 @@ gwf.target_from_template(name = "Load_tree",
                             script_dir = script_dir
                           ))
 
-for i in range(1,10):
-    gwf.target_from_template(name = "Simulate_state_data_" + str(i),
-                                template=sim_state_data(
-                                    input_file = "GBMB_tips.txt",
-                                    output_file = "GBMB_states_" + str(i) + "_.txt",
-                                    path_in = data_dir,
-                                    path_out = workflow_dir+"01_adding_states/",
-                                    script_dir = script_dir,
-                                    nr_states = i
-                                ))
+# for i in range(1,10):
+#     gwf.target_from_template(name = "Simulate_state_data_" + str(i),
+#                                 template=sim_state_data(
+#                                     input_file = "GBMB_tips.txt",
+#                                     output_file = "GBMB_states_" + str(i) + "_.txt",
+#                                     path_in = data_dir,
+#                                     path_out = workflow_dir+"01_adding_states/",
+#                                     script_dir = script_dir,
+#                                     nr_states = i
+#                                 ))
     
 gwf.target_from_template(name = "Adding_orders",
                         template=finding_orders(
