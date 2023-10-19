@@ -12,6 +12,8 @@ parser.add_argument("input_file", help="The name of the file to add a state to")
 parser.add_argument("states", help="the number of states to be added to the file")
 parser.add_argument("output_file", help="The name of the file to write the new states to")
 
+# Parse the command-line arguments
+args = parser.parse_args()
 
 # open the file for reading
 with open(args.input_file, 'r') as input_file:
