@@ -220,6 +220,8 @@ def sim_state_data(input_file, output_file, path_in,path_out, script_dir, nr_sta
     echo Ended the Adding states script
     date
 
+    mv {output_file} {path_out}
+
     '''.format(path_out = path_out, script_dir = script_dir, path_in = path_in, nr_states = nr_states, input_file = input_file, output_file = output_file)
 
     return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)

@@ -22,9 +22,11 @@ with open(args.input_file, 'r') as input_file:
 
 # Generate a vector with 1's and 0's at random the same number of times as specified by the states argument in the command line
 states = [random.randint(0,1) for i in range(int(args.states))]
+print("Generated states:", states)
 
 # Add the states to the list of species
-lines.append(''.join([str(state) for state in states]))
+lines.append(' '.join([str(state) for state in states]))
+print("New lines:", lines)
 
 # Open the output file for writing 
 with open(args.output_file, 'w') as output_file:
