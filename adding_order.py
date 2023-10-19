@@ -5,7 +5,7 @@
 
 # Loading the required packages
 import pandas as pd
-import Bio.Phylo.NewickIO as NewickIO
+from Bio import Phylo
 import argparse
 
 # Command line argument which is the file name
@@ -25,7 +25,7 @@ with open(args.input_file_wcvp, 'r') as input_file_wcvp:
 	lines_wcvp = pd.read_csv(input_file_wcvp, sep = '|', header = 0)
 
 # Open the file containing the GBMB tree using phylopandas
-tree = NewickIO.read(args.input_file_tree)
+tree = Phylo.read(args.input_file_tree, "newick")
 
 # Find the tips in the tree 
 tips = tree.tips()
