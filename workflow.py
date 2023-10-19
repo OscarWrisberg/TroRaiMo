@@ -220,7 +220,6 @@ def sim_state_data(input_file, output_file, path_in,path_out, script_dir, nr_sta
     echo Ended the Adding states script
     date
 
-
     '''.format(path_out = path_out, script_dir = script_dir, path_in = path_in, nr_states = nr_states, input_file = input_file, output_file = output_file)
 
     return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
@@ -296,9 +295,6 @@ to run a tree with 80000 species as it would not be able to acquire a sufficient
 
 I dont know how big an impact the number of species has on the computation time.
 but I know that a phylogeny with 50 species, 3 different regions and 2 hidden states takes 1 hour to run.
-
-
-
 
 This means I have to cut my tree into smaller pieces and run them separately.
 I think I should aim at getting trees with around 2000 species in them in order to get a reasonable computation time.
@@ -376,11 +372,11 @@ gwf.target_from_template(name = "Load_tree",
                             script_dir = script_dir
                           ))
 
-for i in ["1","2","3","4","5","6","7","8","9","10"]:
-    gwf.target_from_template(name = "Simulate_state_data_"+i,
+for i in range(1,10):
+    gwf.target_from_template(name = "Simulate_state_data_"+as.character(i),
                                 template=sim_state_data(
                                     input_file = "GBMB_tips.txt",
-                                    output_file = "GBMB_states_" + i + "_.txt",
+                                    output_file = "GBMB_states_" + as.character(i) + "_.txt",
                                     path_in = data_dir,
                                     path_out = workflow_dir+"01_adding_states/",
                                     script_dir = script_dir,
@@ -389,6 +385,8 @@ for i in ["1","2","3","4","5","6","7","8","9","10"]:
     
 
 
+#python function for converting integer to character
+as.character(1)
 
 
 # gwf.target_from_template(name = "Esse",
