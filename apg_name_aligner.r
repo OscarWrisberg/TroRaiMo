@@ -24,6 +24,10 @@ wcp <- fread(wcp_in)
 
 print(apg)
 
+# I need to remove the ""'s around the family name in the wcvp file
+# I think this is the problem.
+wcp$family <- gsub('"', '', wcp$family)
+
 # Incertae_sedis (of unknown placement)
 wcp <- wcp[which(wcp$family != "Incertae_sedis"),]
 
