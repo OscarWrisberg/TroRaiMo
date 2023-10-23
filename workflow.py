@@ -424,7 +424,7 @@ gwf.target_from_template(name = "APG_preb",
                                  output_file = "wcvp_names_apg_aligned.rds",
                                  path_in = data_dir,
                                  script_dir = script_dir,
-                                 path_out = data_dir
+                                 path_out = workflow_dir+"02_adding_orders/"
                              ))
     
 gwf.target_from_template(name = "slicing_families",
