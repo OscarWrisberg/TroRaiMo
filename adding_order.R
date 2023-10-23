@@ -39,11 +39,16 @@ find_family <- function(name_list, wcvp) {
   families <- character(0)
   
   for (name in name_list) {
-    family <- wcvp[wcvp$taxon_name == name, "family.apg"]
+	ifelse(wcvp[wcvp$taxon_name == name, "family.apg"] == NA,
+	  family <- NA,
+	  family <- wcvp[wcvp$taxon_name == name, "family.apg"])
     names <- c(names, name)
     families <- c(families, family)
   }
-  
+
+  cat("Length names "length(names))
+  cat("Length families "length(families))
+
   df_families <- data.frame(name = names, families = families)
   return(df_families)
 }
