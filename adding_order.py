@@ -28,10 +28,15 @@ with open(args.input_file_wcvp, 'r') as input_file_wcvp:
 tree = Phylo.read(args.input_file_tree, "newick")
 
 # Find the tips in the tree
-#Q is .get_terminals() a method in phylopandas?
-#A Yes, it is a method in Phylo  
-tips = tree.get_terminals()
+# What is the difference between get_terminals and get_tip_names?
+# The difference between 
 
+# Terminals
+terminals = tree.get_terminals() # This is a list of the tips in the tree
+print("Terminals",terminals)
+
+
+tips = tree.get_tip_names() # This is a list of the tips in the tree
 # checking the tips element
 print("Tips before editing", tips)
 
