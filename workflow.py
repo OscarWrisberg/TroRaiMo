@@ -375,6 +375,8 @@ def finding_orders(input_file, output_file, path_in,path_out, script_dir, wcvp_f
     # Loading the input file which is the file containing the tips of the SmB tree
     Rscript --vanilla {script_dir}adding_order.R {input_file} {output_file} {wcvp_file}
 
+    mv {output_file} {path_out}
+
     echo Ended the Adding orders script
     date
 
@@ -427,7 +429,7 @@ gwf.target_from_template(name = "APG_preb",
     
 gwf.target_from_template(name = "slicing_orders",
                         template=finding_orders(
-                            input_file = "GBMB_tips.txt",
+                            input_file = "GBMB.tre",
                             output_file = "GBMB_orders.txt",
                             path_in = data_dir,
                             path_out = workflow_dir+"02_adding_orders/",
