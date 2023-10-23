@@ -43,13 +43,13 @@ for tip in tip_names:
 	print(tip.name)
 
 # Checking the tips
-print("Tips after editing", tips)
+print("Tips after editing", tip_names)
 
 # Find the tips which are in the WCVP names file  
-matching_tips = [tip for tip in tips if tip in lines_wcvp]
+matching_tips = [tip for tip in tip_names if tip in lines_wcvp]
 
 # Find the tips which are not in the WCVP names file
-not_matching_tips = [tip for tip in tips if tip not in lines_wcvp]
+not_matching_tips = [tip for tip in tip_names if tip not in lines_wcvp]
 print("These tips are not in the WCVP \n" , not_matching_tips)
 
 
