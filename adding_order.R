@@ -41,7 +41,7 @@ find_family <- function(name_list, wcvp) {
   
   for (name in name_list) {
 	ifelse(wcvp[wcvp$taxon_name == name, "family.apg"] == NA,
-	  family <- NA,
+	  family <- "NA",
 	  family <- wcvp[wcvp$taxon_name == name, "family.apg"])
 	print(cat("Name ", name, "Family", family, "\n "))
     names <- c(names, name)
