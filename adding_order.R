@@ -33,47 +33,47 @@ cat("Length of matching tips ", length(matching_tips))
 cat("Length of non-matching tips ", length(not_matching_tips))
 
 
-# Create a data frame with tip names and orders
-find_order <- function(name_list, wcvp) {
+# Create a data frame with tip names and families
+find_family <- function(name_list, wcvp) {
   names <- character(0)
-  orders <- character(0)
+  families <- character(0)
   
   for (name in name_list) {
-    order <- wcvp[wcvp$taxon_name == name, "order"]
+    family <- wcvp[wcvp$taxon_name == name, "family.apg"]
     names <- c(names, name)
-    orders <- c(orders, order)
+    families <- c(families, family)
   }
   
-  df_orders <- data.frame(name = names, order = orders)
-  return(df_orders)
+  df_families <- data.frame(name = names, families = families)
+  return(df_families)
 }
 
-tips_orders <- find_order(matching_tips, wcvp)
+tips_families <- find_family(matching_tips, wcvp)
 
-# Write tip orders to a text file
-write.table(tips_orders, "tips_orders.txt", sep = "\t", row.names = FALSE)
+# Write tip families to a text file
+write.table(tips_families, "tips_families.txt", sep = "\t", row.names = FALSE)
 
-# Find unique orders
-unique_orders <- unique(tips_orders$order)
+# Find unique families
+unique_families <- unique(tips_families$families)
 
-# Create a data frame to store the number of tips in each order
-df_number_tips <- data.frame(order = character(0), number_tips = numeric(0))
+# Create a data frame to store the number of tips in each family
+df_number_tips <- data.frame(family = character(0), number_tips = numeric(0))
 
-for (order in unique_orders) {
-  tips_order <- tips_orders[tips_orders$order == order, "name"]
+for (family in unique_families) {
+  tips_family <- tips_families[tips_families$family == family, "name"]
   
-  # Prune the tree for each order
-  pruned_tree <- drop.tip(tree, tips_order)
+  # Prune the tree for each family
+  pruned_tree <- drop.tip(tree, tips_family)
   
   # Calculate the number of tips in the pruned tree
   number_tips <- length(pruned_tree$tip.label)
   
-  # Append the number of tips and order to the data frame
-  df_number_tips <- rbind(df_number_tips, data.frame(order = order, number_tips = number_tips))
+  # Append the number of tips and family to the data frame
+  df_number_tips <- rbind(df_number_tips, data.frame(family = family, number_tips = number_tips))
   
   # Save the pruned tree to a file
-  write.tree(pruned_tree, paste0("pruned_tree_", order, "_GBMB.txt"))
+  write.tree(pruned_tree, paste0("pruned_tree_", family, "_GBMB.txt"))
 }
 
 # Save the data frame to a text file
-write.table(df_number_tips, paste0("nr_subtrees_order_slicing_", length(unique_orders), ".txt"), sep = "\t", row.names = FALSE)
+write.table(df_number_tips, paste0("nr_subtrees_family_slicing_", length(unique_families), ".txt"), sep = "\t", row.names = FALSE)
