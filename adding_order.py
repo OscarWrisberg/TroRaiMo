@@ -36,9 +36,11 @@ tips = tree.get_terminals()
 #Q what is the .name function and what does it do?
 #A .name is a method in Phylo which returns the name of the tip
 for tip in tips:
-	tip.name = tip.name.replace("_", " ")
+	tip.name = tip.name.replace("_", " ") 
 	tip.name = tip.name.replace('"', '')
 
+# Checking the tips
+print("Tips", tips)
 
 # Find the tips which are in the WCVP names file  
 matching_tips = [tip for tip in tips if tip in lines_wcvp]
