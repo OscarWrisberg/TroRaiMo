@@ -72,14 +72,14 @@ pi
 π = Base.pi
 
 # Do not use `.` in variable names, they represent `fields` in types
-a.1 = 2
+#a.1 = 2
 
 # you can use underscores, although discouraged if not necessary
 a_1 = 2
 
 # some few names cannot be used for variables
-else = 2
-end  = "Hi"
+#else = 2
+#end = "Hi"
 
 
 #=

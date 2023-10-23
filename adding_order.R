@@ -9,10 +9,11 @@ output_file <- commandArgs(trailingOnly = TRUE)[2]
 input_file_wcvp <- commandArgs(trailingOnly = TRUE)[3]
 
 # Read the WCVP names file into a data frame
-cat("Attempting to open ", input_file_wcvp, "\n")
+cat("Opening ", input_file_wcvp, "\n")
 wcvp <- readRDS(input_file_wcvp)
 
 # Read the GBMB tree
+cat("Opening ", input_file_tree, "\n")
 tree <- read.tree(input_file_tree)
 
 # Get tip names from the tree
@@ -22,11 +23,11 @@ tip_names <- tree$tip.label
 tip_names <- gsub("_", " ", tip_names)
 tip_names <- gsub('"', '', tip_names)
 
-cat("Checking the start of the tip_names", tip_names[1:50], "\n")
+#cat("Checking the start of the tip_names", tip_names[1:10], "\n")
 
 # Find matching and non-matching tips
-matching_tips <- tip_names[tip_names %in% wcvp$taxon_name]
-not_matching_tips <- tip_names[!(tip_names %in% wcvp$taxon_name)]
+matching_tips <- tip_names[tip_names %in% wcvp$taxon_name] # 76935 tips are matching
+not_matching_tips <- tip_names[!(tip_names %in% wcvp$taxon_name)] # Only 2939 tips are not matching
 
 # Finding length of matching tips
 cat("Length of matching tips ", length(matching_tips), "\n")
@@ -42,12 +43,13 @@ find_family <- function(name_list, wcvp) {
 	ifelse(wcvp[wcvp$taxon_name == name, "family.apg"] == NA,
 	  family <- NA,
 	  family <- wcvp[wcvp$taxon_name == name, "family.apg"])
+	print(cat("Name ", name, "Family", family, "\n "))
     names <- c(names, name)
     families <- c(families, family)
   }
 
-  print(cat("Length names ", length(names)))
-  print(cat("Length families ", length(families)))
+  print(cat("Length names ", length(names), "\n "))
+  print(cat("Length families ", length(families), "\n "))
 
   df_families <- data.frame(name = names, families = families)
   return(df_families)

@@ -427,7 +427,7 @@ gwf.target_from_template(name = "APG_preb",
                                  path_out = data_dir
                              ))
     
-gwf.target_from_template(name = "slicing_orders",
+gwf.target_from_template(name = "slicing_families",
                         template=finding_orders(
                             input_file = "GBMB.tre",
                             output_file = "GBMB_orders.txt",
