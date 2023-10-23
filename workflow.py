@@ -322,7 +322,7 @@ def finding_orders(input_file, output_file, path_in,path_out, script_dir, wcvp_f
     spec = '''
 
     source /home/owrisberg/miniconda3/etc/profile.d/conda.sh
-    conda activate python3_env
+    conda activate R_env
 
     # Going to input folder
     cd {path_in}
@@ -334,7 +334,7 @@ def finding_orders(input_file, output_file, path_in,path_out, script_dir, wcvp_f
     date
 
     # Loading the input file which is the file containing the tips of the SmB tree
-    python3 {script_dir}adding_order.py {input_file} {output_file} {wcvp_file}
+    Rscript --vanilla {script_dir}adding_order.R {input_file} {output_file} {wcvp_file}
 
     echo Ended the Adding orders script
     date
