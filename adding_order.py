@@ -38,9 +38,9 @@ tip_names = [clade.name for clade in tree.get_terminals()]
 print("Tip names", tip_names)
 
 # I need to remove _ from the each tip and replace it with a space and remove ""'s around the name
-for tip in tips:
-	tip.name = tip.name.replace("_", " ") 
-	tip.name = tip.name.replace('"', '')
+for tip in tip_names:
+	tip.name = tip.name.replace("_", " ") # Replace _ with space
+	print(tip.name)
 
 # Checking the tips
 print("Tips after editing", tips)
