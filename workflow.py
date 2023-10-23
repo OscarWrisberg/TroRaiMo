@@ -304,6 +304,45 @@ I could do this by cutting the tree into smaller pieces based on either
 I think I need to try out all three and compare the results between them.
 
 """
+##############################################################
+##############---- Preparing WCVP-names file ----################
+##############################################################
+def apg_name_align(apg,wcp, output_file, path_in, script_dir, path_out):
+    """Here I want to create a common format the wcvp and the previous file and update some family names to APGIV."""
+    inputs = [script_dir+apg, path_in+wcp]
+    outputs = [path_out+output_file]
+    options = {
+        'cores': 5,
+        'memory': '10g',
+        'account':"Trf_models",
+        'walltime': "01:00:00"
+    }
+
+    spec = '''
+
+    #Checking if output dir exists
+    [ -d {path_out} ] && echo "{path_out} exist." || {{ echo "{path_out} does not exist."; mkdir {path_out}; }}
+
+    echo This is the data dir \n
+    echo {script_dir}
+
+    # Starting Conda environment
+    source /home/owrisberg/miniconda3/etc/profile.d/conda.sh
+    conda activate R_env
+
+    #Navigating to folder
+    cd {path_in}
+
+
+    Rscript --vanilla {script_dir}apg_name_aligner.r {script_dir}{apg} {wcp} {output_file}
+
+    echo Done with Rscript
+
+    mv {output_file} {path_out}
+
+    '''.format(apg=apg,wcp = wcp, output_file=output_file, path_in = path_in, script_dir = script_dir, path_out = path_out)
+
+    return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
 
 ##############################################################
 #############---- Approach 1 finding the orders ----##############
@@ -376,16 +415,15 @@ gwf.target_from_template(name = "Load_tree",
                             script_dir = script_dir
                           ))
 
-# for i in range(1,10):
-#     gwf.target_from_template(name = "Simulate_state_data_" + str(i),
-#                                 template=sim_state_data(
-#                                     input_file = "GBMB_tips.txt",
-#                                     output_file = "GBMB_states_" + str(i) + "_.txt",
-#                                     path_in = data_dir,
-#                                     path_out = workflow_dir+"01_adding_states/",
-#                                     script_dir = script_dir,
-#                                     nr_states = i
-#                                 ))
+gwf.target_from_template(name = "APG_preb",
+                             template = apg_name_align(
+                                 wcp = "wcvp_names.csv",
+                                 apg ="apgweb_parsed.csv",
+                                 output_file = "wcvp_names_apg_aligned.rds",
+                                 path_in = data_dir,
+                                 script_dir = script_dir,
+                                 path_out = workflow_dir+"02_adding_orders/"
+                             ))
     
 gwf.target_from_template(name = "slicing_orders",
                         template=finding_orders(
@@ -394,7 +432,7 @@ gwf.target_from_template(name = "slicing_orders",
                             path_in = data_dir,
                             path_out = workflow_dir+"02_adding_orders/",
                             script_dir = script_dir,
-                            wcvp_file = "wcvp_names.csv"
+                            wcvp_file = "wcvp_names_apg_aligned.rds"
                             ))
 
 
