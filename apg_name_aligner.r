@@ -22,6 +22,8 @@ wcp <- fread(wcp_in)
 #Families in wcvp which are not in the file apg synonym families
 #unique(wcp$family[!wcp$family %in% apg$Syn_Fam])
 
+print(apg)
+
 # Incertae_sedis (of unknown placement)
 wcp <- wcp[which(wcp$family != "Incertae_sedis"),]
 
