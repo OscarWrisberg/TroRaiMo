@@ -31,14 +31,11 @@ tree = Phylo.read(args.input_file_tree, "newick")
 # What is the difference between get_terminals and get_tip_names?
 # The difference between 
 
-# Terminals
-terminals = tree.get_terminals() # This is a list of the tips in the tree
-print("Terminals",terminals)
+# Get a list of all tip names
+tip_names = [clade.name for clade in tree.get_terminals()]
 
-
-tips = tree.get_tip_names() # This is a list of the tips in the tree
-# checking the tips element
-print("Tips before editing", tips)
+# checking tip names
+print("Tip names", tip_names)
 
 # I need to remove _ from the each tip and replace it with a space and remove ""'s around the name
 for tip in tips:
@@ -58,8 +55,6 @@ print("These tips are not in the WCVP \n" , not_matching_tips)
 
 # Loop through the matching tips and find the order of each tip by looking it up in the WCVP names file.
 # Then append each species name and order pair to a pandas dataframe.
-# Is this dataframe going to contain only one species as I erase the df_orders everytime I iterate to a new name in matching tips?
-#
 def find_order(name_list, wcvp):
 	# Find the order of the name in WCVP names file
 	names = []
