@@ -1,5 +1,7 @@
 # Load the required packages
 library(ape)
+library(data.table)
+library(dplyr)
 
 # Command line arguments
 input_file_tree <- commandArgs(trailingOnly = TRUE)[1]
@@ -7,7 +9,7 @@ output_file <- commandArgs(trailingOnly = TRUE)[2]
 input_file_wcvp <- commandArgs(trailingOnly = TRUE)[3]
 
 # Read the WCVP names file into a data frame
-lines_wcvp <- read.table(input_file_wcvp, sep = '|', header = TRUE)
+wcvp <- readRDS(input_file_wcvp)
 
 # Read the GBMB tree
 tree <- read.tree(input_file_tree)
@@ -20,8 +22,8 @@ tip_names <- gsub("_", " ", tip_names)
 tip_names <- gsub('"', '', tip_names)
 
 # Find matching and non-matching tips
-matching_tips <- tip_names[tip_names %in% lines_wcvp$taxon_name]
-not_matching_tips <- tip_names[!(tip_names %in% lines_wcvp$taxon_name)]
+matching_tips <- tip_names[tip_names %in% wcvp$taxon_name]
+not_matching_tips <- tip_names[!(tip_names %in% wcvp$taxon_name)]
 
 # Create a data frame with tip names and orders
 find_order <- function(name_list, wcvp) {
@@ -38,7 +40,7 @@ find_order <- function(name_list, wcvp) {
   return(df_orders)
 }
 
-tips_orders <- find_order(matching_tips, lines_wcvp)
+tips_orders <- find_order(matching_tips, wcvp)
 
 # Write tip orders to a text file
 write.table(tips_orders, "tips_orders.txt", sep = "\t", row.names = FALSE)
