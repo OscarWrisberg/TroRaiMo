@@ -434,7 +434,7 @@ gwf.target_from_template(name = "slicing_families",
                             path_in = data_dir,
                             path_out = workflow_dir+"02_adding_orders/",
                             script_dir = script_dir,
-                            wcvp_file = "wcvp_names_apg_aligned.rds"
+                            wcvp_file = data_dir+"wcvp_names_apg_aligned.rds"
                             ))
 
 
