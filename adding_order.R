@@ -9,6 +9,7 @@ output_file <- commandArgs(trailingOnly = TRUE)[2]
 input_file_wcvp <- commandArgs(trailingOnly = TRUE)[3]
 
 # Read the WCVP names file into a data frame
+cat("Attempting to open ", input_file_wcvp, "\n")
 wcvp <- readRDS(input_file_wcvp)
 
 # Read the GBMB tree

@@ -349,7 +349,7 @@ def apg_name_align(apg,wcp, output_file, path_in, script_dir, path_out):
 ##############################################################
 def finding_orders(input_file, output_file, path_in,path_out, script_dir, wcvp_file):
     """This function should be used to simulate the covariate data table through time for the states in the """
-    inputs = [path_in+input_file, path_out+wcvp_file]
+    inputs = [path_in+input_file, path_in+wcvp_file]
     outputs = [path_out+output_file]
     options = {
         'cores': 5,
