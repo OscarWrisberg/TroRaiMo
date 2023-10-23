@@ -22,9 +22,16 @@ tip_names <- tree$tip.label
 tip_names <- gsub("_", " ", tip_names)
 tip_names <- gsub('"', '', tip_names)
 
+cat("Checking the start of the tip_names", tip_names[1:50], "\n")
+
 # Find matching and non-matching tips
 matching_tips <- tip_names[tip_names %in% wcvp$taxon_name]
 not_matching_tips <- tip_names[!(tip_names %in% wcvp$taxon_name)]
+
+# Finding length of matching tips
+cat("Length of matching tips ", length(matching_tips))
+cat("Length of non-matching tips ", length(not_matching_tips))
+
 
 # Create a data frame with tip names and orders
 find_order <- function(name_list, wcvp) {
