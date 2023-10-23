@@ -17,10 +17,10 @@ wcp <- fread(wcp_in)
 
 
 #Families in wcvp
-sort(unique(wcp$family)) # Length 459
+#sort(unique(wcp$family)) # Length 459
 
 #Families in wcvp which are not in the file apg synonym families
-unique(wcp$family[!wcp$family %in% apg$Syn_Fam])
+#unique(wcp$family[!wcp$family %in% apg$Syn_Fam])
 
 # Incertae_sedis (of unknown placement)
 wcp <- wcp[which(wcp$family != "Incertae_sedis"),]
@@ -41,6 +41,7 @@ wcp[which(wcp$family == "Ripogonaceae"),]$family <- "Rhipogonaceae"
 # Fixing and removal of names / families
 wcp <- wcp[!wcp$family=="Pseudotubulare",]
 
+cat("Families in wcvp which are not in the file apg synonym families \n")
 unique(wcp$family[!wcp$family %in% apg$Syn_Fam])
 
 # This should update family column of our WCVP data to be right according to APGIV
@@ -52,7 +53,7 @@ no_na_family.apg <- sum(!is.na(wcp$family.apg))
 if ( no_na_family.apg == nrow(wcp)) {
   cat("There are no NA's in the family.apg column \n")
 } else {
-  cat("There are ", nrow(wcp) - no_na_family.apg, " NA's in the family.apg column \n")
+  cat("There are ", nrow(wcp) - no_na_family.apg, " NA's in the family.apg column, out of a total of ", nrow(wcp), " rows \n")
 }
 
 # Printing the rows where the family column is not NA but the family.apg column is NA.
