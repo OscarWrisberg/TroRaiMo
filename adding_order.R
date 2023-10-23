@@ -46,8 +46,8 @@ find_family <- function(name_list, wcvp) {
     families <- c(families, family)
   }
 
-  cat("Length names "length(names))
-  cat("Length families "length(families))
+  cat("Length names ", length(names))
+  cat("Length families ", length(families))
 
   df_families <- data.frame(name = names, families = families)
   return(df_families)
