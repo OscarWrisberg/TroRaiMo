@@ -33,6 +33,7 @@ not_matching_tips <- tip_names[!(tip_names %in% wcvp$taxon_name)] # Only 2939 ti
 cat("Length of matching tips ", length(matching_tips), "\n")
 cat("Length of non-matching tips ", length(not_matching_tips), "\n")
 
+head(wcvp)
 
 # Create a data frame with tip names and families
 find_family <- function(name_list, wcvp) {
@@ -40,9 +41,7 @@ find_family <- function(name_list, wcvp) {
   families <- character(0)
   
   for (name in name_list) {
-	ifelse(wcvp[wcvp$taxon_name == name, "family.apg"] == NA,
-	  family <- "NA",
-	  family <- wcvp[wcvp$taxon_name == name, "family.apg"])
+	  family <- wcvp[wcvp$taxon_name == name, "family.apg"]
 	print(cat("Name ", name, "Family", family, "\n "))
     names <- c(names, name)
     families <- c(families, family)
