@@ -22,6 +22,8 @@ wcp <- fread(wcp_in)
 #Families in wcvp which are not in the file apg synonym families
 #unique(wcp$family[!wcp$family %in% apg$Syn_Fam])
 
+# This might solve why the family.apg column has NA's in it.
+apg <- as.data.frame(apg)
 print(apg)
 
 # I need to remove the ""'s around the family name in the wcvp file
