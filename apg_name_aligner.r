@@ -52,8 +52,21 @@ wcp <- wcp[!wcp$family=="Pseudotubulare",]
 cat("Families in wcvp which are not in the file apg synonym families \n")
 unique(wcp$family[!wcp$family %in% apg$Syn_Fam])
 
+cat("Families in apg$syn which are not in the wcvp file \n")
+unique(apg$Syn_Fam[!apg$Syn_Fam %in% wcp$family])
+
+
 # This should update family column of our WCVP data to be right according to APGIV
 wcp$family.apg <- apg$Acc_Fam[match(wcp$family, apg$Syn_Fam)]
+
+# Trying with a for loop instead of a match function.
+for(family in unique(wcp$family)){
+  if(family %in% apg$Syn_Fam){
+    wcp[which(wcp$family == family),]$family.apg <- apg[which(apg$Syn_Fam == family),]$Acc_Fam
+    cat("Family ", family, " has been updated to ", apg[which(apg$Syn_Fam == family),]$Acc_Fam, "\n")
+  }else{
+    cat("Family ", family, " is not in the apg file \n")  }
+}
 
 #Why is there some NA's in the family.apg column?
 # There should'nt be any NA's in the family.apg column.
