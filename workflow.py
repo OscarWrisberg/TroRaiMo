@@ -347,7 +347,7 @@ def apg_name_align(apg,wcp, output_file, path_in, script_dir, path_out):
 ##############################################################
 #############---- Approach 1 finding the orders ----##############
 ##############################################################
-def finding_orders(input_file, output_file, path_in,path_out, script_dir, wcvp_file):
+def finding_orders(input_file, output_file, path_in,path_out, script_dir, wcvp_file, apg):
     """This function should be used to simulate the covariate data table through time for the states in the """
     inputs = [path_in+input_file, wcvp_file]
     outputs = [path_out+output_file]
@@ -373,14 +373,14 @@ def finding_orders(input_file, output_file, path_in,path_out, script_dir, wcvp_f
     date
 
     # Loading the input file which is the file containing the tips of the SmB tree
-    Rscript --vanilla {script_dir}adding_order.R {input_file} {output_file} {wcvp_file} {path_out}
+    Rscript --vanilla {script_dir}adding_order.R {input_file} {output_file} {wcvp_file} {path_out} {apg}
 
 
     echo Ended the Adding orders script
     date
 
 
-    '''.format(path_out = path_out, script_dir = script_dir, path_in = path_in, input_file = input_file, output_file = output_file, wcvp_file = wcvp_file)
+    '''.format(path_out = path_out, script_dir = script_dir, path_in = path_in, input_file = input_file, output_file = output_file, wcvp_file = wcvp_file, apg = apg)
 
 
     return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
@@ -433,7 +433,8 @@ gwf.target_from_template(name = "slicing_families",
                             path_in = data_dir,
                             path_out = workflow_dir+"02_adding_orders/",
                             script_dir = script_dir,
-                            wcvp_file = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds"
+                            wcvp_file = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds",
+                            apg = script_dir+"apgweb_parsed.csv"
                             ))
 
 
