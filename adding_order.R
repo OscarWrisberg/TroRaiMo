@@ -35,7 +35,7 @@ not_matching_tips <- tip_names[!(tip_names %in% wcvp$taxon_name)] # Only 2939 ti
 cat("Length of matching tips ", length(matching_tips), "\n")
 cat("Length of non-matching tips ", length(not_matching_tips), "\n")
 
-head(wcvp)
+#head(wcvp)
 
 # Create a data frame with tip names and families
 find_family <- function(name_list, wcvp) {
@@ -145,3 +145,4 @@ for (order in unique_orders){
 # Save the data frame to a text file
 cat("Writing out file to ", file.path(path_out,output), "\n")
 write.table(df_number_tips_orders, file.path(path_out,), sep = "\t", row.names = FALSE)
+
