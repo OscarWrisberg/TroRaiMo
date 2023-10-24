@@ -5,8 +5,9 @@ library(dplyr)
 
 # Command line arguments
 input_file_tree <- commandArgs(trailingOnly = TRUE)[1]
-output_file <- commandArgs(trailingOnly = TRUE)[2]
+output_folder <- commandArgs(trailingOnly = TRUE)[2]
 input_file_wcvp <- commandArgs(trailingOnly = TRUE)[3]
+path_out <- commandArgs(trailingOnly = TRUE)[4]
 
 # Read the WCVP names file into a data frame
 cat("Opening ", input_file_wcvp, "\n")
@@ -42,8 +43,6 @@ find_family <- function(name_list, wcvp) {
   
   for (name in name_list) {
 	  family <- wcvp[wcvp$taxon_name == name, "family"] # Carefull Here I am using family and not family.apg
-    print("printing family")
-    print(family)
     family <- as.character(family[1])
 	  print(cat("Name ", name, "Family", family, "\n "))
     names <- c(names, name)
@@ -71,8 +70,8 @@ df_number_tips <- data.frame(family = character(0), number_tips = numeric(0))
 for (family in unique_families) {
   tips_family <- tips_families[tips_families$family == family, "name"]
   
-  # Prune the tree for each family
-  pruned_tree <- drop.tip(tree, tips_family)
+  # Prune the tree so it only contains the tips in the family
+  pruned_tree <- drop.tip(tree, tree$tip.label[!which(tree$tip.label %in% tips_family)])
   
   # Calculate the number of tips in the pruned tree
   number_tips <- length(pruned_tree$tip.label)
@@ -81,8 +80,9 @@ for (family in unique_families) {
   df_number_tips <- rbind(df_number_tips, data.frame(family = family, number_tips = number_tips))
   
   # Save the pruned tree to a file
-  write.tree(pruned_tree, paste0("pruned_tree_", family, "_GBMB.txt"))
+  write.tree(file.path(path_out,pruned_tree), paste0("pruned_tree_", family, "_GBMB.txt"))
 }
 
 # Save the data frame to a text file
-write.table(df_number_tips, paste0("nr_subtrees_family_slicing_", length(unique_families), ".txt"), sep = "\t", row.names = FALSE)
+cat("Writing out file to ", file.path(path_out,output), "\n")
+write.table(df_number_tips, file.path(path_out,output), sep = "\t", row.names = FALSE)

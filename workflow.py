@@ -373,9 +373,8 @@ def finding_orders(input_file, output_file, path_in,path_out, script_dir, wcvp_f
     date
 
     # Loading the input file which is the file containing the tips of the SmB tree
-    Rscript --vanilla {script_dir}adding_order.R {input_file} {output_file} {wcvp_file}
+    Rscript --vanilla {script_dir}adding_order.R {input_file} {output_file} {wcvp_file} {path_out}
 
-    mv {output_file} {path_out}
 
     echo Ended the Adding orders script
     date
