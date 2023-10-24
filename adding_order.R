@@ -45,7 +45,7 @@ find_family <- function(name_list, wcvp) {
   for (name in name_list) {
 	  family <- wcvp[wcvp$taxon_name == name, "family"] # Carefull Here I am using family and not family.apg
     family <- as.character(family[1])
-	  print(cat("Name ", name, "Family", family, "\n "))
+	  #print(cat("Name ", name, "Family", family, "\n "))
     names <- c(names, name)
     families <- c(families, family)
   }
@@ -60,7 +60,7 @@ find_family <- function(name_list, wcvp) {
 tips_families <- find_family(matching_tips, wcvp)
 
 # Write tip families to a text file
-write.table(tips_families, "tips_families.txt", sep = "\t", row.names = FALSE)
+#write.table(tips_families, "tips_families.txt", sep = "\t", row.names = FALSE)
 
 # Find unique families
 unique_families <- unique(tips_families$families)
@@ -68,6 +68,9 @@ unique_families <- unique(tips_families$families)
 # Create a data frame to store the number of tips in each family
 df_number_tips <- data.frame(family = character(0), number_tips = numeric(0))
 
+###########################
+# Pruning tree to families#
+###########################
 for (family in unique_families) {
   tips_family <- tips_families[tips_families$family == family, "name"]
   
@@ -119,7 +122,9 @@ unique_orders <- unique(apg$Clade)
 # Create a dataframe to store the number of tips in each order
 df_number_tips_orders <- data.frame(order = character(0), number_tips = numeric(0))
 
-#Pruning tree to orders
+#########################
+# Pruning tree to orders#
+#########################
 for (order in unique_orders){
   tips_order <- tips_orders[tips_orders$order == order, "name"] # Selecting the tips in the order
   
