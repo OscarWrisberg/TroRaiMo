@@ -5,7 +5,7 @@ library(dplyr)
 
 # Command line arguments
 input_file_tree <- commandArgs(trailingOnly = TRUE)[1]
-output_folder <- commandArgs(trailingOnly = TRUE)[2]
+output <- commandArgs(trailingOnly = TRUE)[2]
 input_file_wcvp <- commandArgs(trailingOnly = TRUE)[3]
 path_out <- commandArgs(trailingOnly = TRUE)[4]
 apg <- commandArgs(trailingOnly = TRUE)[5]
