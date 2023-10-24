@@ -44,7 +44,8 @@ find_family <- function(name_list, wcvp) {
 	  family <- wcvp[wcvp$taxon_name == name, "family"] # Carefull Here I am using family and not family.apg
     print("printing family")
     print(family)
-	  print(cat("Name ", name, "Family", family[1], "\n "))
+    family <- as.character(family[1])
+	  print(cat("Name ", name, "Family", family, "\n "))
     names <- c(names, name)
     families <- c(families, family)
   }
