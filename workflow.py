@@ -355,7 +355,7 @@ def finding_orders(input_file, output_file, path_in,path_out, script_dir, wcvp_f
         'cores': 5,
         'memory': '10g',
         'account':"Trf_models",
-        'walltime': "01:00:00"
+        'walltime': "03:00:00"
     }
 
     spec = '''
@@ -429,7 +429,7 @@ gwf.target_from_template(name = "APG_preb",
 gwf.target_from_template(name = "slicing_families",
                         template=finding_orders(
                             input_file = "GBMB.tre",
-                            output_file = "GBMB_orders.txt",
+                            output_file = "GBMB_sp_per_orders.txt",
                             path_in = data_dir,
                             path_out = workflow_dir+"02_adding_orders/",
                             script_dir = script_dir,

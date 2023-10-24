@@ -84,12 +84,12 @@ for (family in unique_families) {
   df_number_tips <- rbind(df_number_tips, data.frame(family = family, number_tips = number_tips))
   
   # Save the pruned tree to a file
-  write.tree(file.path(path_out,pruned_tree), paste0("pruned_tree_family_", family, "_GBMB.txt"))
+  write.tree(pruned_tree, paste0(path_out,"pruned_tree_family_", family, "_GBMB.txt"))
 }
 
 # Save the data frame to a text file
 cat("Writing out file to ", file.path(path_out,output), "\n")
-write.table(df_number_tips, file.path(path_out,output), sep = "\t", row.names = FALSE)
+write.table(df_number_tips, file.path(path_out,"GBMB_sp_per_families.txt"), sep = "\t", row.names = FALSE)
 
 
 # Now Ill link the families to the orders from the apgweb_parsed.csv file in order to also add the order to the data frame.
@@ -125,6 +125,7 @@ df_number_tips_orders <- data.frame(order = character(0), number_tips = numeric(
 #########################
 # Pruning tree to orders#
 #########################
+
 for (order in unique_orders){
   tips_order <- tips_orders[tips_orders$order == order, "name"] # Selecting the tips in the order
   
@@ -138,5 +139,9 @@ for (order in unique_orders){
   df_number_tips_orders <- rbind(df_number_tips_orders, data.frame(order = order, number_tips = number_tips))
   
   # Save the pruned tree to a file
-  write.tree(file.path(path_out,pruned_tree), paste0("pruned_tree__order_", order, "_GBMB.txt"))
+  write.tree(pruned_tree, paste0(path_out,"pruned_tree__order_", order, "_GBMB.txt"))
 }
+
+# Save the data frame to a text file
+cat("Writing out file to ", file.path(path_out,output), "\n")
+write.table(df_number_tips_orders, file.path(path_out,), sep = "\t", row.names = FALSE)
