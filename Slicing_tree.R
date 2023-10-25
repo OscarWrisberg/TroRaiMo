@@ -83,7 +83,7 @@ for (family in unique_families) {
   tips_family <- tips_families[tips_families$family == family, "name"]
 
   print(cat("Pruning tree to family ", family, "\n"))
-  print(cat("Length of tips in ",family " is ", length(tips_family), "\n"))
+  print(cat("Length of tips in ",family," is ", length(tips_family), "\n"))
   
   # Selecting the tips NOT in the family
   tips_not_in_family <- c(tree$tip.label[!which(tree$tip.label %in% tips_family)])
