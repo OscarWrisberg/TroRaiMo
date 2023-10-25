@@ -19,18 +19,25 @@ wcvp <- readRDS(input_file_wcvp)
 cat("Opening ", input_file_tree, "\n")
 tree <- read.tree(input_file_tree)
 
+tree$tip.label <- gsub("_", " ", tree$tip.label)
+tree$tip.label <- gsub('"', '', tree$tip.label)
+
 # Get tip names from the tree
 tip_names <- tree$tip.label
 
-# Replace underscores with spaces and remove quotes
-tip_names <- gsub("_", " ", tip_names)
-tip_names <- gsub('"', '', tip_names)
+# # Replace underscores with spaces and remove quotes
+# tip_names <- gsub("_", " ", tip_names)
+# tip_names <- gsub('"', '', tip_names)
 
 #cat("Checking the start of the tip_names", tip_names[1:10], "\n")
 
 # Find matching and non-matching tips
 matching_tips <- tip_names[tip_names %in% wcvp$taxon_name] # 76935 tips are matching
 not_matching_tips <- tip_names[!(tip_names %in% wcvp$taxon_name)] # Only 2939 tips are not matching
+
+# I also need to do something about the tips that are not in the WCVP file but are in the tree.
+# In an ideal world I would like to use the taxonomy_matcher to find the correct name for all the tips in the tree
+# But that is for a different day.....
 
 # Finding length of matching tips
 cat("Length of matching tips ", length(matching_tips), "\n")
@@ -44,7 +51,7 @@ find_family <- function(name_list, wcvp) {
   families <- character(0)
   
   for (name in name_list) {
-	  family <- wcvp[wcvp$taxon_name == name, "family"] # Carefull Here I am using family and not family.apg
+	  family <- wcvp[wcvp$taxon_name == name, "family"] 
     family <- as.character(family[1])
 	  #print(cat("Name ", name, "Family", family, "\n "))
     names <- c(names, name)
