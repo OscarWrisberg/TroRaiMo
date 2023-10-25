@@ -109,8 +109,6 @@ find_order <- function(fams, apg) {
     order <- apg[apg$Syn_Fam == family, "Clade"] # Finding the order of that family in APG file
     order <- as.character(order[1]) # Selecting the order of the family
     print(cat("family ", family, "Order", order, "\n ")) # Printing the family and order
-    tip_fams[tip_fams$families == family, "order"] <- order # Adding the order to the tip_fams data frame
-
     fam_list <- c(fam_list, family)
     orders <- c(orders, order)
   } 
