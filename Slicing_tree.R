@@ -2,6 +2,7 @@
 library(ape)
 library(data.table)
 library(dplyr)
+library(phytools)
 
 # Command line arguments
 input_file_tree <- commandArgs(trailingOnly = TRUE)[1]
@@ -81,9 +82,9 @@ for (family in unique_families) {
   tips_not_in_family <- c(tree$tip.label[!which(tree$tip.label %in% tips_family)])
 
   # Prune the tree so it only contains the tips in the family
-  pruned_tree <- drop.tip(tree, tips_not_in_family)
+  #pruned_tree <- drop.tip(tree, tips_not_in_family)
+  pruned_tree <- subsetTree(tree, tip = tips_family)
 
-  
   # Calculate the number of tips in the pruned tree
   cat("The number of tips left in the tree for: ",family " is ", length(pruned_tree$tip.label), "\n")
   number_tips <- length(pruned_tree$tip.label)
