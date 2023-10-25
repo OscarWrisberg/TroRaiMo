@@ -29,7 +29,7 @@ for j in range(num_species):
     states = [str(random.randint(0, 1)) for j in range(args.states)]
     
     # Join the states with the species name and append to the output
-    output_lines.append(lines[j].strip() ' ' + ' '.join(states) + '\n')
+    output_lines.append(lines[j].strip() + ' ' + ' '.join(states) + '\n')
 
 # Open the output file for writing 
 with open(args.output_file, 'w') as output_file:

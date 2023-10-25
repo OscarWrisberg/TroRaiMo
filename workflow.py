@@ -347,7 +347,7 @@ def apg_name_align(apg,wcp, output_file, path_in, script_dir, path_out):
 ##############################################################
 #############---- Approach 1 finding the orders ----##############
 ##############################################################
-def finding_orders(input_file, output_file, path_in,path_out, script_dir, wcvp_file, apg):
+def Slicing_trees(input_file, output_file, path_in,path_out, script_dir, wcvp_file, apg):
     """This function should be used to simulate the covariate data table through time for the states in the """
     inputs = [path_in+input_file, wcvp_file]
     outputs = [path_out+output_file]
@@ -373,7 +373,7 @@ def finding_orders(input_file, output_file, path_in,path_out, script_dir, wcvp_f
     date
 
     # Loading the input file which is the file containing the tips of the SmB tree
-    Rscript --vanilla {script_dir}adding_order.R {input_file} {output_file} {wcvp_file} {path_out} {apg}
+    Rscript --vanilla {script_dir}Slicing_tree.R {input_file} {output_file} {wcvp_file} {path_out} {apg}
 
 
     echo Ended the Adding orders script
@@ -426,8 +426,8 @@ gwf.target_from_template(name = "APG_preb",
                                  path_out = workflow_dir+"02_adding_orders/"
                              ))
     
-gwf.target_from_template(name = "slicing_families",
-                        template=finding_orders(
+gwf.target_from_template(name = "slicing_Trees",
+                        template=Slicing_trees(
                             input_file = "GBMB.tre",
                             output_file = "GBMB_sp_per_orders.txt",
                             path_in = data_dir,
@@ -436,6 +436,8 @@ gwf.target_from_template(name = "slicing_families",
                             wcvp_file = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds",
                             apg = script_dir+"apgweb_parsed.csv"
                             ))
+
+
 
 
 
