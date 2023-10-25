@@ -100,34 +100,49 @@ cat("Loading the apgweb_parsed.csv file \n")
 apg <- fread(apg)
 
 # Find order function
-find_order <- function(tip_fams, apg) {
-  names <- character(0)
-  tip_fams$order <- character(0)
-  for (family in unique(tip_fams$families)) {
+cat("Creating the find_order function \n")
+find_order <- function(fams, apg) {
+  fam_list <- character(0)
+  orders <- character(0)
+
+  for (family in unique(fams)) {
     order <- apg[apg$Syn_Fam == family, "Clade"] # Finding the order of that family in APG file
     order <- as.character(order[1]) # Selecting the order of the family
     print(cat("family ", family, "Order", order, "\n ")) # Printing the family and order
     tip_fams[tip_fams$families == family, "order"] <- order # Adding the order to the tip_fams data frame
+
+    fam_list <- c(fam_list, family)
+    orders <- c(orders, order)
   } 
 
-  return(tip_fams)
+  df_orders <- data.frame(family = fam_list, order = orders)
+  return(df_orders)
 }
 
 # Running the function
-tips_orders <- find_order(tips_families, apg)
+cat("Running the function \n")
+family_orders <- find_order(unique_families, apg)
+
+# Merging the tips_families and family_orders data frames
+cat("Merging the tips_families and family_orders data frames \n")
+tips_family_orders <- merge(tips_families, family_orders, by.x = "family", by.y = "family")
+
 
 # Find unique orders
-unique_orders <- unique(apg$Clade)
+cat("Finding unique orders \n")
+unique_orders <- unique(tips_family_orders$order)
 
 # Create a dataframe to store the number of tips in each order
+cat("Creating a dataframe to store the number of tips in each order \n")
 df_number_tips_orders <- data.frame(order = character(0), number_tips = numeric(0))
 
 #########################
 # Pruning tree to orders#
 #########################
+cat("Pruining tree to orders \n")
 
 for (order in unique_orders){
-  tips_order <- tips_orders[tips_orders$order == order, "name"] # Selecting the tips in the order
+  tips_order <- tips_family_orders[tips_family_orders$order == order, "name"] # Selecting the tips in the order
   
   # Prune the tree so it only contains the tips in the order
   pruned_tree <- drop.tip(tree, tree$tip.label[!which(tree$tip.label %in% tips_order)])
