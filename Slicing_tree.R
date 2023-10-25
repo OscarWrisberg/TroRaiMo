@@ -73,11 +73,19 @@ df_number_tips <- data.frame(family = character(0), number_tips = numeric(0))
 ###########################
 for (family in unique_families) {
   tips_family <- tips_families[tips_families$family == family, "name"]
+
+  cat("Pruning tree to family ", family, "\n")
+  cat("Length of tips in ",family " is ", length(tips_family), "\n")
   
+  # Selecting the tips NOT in the family
+  tips_not_in_family <- c(tree$tip.label[!which(tree$tip.label %in% tips_family)])
+
   # Prune the tree so it only contains the tips in the family
-  pruned_tree <- drop.tip(tree, tree$tip.label[!which(tree$tip.label %in% tips_family)])
+  pruned_tree <- drop.tip(tree, tips_not_in_family)
+
   
   # Calculate the number of tips in the pruned tree
+  cat("The number of tips left in the tree for: ",family " is ", length(pruned_tree$tip.label), "\n")
   number_tips <- length(pruned_tree$tip.label)
   
   # Append the number of tips and family to the data frame
