@@ -94,16 +94,19 @@ cat(which(names(tips_families) == "families"), " \n ")
 for (i in seq_along(unique_families)) {
   cat("This is the family were looking for ", unique_families[i], " \n")
   #print(tips_families[which(tips_families$families == unique_families[i]), ])
-  print(c(tips_families[which(tips_families$families == unique_families[i]), "name"]))
-  tips_family <- c(tips_families[which(tips_families$families == unique_families[i]), which(names(tips_families) == "name")])
-  tips_family <- as.character(tips_family)
-  print(tips_family$name)
+  # print(c(tips_families[which(tips_families$families == unique_families[i]), "name"]))
+  # tips_family <- tips_families$[which(tips_families$families == unique_families[i]), which(names(tips_families) == "name")])
+  # tips_family <- as.character(tips_family)
+  family_subset <- tips_families[tips_families$families == unique_families[i], ]
+  tips_family <- as.character(family_subset$name)
+
+  print(tips_family)
   #cat("These are the tips in ", family, "\n")
   cat("Pruning tree to family ", unique_families[i], "\n")
-  cat("Length of tips in ", unique_families[i], " is ", length(tips_family$name), "\n")
+  cat("Length of tips in ", unique_families[i], " is ", length(tips_family), "\n")
 
   # Selecting the tips NOT in the family
-  tips_not_in_family <- tree$tip.label[!which(tree$tip.label %in% tips_family$name)]
+  tips_not_in_family <- tree$tip.label[!which(tree$tip.label %in% tips_family)]
 
   # Check if the tips which are in the family ACTUALLY form a monophyletic group in the tree
   # If they do not form a monophyletic group then I will not prune the tree
