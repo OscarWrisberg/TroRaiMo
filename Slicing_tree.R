@@ -73,6 +73,7 @@ tips_families <- fread("tips_families.txt")
 
 # Find unique families
 unique_families <- unique(tips_families$families)
+unique_families <- unique_families[1]
 print("This is the unique_families")
 print(unique_families)
 
@@ -88,7 +89,7 @@ cat(names(tips_families), " \n")
 cat(which(names(tips_families) == "name"), "  ")
 cat(which(names(tips_families) == "families"), " \n ")
 
-for (family in unique_families) {
+for (family in unique_families[1]) {
   cat("This is the family were looking for ", family, " \n")
   tips_family <- tips_families[which(tips_families$families == family), which(names(tips_families) == "name")]
   print(class(tips_family))
