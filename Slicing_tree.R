@@ -25,11 +25,6 @@ tree$tip.label <- gsub('"', '', tree$tip.label)
 # Get tip names from the tree
 tip_names <- tree$tip.label
 
-# # Replace underscores with spaces and remove quotes
-# tip_names <- gsub("_", " ", tip_names)
-# tip_names <- gsub('"', '', tip_names)
-
-#cat("Checking the start of the tip_names", tip_names[1:10], "\n")
 
 # Find matching and non-matching tips
 matching_tips <- tip_names[tip_names %in% wcvp$taxon_name] # 76935 tips are matching
@@ -43,17 +38,13 @@ not_matching_tips <- tip_names[!(tip_names %in% wcvp$taxon_name)] # Only 2939 ti
 cat("Length of matching tips ", length(matching_tips), "\n")
 cat("Length of non-matching tips ", length(not_matching_tips), "\n")
 
-#head(wcvp)
-
 # Create a data frame with tip names and families
 find_family <- function(name_list, wcvp) {
   names <- character(0)
   families <- character(0)
-  
   for (name in name_list) {
 	  family <- wcvp[wcvp$taxon_name == name, "family"] 
     family <- as.character(family[1])
-	  #print(cat("Name ", name, "Family", family, "\n "))
     names <- c(names, name)
     families <- c(families, family)
   }
@@ -93,7 +84,7 @@ for (family in unique_families) {
   pruned_tree <- subsetTree(tree, tip = tips_family)
 
   # Calculate the number of tips in the pruned tree
-  print(cat("The number of tips left in the tree for: ",family " is ", length(pruned_tree$tip.label), "\n"))
+  print(cat("The number of tips left in the tree for: ",family, " is ", length(pruned_tree$tip.label), "\n"))
   number_tips <- length(pruned_tree$tip.label)
   
   # Append the number of tips and family to the data frame
@@ -157,7 +148,7 @@ cat("Pruining tree to orders \n")
 
 for (order in unique_orders){
   tips_order <- tips_family_orders[tips_family_orders$order == order, "name"] # Selecting the tips in the order
-  
+
   # Prune the tree so it only contains the tips in the order
   pruned_tree <- drop.tip(tree, tree$tip.label[!which(tree$tip.label %in% tips_order)])
   
