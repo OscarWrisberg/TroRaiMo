@@ -37,13 +37,11 @@ not_matching_tips <- tip_names[!(tip_names %in% wcvp$taxon_name)] # Only 2939 ti
 # Finding length of matching tips
 cat("Length of matching tips ", length(matching_tips), "\n")
 cat("Length of non-matching tips ", length(not_matching_tips), "\n")
-cat("Seq_along matching_tips", seq_along(matching_tips))
-
 # Create a data frame with tip names and families
 find_family <- function(name_list, wcvp) {
   names <- character(0)
   families <- character(0)
-  for (i in seq_along((name_list))) {
+  for (i in seq_along(name_list)) {
     # print progress
     #if (!i %% 1000) cat("Percentage done", format(round((i / length(name_list)) *- 100, 2), nsmall = 2), " at ", format(Sys.time(), '%H:%M:%S'), "\n")
 
@@ -51,12 +49,12 @@ find_family <- function(name_list, wcvp) {
     family <- as.character(family[1])
     names <- c(names, name_list[i])
     families <- c(families, family)
-    print(cat(name_list[i], " is found in family ", family, " \n"))
+    cat(name_list[i], " is found in family ", family, " \n")
     print(family)
   }
 
-  print(cat("Length names ", length(names), "\n "))
-  print(cat("Length families ", length(families), "\n "))
+  cat("Length names ", length(names), "\n ")
+  cat("Length families ", length(families), "\n ")
 
   df_families <- data.frame(name = names, families = families)
   return(df_families)
@@ -80,10 +78,11 @@ non_mono_family <- character(0)
 ###########################
 
 for (family in unique_families) {
-  tips_family <- tips_families[tips_families$family == family, "name"]
-
-  print(cat("Pruning tree to family ", family, "\n"))
-  print(cat("Length of tips in ", family, " is ", length(tips_family), "\n"))
+  tips_family <- tips_families[which(tips_families$family == family), "name"]
+  cat("These are the tips in ", family, "\n")
+  cat(tips_family, "\n \n")
+  cat("Pruning tree to family ", family, "\n")
+  cat("Length of tips in ", family, " is ", length(tips_family), "\n")
 
   # Selecting the tips NOT in the family
   tips_not_in_family <- c(tree$tip.label[!which(tree$tip.label %in% tips_family)])
@@ -92,7 +91,7 @@ for (family in unique_families) {
   # If they do not form a monophyletic group then I will not prune the tree
 
   if (is.monophyletic(tree, tips_family) == FALSE) {
-    print(cat("The tips in ", family, " do not form a monophyletic group in the tree \n"))
+    cat("The tips in ", family, " do not form a monophyletic group in the tree \n")
     non_mono_family <- c(non_mono_family, family)
     next
   }
@@ -101,7 +100,7 @@ for (family in unique_families) {
   pruned_tree <- drop.tip(tree, tip = tips_family)
 
   # Calculate the number of tips in the pruned tree
-  print(cat("The number of tips left in the tree for: ", family, " is ", length(pruned_tree$tip.label), "\n"))
+  cat("The number of tips left in the tree for: ", family, " is ", length(pruned_tree$tip.label), "\n")
   number_tips <- length(pruned_tree$tip.label)
 
   # Append the number of tips and family to the data frame
