@@ -38,32 +38,35 @@ not_matching_tips <- tip_names[!(tip_names %in% wcvp$taxon_name)] # Only 2939 ti
 cat("Length of matching tips ", length(matching_tips), "\n")
 cat("Length of non-matching tips ", length(not_matching_tips), "\n")
 # Create a data frame with tip names and families
-find_family <- function(name_list, wcvp) {
-  names <- character(0)
-  families <- character(0)
-  for (i in seq_along(name_list)) {
-    #print progress
-    if (!i %% 500) cat("Percentage done", format(round((i / length(name_list)) * 100, 2), nsmall = 2), " at ", format(Sys.time(), '%H:%M:%S'), "\n")
 
-    family <- wcvp[wcvp$taxon_name == name_list[i], "family"]
-    family <- as.character(family[1])
-    names <- c(names, name_list[i])
-    families <- c(families, family)
-    #cat(name_list[i], " is found in family ", family, " \n")
-  }
+#########################################################################################################
+# find_family <- function(name_list, wcvp) {
+#   names <- character(0)
+#   families <- character(0)
+#   for (i in seq_along(name_list)) {
+#     #print progress
+#     if (!i %% 500) cat("Percentage done", format(round((i / length(name_list)) * 100, 2), nsmall = 2), " at ", format(Sys.time(), '%H:%M:%S'), "\n")
 
-  cat("Length names ", length(names), "\n ")
-  cat("Length families ", length(families), "\n ")
+#     family <- wcvp[wcvp$taxon_name == name_list[i], "family"]
+#     family <- as.character(family[1])
+#     names <- c(names, name_list[i])
+#     families <- c(families, family)
+#     #cat(name_list[i], " is found in family ", family, " \n")
+#   }
 
-  df_families <- data.frame(name = names, families = families)
-  return(df_families)
-}
+#   cat("Length names ", length(names), "\n ")
+#   cat("Length families ", length(families), "\n ")
 
-tips_families <- find_family(matching_tips, wcvp)
+#   df_families <- data.frame(name = names, families = families)
+#   return(df_families)
+# }
 
-head(tips_families)
-# Write tip families to a text file
-write.table(tips_families, "tips_families.txt", sep = "\t", row.names = FALSE) #nolint
+# tips_families <- find_family(matching_tips, wcvp)
+
+# head(tips_families)
+# # Write tip families to a text file
+# write.table(tips_families, "tips_families.txt", sep = "\t", row.names = FALSE) #nolint
+##########################################################################################################
 
 # Loading tips families so I dont have to wait so fucking long..
 tips_families <- fread("tips_families.txt")
@@ -79,12 +82,15 @@ non_mono_family <- character(0)
 # Pruning tree to families#
 ###########################
 cat("Names tips_families \n")
-cat(names(tips_families))
+cat(names(tips_families), " \n")
+
+cat(tips_families$name)
+cat(tips_families$families)
 
 for (family in unique_families) {
   tips_family <- tips_families[which(tips_families$family == family), which(names(tips_families) == "name")]
   cat("These are the tips in ", family, "\n")
-  cat(tips_family, "\n \n")
+  print(tips_family)
   cat("Pruning tree to family ", family, "\n")
   cat("Length of tips in ", family, " is ", length(tips_family), "\n")
 
