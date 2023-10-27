@@ -37,13 +37,13 @@ not_matching_tips <- tip_names[!(tip_names %in% wcvp$taxon_name)] # Only 2939 ti
 # Finding length of matching tips
 cat("Length of matching tips ", length(matching_tips), "\n")
 cat("Length of non-matching tips ", length(not_matching_tips), "\n")
+cat("Seq_along matching_tips", seq_along(matching_tips))
 
 # Create a data frame with tip names and families
 find_family <- function(name_list, wcvp) {
   names <- character(0)
   families <- character(0)
-  for (i in seq_len(nrow(name_list))) {
-
+  for (i in seq_along((name_list))) {
     # print progress
     #if (!i %% 1000) cat("Percentage done", format(round((i / length(name_list)) *- 100, 2), nsmall = 2), " at ", format(Sys.time(), '%H:%M:%S'), "\n")
 
