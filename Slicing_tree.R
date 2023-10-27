@@ -85,7 +85,7 @@ cat("Names tips_families \n")
 cat(names(tips_families), " \n")
 
 for (family in unique_families) {
-  tips_family <- tips_families[which(tips_families$family == family), which(names(tips_families) == "name")]
+  tips_family <- tips_families[which(tips_families$families == family), which(names(tips_families) == "name")]
   cat("These are the tips in ", family, "\n")
   print(tips_family)
   cat("Pruning tree to family ", family, "\n")
