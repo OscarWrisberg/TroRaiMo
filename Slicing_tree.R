@@ -83,11 +83,16 @@ non_mono_family <- character(0)
 ###########################
 cat("Names tips_families \n")
 cat(names(tips_families), " \n")
-cat(which(names(tips_families) == "name"), " ")
-cat(which(names(tips_families) == "families"), " ")
+cat(which(names(tips_families) == "name"), "  ")
+cat(which(names(tips_families) == "families"), " \n ")
+cat(class(tips_families))
 
 for (family in unique_families) {
   tips_family <- tips_families[which(tips_families$families == family), which(names(tips_families) == "name")]
+  print(class(tips_family))
+  # I want a line of code which selects all the rows in tips_families with the family iterator.
+  tips_family <- 
+
   cat("These are the tips in ", family, "\n")
   print(tips_family[1])
   cat("Pruning tree to family ", family, "\n")
