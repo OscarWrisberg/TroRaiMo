@@ -84,7 +84,7 @@ non_mono_family <- character(0)
 cat("Names tips_families \n")
 cat(names(tips_families), " \n")
 
-cat(tips_families$name)
+#cat(tips_families$name)
 cat(tips_families$families)
 
 for (family in unique_families) {
@@ -95,7 +95,7 @@ for (family in unique_families) {
   cat("Length of tips in ", family, " is ", length(tips_family), "\n")
 
   # Selecting the tips NOT in the family
-  tips_not_in_family <- c(tree$tip.label[!which(tree$tip.label %in% tips_family)])
+  tips_not_in_family <- tree$tip.label[!which(tree$tip.label %in% tips_family)]
 
   # Check if the tips which are in the family ACTUALLY form a monophyletic group in the tree
   # If they do not form a monophyletic group then I will not prune the tree
