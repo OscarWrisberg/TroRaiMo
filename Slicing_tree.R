@@ -97,7 +97,7 @@ for (i in seq_along(unique_families)) {
   print(c(tips_families[which(tips_families$families == unique_families[i]), "name"]))
   tips_family <- c(tips_families[which(tips_families$families == unique_families[i]), which(names(tips_families) == "name")])
   tips_family <- as.character(tips_family)
-  print(class(tips_family[1]))
+  print(tips_family$name)
   #cat("These are the tips in ", family, "\n")
   cat("Pruning tree to family ", unique_families[i], "\n")
   cat("Length of tips in ", unique_families[i], " is ", length(tips_family), "\n")
