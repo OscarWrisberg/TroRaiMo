@@ -84,9 +84,6 @@ non_mono_family <- character(0)
 cat("Names tips_families \n")
 cat(names(tips_families), " \n")
 
-#cat(tips_families$name)
-cat(tips_families$families)
-
 for (family in unique_families) {
   tips_family <- tips_families[which(tips_families$family == family), which(names(tips_families) == "name")]
   cat("These are the tips in ", family, "\n")
