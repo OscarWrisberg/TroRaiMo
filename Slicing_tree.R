@@ -93,15 +93,8 @@ cat(which(names(tips_families) == "families"), " \n ")
 
 for (i in seq_along(unique_families)) {
   cat("This is the family were looking for ", unique_families[i], " \n")
-  #print(tips_families[which(tips_families$families == unique_families[i]), ])
-  # print(c(tips_families[which(tips_families$families == unique_families[i]), "name"]))
-  # tips_family <- tips_families$[which(tips_families$families == unique_families[i]), which(names(tips_families) == "name")])
-  # tips_family <- as.character(tips_family)
   family_subset <- tips_families[tips_families$families == unique_families[i], ]
   tips_family <- as.character(family_subset$name)
-
-  print(tips_family)
-  #cat("These are the tips in ", family, "\n")
   cat("Pruning tree to family ", unique_families[i], "\n")
   cat("Length of tips in ", unique_families[i], " is ", length(tips_family), "\n")
 
@@ -117,8 +110,7 @@ for (i in seq_along(unique_families)) {
   }
 
   # Prune the tree so it only contains the tips in the family
-  pruned_tree <- drop.tip(tree, tip = tips_family)
-
+  pruned_tree <- drop.tip(tree, tip = tree$tip.label[!tree$tip.label %in% tips_family])
   # Calculate the number of tips in the pruned tree
   cat("The number of tips left in the tree for: ", unique_families[i], " is ", length(pruned_tree$tip.label), "\n")
   number_tips <- length(pruned_tree$tip.label)
