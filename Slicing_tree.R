@@ -42,10 +42,10 @@ cat("Length of non-matching tips ", length(not_matching_tips), "\n")
 find_family <- function(name_list, wcvp) {
   names <- character(0)
   families <- character(0)
-  for (i in range(length(name_list))) {
+  for (i in seq_along(range(length(name_list)))) {
 
     # print progress
-    if(!i%%1000) cat("Percentage done",format(round((i/length(name_list))*100,2), nsmall = 2)," at ",format(Sys.time(),'%H:%M:%S'), "\n")
+    if (!i %% 1000) cat("Percentage done", format(round((i / length(name_list)) *- 100, 2), nsmall = 2), " at ", format(Sys.time(), '%H:%M:%S'), "\n")
 
     family <- wcvp[wcvp$taxon_name == name_list[i], "family"]
     family <- as.character(family[1])
@@ -130,7 +130,7 @@ find_order <- function(fams, apg) {
   for (family in unique(fams)) {
     order <- apg[apg$Syn_Fam == family, "Clade"] # Finding the order of that family in APG file
     order <- as.character(order[1]) # Selecting the order of the family
-    print(cat("family ", family, "Order", order, "\n ")) # Printing the family and order
+    print(cat("family ", family, "Order", order, "\n")) # Printing the family and order
     fam_list <- c(fam_list, family)
     orders <- c(orders, order)
   }
