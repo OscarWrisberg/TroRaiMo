@@ -42,14 +42,14 @@ find_family <- function(name_list, wcvp) {
   names <- character(0)
   families <- character(0)
   for (i in seq_along(name_list)) {
-    # print progress
-    #if (!i %% 1000) cat("Percentage done", format(round((i / length(name_list)) *- 100, 2), nsmall = 2), " at ", format(Sys.time(), '%H:%M:%S'), "\n")
+    #print progress
+    if (!i %% 500) cat("Percentage done", format(round((i / length(name_list)) *- 100, 2), nsmall = 2), " at ", format(Sys.time(), '%H:%M:%S'), "\n")
 
     family <- wcvp[wcvp$taxon_name == name_list[i], "family"]
     family <- as.character(family[1])
     names <- c(names, name_list[i])
     families <- c(families, family)
-    cat(name_list[i], " is found in family ", family, " \n")
+    #cat(name_list[i], " is found in family ", family, " \n")
   }
 
   cat("Length names ", length(names), "\n ")
@@ -128,7 +128,7 @@ find_order <- function(fams, apg) {
   orders <- character(0)
 
   for (family in unique(fams)) {
-    order <- apg[apg$Syn_Fam == family, "Clade"] # Finding the order of that family in APG file
+    order <- apg[which(apg$Syn_Fam == family), "Clade"] # Finding the order of that family in APG file
     order <- as.character(order[1]) # Selecting the order of the family
     print(cat("family ", family, "Order", order, "\n")) # Printing the family and order
     fam_list <- c(fam_list, family)
