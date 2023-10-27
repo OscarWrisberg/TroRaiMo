@@ -42,11 +42,16 @@ cat("Length of non-matching tips ", length(not_matching_tips), "\n")
 find_family <- function(name_list, wcvp) {
   names <- character(0)
   families <- character(0)
-  for (name in name_list) {
-    family <- wcvp[wcvp$taxon_name == name, "family"]
+  for (i in range(length(name_list))) {
+
+    # print progress
+    if(!i%%1000) cat("Percentage done",format(round((i/length(name_list))*100,2), nsmall = 2)," at ",format(Sys.time(),'%H:%M:%S'), "\n")
+
+    family <- wcvp[wcvp$taxon_name == name_list[i], "family"]
     family <- as.character(family[1])
-    names <- c(names, name)
+    names <- c(names, name_list[i])
     families <- c(families, family)
+    print(cat(name_list[i], " is found in family ", family))
   }
 
   print(cat("Length names ", length(names), "\n "))
