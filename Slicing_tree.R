@@ -77,7 +77,6 @@ unique_families <- as.character(unique_families)
 cat("This is the unique_families \n")
 cat(dim(unique_families))
 cat(class(unique_families))
-#cat(unique_families)
 
 # Create a data frame to store the number of tips in each family
 df_number_tips <- data.frame(family = character(0), number_tips = numeric(0))
@@ -92,11 +91,8 @@ cat(which(names(tips_families) == "name"), "  ")
 cat(which(names(tips_families) == "families"), " \n ")
 
 for (i in seq_along(unique_families)) {
-  cat("This is the family were looking for ", unique_families[i], " \n")
   family_subset <- tips_families[tips_families$families == unique_families[i], ]
   tips_family <- as.character(family_subset$name)
-  cat("Pruning tree to family ", unique_families[i], "\n")
-  cat("Length of tips in ", unique_families[i], " is ", length(tips_family), "\n")
 
   # Selecting the tips NOT in the family
   tips_not_in_family <- tree$tip.label[!which(tree$tip.label %in% tips_family)]
@@ -111,8 +107,8 @@ for (i in seq_along(unique_families)) {
 
   # Prune the tree so it only contains the tips in the family
   pruned_tree <- drop.tip(tree, tip = tree$tip.label[!tree$tip.label %in% tips_family])
+
   # Calculate the number of tips in the pruned tree
-  cat("The number of tips left in the tree for: ", unique_families[i], " is ", length(pruned_tree$tip.label), "\n")
   number_tips <- length(pruned_tree$tip.label)
 
   # Append the number of tips and family to the data frame
@@ -169,17 +165,22 @@ unique_orders <- unique(tips_family_orders$order)
 cat("Creating a dataframe to store the number of tips in each order \n")
 df_number_tips_orders <- data.frame(order = character(0), number_tips = numeric(0))
 non_mono_order <- character(0)
+
+
 #########################
 # Pruning tree to orders#
 #########################
 cat("Pruining tree to orders \n")
 
-for (order in unique_orders){
-  tips_order <- tips_family_orders[which(tips_family_orders$order == order), "name"] # Selecting the tips in the order
+for (i in seq_along(unique_orders)){
+
+  tips_family <- as.character(family_subset$name)
+  order_subset <- tips_family_orders[tips_family_orders$order == unique_orders[i], ]
+  tips_order <- as.character(order_subset$name)
 
   # Check if the tips in each order form a monophyletic clade
   if (is.monophyletic(tree, tips_order) == FALSE) {
-    print(cat("The tips in ", order, " do not form a monophyletic group in the tree \n"))
+    print(cat("The tips in ", unique_orders[i], " do not form a monophyletic group in the tree \n"))
     non_mono_order <- c(non_mono_order, family)
     next
   }
@@ -191,10 +192,10 @@ for (order in unique_orders){
   number_tips <- length(pruned_tree$tip.label)
 
   # Append the number of tips and order to the data frame
-  df_number_tips_orders <- rbind(df_number_tips_orders, data.frame(order = order, number_tips = number_tips))
+  df_number_tips_orders <- rbind(df_number_tips_orders, data.frame(order = unique_orders[i], number_tips = number_tips))
 
   # Save the pruned tree to a file
-  write.tree(pruned_tree, paste0(path_out, "pruned_tree__order_", order, "_GBMB.txt"))
+  write.tree(pruned_tree, paste0(path_out, "pruned_tree__order_", unique_orders[i], "_GBMB.txt"))
 }
 
 # Save the data frame to a text file
