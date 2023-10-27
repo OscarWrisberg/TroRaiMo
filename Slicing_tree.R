@@ -73,6 +73,8 @@ tips_families <- fread("tips_families.txt")
 
 # Find unique families
 unique_families <- unique(tips_families$families)
+print("This is the unique_families")
+print(unique_families)
 
 # Create a data frame to store the number of tips in each family
 df_number_tips <- data.frame(family = character(0), number_tips = numeric(0))
@@ -85,16 +87,15 @@ cat("Names tips_families \n")
 cat(names(tips_families), " \n")
 cat(which(names(tips_families) == "name"), "  ")
 cat(which(names(tips_families) == "families"), " \n ")
-cat(class(tips_families))
 
 for (family in unique_families) {
-  cat("This is the family were looking for ", family)
+  cat("This is the family were looking for ", family, " \n")
   tips_family <- tips_families[which(tips_families$families == family), which(names(tips_families) == "name")]
   print(class(tips_family))
   #cat("These are the tips in ", family, "\n")
   cat("Figuring out the structure of tips_family \n")
-  cat(tips_family)
-  cat(tips_family[1])
+  cat(tips_family, "\n")
+  cat(tips_family[1], "\n")
   print(tips_family[1][1])
   cat("Pruning tree to family ", family, "\n")
   cat("Length of tips in ", family, " is ", length(tips_family), "\n")
