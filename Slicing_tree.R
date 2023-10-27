@@ -74,8 +74,10 @@ tips_families <- fread("tips_families.txt")
 # Find unique families
 unique_families <- unique(tips_families$families)
 unique_families <- as.character(unique_families)
-print("This is the unique_families")
-print(unique_families)
+cat("This is the unique_families")
+cat(dim(unique_families))
+cat(class(unique_families))
+cat(unique_families)
 
 # Create a data frame to store the number of tips in each family
 df_number_tips <- data.frame(family = character(0), number_tips = numeric(0))
@@ -106,10 +108,9 @@ for (i in seq_along(unique_families)) {
 
   # Check if the tips which are in the family ACTUALLY form a monophyletic group in the tree
   # If they do not form a monophyletic group then I will not prune the tree
-
   if (is.monophyletic(tree, tips_family) == FALSE) {
-    cat("The tips in ", family, " do not form a monophyletic group in the tree \n")
-    non_mono_family <- c(non_mono_family, family)
+    cat("The tips in ", unique_families[i], " do not form a monophyletic group in the tree \n")
+    non_mono_family <- c(non_mono_family, unique_families[i])
     next
   }
 
@@ -117,14 +118,14 @@ for (i in seq_along(unique_families)) {
   pruned_tree <- drop.tip(tree, tip = tips_family)
 
   # Calculate the number of tips in the pruned tree
-  cat("The number of tips left in the tree for: ", family, " is ", length(pruned_tree$tip.label), "\n")
+  cat("The number of tips left in the tree for: ", unique_families[i], " is ", length(pruned_tree$tip.label), "\n")
   number_tips <- length(pruned_tree$tip.label)
 
   # Append the number of tips and family to the data frame
-  df_number_tips <- rbind(df_number_tips, data.frame(family = family, number_tips = number_tips))
+  df_number_tips <- rbind(df_number_tips, data.frame(family = unique_families[i], number_tips = number_tips))
 
   # Save the pruned tree to a file
-  write.tree(pruned_tree, paste0(path_out, "pruned_tree_family_", family, "_GBMB.txt"))
+  write.tree(pruned_tree, paste0(path_out, "pruned_tree_family_", unique_families[i], "_GBMB.txt"))
 }
 
 # Save the data frame to a text file
