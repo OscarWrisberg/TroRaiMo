@@ -43,7 +43,7 @@ find_family <- function(name_list, wcvp) {
   families <- character(0)
   for (i in seq_along(name_list)) {
     #print progress
-    if (!i %% 500) cat("Percentage done", format(round((i / length(name_list)) *- 100, 2), nsmall = 2), " at ", format(Sys.time(), '%H:%M:%S'), "\n")
+    if (!i %% 500) cat("Percentage done", format(round((i / length(name_list)) * 100, 2), nsmall = 2), " at ", format(Sys.time(), '%H:%M:%S'), "\n")
 
     family <- wcvp[wcvp$taxon_name == name_list[i], "family"]
     family <- as.character(family[1])
@@ -63,7 +63,10 @@ tips_families <- find_family(matching_tips, wcvp)
 
 head(tips_families)
 # Write tip families to a text file
-#write.table(tips_families, "tips_families.txt", sep = "\t", row.names = FALSE) #nolint
+write.table(tips_families, "tips_families.txt", sep = "\t", row.names = FALSE) #nolint
+
+# Loading tips families so I dont have to wait so fucking long..
+tips_families <- fread("tips_families.txt")
 
 # Find unique families
 unique_families <- unique(tips_families$families)
@@ -75,9 +78,11 @@ non_mono_family <- character(0)
 ###########################
 # Pruning tree to families#
 ###########################
+cat("Names tips_families \n")
+cat(names(tips_families))
 
 for (family in unique_families) {
-  tips_family <- tips_families[which(tips_families$family == family), which(colnames(tips_families) == "name")]
+  tips_family <- tips_families[which(tips_families$family == family), which(names(tips_families) == "name")]
   cat("These are the tips in ", family, "\n")
   cat(tips_family, "\n \n")
   cat("Pruning tree to family ", family, "\n")
@@ -162,7 +167,7 @@ non_mono_order <- character(0)
 cat("Pruining tree to orders \n")
 
 for (order in unique_orders){
-  tips_order <- tips_family_orders[tips_family_orders$order == order, "name"] # Selecting the tips in the order
+  tips_order <- tips_family_orders[which(tips_family_orders$order == order), "name"] # Selecting the tips in the order
 
   # Check if the tips in each order form a monophyletic clade
   if (is.monophyletic(tree, tips_order) == FALSE) {
