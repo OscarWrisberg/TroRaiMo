@@ -77,7 +77,7 @@ non_mono_family <- character(0)
 ###########################
 
 for (family in unique_families) {
-  tips_family <- tips_families[which(tips_families$family == family), "name"]
+  tips_family <- tips_families[which(tips_families$family == family), which(colnames(tips_families) == "name")]
   cat("These are the tips in ", family, "\n")
   cat(tips_family, "\n \n")
   cat("Pruning tree to family ", family, "\n")
