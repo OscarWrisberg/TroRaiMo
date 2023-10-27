@@ -42,7 +42,7 @@ cat("Length of non-matching tips ", length(not_matching_tips), "\n")
 find_family <- function(name_list, wcvp) {
   names <- character(0)
   families <- character(0)
-  for (i in seq_along(range(nrow(name_list)))) {
+  for (i in seq_len(nrow(name_list))) {
 
     # print progress
     #if (!i %% 1000) cat("Percentage done", format(round((i / length(name_list)) *- 100, 2), nsmall = 2), " at ", format(Sys.time(), '%H:%M:%S'), "\n")
