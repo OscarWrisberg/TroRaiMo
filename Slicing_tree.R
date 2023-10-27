@@ -94,7 +94,7 @@ cat(which(names(tips_families) == "families"), " \n ")
 for (i in seq_along(unique_families)) {
   cat("This is the family were looking for ", unique_families[i], " \n")
   print(tips_families[which(tips_families$families == unique_families[i]), ])
-  print(tips_families[which(tips_families$families == unique_families[i]), "name"])
+  print(c(tips_families[which(tips_families$families == unique_families[i]), "name"]))
   tips_family <- tips_families[which(tips_families$families == unique_families[i]), which(names(tips_families) == "name")]
   print(class(tips_family))
   #cat("These are the tips in ", family, "\n")
