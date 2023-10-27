@@ -83,11 +83,13 @@ non_mono_family <- character(0)
 ###########################
 cat("Names tips_families \n")
 cat(names(tips_families), " \n")
+cat(which(names(tips_families) == "name"), " ")
+cat(which(names(tips_families) == "families"), " ")
 
 for (family in unique_families) {
   tips_family <- tips_families[which(tips_families$families == family), which(names(tips_families) == "name")]
   cat("These are the tips in ", family, "\n")
-  print(tips_family)
+  print(tips_family[1])
   cat("Pruning tree to family ", family, "\n")
   cat("Length of tips in ", family, " is ", length(tips_family), "\n")
 
