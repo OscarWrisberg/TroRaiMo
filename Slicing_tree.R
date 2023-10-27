@@ -74,10 +74,10 @@ tips_families <- fread("tips_families.txt")
 # Find unique families
 unique_families <- unique(tips_families$families)
 unique_families <- as.character(unique_families)
-cat("This is the unique_families")
+cat("This is the unique_families \n")
 cat(dim(unique_families))
 cat(class(unique_families))
-cat(unique_families)
+#cat(unique_families)
 
 # Create a data frame to store the number of tips in each family
 df_number_tips <- data.frame(family = character(0), number_tips = numeric(0))
@@ -93,6 +93,7 @@ cat(which(names(tips_families) == "families"), " \n ")
 
 for (i in seq_along(unique_families)) {
   cat("This is the family were looking for ", unique_families[i], " \n")
+  print(tips_families[which(tips_families$families == unique_families[i]),])
   tips_family <- tips_families[which(tips_families$families == unique_families[i]), which(names(tips_families) == "name")]
   print(class(tips_family))
   #cat("These are the tips in ", family, "\n")
