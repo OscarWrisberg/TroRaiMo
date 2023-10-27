@@ -50,7 +50,6 @@ find_family <- function(name_list, wcvp) {
     names <- c(names, name_list[i])
     families <- c(families, family)
     cat(name_list[i], " is found in family ", family, " \n")
-    print(family)
   }
 
   cat("Length names ", length(names), "\n ")
