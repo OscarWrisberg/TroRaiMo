@@ -73,7 +73,7 @@ tips_families <- fread("tips_families.txt")
 
 # Find unique families
 unique_families <- unique(tips_families$families)
-unique_families <- unique_families[1]
+unique_families <- as.character(unique_families)
 print("This is the unique_families")
 print(unique_families)
 
@@ -89,17 +89,17 @@ cat(names(tips_families), " \n")
 cat(which(names(tips_families) == "name"), "  ")
 cat(which(names(tips_families) == "families"), " \n ")
 
-for (family in unique_families[1]) {
-  cat("This is the family were looking for ", family, " \n")
-  tips_family <- tips_families[which(tips_families$families == family), which(names(tips_families) == "name")]
+for (i in seq_along(unique_families)) {
+  cat("This is the family were looking for ", unique_families[i], " \n")
+  tips_family <- tips_families[which(tips_families$families == unique_families[i]), which(names(tips_families) == "name")]
   print(class(tips_family))
   #cat("These are the tips in ", family, "\n")
   cat("Figuring out the structure of tips_family \n")
   cat(tips_family, "\n")
   cat(tips_family[1], "\n")
   print(tips_family[1][1])
-  cat("Pruning tree to family ", family, "\n")
-  cat("Length of tips in ", family, " is ", length(tips_family), "\n")
+  cat("Pruning tree to family ", unique_families[i], "\n")
+  cat("Length of tips in ", unique_families[i], " is ", length(tips_family), "\n")
 
   # Selecting the tips NOT in the family
   tips_not_in_family <- tree$tip.label[!which(tree$tip.label %in% tips_family)]
