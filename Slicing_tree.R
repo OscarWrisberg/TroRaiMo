@@ -39,6 +39,9 @@ cat("Length of matching tips ", length(matching_tips), "\n")
 cat("Length of non-matching tips ", length(not_matching_tips), "\n")
 # Create a data frame with tip names and families
 
+# Writing the non matching tips to a file.
+write.table(not_matching_tips, file.path(path_out, "not_matching_tips.txt"), sep = "\t", row.names = FALSE)
+
 #########################################################################################################
 # find_family <- function(name_list, wcvp) {
 #   names <- character(0)
@@ -180,7 +183,7 @@ for (i in seq_along(unique_orders)){
 
   # Check if the tips in each order form a monophyletic clade
   if (is.monophyletic(tree, tips_order) == FALSE) {
-    print(cat("The tips in ", unique_orders[i], " do not form a monophyletic group in the tree \n"))
+    cat("The tips in ", unique_orders[i], " do not form a monophyletic group in the tree \n")
     non_mono_order <- c(non_mono_order, family)
     next
   }
@@ -200,7 +203,7 @@ for (i in seq_along(unique_orders)){
 
 # Save the data frame to a text file
 cat("Writing out file to ", file.path(path_out, output), "\n")
-write.table(df_number_tips_orders, file.path(path_out, ), sep = "\t", row.names = FALSE)
+write.table(df_number_tips_orders, file.path(path_out, output), sep = "\t", row.names = FALSE)
 
 # Save the non_monophyletic families and orders to a file.
 cat("Saving the non_monophyletic families and orders to a file \n")
