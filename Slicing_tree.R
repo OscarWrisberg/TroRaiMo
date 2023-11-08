@@ -139,7 +139,7 @@ find_order <- function(fams, apg) {
   for (family in unique(fams)) {
     order <- apg[which(apg$Syn_Fam == family), "Clade"] # Finding the order of that family in APG file
     order <- as.character(order[1]) # Selecting the order of the family
-    print(cat("family ", family, "Order", order, "\n")) # Printing the family and order
+    cat("family ", family, "Order", order, "\n") # Printing the family and order
     fam_list <- c(fam_list, family)
     orders <- c(orders, order)
   }
@@ -154,7 +154,7 @@ family_orders <- find_order(unique_families, apg)
 
 # Merging the tips_families and family_orders data frames
 cat("Merging the tips_families and family_orders data frames \n")
-tips_family_orders <- merge(tips_families, family_orders, by.x = "family", by.y = "family")
+tips_family_orders <- merge(tips_families, family_orders, by.x = "families", by.y = "family")
 
 
 # Find unique orders
