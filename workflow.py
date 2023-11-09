@@ -344,11 +344,58 @@ def apg_name_align(apg,wcp, output_file, path_in, script_dir, path_out):
 
     return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
 
+
+
+##############################################################
+####---- Pruning the GBMB tree for tips not in WCVP ----######
+##############################################################
+def pruning_tree(wcp,tree, output_file, path_in, script_dir, path_out):
+    """Here I am looping through the tips in the GBMB tree to see if they are in the WCVP.
+    If there is no exact match for the tip, I will look for a fuzzy match allowing for 1 substitution, insertion or deletion.
+    If the tip name is longer than 2 IE. a subsp or a variety I will then search for just the genus and species epithet.
+    Lastly I check if this has introduced any duplicate species in the tree.
+    If the duplicates are sister species I will then remove one of them at random and if they are not I will remove both of them"""
+    inputs = [path_in+wcp, path_in+tree]
+    outputs = [path_out+output_file]
+    options = {
+        'cores': 5,
+        'memory': '20g',
+        'account':"Trf_models",
+        'walltime': "03:00:00"
+    }
+
+    spec = '''
+
+    #Checking if output dir exists
+    [ -d {path_out} ] && echo "{path_out} exist." || {{ echo "{path_out} does not exist."; mkdir {path_out}; }}
+
+    echo This is the data dir \n
+    echo {script_dir}
+
+    # Starting Conda environment
+    source /home/owrisberg/miniconda3/etc/profile.d/conda.sh
+    conda activate R_env
+
+    #Navigating to folder
+    cd {path_in}
+
+
+    Rscript --vanilla {script_dir}pruning.r {tree} {wcp} {output_file}
+
+    echo Done with Rscript
+
+    mv {output_file} {path_out}
+
+    '''.format(wcp = wcp, output_file=output_file, path_in = path_in, script_dir = script_dir, path_out = path_out, tree = tree)
+
+    return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
+
+
 ##############################################################
 #############---- Approach 1 finding the orders ----##############
 ##############################################################
 def Slicing_trees(input_file, output_file, path_in,path_out, script_dir, wcvp_file, apg):
-    """This function should be used to simulate the covariate data table through time for the states in the """
+    """This function slices the GBMB tree into subtrees based on the order and families of the species in the tree. """
     inputs = [path_in+input_file, wcvp_file]
     outputs = [path_out+output_file]
     options = {
@@ -425,13 +472,34 @@ gwf.target_from_template(name = "APG_preb",
                                  script_dir = script_dir,
                                  path_out = workflow_dir+"02_adding_orders/"
                              ))
+
+gwf.target_from_template(name = "Pruning_tree",
+                            template=pruning_tree(
+                                wcp = "wcvp_names_apg_aligned.rds",
+                                tree = "GBMB.tre",
+                                output_file = "GBMB_pruned.tre",
+                                path_in = data_dir,
+                                path_out = data_dir,
+                                script_dir = script_dir
+                            ))
     
-gwf.target_from_template(name = "slicing_Trees",
+gwf.target_from_template(name = "slicing_Trees_no_pruning",
                         template=Slicing_trees(
                             input_file = "GBMB.tre",
-                            output_file = "GBMB_sp_per_orders.txt",
+                            output_file = "GBMB_sp_per_orders_no_pruning.txt",
                             path_in = data_dir,
-                            path_out = workflow_dir+"02_adding_orders/",
+                            path_out = workflow_dir+"02_adding_orders/no_pruning/",
+                            script_dir = script_dir,
+                            wcvp_file = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds",
+                            apg = script_dir+"apgweb_parsed.csv"
+                            ))
+
+gwf.target_from_template(name = "slicing_Trees_pruning",
+                        template=Slicing_trees(
+                            input_file = "GBMB_pruned.tre",
+                            output_file = "GBMB_sp_per_orders_pruning.txt",
+                            path_in = data_dir,
+                            path_out = workflow_dir+"02_adding_orders/pruning/",
                             script_dir = script_dir,
                             wcvp_file = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds",
                             apg = script_dir+"apgweb_parsed.csv"

@@ -25,7 +25,6 @@ tree$tip.label <- gsub('"', '', tree$tip.label)  # nolint
 # Get tip names from the tree
 tip_names <- tree$tip.label
 
-
 # Find matching and non-matching tips
 matching_tips <- tip_names[tip_names %in% wcvp$taxon_name] # 76935 tips are matching
 not_matching_tips <- tip_names[!(tip_names %in% wcvp$taxon_name)] # Only 2939 tips are not matching
@@ -41,6 +40,7 @@ cat("Length of non-matching tips ", length(not_matching_tips), "\n")
 
 # Writing the non matching tips to a file.
 write.table(not_matching_tips, file.path(path_out, "not_matching_tips.txt"), sep = "\t", row.names = FALSE)
+
 
 #########################################################################################################
 # find_family <- function(name_list, wcvp) {
@@ -209,3 +209,4 @@ write.table(df_number_tips_orders, file.path(path_out, output), sep = "\t", row.
 cat("Saving the non_monophyletic families and orders to a file \n")
 write.table(non_mono_family, file.path(path_out, "non_mono_family.txt"), sep = "\t", row.names = FALSE)
 write.table(non_mono_order, file.path(path_out, "non_mono_order.txt"), sep = "\t", row.names = FALSE)
+
