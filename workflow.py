@@ -475,7 +475,7 @@ gwf.target_from_template(name = "APG_preb",
 
 gwf.target_from_template(name = "Pruning_tree",
                             template=pruning_tree(
-                                wcp = "wcvp_names_apg_aligned.rds",
+                                wcp = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds",
                                 tree = "GBMB.tre",
                                 output_file = "GBMB_pruned.tre",
                                 path_in = data_dir,
