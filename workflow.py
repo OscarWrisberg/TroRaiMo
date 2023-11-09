@@ -355,7 +355,7 @@ def pruning_tree(wcp,tree, output_file, path_in, script_dir, path_out):
     If the tip name is longer than 2 IE. a subsp or a variety I will then search for just the genus and species epithet.
     Lastly I check if this has introduced any duplicate species in the tree.
     If the duplicates are sister species I will then remove one of them at random and if they are not I will remove both of them"""
-    inputs = [path_in+wcp, path_in+tree]
+    inputs = [wcp, path_in+tree]
     outputs = [path_out+output_file]
     options = {
         'cores': 5,
