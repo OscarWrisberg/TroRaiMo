@@ -183,13 +183,14 @@ for (i in seq_along(unique_orders)){
 
   # Check if the tips in each order form a monophyletic clade
   if (is.monophyletic(tree, tips_order) == FALSE) {
-    cat("The tips in ", unique_orders[i], " do not form a monophyletic group in the tree \n")
+    #cat("The tips in ", unique_orders[i], " do not form a monophyletic group in the tree \n")
     non_mono_order <- c(non_mono_order, family)
     next
-  }
+  } else {
 
+  cat("The tips in ", unique_orders[i], " form a monophyletic group in the tree \n")
   # Prune the tree so it only contains the tips in the order
-  pruned_tree <- drop.tip(tree, tree$tip.label[!which(tree$tip.label %in% tips_order)])
+  pruned_tree <- drop.tip(tree, tip = tree$tip.label[!tree$tip.label %in% tips_order])
 
   # Calculate the number of tips in the pruned tree
   number_tips <- length(pruned_tree$tip.label)
@@ -199,6 +200,7 @@ for (i in seq_along(unique_orders)){
 
   # Save the pruned tree to a file
   write.tree(pruned_tree, paste0(path_out, "pruned_tree__order_", unique_orders[i], "_GBMB.txt"))
+  }
 }
 
 # Save the data frame to a text file
