@@ -361,7 +361,7 @@ def pruning_tree(wcp,tree, output_file, path_in, script_dir, path_out):
         'cores': 5,
         'memory': '20g',
         'account':"Trf_models",
-        'walltime': "03:00:00"
+        'walltime': "10:00:00"
     }
 
     spec = '''
