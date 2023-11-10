@@ -361,7 +361,7 @@ def pruning_tree(wcp,tree, output_file, path_in, script_dir, path_out):
         'cores': 5,
         'memory': '20g',
         'account':"Trf_models",
-        'walltime': "10:00:00"
+        'walltime': "24:00:00"
     }
 
     spec = '''
@@ -504,9 +504,6 @@ gwf.target_from_template(name = "slicing_Trees_pruning",
                             wcvp_file = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds",
                             apg = script_dir+"apgweb_parsed.csv"
                             ))
-
-
-
 
 
 

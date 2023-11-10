@@ -118,7 +118,12 @@ for (i in seq_along(not_matchable_tips)) {
   # Split the tip by space
   tip_elements <- strsplit(not_matching_tips[i], " ")[[1]]
   
-  # Check if there are more than 2 elements
+  # If the split list is only of length 2, then we can go to next tip
+  if(length(tip_elements) <= 2){
+	next
+  }
+
+  # Otherwise we can try to find a match for the first two elements
   if (length(tip_elements) > 2) {
     # Take the first two elements
     tip_to_search <- paste(tip_elements[1:2], collapse = " ")
