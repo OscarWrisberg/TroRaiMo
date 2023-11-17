@@ -113,7 +113,7 @@ split_match_name <- character(0)
 # Loop through the not_matching_tips
 for (i in seq_along(not_matchable_tips)) {
   # Writing a progress bar
-  if (!i %% 50) cat("Percentage done", format(round((i / length(not_matchable_tips)) * 100, 2), nsmall = 2), " at ", format(Sys.time(), '%H:%M:%S'), "\n")
+  if (!i %% 500) cat("Percentage done", format(round((i / length(not_matchable_tips)) * 100, 2), nsmall = 2), " at ", format(Sys.time(), '%H:%M:%S'), "\n")
 
   # Split the tip by space
   tip_elements <- strsplit(not_matching_tips[i], " ")[[1]]
@@ -131,7 +131,7 @@ for (i in seq_along(not_matchable_tips)) {
     # Check for exact match
     if (tip_to_search %in% wcvp$taxon_name) {
       cat("Exact match found for ", not_matching_tips[i], "\n")
-      split_matchable_tips <- c(matchable_tips, not_matching_tips[i])
+      split_matchable_tips <- c(split_matchable_tips, not_matching_tips[i])
       split_match_name <- c(split_match_name, tip_to_search)
     } else {
       # Check for matches with one substitution, insertion, or deletion
@@ -155,14 +155,13 @@ for (i in seq_along(not_matchable_tips)) {
   }
 }
 
+saveRDS(split_match_name, "split_match_name")
+
 # And now we can again rename the tips based on the matches we found
 tree$tip.label[split_matchable_tips] <- split_match_name
 
 # Remove tips that are still not matched
 tree <- drop.tip(tree, split_not_matchable_tips)
-
-# check if the tree contains duplicate species names
-tree$tip.label[duplicated(tree$tip.label)]
 
 # if no duplicates are found report it and continue
 if (length(tree$tip.label[duplicated(tree$tip.label)]) == 0) {
