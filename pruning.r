@@ -95,6 +95,16 @@ for (i in seq_along(not_matching_tips)) {
   }
 }
 
+# Saving vectors as RDS files
+saveRDS(not_matchable_tips, "not_matchable_tips_1.rds") 
+saveRDS(matchable_tips, "matchable_tips_1.rds") 
+saveRDS(match_name, "match_name_1.rds")
+
+# Loading RDS files
+# not_matchable_tips <- readRDS("not_matchable_tips_1.rds")
+# matchable_tips <- readRDS("matchable_tips_1.rds")
+# match_name <- readRDS("match_name_1.rds")
+
 # Renaming tips in the tree with the matched tip names
 tree$tip.label[matchable_tips] <- match_name # This works because both of them is ordered
 
@@ -155,12 +165,23 @@ for (i in seq_along(not_matchable_tips)) {
   }
 }
 
-saveRDS(split_match_name, "split_match_name")
+# Saving vectors as RDS files for easy loading if I need to rerun the script
+saveRDS(split_not_matchable_tips, "split_not_matchable_tips.rds")
+saveRDS(split_matchable_tips, "split_matchable_tips.rds")
+saveRDS(split_match_name, "split_match_name.rds")
+
+# Loading RDS files
+# split_not_matchable_tips <- readRDS("split_not_matchable_tips.rds")
+# split_matchable_tips <- readRDS("split_matchable_tips.rds")
+# split_match_name <- readRDS("split_match_name.rds")
+
 
 # And now we can again rename the tips based on the matches we found
+cat("Renaming tips we found during split names approach \n")
 tree$tip.label[split_matchable_tips] <- split_match_name
 
 # Remove tips that are still not matched
+cat("Removing tips that are still not matched \n")
 tree <- drop.tip(tree, split_not_matchable_tips)
 
 # if no duplicates are found report it and continue
