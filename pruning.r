@@ -7,7 +7,7 @@ library(stringdist)
 
 ###########################################################################################################################
 # Settings for running this script locally.
-# setwd("/home/au543206/GenomeDK/Trf_models/data") # Set the working directory when local
+#setwd("/home/au543206/GenomeDK/Trf_models/data") # Set the working directory when local
 # setwd("/home/owrisberg/Trf_models/data") # Set working directory when remove
 # wcvp <- readRDS("../workflow/02_adding_orders/wcvp_names_apg_aligned.rds")  # Read the WCVP names file into a data frame
 # tree <- read.tree("GBMB.tre") # Read the GBMB tree
@@ -138,9 +138,17 @@ for (i in seq_along(not_matchable_tips)) {
 
   if( any(tip_elements == "x" | tip_elements == "X") ){
     # If the tip contains an x or an X then we can go to next tip
-    cat("Cannot match ", not_matchable_tips[i], " because it contains an x or an X \n")
+    #cat("Cannot match ", not_matchable_tips[i], " because it contains an x or an X \n")
+    split_not_matchable_tips <- c(split_not_matchable_tips, not_matchable_tips[i])
     next
   } 
+
+  if ( any(tip_elements == "Sp." | tip_elements == "sp.")){
+    # If the tip contains an Sp. or an sp. then we can go to next tip
+    #cat("Cannot match ", not_matchable_tips[i], " because it contains an Sp. or an sp. \n")
+    split_not_matchable_tips <- c(split_not_matchable_tips, not_matchable_tips[i])
+    next
+  }
 
   # Otherwise we can try to find a match for the first two elements
   if (length(tip_elements) > 2) {
@@ -188,9 +196,9 @@ saveRDS(split_match_name, "split_match_name.rds")
 saveRDS(split_multi_match, "split_multi_match.rds")
 
 # Loading RDS files
-# split_not_matchable_tips <- readRDS("split_not_matchable_tips.rds")
-# split_matchable_tips <- readRDS("split_matchable_tips.rds")
-# split_match_name <- readRDS("split_match_name.rds")
+split_not_matchable_tips <- readRDS("split_not_matchable_tips.rds")
+split_matchable_tips <- readRDS("split_matchable_tips.rds")
+split_match_name <- readRDS("split_match_name.rds")
 
 
 # And now we can again rename the tips based on the matches we found
@@ -199,7 +207,7 @@ tree$tip.label[which(tree$tip.label %in% split_matchable_tips)] <- split_match_n
 
 # Remove tips that are still not matched
 cat("Removing tips that are still not matched \n")
-tree <- ape::drop.tip(tree, tf_tips_in_not_match)
+tree <- ape::drop.tip(tree, split_not_matchable_tips)
 
 # if no duplicates are found report it and continue
 if (length(tree$tip.label[duplicated(tree$tip.label)]) == 0) {
