@@ -13,13 +13,15 @@ library(data.table)
 library(ape)
 library(phytools)
 library(geiger)
+library(castor)
 
 ###########################################################################################################################
 #Testing the code by runnin it on GDK through VScode and its built in terminal
-
+setwd("/home/owrisberg/Trf_models/data") # Set working directory when local
 setwd("/home/owrisberg/Trf_models/data") # Set working directory when remove
 wcvp <- readRDS("../workflow/02_adding_orders/wcvp_names_apg_aligned.rds")  # Read the WCVP names file into a data frame
 tree <- read.tree("GBMB.tre") # Read the GBMB tree
+path_out <- "../workflow/02_adding_orders/pruning/"
 
 ###########################################################################################################################
 
@@ -81,6 +83,56 @@ cat("Merging the tips_families and family_orders data frames \n")
 tips_family_orders <- merge(tips_families, family_orders, by.x = "families", by.y = "family")
 
 
+#####################################################################
+# Function for finding the largest monophyletic clade in an order that is not monophyletic
+find_largest_clade <- function(tips_in_order, tree){
+	biggest_subtree <- character(0)
+	for(i in seq_along(tips_in_order)){
+	tip <- tips_in_order[i]
+	#print(tip)
+
+    cat(which(tips_in_order == tip), "\r")
+
+    node <- which(tree$tip.label==tip)
+
+    pnode <- getParent(tree, node)
+
+    subtree <- get_subtree_at_node(tree, pnode-Ntip(tree))$subtree
+
+    # condition: any of the tips in this subtree not a species in this order
+    if(any(!subtree$tip.label %in% tips_in_order)){
+		# We need to save the subtree if it is bigger than the current biggest subtree
+		if(length(subtree$tip.label) > length(biggest_subtree$tip.label)){
+			biggest_subtree <- subtree
+		}
+    }
+
+    # condition: all of the tips in this subtree an island endemic?
+    if(all(subtree$tip.label %in% tips_in_order)){
+      
+      while(all(subtree$tip.label %in% tips_in_order)){
+        #print("down the rabbit hole")
+        last_tree <- subtree
+        last_pnode <- pnode
+
+        pnode <- getParent(tree, pnode)
+        subtree <- get_subtree_at_node(tree, pnode-Ntip(tree))$subtree 
+      }
+      
+	  biggest_subtree <- subtree
+		# Here I should save the last tree if it is bigger than the current biggest subtree
+    	}
+	}
+return(biggest_subtree)
+}
+##########################################################################################
+##########################################################################################
+##########################################################################################
+##########################################################################################
+
+
+rogue_tips_family <- data.frame(order = character(0), rogue_tips = numeric(0))
+
 # Looping through the non-monophyletic orders
 for (i in seq_along(non_monophyletic_orders[[1]])) {
 	# Finding the order
@@ -95,8 +147,12 @@ for (i in seq_along(non_monophyletic_orders[[1]])) {
 	cat("Number of tips in the order: ", length(tips_in_order), "   ")
 
 	# Finding the MRCA of the tips in the order
-	MRCA <- findMRCA(tree, tips_in_order)
-
+	if(order == "Gentianales"){
+		cat("Skipping Gentianales \n")
+		next
+	}else {
+	MRCA <- getMRCA(tree, tips_in_order)
+	}
 	#print(MRCA)
 
 	# Finding the tips which are descendants of the MRCA
@@ -115,23 +171,31 @@ for (i in seq_along(non_monophyletic_orders[[1]])) {
 	# The problem is likely that we have a tip which SHOULD be placed in the order but is not.
 	# and the pruning of this species would probably result in a monophyletic order.
 
-	# if the number of rogue tips is smaller than 10 % of the number of tips in the order
-	# We prune the rogue tips
-	if (length(rogue_tips) <= (0.1*length((tips_in_order)))){
+	if ( length(rogue_tips) <= 0.1 * length(tips_in_order) & length(rogue_tips) > 0){
 		cat("The number of rogue tips is smaller than 10 % of the number of tips in the order \n")
 		cat("Pruning the rogue tips and extracting the order \n")
 		tree <- drop.tip(tree, tip = rogue_tips)
 
-		if( is.monophyletic(tree, tips_family) == TRUE)){
-				order_tree <- extract.clade(tree, tips_in_order)
+		if( is.monophyletic(tree, tips_in_order) == TRUE){
+				order_tree <- drop.tip(tree, tip = tree$tip.label[!tree$tip.label %in% tips_in_order])
 				 # Save the pruned tree to a file
-  				write.tree(order_tree, paste0(path_out, "pruned_tree_family_", unique_families[i], "_GBMB.txt"))
+  				write.tree(order_tree, paste0(path_out, "twice_pruned_tree_family_", order, "_GBMB.txt"))
+				rogue_tips_family <- rbind(rogue_tips_family, data.frame(order = order, rogue_tips = c(rogue_tips)))
 		}
 
-
+	} else if (length(rogue_tips) == 0) { # Trees which have already had the rogue tips pruned
+		next
 	} else {
+		# Here I will loop through the tips in the order and find the largest monophyletic clade which is in the order.
+		#largest_clade <- find_largest_clade(tips_in_order, tree)
+		#cat("The largest monophyletic clade in the", order, "is: ", length(largest_clade$tip.label), "\n")
 
+		subtree <- get_subtree_at_node(tree, MRCA-Ntip(tree))$subtree
+		# Saving the tree with all the descendants of the MRCA
+		# Can i somehow 
+		write.tree(subtree, paste0(path_out, "MRCA_tree_", order, "_GBMB.txt"))
+		}
 	}
 
-}
-
+tree
+plot(tree)
