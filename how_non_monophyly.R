@@ -17,10 +17,10 @@ library(castor)
 
 ###########################################################################################################################
 #Testing the code by runnin it on GDK through VScode and its built in terminal
-setwd("/home/owrisberg/Trf_models/data") # Set working directory when local
-setwd("/home/owrisberg/Trf_models/data") # Set working directory when remove
+setwd("/home/au543206/GenomeDK/Trf_models/data") # Set working directory when local
+#setwd("/home/owrisberg/Trf_models/data") # Set working directory when remove
 wcvp <- readRDS("../workflow/02_adding_orders/wcvp_names_apg_aligned.rds")  # Read the WCVP names file into a data frame
-tree <- read.tree("GBMB.tre") # Read the GBMB tree
+tree <- read.tree("GBMB_pruned.tre") # Read the GBMB pruned tree
 path_out <- "../workflow/02_adding_orders/pruning/"
 
 ###########################################################################################################################
@@ -32,6 +32,35 @@ path_out <- "../workflow/02_adding_orders/pruning/"
 # Removing the _ and " from the tip labels
 tree$tip.label <- gsub("_", " ", tree$tip.label)
 tree$tip.label <- gsub('"', '', tree$tip.label)  # nolint
+
+tree <- force.ultrametric(tree)
+
+# Function for finding duplicate tips and removing them
+find_duplicate_tips <- function(tree) {
+  # Find duplicate tips
+  duplicate_tips <- tree$tip.label[duplicated(tree$tip.label)]
+
+  # Loop through duplicate tips
+	for (i in seq_along(duplicate_tips)) {
+	# writing a progress bar
+	if (!i %% 10) cat("Percentage done", format(round((i / length(duplicate_tips)) * 100, 2), nsmall = 2), " at ", format(Sys.time(), '%H:%M:%S'), "\n")
+	
+	locations_dups <- which(tree$tip.label == duplicate_tips[i])
+	# Does the duplicate tips form a monophyletic clade?
+	# If yes then we can remove one of the duplicate tips
+	if( is.monophyletic(tree, locations_dups) == TRUE) {
+		tree <- drop.tip(tree, tip = locations_dups[1])
+	} else {
+		# Remove both tips
+		tree <- drop.tip(tree, tip = duplicate_tips)
+		}
+	}
+	return(tree)
+}
+
+tree <- find_duplicate_tips(tree)
+#############################################################################################################################
+
 
 # Loading the list of non-monophyletic orders
 cat("Loading the list of non-monophyletic orders \n")
@@ -85,46 +114,60 @@ tips_family_orders <- merge(tips_families, family_orders, by.x = "families", by.
 
 #####################################################################
 # Function for finding the largest monophyletic clade in an order that is not monophyletic
-find_largest_clade <- function(tips_in_order, tree){
-	biggest_subtree <- character(0)
-	for(i in seq_along(tips_in_order)){
-	tip <- tips_in_order[i]
-	#print(tip)
-
+find_largest_clade <- function(tips_in_order, tree) {
+  biggest_subtree <- character(0)
+  rogue_species <- character(0)  # New: Keep track of rogue species causing the loop
+  
+  for (i in seq_along(tips_in_order)) {
+    tip <- tips_in_order[i]
     cat(which(tips_in_order == tip), "\r")
 
-    node <- which(tree$tip.label==tip)
-
+    node <- which(tree$tip.label == tip)[1]  # Choose the first match if there are multiple
     pnode <- getParent(tree, node)
 
-    subtree <- get_subtree_at_node(tree, pnode-Ntip(tree))$subtree
+    # Ensure that the parent node is not 0 (root) before proceeding
+    if (pnode != 0) {
+      subtree <- get_subtree_at_node(tree, pnode - Ntip(tree))$subtree
 
-    # condition: any of the tips in this subtree not a species in this order
-    if(any(!subtree$tip.label %in% tips_in_order)){
-		# We need to save the subtree if it is bigger than the current biggest subtree
-		if(length(subtree$tip.label) > length(biggest_subtree$tip.label)){
-			biggest_subtree <- subtree
-		}
-    }
+      # Check if the subtree is non-empty
+      if (length(subtree$tip.label) > 0) {
+        # condition: any of the tips in this subtree not a species in this order
+        if (any(!subtree$tip.label %in% tips_in_order)) {
+          # We need to save the subtree if it is bigger than the current biggest subtree
+          if (length(subtree$tip.label) > length(biggest_subtree$tip.label)) {
+            biggest_subtree <- subtree
+            # New: Save the rogue species causing the loop
+            rogue_species <- tip
+          }
+        }
 
-    # condition: all of the tips in this subtree an island endemic?
-    if(all(subtree$tip.label %in% tips_in_order)){
-      
-      while(all(subtree$tip.label %in% tips_in_order)){
-        #print("down the rabbit hole")
-        last_tree <- subtree
-        last_pnode <- pnode
+        # condition: all of the tips in this subtree an island endemic?
+        if (all(subtree$tip.label %in% tips_in_order)) {
+          while (all(subtree$tip.label %in% tips_in_order)) {
+            last_tree <- subtree
+            last_pnode <- pnode
 
-        pnode <- getParent(tree, pnode)
-        subtree <- get_subtree_at_node(tree, pnode-Ntip(tree))$subtree 
+            pnode <- getParent(tree, pnode)
+            subtree <- get_subtree_at_node(tree, pnode - Ntip(tree))$subtree
+          }
+
+          biggest_subtree <- subtree
+          # New: Save the rogue species causing the loop
+          rogue_species <- tip
+        }
       }
-      
-	  biggest_subtree <- subtree
-		# Here I should save the last tree if it is bigger than the current biggest subtree
-    	}
-	}
-return(biggest_subtree)
+    }
+  }
+  
+  # Check if biggest_subtree is non-empty before returning
+  if (length(biggest_subtree$tip.label) > 0) {
+    # New: Return both the biggest_subtree and rogue_species
+    return(list(biggest_subtree = biggest_subtree, rogue_species = rogue_species))
+  } else {
+    return(NULL)
+  }
 }
+
 ##########################################################################################
 ##########################################################################################
 ##########################################################################################
@@ -135,6 +178,7 @@ rogue_tips_family <- data.frame(order = character(0), rogue_tips = numeric(0))
 
 # Looping through the non-monophyletic orders
 for (i in seq_along(non_monophyletic_orders[[1]])) {
+
 	# Finding the order
 	order <- non_monophyletic_orders[[1]][i]
 
@@ -146,13 +190,15 @@ for (i in seq_along(non_monophyletic_orders[[1]])) {
 	tips_in_order <- tips_family_orders$name[which(tips_family_orders$order == order)]
 	cat("Number of tips in the order: ", length(tips_in_order), "   ")
 
-	# Finding the MRCA of the tips in the order
-	if(order == "Gentianales"){
-		cat("Skipping Gentianales \n")
-		next
-	}else {
+
+	tips_in_order <- tips_in_order[which(tips_in_order %in% tree$tip.label)]
+
+	#cat("Are all the tips in the order in the tree: ",all(tips_in_order %in% tree$tip.label), "\n")
+	#cat("These are the tips not in the tree: ", tips_in_order[which(!(tips_in_order %in% tree$tip.label))], "\n")
+
+
 	MRCA <- getMRCA(tree, tips_in_order)
-	}
+	#}
 	#print(MRCA)
 
 	# Finding the tips which are descendants of the MRCA
@@ -179,7 +225,7 @@ for (i in seq_along(non_monophyletic_orders[[1]])) {
 		if( is.monophyletic(tree, tips_in_order) == TRUE){
 				order_tree <- drop.tip(tree, tip = tree$tip.label[!tree$tip.label %in% tips_in_order])
 				 # Save the pruned tree to a file
-  				write.tree(order_tree, paste0(path_out, "twice_pruned_tree_family_", order, "_GBMB.txt"))
+  				write.tree(order_tree, paste0(path_out, "twice_pruned_tree_", order, "_GBMB.txt"))
 				rogue_tips_family <- rbind(rogue_tips_family, data.frame(order = order, rogue_tips = c(rogue_tips)))
 		}
 
@@ -187,15 +233,30 @@ for (i in seq_along(non_monophyletic_orders[[1]])) {
 		next
 	} else {
 		# Here I will loop through the tips in the order and find the largest monophyletic clade which is in the order.
-		#largest_clade <- find_largest_clade(tips_in_order, tree)
-		#cat("The largest monophyletic clade in the", order, "is: ", length(largest_clade$tip.label), "\n")
+		
+		result <- find_largest_clade(tips_in_order, tree)
 
-		subtree <- get_subtree_at_node(tree, MRCA-Ntip(tree))$subtree
-		# Saving the tree with all the descendants of the MRCA
-		# Can i somehow 
-		write.tree(subtree, paste0(path_out, "MRCA_tree_", order, "_GBMB.txt"))
+		largest_clade <- result$biggest_subtree
+		rogue_species_breaking <- result$rogue_species
+
+
+
+
+		cat("The largest monophyletic clade in the", order, "is: ", length(largest_clade$tip.label), "\n")
+		cat("The rogue species breaking the loop is: ", rogue_species_breaking, "\n")
+
+		#writing the species_in_mrca_tree to a file
+		#write.table(species_in_mrca_tree, paste0(path_out, "species_in_mrca_tree_", order, "_GBMB.txt"), row.names = FALSE, col.names = FALSE)
+		if ( length(largest_clade$tip.label) >= 0.9 * length(tips_in_order) ) {
+			cat("The largest monophyletic clade in the order contains atleat 90 % of the tips in the order \n")
+			cat("Saving the largest clade \n")
+			write.tree(largest_clade, paste0(path_out, "twice_pruned_tree_", order, "_GBMB.txt"))
+			
+
+		} else {
+			cat("Problem order is: ", order, "\n")
+		#write.tree(subtree, paste0(path_out, "Rogue_MRCA_tree_", order, "_GBMB.txt"))
+
 		}
 	}
-
-tree
-plot(tree)
+}

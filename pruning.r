@@ -301,6 +301,30 @@ if (length(tree$tip.label[!(tree$tip.label %in% wcvp$taxon_name)]) == 0) {
   break
 }
 
+######################################################################################
+# Find bad names
+bad_names <- tree$tip.label[tree$tip.label %in% wcvp$taxon_name[wcvp$taxon_status != "Accepted" & wcvp$taxon_rank == "Species"]]
+
+# Create a data frame for renaming
+rename_df <- wcvp %>%
+  filter(taxon_name %in% bad_names) %>%
+  group_by(accepted_plant_name_id) %>%
+  slice(1) %>%
+  select(taxon_name, accepted_plant_name_id)
+
+# Update the tips in the tree
+tree$tip.label <- ifelse(tree$tip.label %in% rename_df$taxon_name, rename_df$accepted_plant_name_id[match(tree$tip.label, rename_df$taxon_name)], tree$tip.label)
+
+# Check if all the tips in the tree are currently in the WCVP and are Accepted species names
+if (length(tree$tip.label[!(tree$tip.label %in% wcvp$taxon_name[wcvp$taxon_status == "Accepted" & wcvp$taxon_rank == "Species"])]) == 0) {
+  cat("All tips in the tree are in the WCVP file and are Accepted species names\n")
+} else {
+  cat("There are still tips in the tree that are not in the WCVP file or are not Accepted species names\n")
+  cat("The tips are ", tree$tip.label[!(tree$tip.label %in% wcvp$taxon_name[wcvp$taxon_status == "Accepted" & wcvp$taxon_rank == "Species"])], "\n")
+  stop("Stopping the program\n")
+  break
+}
+
 # I should now be able to save the tree as a newick file and use it for the next step in the workflow.
 cat("Saving the tree as a newick file \n")
 write.tree(tree, output_file_tree)
