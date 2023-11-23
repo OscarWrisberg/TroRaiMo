@@ -192,7 +192,7 @@ for (i in seq_along(not_matchable_tips)) {
 }
 
 # Are all species accounted for?
-cat("Are all species accounted for: "all(not_matchable_tips %in% split_not_matchable_tips | not_matchable_tips %in% split_matchable_tips| not_matchable_tips %in% split_multi_match))
+cat("Are all species accounted for: ", all(not_matchable_tips %in% split_not_matchable_tips | not_matchable_tips %in% split_matchable_tips| not_matchable_tips %in% split_multi_match))
 
 Saving vectors as RDS files for easy loading if I need to rerun the script
 saveRDS(split_not_matchable_tips, "split_not_matchable_tips.rds")
