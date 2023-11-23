@@ -191,9 +191,6 @@ tree$tip.label[which(tree$tip.label %in% matchable_tips)] <- match_name # This w
 #   }
 # }
 
-# Are all species accounted for?
-cat("Are all species accounted for: ", all(not_matchable_tips %in% split_not_matchable_tips | not_matchable_tips %in% split_matchable_tips| not_matchable_tips %in% split_multi_match))
-
 #Saving vectors as RDS files for easy loading if I need to rerun the script
 # saveRDS(split_not_matchable_tips, "split_not_matchable_tips.rds")
 # saveRDS(split_matchable_tips, "split_matchable_tips.rds")
@@ -205,6 +202,11 @@ split_not_matchable_tips <- readRDS("split_not_matchable_tips.rds")
 split_matchable_tips <- readRDS("split_matchable_tips.rds")
 split_match_name <- readRDS("split_match_name.rds")
 split_multi_match <- readRDS("split_multi_match.rds")
+
+
+# Are all species accounted for?
+cat("Are all species accounted for: ", all(not_matchable_tips %in% split_not_matchable_tips | not_matchable_tips %in% split_matchable_tips| not_matchable_tips %in% split_multi_match))
+
 
 # And now we can again rename the tips based on the matches we found
 cat("Renaming tips we found during split names approach \n")
