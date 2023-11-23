@@ -118,78 +118,78 @@ tree$tip.label[which(tree$tip.label %in% matchable_tips)] <- match_name # This w
 # looping through the not_matchable_tips which when split by " " gives me a vector longer than 2.
 ###############################################################################################################################################
 
-# Initialize empty vectors
-split_not_matchable_tips <- character(0)
-split_matchable_tips <- character(0)
-split_match_name <- character(0)
-split_multi_match <- character(0)
+# # Initialize empty vectors
+# split_not_matchable_tips <- character(0)
+# split_matchable_tips <- character(0)
+# split_match_name <- character(0)
+# split_multi_match <- character(0)
 
-# Loop through the not_matchable_tips
-for (i in seq_along(not_matchable_tips)) {
-  # Writing a progress bar
-  if (!i %% 50) cat("Percentage done", format(round((i / length(not_matchable_tips)) * 100, 2), nsmall = 2), " at ", format(Sys.time(), '%H:%M:%S'), "\n")
+# # Loop through the not_matchable_tips
+# for (i in seq_along(not_matchable_tips)) {
+#   # Writing a progress bar
+#   if (!i %% 50) cat("Percentage done", format(round((i / length(not_matchable_tips)) * 100, 2), nsmall = 2), " at ", format(Sys.time(), '%H:%M:%S'), "\n")
 
-  # Split the tip by space
-  tip_elements <- strsplit(not_matchable_tips[i], " ")[[1]]
+#   # Split the tip by space
+#   tip_elements <- strsplit(not_matchable_tips[i], " ")[[1]]
   
-  # If the split list is only of length 2, then we can go to next tip
-  if(length(tip_elements) <= 2){
-    split_not_matchable_tips <- c(split_not_matchable_tips, not_matchable_tips[i])
-	next
-  }
+#   # If the split list is only of length 2, then we can go to next tip
+#   if(length(tip_elements) <= 2){
+#     split_not_matchable_tips <- c(split_not_matchable_tips, not_matchable_tips[i])
+# 	next
+#   }
 
-  if( any(tip_elements == "x" | tip_elements == "X") ){
-    # If the tip contains an x or an X then we can go to next tip
-    #cat("Cannot match ", not_matchable_tips[i], " because it contains an x or an X \n")
-    split_not_matchable_tips <- c(split_not_matchable_tips, not_matchable_tips[i])
-    next
-  } 
+#   if( any(tip_elements == "x" | tip_elements == "X") ){
+#     # If the tip contains an x or an X then we can go to next tip
+#     #cat("Cannot match ", not_matchable_tips[i], " because it contains an x or an X \n")
+#     split_not_matchable_tips <- c(split_not_matchable_tips, not_matchable_tips[i])
+#     next
+#   } 
 
-  if ( any(tip_elements == "Sp." | tip_elements == "sp.")){
-    # If the tip contains an Sp. or an sp. then we can go to next tip
-    #cat("Cannot match ", not_matchable_tips[i], " because it contains an Sp. or an sp. \n")
-    split_not_matchable_tips <- c(split_not_matchable_tips, not_matchable_tips[i])
-    next
-  }
+#   if ( any(tip_elements == "Sp." | tip_elements == "sp.")){
+#     # If the tip contains an Sp. or an sp. then we can go to next tip
+#     #cat("Cannot match ", not_matchable_tips[i], " because it contains an Sp. or an sp. \n")
+#     split_not_matchable_tips <- c(split_not_matchable_tips, not_matchable_tips[i])
+#     next
+#   }
 
-  # Otherwise we can try to find a match for the first two elements
-  if (length(tip_elements) > 2) {
-    # Take the first two elements
-    tip_to_search <- paste(tip_elements[1:2], collapse = " ")
+#   # Otherwise we can try to find a match for the first two elements
+#   if (length(tip_elements) > 2) {
+#     # Take the first two elements
+#     tip_to_search <- paste(tip_elements[1:2], collapse = " ")
     
-    # Check for exact match
-    if (tip_to_search %in% wcvp$taxon_name) {
-      #cat("Exact match found for ", not_matchable_tips[i], "\n")
-      split_matchable_tips <- c(split_matchable_tips, not_matchable_tips[i])
-      split_match_name <- c(split_match_name, tip_to_search)
-    } else {
-      # Check for matches with one substitution, insertion, or deletion
-      potential_matches <- stringdist::stringdistmatrix(tip_to_search, wcvp$taxon_name, method = "lv", useNames = TRUE)
+#     # Check for exact match
+#     if (tip_to_search %in% wcvp$taxon_name) {
+#       #cat("Exact match found for ", not_matchable_tips[i], "\n")
+#       split_matchable_tips <- c(split_matchable_tips, not_matchable_tips[i])
+#       split_match_name <- c(split_match_name, tip_to_search)
+#     } else {
+#       # Check for matches with one substitution, insertion, or deletion
+#       potential_matches <- stringdist::stringdistmatrix(tip_to_search, wcvp$taxon_name, method = "lv", useNames = TRUE)
       
-      # Filter for matches with distance 1
-      matches_with_distance_one <- wcvp$taxon_name[potential_matches <= 1]
+#       # Filter for matches with distance 1
+#       matches_with_distance_one <- wcvp$taxon_name[potential_matches <= 1]
       
-      # Check if any matches were found
-      if (length(matches_with_distance_one) > 0 & length(matches_with_distance_one) == 1) {
-        #cat("Match found for ", not_matchable_tips[i], " with one substitution, insertion, or deletion\n")
-        #cat("Match is ", matches_with_distance_one[1], "\n")
-        split_matchable_tips <- c(split_matchable_tips, not_matchable_tips[i])
-        split_match_name <- c(split_match_name, matches_with_distance_one[1])
-      }
+#       # Check if any matches were found
+#       if (length(matches_with_distance_one) > 0 & length(matches_with_distance_one) == 1) {
+#         #cat("Match found for ", not_matchable_tips[i], " with one substitution, insertion, or deletion\n")
+#         #cat("Match is ", matches_with_distance_one[1], "\n")
+#         split_matchable_tips <- c(split_matchable_tips, not_matchable_tips[i])
+#         split_match_name <- c(split_match_name, matches_with_distance_one[1])
+#       }
 
-       if(length(matches_with_distance_one) > 0 & length(matches_with_distance_one) > 1) {
-        #cat("Multiple matches found for ", not_matchable_tips[i], "\n")
-        #cat("Matches are ", matches_with_distance_one, "\n")
-        split_multi_match <- c(split_multi_match, not_matchable_tips[i])
+#        if(length(matches_with_distance_one) > 0 & length(matches_with_distance_one) > 1) {
+#         #cat("Multiple matches found for ", not_matchable_tips[i], "\n")
+#         #cat("Matches are ", matches_with_distance_one, "\n")
+#         split_multi_match <- c(split_multi_match, not_matchable_tips[i])
 
-      } else {
-        # No match found
-        #cat("No match found for ", not_matchable_tips[i], "\n")
-        split_not_matchable_tips <- c(split_not_matchable_tips, not_matchable_tips[i])
-      }
-    }
-  }
-}
+#       } else {
+#         # No match found
+#         #cat("No match found for ", not_matchable_tips[i], "\n")
+#         split_not_matchable_tips <- c(split_not_matchable_tips, not_matchable_tips[i])
+#       }
+#     }
+#   }
+# }
 
 # Are all species accounted for?
 cat("Are all species accounted for: ", all(not_matchable_tips %in% split_not_matchable_tips | not_matchable_tips %in% split_matchable_tips| not_matchable_tips %in% split_multi_match))
