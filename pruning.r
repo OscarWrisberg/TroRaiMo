@@ -191,17 +191,19 @@ for (i in seq_along(not_matchable_tips)) {
   }
 }
 
-Saving vectors as RDS files for easy loading if I need to rerun the script
+#Saving vectors as RDS files for easy loading if I need to rerun the script
+cat("Saving Rds files \n")
 saveRDS(split_not_matchable_tips, "split_not_matchable_tips.rds")
 saveRDS(split_matchable_tips, "split_matchable_tips.rds")
 saveRDS(split_match_name, "split_match_name.rds")
 saveRDS(split_multi_match, "split_multi_match.rds")
+cat("Rds files saved \n")
 
-# Loading RDS files
-split_not_matchable_tips <- readRDS("split_not_matchable_tips.rds")
-split_matchable_tips <- readRDS("split_matchable_tips.rds")
-split_match_name <- readRDS("split_match_name.rds")
-split_multi_match <- readRDS("split_multi_match.rds")
+## Loading RDS files
+#split_not_matchable_tips <- readRDS("split_not_matchable_tips.rds")
+#split_matchable_tips <- readRDS("split_matchable_tips.rds")
+#split_match_name <- readRDS("split_match_name.rds")
+#split_multi_match <- readRDS("split_multi_match.rds")
 
 
 # Are all species accounted for?
@@ -290,6 +292,7 @@ if (length(tree$tip.label[duplicated(tree$tip.label)]) == 0) {
 cat("Proportion of duplicated tips solved is ", length(mono_dups)/total_dups, "\n")
 cat("Proportion of duplicated tips not solved is ", length(no_mono_dropped_tips)/total_dups, "\n")
 cat("Duplicated species accounted for: " , length(mono_dups) + length(no_mono_dropped_tips), "\n")
+cat("The number of duplicated tips left in the tree is: ", length(tree$tip.label[duplicated(tree$tip.label)]), "\n")
 
 
 # Check if there are any tips left in the tree that are not in the WCVP file
