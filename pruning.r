@@ -57,52 +57,52 @@ tree <- drop.tip(tree, "Passiflora hybrid cultivar")
 # I could use the taxonomy_matcher to find the correct name for all the tips in the tree, but I think this would be too time consuming.
 # Instead I am just going to loop through the names and see if I can find a match in the WCVP file using the grep function.
 
-# # Initialize empty vectorsq
-# not_matchable_tips <- character(0)
-# matchable_tips <- character(0)
-# match_name <- character(0)
+# Initialize empty vectorsq
+not_matchable_tips <- character(0)
+matchable_tips <- character(0)
+match_name <- character(0)
 
-# # Loop through the not_matching_tips
-# for (i in seq_along(not_matching_tips)) {
-#   # Writing a progress bar
-#   if (!i %% 50) cat("Percentage done", format(round((i / length(not_matching_tips)) * 100, 2), nsmall = 2), " at ", format(Sys.time(), '%H:%M:%S'), "\n")
+# Loop through the not_matching_tips
+for (i in seq_along(not_matching_tips)) {
+  # Writing a progress bar
+  if (!i %% 50) cat("Percentage done", format(round((i / length(not_matching_tips)) * 100, 2), nsmall = 2), " at ", format(Sys.time(), '%H:%M:%S'), "\n")
 
-#   # Check for exact match
-#   if (not_matching_tips[i] %in% wcvp$taxon_name) {
-#     #cat("Exact match found for ", not_matching_tips[i], "\n")
-#     matchable_tips <- c(matchable_tips, not_matching_tips[i])
-#     match_name <- c(match_name, not_matching_tips[i])
-#   } else {
-#     # Check for matches with one substitution, insertion, or deletion
-#     potential_matches <- stringdist::stringdistmatrix(not_matching_tips[i], wcvp$taxon_name, method = "lv", useNames = TRUE)
+  # Check for exact match
+  if (not_matching_tips[i] %in% wcvp$taxon_name) {
+    #cat("Exact match found for ", not_matching_tips[i], "\n")
+    matchable_tips <- c(matchable_tips, not_matching_tips[i])
+    match_name <- c(match_name, not_matching_tips[i])
+  } else {
+    # Check for matches with one substitution, insertion, or deletion
+    potential_matches <- stringdist::stringdistmatrix(not_matching_tips[i], wcvp$taxon_name, method = "lv", useNames = TRUE)
     
-#     # Filter for matches with distance 1
-#     matches_with_distance_one <- wcvp$taxon_name[potential_matches <= 1]
+    # Filter for matches with distance 1
+    matches_with_distance_one <- wcvp$taxon_name[potential_matches <= 1]
     
-#     # Check if any matches were found
-#     if (length(matches_with_distance_one) > 0) {
-#       #cat("Match found for ", not_matching_tips[i], " with one substitution, insertion, or deletion\n")
-# 	  if (length(matches_with_distance_one) == 1) {
-#       #cat("Match is ", matches_with_distance_one[1], "\n")
-#       matchable_tips <- c(matchable_tips, not_matching_tips[i])
-#       match_name <- c(match_name, matches_with_distance_one[1])
-# 	  } else {
-# 		  cat("Multiple matches found for ", not_matching_tips[i], "\n")
-# 		  cat("Matches are ", matches_with_distance_one, "\n")
-# 		  not_matchable_tips <- c(not_matchable_tips, not_matching_tips[i])
-#     } 
-# 	} else {
-#       # No match found
-#       #cat("No match found for ", not_matching_tips[i], "\n")
-#       not_matchable_tips <- c(not_matchable_tips, not_matching_tips[i])
-#     }
-#   }
-# }
+    # Check if any matches were found
+    if (length(matches_with_distance_one) > 0) {
+      #cat("Match found for ", not_matching_tips[i], " with one substitution, insertion, or deletion\n")
+	  if (length(matches_with_distance_one) == 1) {
+      #cat("Match is ", matches_with_distance_one[1], "\n")
+      matchable_tips <- c(matchable_tips, not_matching_tips[i])
+      match_name <- c(match_name, matches_with_distance_one[1])
+	  } else {
+		  cat("Multiple matches found for ", not_matching_tips[i], "\n")
+		  cat("Matches are ", matches_with_distance_one, "\n")
+		  not_matchable_tips <- c(not_matchable_tips, not_matching_tips[i])
+    } 
+	} else {
+      # No match found
+      #cat("No match found for ", not_matching_tips[i], "\n")
+      not_matchable_tips <- c(not_matchable_tips, not_matching_tips[i])
+    }
+  }
+}
 
-# # Saving vectors as RDS files
-# saveRDS(not_matchable_tips, "not_matchable_tips_1.rds") 
-# saveRDS(matchable_tips, "matchable_tips_1.rds") 
-# saveRDS(match_name, "match_name_1.rds")
+# Saving vectors as RDS files
+saveRDS(not_matchable_tips, "not_matchable_tips_1.rds") 
+saveRDS(matchable_tips, "matchable_tips_1.rds") 
+saveRDS(match_name, "match_name_1.rds")
 
 # Loading RDS files
 not_matchable_tips <- readRDS("not_matchable_tips_1.rds")
@@ -200,17 +200,19 @@ saveRDS(split_multi_match, "split_multi_match.rds")
 cat("Rds files saved \n")
 
 ## Loading RDS files
-#split_not_matchable_tips <- readRDS("split_not_matchable_tips.rds")
-#split_matchable_tips <- readRDS("split_matchable_tips.rds")
-#split_match_name <- readRDS("split_match_name.rds")
-#split_multi_match <- readRDS("split_multi_match.rds")
+split_not_matchable_tips <- readRDS("split_not_matchable_tips.rds")
+split_matchable_tips <- readRDS("split_matchable_tips.rds")
+split_match_name <- readRDS("split_match_name.rds")
+split_multi_match <- readRDS("split_multi_match.rds")
 
 
 # Are all species accounted for?
-cat("Are all species accounted for: ", all(not_matchable_tips %in% split_not_matchable_tips | not_matchable_tips %in% split_matchable_tips| not_matchable_tips %in% split_multi_match))
+cat("Are all species accounted for: ", all(not_matchable_tips %in% split_not_matchable_tips | not_matchable_tips %in% split_matchable_tips| not_matchable_tips %in% split_multi_match), "\n")
 
 # And now we can again rename the tips based on the matches we found
 cat("Renaming tips we found during split names approach \n")
+cat("Number of tips in split_,matchable_tips is: ", length(split_matchable_tips), "\n")
+cat("Number of tips in split_match_name is: ", length(split_match_name), "\n")
 tree$tip.label[which(tree$tip.label %in% split_matchable_tips)] <- split_match_name
 
 # Remove tips that are still not matched
