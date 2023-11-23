@@ -194,17 +194,17 @@ for (i in seq_along(not_matchable_tips)) {
 # Are all species accounted for?
 cat("Are all species accounted for: ", all(not_matchable_tips %in% split_not_matchable_tips | not_matchable_tips %in% split_matchable_tips| not_matchable_tips %in% split_multi_match))
 
-Saving vectors as RDS files for easy loading if I need to rerun the script
-saveRDS(split_not_matchable_tips, "split_not_matchable_tips.rds")
-saveRDS(split_matchable_tips, "split_matchable_tips.rds")
-saveRDS(split_match_name, "split_match_name.rds")
-saveRDS(split_multi_match, "split_multi_match.rds")
+#Saving vectors as RDS files for easy loading if I need to rerun the script
+# saveRDS(split_not_matchable_tips, "split_not_matchable_tips.rds")
+# saveRDS(split_matchable_tips, "split_matchable_tips.rds")
+# saveRDS(split_match_name, "split_match_name.rds")
+# saveRDS(split_multi_match, "split_multi_match.rds")
 
 # Loading RDS files
-# split_not_matchable_tips <- readRDS("split_not_matchable_tips.rds")
-# split_matchable_tips <- readRDS("split_matchable_tips.rds")
-# split_match_name <- readRDS("split_match_name.rds")
-# split_multi_match <- readRDS("split_multi_match.rds")
+split_not_matchable_tips <- readRDS("split_not_matchable_tips.rds")
+split_matchable_tips <- readRDS("split_matchable_tips.rds")
+split_match_name <- readRDS("split_match_name.rds")
+split_multi_match <- readRDS("split_multi_match.rds")
 
 # And now we can again rename the tips based on the matches we found
 cat("Renaming tips we found during split names approach \n")
