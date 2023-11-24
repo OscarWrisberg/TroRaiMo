@@ -361,7 +361,7 @@ def pruning_tree(wcp,tree, output_file, path_in, script_dir, path_out):
         'cores': 5,
         'memory': '20g',
         'account':"Trf_models",
-        'walltime': "24:00:00"
+        'walltime': "02:00:00" # should be atleast 24 hours if you dont load from RDS files
     }
 
     spec = '''
