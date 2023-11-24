@@ -293,7 +293,7 @@ if (length(tree$tip.label[duplicated(tree$tip.label)]) == 0) {
 }
 
 # Removing Tips which are suddenly not in the wcvp
-cat("Which tips are in the tree but not in the WCVP", tree$tip.label[which(!(tree$tip.label %in% wcvp$taxon_name))])
+cat("Which tips are in the tree but not in the WCVP", tree$tip.label[which(!(tree$tip.label %in% wcvp$taxon_name))], "\n")
 
 #cat("Dropping the tips", )
 #tree <- drop.tip(tree, )
@@ -311,8 +311,8 @@ if (length(tree$tip.label[!(tree$tip.label %in% wcvp$taxon_name)]) == 0) {
 } else {
   cat("There are still ",length(tree$tip.label[which(!(tree$tip.label %in% wcvp$taxon_name))]), " in the tree that are not in the WCVP file\n")
   cat("The tips are ", tree$tip.label[which(!(tree$tip.label %in% wcvp$taxon_name))], "\n")
-  stop("Stopping the program\n")
-  break
+  cat("Removing these species \n")
+  tree <- drop.tip(tree, tree$tip.label[which(!(tree$tip.label %in% wcvp$taxon_name))])
 }
 
 ######################################################################################
