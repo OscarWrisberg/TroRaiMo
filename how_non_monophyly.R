@@ -29,36 +29,39 @@ path_out <- "../workflow/02_adding_orders/pruning/"
 # cat("Loading the tree \n")
 # tree <- read.tree(tree)
 
+
 # Removing the _ and " from the tip labels
 tree$tip.label <- gsub("_", " ", tree$tip.label)
 tree$tip.label <- gsub('"', '', tree$tip.label)  # nolint
 
 tree <- force.ultrametric(tree)
 
-# Function for finding duplicate tips and removing them
-find_duplicate_tips <- function(tree) {
-  # Find duplicate tips
-  duplicate_tips <- tree$tip.label[duplicated(tree$tip.label)]
+any(duplicated(tree$tip.label))
 
-  # Loop through duplicate tips
-	for (i in seq_along(duplicate_tips)) {
-	# writing a progress bar
-	if (!i %% 10) cat("Percentage done", format(round((i / length(duplicate_tips)) * 100, 2), nsmall = 2), " at ", format(Sys.time(), '%H:%M:%S'), "\n")
+# # Function for finding duplicate tips and removing them
+# find_duplicate_tips <- function(tree) {
+#   # Find duplicate tips
+#   duplicate_tips <- tree$tip.label[duplicated(tree$tip.label)]
+
+#   # Loop through duplicate tips
+# 	for (i in seq_along(duplicate_tips)) {
+# 	# writing a progress bar
+# 	if (!i %% 10) cat("Percentage done", format(round((i / length(duplicate_tips)) * 100, 2), nsmall = 2), " at ", format(Sys.time(), '%H:%M:%S'), "\n")
 	
-	locations_dups <- which(tree$tip.label == duplicate_tips[i])
-	# Does the duplicate tips form a monophyletic clade?
-	# If yes then we can remove one of the duplicate tips
-	if( is.monophyletic(tree, locations_dups) == TRUE) {
-		tree <- drop.tip(tree, tip = locations_dups[1])
-	} else {
-		# Remove both tips
-		tree <- drop.tip(tree, tip = duplicate_tips)
-		}
-	}
-	return(tree)
-}
+# 	locations_dups <- which(tree$tip.label == duplicate_tips[i])
+# 	# Does the duplicate tips form a monophyletic clade?
+# 	# If yes then we can remove one of the duplicate tips
+# 	if( is.monophyletic(tree, locations_dups) == TRUE) {
+# 		tree <- drop.tip(tree, tip = locations_dups[1])
+# 	} else {
+# 		# Remove both tips
+# 		tree <- drop.tip(tree, tip = duplicate_tips)
+# 		}
+# 	}
+# 	return(tree)
+# }
 
-tree <- find_duplicate_tips(tree)
+# tree <- find_duplicate_tips(tree)
 #############################################################################################################################
 
 
@@ -106,6 +109,7 @@ find_order <- function(fams, apg) {
 # Running the function
 cat("Running the function \n")
 family_orders <- find_order(unique_families, apg)
+length(family_orders$order)
 
 # Merging the tips_families and family_orders data frames
 cat("Merging the tips_families and family_orders data frames \n")
@@ -116,7 +120,7 @@ tips_family_orders <- merge(tips_families, family_orders, by.x = "families", by.
 # Function for finding the largest monophyletic clade in an order that is not monophyletic
 find_largest_clade <- function(tips_in_order, tree) {
   biggest_subtree <- character(0)
-  rogue_species <- character(0)  # New: Keep track of rogue species causing the loop
+  rogue_species <- character(0)  # New: Keep track of rogue species causing the loop to crash
   
   for (i in seq_along(tips_in_order)) {
     tip <- tips_in_order[i]
@@ -137,11 +141,11 @@ find_largest_clade <- function(tips_in_order, tree) {
           if (length(subtree$tip.label) > length(biggest_subtree$tip.label)) {
             biggest_subtree <- subtree
             # New: Save the rogue species causing the loop
-            rogue_species <- tip
+            rogue_species <- subtree$tip.label[which(!subtree$tip.label %in% tips_in_order)]
           }
         }
 
-        # condition: all of the tips in this subtree an island endemic?
+        # condition: all of the tips in 
         if (all(subtree$tip.label %in% tips_in_order)) {
           while (all(subtree$tip.label %in% tips_in_order)) {
             last_tree <- subtree
@@ -153,7 +157,7 @@ find_largest_clade <- function(tips_in_order, tree) {
 
           biggest_subtree <- subtree
           # New: Save the rogue species causing the loop
-          rogue_species <- tip
+          rogue_species <- subtree$tip.label[which(!subtree$tip.label %in% tips_in_order)] #
         }
       }
     }
@@ -165,7 +169,30 @@ find_largest_clade <- function(tips_in_order, tree) {
     return(list(biggest_subtree = biggest_subtree, rogue_species = rogue_species))
   } else {
     return(NULL)
-  }
+  }# Function for finding duplicate tips and removing them
+# find_duplicate_tips <- function(tree) {
+#   # Find duplicate tips
+#   duplicate_tips <- tree$tip.label[duplicated(tree$tip.label)]
+
+#   # Loop through duplicate tips
+# 	for (i in seq_along(duplicate_tips)) {
+# 	# writing a progress bar
+# 	if (!i %% 10) cat("Percentage done", format(round((i / length(duplicate_tips)) * 100, 2), nsmall = 2), " at ", format(Sys.time(), '%H:%M:%S'), "\n")
+	
+# 	locations_dups <- which(tree$tip.label == duplicate_tips[i])
+# 	# Does the duplicate tips form a monophyletic clade?
+# 	# If yes then we can remove one of the duplicate tips
+# 	if( is.monophyletic(tree, locations_dups) == TRUE) {
+# 		tree <- drop.tip(tree, tip = locations_dups[1])
+# 	} else {
+# 		# Remove both tips
+# 		tree <- drop.tip(tree, tip = duplicate_tips)
+# 		}
+# 	}
+# 	return(tree)
+# }
+
+# tree <- find_duplicate_tips(tree)
 }
 
 ##########################################################################################
@@ -176,6 +203,11 @@ find_largest_clade <- function(tips_in_order, tree) {
 
 rogue_tips_family <- data.frame(order = character(0), rogue_tips = numeric(0))
 
+all(tree$tip.label %in% wcvp$taxon_name)
+all(tree$tip.label %in% tips_family_orders$name)
+
+tree$tip.label[which(!tree$tip.label %in% tips_family_orders$name)
+]
 # Looping through the non-monophyletic orders
 for (i in seq_along(non_monophyletic_orders[[1]])) {
 
@@ -187,8 +219,8 @@ for (i in seq_along(non_monophyletic_orders[[1]])) {
 
 	# Finding the tips in the order
 	print(order)
-	tips_in_order <- tips_family_orders$name[which(tips_family_orders$order == order)]
-	cat("Number of tips in the order: ", length(tips_in_order), "   ")
+	tips_in_order <- tips_family_orders$name[which(tips_family_orders$order == order)] # Selecting the tips which are in the selected order
+	cat("Number of tips in the order: ", length(tips_in_order), "   ") 
 
 
 	tips_in_order <- tips_in_order[which(tips_in_order %in% tree$tip.label)]
@@ -198,15 +230,15 @@ for (i in seq_along(non_monophyletic_orders[[1]])) {
 
 
 	MRCA <- getMRCA(tree, tips_in_order)
-	#}
 	#print(MRCA)
 
 	# Finding the tips which are descendants of the MRCA
 	descendants <- tips(tree, MRCA)
 
+	cat("The number of descendants from the MRCA is  ", length(descendants), "\n")
 
 	# finding the tips which are descendants of the MRCA and are not in the order
-	rogue_tips <- descendants[which(descendants %in% tips_in_order == FALSE)]
+	rogue_tips <- descendants[which(!descendants %in% tips_in_order)]
 
 	cat("Number of rogue tips is:", length(rogue_tips), "\n ")
 

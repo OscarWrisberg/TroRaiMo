@@ -43,32 +43,32 @@ write.table(not_matching_tips, file.path(path_out, "not_matching_tips.txt"), sep
 
 
 #########################################################################################################
-# find_family <- function(name_list, wcvp) {
-#   names <- character(0)
-#   families <- character(0)
-#   for (i in seq_along(name_list)) {
-#     #print progress
-#     if (!i %% 500) cat("Percentage done", format(round((i / length(name_list)) * 100, 2), nsmall = 2), " at ", format(Sys.time(), '%H:%M:%S'), "\n")
+find_family <- function(name_list, wcvp) {
+  names <- character(0)
+  families <- character(0)
+  for (i in seq_along(name_list)) {
+    #print progress
+    if (!i %% 500) cat("Percentage done", format(round((i / length(name_list)) * 100, 2), nsmall = 2), " at ", format(Sys.time(), '%H:%M:%S'), "\n")
 
-#     family <- wcvp[wcvp$taxon_name == name_list[i], "family"]
-#     family <- as.character(family[1])
-#     names <- c(names, name_list[i])
-#     families <- c(families, family)
-#     #cat(name_list[i], " is found in family ", family, " \n")
-#   }
+    family <- wcvp[wcvp$taxon_name == name_list[i], "family"]
+    family <- as.character(family[1])
+    names <- c(names, name_list[i])
+    families <- c(families, family)
+    #cat(name_list[i], " is found in family ", family, " \n")
+  }
 
-#   cat("Length names ", length(names), "\n ")
-#   cat("Length families ", length(families), "\n ")
+  cat("Length names ", length(names), "\n ")
+  cat("Length families ", length(families), "\n ")
 
-#   df_families <- data.frame(name = names, families = families)
-#   return(df_families)
-# }
+  df_families <- data.frame(name = names, families = families)
+  return(df_families)
+}
 
-# tips_families <- find_family(matching_tips, wcvp)
+tips_families <- find_family(matching_tips, wcvp)
 
-# head(tips_families)
-# # Write tip families to a text file
-# write.table(tips_families, "tips_families.txt", sep = "\t", row.names = FALSE) #nolint
+head(tips_families)
+# Write tip families to a text file
+write.table(tips_families, "tips_families.txt", sep = "\t", row.names = FALSE) #nolint
 ##########################################################################################################
 
 # Loading tips families so I dont have to wait so fucking long..
