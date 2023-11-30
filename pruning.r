@@ -371,7 +371,8 @@ tree$tip.label[which(tree$tip.label %in% rename_df_new_matches_not_accepted$taxo
 # Are all the tips in the tree now found in the WCVP_accepted file?
 cat("Are all the ", length(tree$tip.label)," tips in the tree now found in the WCVP_accepted file? ", all(tree$tip.label %in% wcvp_accepted$taxon_name), "\n")
 
-
+wcvp_SmB_all_accepted <- wcvp[which(wcvp$taxon_name %in% tree$tip.label),] # 10843 t
+length(unique(wcvp_SmB_all_accepted$genus))
 ############################################################################################################################################################################
 ############################################################################################################################################################################
 ############################################################################################################################################################################
@@ -484,6 +485,16 @@ no_mono_dropped_tips <- character(0)
 mono_dups <- character(0)
 
 ##############################################################################
+# This function for checking duplicates is more sophisticated
+# It looks trough all the duplicate tips.
+# It looks for a monophyletic clade containing more than half of the number of duplicate tips.
+# If it finds this clade, it drops all the tips outside the clade and drops all but one of the tips in the clade.
+# If it does NOT find this clade, it drops all the duplicate tips.
+
+# In the end it writes a small dataframe showing the number of tip names for each number of duplicates, how many of them it solved, how many of them it was unable to solve and the proportion solved.
+
+# Current status is that I think this function runs but it takes a REALLY long time to run.
+# It has to be ran on the server, which is something I havent implemented yet.
 
 # tree_test <- tree
 
@@ -563,6 +574,10 @@ mono_dups <- character(0)
 
 
 # ###############################################################################
+# Simple duplicate remover where I remove duplicate tips if there are more than 3
+# If there is 2 I check if they are monophyletic and only remove 1 of them if they are and both if they are not
+# If there is 3 duplicates I check if  any combination of the tips can form a monophyletic clade, if they can, I keep one of the species in the clade and drop the rest, if they cannot I drop all of them.
+
 # if no duplicates are found, report it and continue
 if (length(tree$tip.label[duplicated(tree$tip.label)]) == 0) {
   cat("No duplicate species names found in the tree\n")
@@ -691,10 +706,8 @@ write.table(df_split_matchable_tips, "split_matchable_tips.txt", sep = "\t", row
 write.table(df_not_matchable_tips, "not_matchable_tips.txt", sep = "\t", row.names = FALSE) #nolints
 
 
-"Recordia reitzii" %in% tree$tip.label
-"Recordia reitzii" %in% wcvp$taxon_name
-wcvp[which(wcvp$taxon_name == "Recordia reitzii"),]
+wcvp_SmB <- wcvp[which(wcvp$taxon_name %in% tree$tip.label),]
+length(unique(wcvp_SmB$genus))
 
+all(tree$tip.label %in% wcvp_accepted_species$taxon_name)
 
-"Filipendula × intermedia Centella glabrata Citharexylum mocinoi" %in% tree$tip.label
-"Asperula kotschyana Hieracium pruinale Pterostylis lineata" %in% tree$tip.label

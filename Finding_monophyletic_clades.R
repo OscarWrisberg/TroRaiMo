@@ -8,20 +8,35 @@
 # Depending on the results. This script will then consider pruning the rogue tips which are in the order but not supposed to be in the order.
 # or it will remove tips which are supposed to be in the order but are placing elsewhere in the tree.
 
-# Loading packages
-library(data.table)
-library(ape)
-library(phytools)
-library(geiger)
-library(castor)
+
+#########################################################################################################################
+################################################## Loading packages  ####################################################
+#########################################################################################################################
+
+#Packages
+packages <- c("data.table", "ape", "phytools", "geiger", "castor")
+
+# Install packages not yet installed
+installed_packages <- packages %in% rownames(installed.packages())
+if (any(installed_packages == FALSE)) {
+  install.packages(packages[!installed_packages])
+}
+
+# Packages loading
+invisible(lapply(packages, library, character.only = TRUE))
+
 
 ###########################################################################################################################
-#Testing the code by runnin it on GDK through VScode and its built in terminal
-#setwd("/home/au543206/GenomeDK/Trf_models/data") # Set working directory when local
-wcvp <- readRDS("../workflow/02_adding_orders/wcvp_names_apg_aligned.rds")  # Read the WCVP names file into a data frame
-tree <- read.tree("GBMB_pruned.tre") # Read the GBMB pruned tree
-path_out <- "../workflow/02_adding_orders/pruning/"
+##################  Testing the code by runnin it on GDK through VScode and its built in terminal  ########################
+###########################################################################################################################
 
+#setwd("/home/au543206/GenomeDK/Trf_models/data") # Set working directory when local
+# wcvp <- readRDS("../workflow/02_adding_orders/wcvp_names_apg_aligned.rds")  # Read the WCVP names file into a data frame
+# tree <- read.tree("GBMB_pruned.tre") # Read the GBMB pruned tree
+# path_out <- "../workflow/02_adding_orders/pruning/"
+
+###########################################################################################################################
+############################# Getting command line file names for workflow ################################################
 ###########################################################################################################################
 
 # Setting the wd for the script
@@ -64,7 +79,10 @@ tips_families <- fread("tips_families.txt")
 ###################################################################################
 # Dropping the x order
 non_monophyletic_orders <- non_monophyletic_orders[which(non_monophyletic_orders$V1 != "x"),]
-non_monophyletic_orders
+
+# Removing some orders of Ferns which I am not interested in and which are causing problems
+fern_orders <- c("Gleicheniales", "Hymenophyllales", "Lycopodiales", "Ophioglossales", "Schizaeales", "Marsileales", "Polypodiales-eupolypod_I", "eupolypod_II", "Polypodiales")
+non_monophyletic_orders <- non_monophyletic_orders[which(!non_monophyletic_orders$V1 %in% fern_orders),]
 
 # Find unique families
 unique_families <- unique(tips_families$families)
@@ -75,7 +93,6 @@ cat(length(unique_families), "\n")
 # Create a data frame to store the number of tips in each family
 df_number_tips <- data.frame(family = character(0), number_tips = numeric(0))
 non_mono_family <- character(0)
-
 
 
 ####################################################################################
@@ -109,6 +126,8 @@ length(family_orders$order)
 cat("Merging the tips_families and family_orders data frames \n")
 tips_family_orders <- merge(tips_families, family_orders, by.x = "families", by.y = "family")
 unique(tips_family_orders$order)
+
+
 
 ##########################################################################################################################
 ############################  Defining function for finding the largest clades############################################
@@ -189,13 +208,6 @@ find_largest_clade <- function(tips_in_order, tree) {
 ############################ Looping through all non monophyletic orders to see if we can make them monophyletic#################################
 #################################################################################################################################################
 
-# Create a dataframe to store the orders which I could not solve
-no_solvable_tips_family <- data.frame(order = character(0), max_clade_found = numeric(0), total_tips_in_order = numeric(0),max_clade_coverage = numeric(0), rogue_tips = character(0))
-
-# Removing some orders of Ferns which I am not interested in and which are causing problems
-fern_orders <- c("Gleicheniales", "Hymenophyllales", "Lycopodiales", "Ophioglossales", "Schizaeales", "Marsileales", "Polypodiales-eupolypod_I", "eupolypod_II", "Polypodiales")
-non_monophyletic_orders <- non_monophyletic_orders[which(!non_monophyletic_orders$V1 %in% fern_orders),]
-
 	# Thought process behind this loop
 
 	# First we find the Most Recent Common Ancestor (MRCA) of all the tips in the order which we are investigating.
@@ -219,6 +231,8 @@ non_monophyletic_orders <- non_monophyletic_orders[which(!non_monophyletic_order
 	# Orders where the largest clade does not contain at least 90 % of the tips in the order will be saved to a file
 	# Potentially I can somehow later join some orders in order to get a monophyletic clade of two or more orders.
 
+# Create a dataframe to store the orders which I could not solve
+no_solvable_tips_family <- data.frame(order = character(0), max_clade_found = numeric(0), total_tips_in_order = numeric(0),max_clade_coverage = numeric(0), rogue_tips = character(0))
 
 # Looping through the non-monophyletic orders
 for (i in seq_along(non_monophyletic_orders[[1]])) {
@@ -300,9 +314,6 @@ for (i in seq_along(non_monophyletic_orders[[1]])) {
 
 # Writing out the no_solvable_tips_family data frame to a file
 write.table(no_solvable_tips_family, paste0(path_out,output_file), sep = "\t", row.names = FALSE) #nolint
-"Orders_which_could_not_be_solved.txt"
 
-no_solvable_tips_family
-head(no_solvable_tips_family)
 
-no_solvable_tips_family[,1:4]
+
