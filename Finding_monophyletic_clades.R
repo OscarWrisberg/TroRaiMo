@@ -30,24 +30,27 @@ invisible(lapply(packages, library, character.only = TRUE))
 ##################  Testing the code by runnin it on GDK through VScode and its built in terminal  ########################
 ###########################################################################################################################
 
-#setwd("/home/au543206/GenomeDK/Trf_models/data") # Set working directory when local
-# wcvp <- readRDS("../workflow/02_adding_orders/wcvp_names_apg_aligned.rds")  # Read the WCVP names file into a data frame
-# tree <- read.tree("GBMB_pruned.tre") # Read the GBMB pruned tree
-# path_out <- "../workflow/02_adding_orders/pruning/"
+setwd("/home/au543206/GenomeDK/Trf_models/data") # Set working directory when local
+wcvp <- readRDS("../workflow/02_adding_orders/wcvp_names_apg_aligned.rds")  # Read the WCVP names file into a data frame
+tree <- read.tree("GBMB_pruned.tre") # Read the GBMB pruned tree
+path_out <- "../workflow/02_adding_orders/pruning/"
+apg <- fread("../TroRaiMo/apgweb_parsed.csv")
+tips_families <- fread("tips_families.txt")
+non_monophyletic_orders <- fread("../workflow/02_adding_orders/pruning/non_mono_order.txt", header = FALSE, sep = "\t")
 
 ###########################################################################################################################
 ############################# Getting command line file names for workflow ################################################
 ###########################################################################################################################
 
-# Setting the wd for the script
-setwd("/home/owrisberg/Trf_models/data") # Set working directory when remote
+# # Setting the wd for the script
+# setwd("/home/owrisberg/Trf_models/data") # Set working directory when remote
 
-# Command line arguments
-input_file_tree <- commandArgs(trailingOnly = TRUE)[1]
-input_file_wcvp <- commandArgs(trailingOnly = TRUE)[2]
-output_file <- commandArgs(trailingOnly = TRUE)[3]
-output_path <- commandArgs(trailingOnly = TRUE)[4]
-apg <- commandArgs(trailingOnly = TRUE)[5]
+# # Command line arguments
+# input_file_tree <- commandArgs(trailingOnly = TRUE)[1]
+# input_file_wcvp <- commandArgs(trailingOnly = TRUE)[2]
+# output_file <- commandArgs(trailingOnly = TRUE)[3]
+# output_path <- commandArgs(trailingOnly = TRUE)[4]
+# apg <- commandArgs(trailingOnly = TRUE)[5]
 
 
 ###################################################################################
@@ -77,6 +80,11 @@ tips_families <- fread("tips_families.txt")
 ###################################################################################
 ###########################  Basic clean up  ######################################
 ###################################################################################
+
+# Remove "_"
+tree$tip.label <- gsub("_", " ", tree$tip.label)
+tree$tip.label <- gsub('"', '', tree$tip.label)  # nolint
+
 # Dropping the x order
 non_monophyletic_orders <- non_monophyletic_orders[which(non_monophyletic_orders$V1 != "x"),]
 
@@ -100,7 +108,6 @@ non_mono_family <- character(0)
 ####################################################################################
 
 # Find order function
-cat("Creating the find_order function \n")
 find_order <- function(fams, apg) {
   fam_list <- character(0)
   orders <- character(0)
@@ -118,7 +125,7 @@ find_order <- function(fams, apg) {
 }
 
 # Running the function
-cat("Running the function \n")
+cat("Finding the order for each of the families \n")
 family_orders <- find_order(unique_families, apg)
 length(family_orders$order)
 
