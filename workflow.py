@@ -434,6 +434,49 @@ def Slicing_trees(input_file, output_file, path_in,path_out, script_dir, wcvp_fi
 
 
 
+
+##############################################################
+###########---- Approach 1 finding the orders ----############
+##############################################################
+def Forcing_orders(input_file_tree, output_file, path_in,path_out, script_dir, wcvp_file, apg):
+    """This function searchers for the largest monophyletic clades in the orders which are not monophyletic in the GBMB tree."""
+    inputs = [path_in+input_file_tree, wcvp_file]
+    outputs = [path_out+output_file]
+    options = {
+        'cores': 5,
+        'memory': '10g',
+        'account':"Trf_models",
+        'walltime': "03:00:00"
+    }
+
+    spec = '''
+
+    source /home/owrisberg/miniconda3/etc/profile.d/conda.sh
+    conda activate R_env
+
+    # Going to input folder
+    cd {path_in}
+
+    #Checking if output dir exists
+    [ -d {path_out} ] && echo "{path_out} exist." || {{ echo "{path_out} does not exist."; mkdir {path_out}; }}
+
+    echo Starting the Forcing monophyly script
+    date
+
+    # Running the R script
+    Rscript --vanilla {script_dir}Finding_monophyletic_clades.R {input_file_tree} {wcvp_file} {output_file} {path_out} {apg}
+
+
+    echo Ended the Forcing monophyly script
+    date
+
+
+    '''.format(path_out = path_out, script_dir = script_dir, path_in = path_in, input_file_tree = input_file_tree, output_file = output_file, wcvp_file = wcvp_file, apg = apg)
+
+
+    return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
+
+
 ########################################################################################################################
 ####################################---- Running pipeline ----##########################################################
 ########################################################################################################################
@@ -505,7 +548,16 @@ gwf.target_from_template(name = "slicing_Trees_pruning",
                             apg = script_dir+"apgweb_parsed.csv"
                             ))
 
-
+gwf.target_from_template(name = "Finding_monophyletic_orders",
+                        template=Forcing_orders(
+                            input_file = "GBMB_pruned.tre", 
+                            output_file = "Orders_which_could_not_be_solved.txt", 
+                            path_in = data_dir, 
+                            path_out = workflow_dir+"02_adding_orders/pruning/", 
+                            script_dir = script_dir, 
+                            wcvp_file = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds", 
+                            apg = script_dir+"apgweb_parsed.csv" 
+                            ))
 
 
 # gwf.target_from_template(name = "Esse",
