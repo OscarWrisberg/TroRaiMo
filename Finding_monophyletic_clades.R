@@ -167,7 +167,7 @@ find_largest_clade <- function(tips_in_order, tree) {
       if (length(subtree$tip.label) > 0 && all(subtree$tip.label %in% tips_in_order)) {
 
 		# While all the tip labels are in the order continue "diving" into the tree untill you come to a species which is not in the order
-        while (all(subtree$tip.label %in% tips_in_order)) {
+        while (all(subtree$tip.label %in% tips_in_order)) { # i could change this so the while loop continues diving into the tree untill it find a clade with more than 10 % rogue tips.
           last_tree <- subtree
           last_pnode <- pnode
 
@@ -319,8 +319,9 @@ for (i in seq_along(non_monophyletic_orders[[1]])) {
 	}
 }
 
+cat("Printing output_file to: ",paste0(output_path,output_file), "\n")
 # Writing out the no_solvable_tips_family data frame to a file
-write.table(no_solvable_tips_family, paste0(path_out,output_file), sep = "\t", row.names = FALSE) #nolint
+write.table(no_solvable_tips_family, paste0(output_path,output_file), sep = "\t", row.names = FALSE) #nolint
 
 
 
