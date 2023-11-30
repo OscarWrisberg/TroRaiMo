@@ -550,7 +550,7 @@ gwf.target_from_template(name = "slicing_Trees_pruning",
 
 gwf.target_from_template(name = "Finding_monophyletic_orders",
                         template=Forcing_orders(
-                            input_file = "GBMB_pruned.tre", 
+                            input_file_tree = "GBMB_pruned.tre", 
                             output_file = "Orders_which_could_not_be_solved.txt", 
                             path_in = data_dir, 
                             path_out = workflow_dir+"02_adding_orders/pruning/", 
