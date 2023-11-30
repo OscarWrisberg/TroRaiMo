@@ -33,7 +33,7 @@ invisible(lapply(packages, library, character.only = TRUE))
 # setwd("/home/au543206/GenomeDK/Trf_models/data") # Set working directory when local
 # wcvp <- readRDS("../workflow/02_adding_orders/wcvp_names_apg_aligned.rds")  # Read the WCVP names file into a data frame
 # tree <- read.tree("GBMB_pruned.tre") # Read the GBMB pruned tree
-# path_out <- "../workflow/02_adding_orders/pruning/"
+# output_path <- "../workflow/02_adding_orders/pruning/"
 # apg <- fread("../TroRaiMo/apgweb_parsed.csv")
 # tips_families <- fread("tips_families.txt")
 # non_monophyletic_orders <- fread("../workflow/02_adding_orders/pruning/non_mono_order.txt", header = FALSE, sep = "\t")
@@ -279,7 +279,7 @@ for (i in seq_along(non_monophyletic_orders[[1]])) {
 		if( is.monophyletic(tree, tips_in_order) == TRUE){
 				order_tree <- drop.tip(tree, tip = tree$tip.label[!tree$tip.label %in% tips_in_order])
 				 # Save the pruned tree to a file
-  				write.tree(order_tree, paste0(path_out, "twice_pruned_tree_", order, "_GBMB.txt"))
+  				write.tree(order_tree, paste0(output_path, "twice_pruned_tree_", order, "_GBMB.txt"))
 				rogue_tips_family <- rbind(rogue_tips_family, data.frame(order = order, rogue_tips = c(rogue_tips)))
 				cat("Done with ", order, "\n")
 		}
@@ -297,7 +297,7 @@ for (i in seq_along(non_monophyletic_orders[[1]])) {
 		if ( length(largest_clade$tip.label) >= 0.9 * length(tips_in_order) ) {
 			cat("The largest monophyletic clade in the order contains atleat 90 % of the tips in the order \n")
 			cat("Saving the largest clade \n")
-			write.tree(largest_clade, paste0(path_out, "twice_pruned_tree_", order, "_GBMB.txt"))
+			write.tree(largest_clade, paste0(output_path, "twice_pruned_tree_", order, "_GBMB.txt"))
 			cat("Done with ", order, "\n")
 			
 		# If it dosent I will save the order to a file and save the number of tips in the largest clade and the total number of tips in the order
@@ -314,7 +314,7 @@ for (i in seq_along(non_monophyletic_orders[[1]])) {
     		no_solvable_tips_family <- rbind(no_solvable_tips_family, new_row)
 			cat("Done with ", order, "\n")
 			}
-		#write.tree(subtree, paste0(path_out, "Rogue_MRCA_tree_", order, "_GBMB.txt"))
+		#write.tree(subtree, paste0(output_path, "Rogue_MRCA_tree_", order, "_GBMB.txt"))
 
 	}
 }
