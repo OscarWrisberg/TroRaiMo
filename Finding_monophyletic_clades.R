@@ -355,7 +355,6 @@ for (i in seq_along(non_monophyletic_orders[[1]])) {
 				order_tree <- drop.tip(tree, tip = tree$tip.label[!tree$tip.label %in% tips_in_order])
 				 # Save the pruned tree to a file
   				write.tree(order_tree, paste0(output_path, "twice_pruned_tree_", order, "_GBMB.txt"))
-				rogue_tips_family <- rbind(rogue_tips_family, data.frame(order = order, rogue_tips = c(rogue_tips)))
 				cat("Done with ", order, "\n")
 		}
 
@@ -382,21 +381,20 @@ for (i in seq_along(non_monophyletic_orders[[1]])) {
 		} else {
 			cat("Problem order is: ", order, "\n")
 
-			# I want to use MonoPhy to create a tree which shows the Monophyly of the MRCA tree
-			rogue_tips_orders <- tips_family_orders[which(tips_family_orders$name %in% subtree$tip.label)] # Selecting the tips which are in the MRCA tree
 
-			#rogue_sub_tree <- ape::extract.clade(tree, MRCA)
+			rogue_sub_tree <- ape::extract.clade(tree, MRCA)
+			rogue_tips_orders <- tips_family_orders[which(tips_family_orders$name %in% rogue_sub_tree$tip.label)] # Selecting the tips which are in the MRCA tree
 			rogue_tips_orders <- rogue_tips_orders[, c("name", "order")]
-			monophy <- AssessMonophyly(subtree, rogue_tips_orders)
+			monophy <- AssessMonophyly(rogue_sub_tree, rogue_tips_orders)
 
-			#print(monophy)
+			print(monophy)
 			
 			height_per_species <- 0.15
 
-			# Calculate the total height based on the number of species
-			if ( length(subtree$tip.label) < 10){
+			#Calculate the total height based on the number of species
+			if ( length(rogue_sub_tree$tip.label) < 10) {
 				total_height <- 50
-			}else {
+			 } else {
 				 total_height <- round(length(subtree$tip.label) * height_per_species)
 			}
 			cat("Total height is: ", total_height, "\n")
@@ -418,11 +416,11 @@ for (i in seq_along(non_monophyletic_orders[[1]])) {
 				rogue_tips = paste(rogue_species_breaking, collapse = ","))
 
     		no_solvable_tips_family <- rbind(no_solvable_tips_family, new_row)
+
 			cat("Done with ", order, "\n")
 			
 			}
 		write.tree(subtree, paste0(output_path, "Rogue_MRCA_tree_", order, "_GBMB.txt"))
-
 	}
 }
 
