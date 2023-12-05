@@ -105,6 +105,11 @@ cat(length(unique_families), "\n")
 df_number_tips <- data.frame(family = character(0), number_tips = numeric(0))
 non_mono_family <- character(0)
 
+# Dropping tips which are outlier taxa based on MonoPhy
+outlier_taxa <- c("Androya decaryi","Pteleocarpa lamponga")
+tree <- drop.tip(tree, tip = outlier_taxa)
+
+
 
 ####################################################################################
 ####################  Finding the order for each family  ###########################
@@ -384,7 +389,7 @@ for (i in seq_along(non_monophyletic_orders[[1]])) {
 		} else {
 			cat("Problem order is: ", order, "\n")
 
-			if(length(rogue_tips) <= 20000) {
+			if(length(rogue_tips) <= 66502) {
 				cat("Assesing the monophyly of ", order, "\n")
 			rogue_sub_tree <- ape::extract.clade(tree, MRCA)
 			rogue_tips_orders <- tips_family_orders[which(tips_family_orders$name %in% rogue_sub_tree$tip.label)] # Selecting the tips which are in the MRCA tree

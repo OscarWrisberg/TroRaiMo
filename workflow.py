@@ -443,10 +443,10 @@ def Forcing_orders(input_file_tree, output_file, path_in,path_out, script_dir, w
     inputs = [path_in+input_file_tree, wcvp_file]
     outputs = [path_out+output_file]
     options = {
-        'cores': 5,
-        'memory': '10g',
+        'cores': 10,
+        'memory': '30g',
         'account':"Trf_models",
-        'walltime': "03:00:00"
+        'walltime': "05:00:00"
     }
 
     spec = '''
