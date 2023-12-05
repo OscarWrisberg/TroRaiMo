@@ -33,48 +33,48 @@ invisible(lapply(packages, library, character.only = TRUE))
 ##################  Testing the code by runnin it on GDK through VScode and its built in terminal  ########################
 ###########################################################################################################################
 
-setwd("/home/au543206/GenomeDK/Trf_models/data") # Set working directory when local
-wcvp <- readRDS("../workflow/02_adding_orders/wcvp_names_apg_aligned.rds")  # Read the WCVP names file into a data frame
-tree <- read.tree("GBMB_pruned.tre") # Read the GBMB pruned tree
-output_path <- "../workflow/02_adding_orders/pruning/"
-apg <- fread("../TroRaiMo/apgweb_parsed.csv")
-tips_families <- fread("tips_families.txt")
-non_monophyletic_orders <- fread("../workflow/02_adding_orders/pruning/non_mono_order.txt", header = FALSE, sep = "\t")
-output_file <- "Orders_which_could_not_be_solved.txt"
+# setwd("/home/au543206/GenomeDK/Trf_models/data") # Set working directory when local
+# wcvp <- readRDS("../workflow/02_adding_orders/wcvp_names_apg_aligned.rds")  # Read the WCVP names file into a data frame
+# tree <- read.tree("GBMB_pruned.tre") # Read the GBMB pruned tree
+# output_path <- "../workflow/02_adding_orders/pruning/"
+# apg <- fread("../TroRaiMo/apgweb_parsed.csv")
+# tips_families <- fread("tips_families.txt")
+# non_monophyletic_orders <- fread("../workflow/02_adding_orders/pruning/non_mono_order.txt", header = FALSE, sep = "\t")
+# output_file <- "Orders_which_could_not_be_solved.txt"
 
 ###########################################################################################################################
 ############################# Getting command line file names for workflow ################################################
 ###########################################################################################################################
 
-# # # Setting the wd for the script
-# setwd("/home/owrisberg/Trf_models/data") # Set working directory when remote
+# # Setting the wd for the script
+setwd("/home/owrisberg/Trf_models/data") # Set working directory when remote
 
-# # Command line arguments
-# input_file_tree <- commandArgs(trailingOnly = TRUE)[1]
-# input_file_wcvp <- commandArgs(trailingOnly = TRUE)[2]
-# output_file <- commandArgs(trailingOnly = TRUE)[3]
-# output_path <- commandArgs(trailingOnly = TRUE)[4]
-# apg <- commandArgs(trailingOnly = TRUE)[5]
+# Command line arguments
+input_file_tree <- commandArgs(trailingOnly = TRUE)[1]
+input_file_wcvp <- commandArgs(trailingOnly = TRUE)[2]
+output_file <- commandArgs(trailingOnly = TRUE)[3]
+output_path <- commandArgs(trailingOnly = TRUE)[4]
+apg <- commandArgs(trailingOnly = TRUE)[5]
 
-# # Read the WCVP names file into a data frame
-# cat("Opening ", input_file_wcvp, "\n")  
-# wcvp <- readRDS(input_file_wcvp)
+# Read the WCVP names file into a data frame
+cat("Opening ", input_file_wcvp, "\n")  
+wcvp <- readRDS(input_file_wcvp)
 
-# # Read the GBMB tree
-# cat("Opening ", input_file_tree, "\n")
-# tree <- read.tree(input_file_tree)
+# Read the GBMB tree
+cat("Opening ", input_file_tree, "\n")
+tree <- read.tree(input_file_tree)
 
-# # Loading the apgweb_parsed.csv file
-# cat("Loading the apgweb_parsed.csv file \n")
-# apg <- fread(apg)
+# Loading the apgweb_parsed.csv file
+cat("Loading the apgweb_parsed.csv file \n")
+apg <- fread(apg)
 
-#  # Loading tips families so I dont have to wait so fucking long..
-# tips_families <- fread("tips_families.txt")
+ # Loading tips families so I dont have to wait so fucking long..
+tips_families <- fread("tips_families.txt")
 
 
-# # Loading the list of non-monophyletic orders
-# cat("Loading the list of non-monophyletic orders \n")
-# non_monophyletic_orders <- fread("../workflow/02_adding_orders/pruning/non_mono_order.txt", header = FALSE, sep = "\t")
+# Loading the list of non-monophyletic orders
+cat("Loading the list of non-monophyletic orders \n")
+non_monophyletic_orders <- fread("../workflow/02_adding_orders/pruning/non_mono_order.txt", header = FALSE, sep = "\t")
 
 
 ###################################################################################
