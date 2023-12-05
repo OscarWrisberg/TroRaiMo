@@ -106,10 +106,11 @@ df_number_tips <- data.frame(family = character(0), number_tips = numeric(0))
 non_mono_family <- character(0)
 
 # Dropping tips which are outlier taxa based on MonoPhy
-outlier_taxa <- c("Androya decaryi","Pteleocarpa lamponga")
+outlier_taxa <- c("Androya decaryi","Pteleocarpa lamponga", "Tectaria heracleifolia", "Streptopus parviflorus","Streptopus amplexifolius","Streptopus koreanus","Streptopus lanceolatus","Streptopus ovalis","Streptopus obtusatus","Streptopus parasimplex")
 tree <- drop.tip(tree, tip = outlier_taxa)
 
-
+# Fixing a wrong family in tips_families
+tips_families[which(tips_families$name == "Saussurea japonica"),"families"] <- "Asteraceae"
 
 ####################################################################################
 ####################  Finding the order for each family  ###########################
