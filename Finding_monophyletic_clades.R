@@ -389,7 +389,7 @@ for (i in seq_along(non_monophyletic_orders[[1]])) {
 		} else {
 			cat("Problem order is: ", order, "\n")
 
-			if(length(rogue_tips) <= 66502) {
+			if(length(rogue_tips) <= 64486) {
 				cat("Assesing the monophyly of ", order, "\n")
 			rogue_sub_tree <- ape::extract.clade(tree, MRCA)
 			rogue_tips_orders <- tips_family_orders[which(tips_family_orders$name %in% rogue_sub_tree$tip.label)] # Selecting the tips which are in the MRCA tree

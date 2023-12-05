@@ -446,7 +446,7 @@ def Forcing_orders(input_file_tree, output_file, path_in,path_out, script_dir, w
         'cores': 10,
         'memory': '30g',
         'account':"Trf_models",
-        'walltime': "05:00:00"
+        'walltime': "12:00:00"
     }
 
     spec = '''
