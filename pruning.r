@@ -19,28 +19,31 @@ invisible(lapply(packages, library, character.only = TRUE))
 ######################################## Settings for running this script locally. ########################################
 ###########################################################################################################################
 
-setwd("/home/au543206/GenomeDK/Trf_models/data") # Set the working directory when local
-# setwd("/home/owrisberg/Trf_models/data") # Set working directory when remote through vpn and SRUN on cluster
-wcvp <- readRDS("../workflow/02_adding_orders/wcvp_names_apg_aligned.rds")  # Read the WCVP names file into a data frame
-tree <- read.tree("GBMB.tre") # Read the GBMB tree
-output_file_tree <- "GBMB_pruned.tre" # Set the name of the output file
+# setwd("/home/au543206/GenomeDK/Trf_models/data") # Set the working directory when local
+# wcvp <- readRDS("../workflow/02_adding_orders/wcvp_names_apg_aligned.rds")  # Read the WCVP names file into a data frame
+# tree <- read.tree("GBMB.tre") # Read the GBMB tree
+# output_file_tree <- "GBMB_pruned.tre" # Set the name of the output file
 
 ###########################################################################################################################
 ########################################### Running the script on the cluster #############################################
 ###########################################################################################################################
 
 # # Command line arguments
-# input_file_tree <- commandArgs(trailingOnly = TRUE)[1]
-# input_file_wcvp <- commandArgs(trailingOnly = TRUE)[2]
-# output_file_tree <- commandArgs(trailingOnly = TRUE)[3]
+input_file_tree <- commandArgs(trailingOnly = TRUE)[1]
+input_file_wcvp <- commandArgs(trailingOnly = TRUE)[2]
+output_file_tree <- commandArgs(trailingOnly = TRUE)[3]
 
-# # Read the WCVP names file into a data frame
-# cat("Opening ", input_file_wcvp, "\n")  
-# wcvp <- readRDS(input_file_wcvp)
+# Read the WCVP names file into a data frame
+cat("Opening ", input_file_wcvp, "\n")  
+wcvp <- readRDS(input_file_wcvp)
 
-# # Read the GBMB tree
-# cat("Opening ", input_file_tree, "\n")
-# tree <- read.tree(input_file_tree)
+# Read the GBMB tree
+cat("Opening ", input_file_tree, "\n")
+tree <- read.tree(input_file_tree)
+
+###########################################################################################################################
+########################################################### Basic Setup  ##################################################
+###########################################################################################################################
 
 tree$tip.label <- gsub("_", " ", tree$tip.label)
 tree$tip.label <- gsub('"', '', tree$tip.label)  # nolint
@@ -58,10 +61,11 @@ matching_tips_accepted <- tip_names[tip_names %in% wcvp$taxon_name[wcvp$taxon_st
 matching_tips_not_accepted <- tip_names[tip_names %in% wcvp$taxon_name[wcvp$taxon_status != "Accepted"]] # 14355 out of the matching tips are not accepted
 
 # Finding length of matching tips
-cat("Length of matching tips ", length(matching_tips), "\n")
-cat("Length of non-matching tips ", length(not_matching_tips), "\n")
-cat("Length of matching tips accepted ", length(matching_tips_accepted), "\n")
-cat("Length of matching tips not accepted ", length(matching_tips_not_accepted), "\n")
+cat("Length of matching tips ", length(matching_tips), "\n") #76935
+cat("Length of non-matching tips ", length(not_matching_tips), "\n") #2938
+cat("Length of matching tips accepted ", length(matching_tips_accepted), "\n") #66166
+cat("Length of matching tips not accepted ", length(matching_tips_not_accepted), "\n") #14355
+
 # Create a data frame with tip names and families
 
 # Looking at the not_matching_tips I need to loop through them in order to check if they are indeed unmatchable or if they can be matched.
@@ -91,18 +95,18 @@ for (i in seq_along(not_matching_tips)) {
     matches_with_distance_one <- wcvp$taxon_name[potential_matches <= 1]
     
     # Check if any matches were found
-    if (length(matches_with_distance_one) > 0 & length(matches_with_distance_one) ==) {
+    if (length(matches_with_distance_one) > 0 & length(matches_with_distance_one) == 1) {
       #cat("Match found for ", not_matching_tips[i], " with one substitution, insertion, or deletion\n")
-	  if (length(matches_with_distance_one) == 1) {
-      #cat("Match is ", matches_with_distance_one[1], "\n")
-      matchable_tips <- c(matchable_tips, not_matching_tips[i])
-      match_name <- c(match_name, matches_with_distance_one[1])
+	    if (length(matches_with_distance_one) == 1) {
+        #cat("Match is ", matches_with_distance_one[1], "\n")
+        matchable_tips <- c(matchable_tips, not_matching_tips[i])
+        match_name <- c(match_name, matches_with_distance_one[1])
+	    } else {
+		    cat("Multiple matches found for ", not_matching_tips[i], "\n")
+		    cat("Matches are ", matches_with_distance_one, "\n")
+		    not_matchable_tips <- c(not_matchable_tips, not_matching_tips[i])
+      } 
 	  } else {
-		  cat("Multiple matches found for ", not_matching_tips[i], "\n")
-		  cat("Matches are ", matches_with_distance_one, "\n")
-		  not_matchable_tips <- c(not_matchable_tips, not_matching_tips[i])
-    } 
-	} else {
       # No match found
       #cat("No match found for ", not_matching_tips[i], "\n")
       not_matchable_tips <- c(not_matchable_tips, not_matching_tips[i])
@@ -110,7 +114,7 @@ for (i in seq_along(not_matching_tips)) {
   }
 }
 
-# Saving vectors as RDS files
+Saving vectors as RDS files
 saveRDS(not_matchable_tips, "not_matchable_tips_1.rds") 
 saveRDS(matchable_tips, "matchable_tips_1.rds") 
 saveRDS(match_name, "match_name_1.rds")
@@ -122,8 +126,13 @@ saveRDS(match_name, "match_name_1.rds")
 
 
 cat("Are all the matchable tips found in the tree? ", all(matchable_tips %in% tree$tip.label), " and are all the match_names found in the wcvp$taxon_name", all(match_name %in% wcvp$taxon_name), "\n")
-# Renaming tips in the tree with the matched tip names
-tree$tip.label[which(tree$tip.label %in% matchable_tips)] <- match_name # This works because both of them is ordered
+
+
+# Find the indices of tips in the tree that match the split_matchable_tips
+matching_indices <- match(tree$tip.label, matchable_tips)
+
+# Replace the matched tips with split_match_name
+tree$tip.label[!is.na(matching_indices)] <- match_name
 
 # Are all species accounted for?
 cat("Have all the match_name's been incorporated into the tip.labels: ",all(match_name %in% tree$tip.label))
@@ -207,7 +216,7 @@ for (i in seq_along(not_matchable_tips)) {
   }
 }
 
-#Saving vectors as RDS files for easy loading if I need to rerun the script
+Saving vectors as RDS files for easy loading if I need to rerun the script
 cat("Saving Rds files \n")
 saveRDS(split_not_matchable_tips, "split_not_matchable_tips.rds")
 saveRDS(split_matchable_tips, "split_matchable_tips.rds")
@@ -226,29 +235,20 @@ cat("Rds files saved \n")
 cat("Are all species accounted for: ", all(not_matchable_tips %in% split_not_matchable_tips | not_matchable_tips %in% split_matchable_tips| not_matchable_tips %in% split_multi_match), "\n")
 
 # And now we can again rename the tips based on the matches we found
-cat("Number of tips in split_,matchable_tips is: ", length(split_matchable_tips), "\n")
+cat("Number of tips in split_matchable_tips is: ", length(split_matchable_tips), "\n")
 cat("Number of tips in split_match_name is: ", length(split_match_name), "\n")
 cat("Number of tips in tree which are found in matchable names are: ", length(tree$tip.label[which(tree$tip.label %in% split_matchable_tips)]))
-
-# # Making a dataframe with the split_matchable_tips and the split_match_name
-# split_match_tips_names <- as.data.frame(cbind(split_matchable_tips, split_match_name))
-
-# # Removing tips which are not in the tree.
-# for (i in seq_along(split_match_tips_names[which(!split_match_tips_names$split_matchable_tips %in% tree$tip.label),1])){
-#   cat("Removing ",split_match_tips_names[which(!split_match_tips_names$split_matchable_tips %in% tree$tip.label),1][i], " from the matchable tips because it is not in the tree \n")
-#   split_match_tips_names <- split_match_tips_names[-which(split_match_tips_names$split_matchable_tips == split_match_tips_names[which(!split_match_tips_names$split_matchable_tips %in% tree$tip.label),1][i]),]
-# }
-
-# # Renaming tips 
-# tree$tip.label[which(tree$tip.label %in% split_match_tips_names$split_matchable_tips)] <- split_match_tips_names$split_match_name 
 
 # Removing the row from split_matchable_tips and split_match_name if the tip is not in the tree
 split_match_name <- split_match_name[which(split_matchable_tips %in% tree$tip.label)]
 split_matchable_tips <- split_matchable_tips[which(split_matchable_tips %in% tree$tip.label)]
 
-# Renaming tips in the tree with the matched tip names
-tree$tip.label[which(tree$tip.label %in% split_matchable_tips)] <- split_match_name # This works because both of them is ordered
 
+# Find the indices of tips in the tree that match the split_matchable_tips
+matching_indices <- match(tree$tip.label, split_matchable_tips)
+
+# Replace the matched tips with split_match_name
+tree$tip.label[!is.na(matching_indices)] <- split_match_name
 
 # Are all species accounted for?
 cat("Have all the split_match_name's been incorporated into the tip.labels: ",all(split_match_name %in% tree$tip.label))
@@ -271,23 +271,24 @@ cat("but we had to drop ", length(split_not_matchable_tips) + length(split_multi
 tip_names <- tree$tip.label
 
 # Find matching and non-matching tips
-matching_tips <- tip_names[tip_names %in% wcvp$taxon_name] # 76935 tips are matching
-not_matching_tips <- tip_names[!(tip_names %in% wcvp$taxon_name)] # Only 2939 tips are not matching
-matching_tips_accepted <- tip_names[tip_names %in% wcvp$taxon_name[wcvp$taxon_status == "Accepted"]] # 66166 out of the matching tips are accepted
+matching_tips <- tip_names[tip_names %in% wcvp$taxon_name] # 78208 tips are matching
+not_matching_tips <- tip_names[!(tip_names %in% wcvp$taxon_name)] # Only 0 tips are not matching
+matching_tips_accepted <- tip_names[tip_names %in% wcvp$taxon_name[wcvp$taxon_status == "Accepted"]] # 67164 out of the matching tips are accepted
 matching_tips_not_accepted <- tip_names[tip_names %in% wcvp$taxon_name[wcvp$taxon_status != "Accepted"]] # 14355 out of the matching tips are not accepted
 
+
 # Finding length of matching tips
-cat("Length of matching tips ", length(matching_tips), "\n")
-cat("Length of non-matching tips ", length(not_matching_tips), "\n")
-cat("Length of matching tips accepted ", length(matching_tips_accepted), "\n")
-cat("Length of matching tips not accepted ", length(matching_tips_not_accepted), "\n")
+cat("Length of matching tips ", length(matching_tips), "\n") # 78208 we have gained 1273 new matching species
+cat("Length of non-matching tips ", length(not_matching_tips), "\n") #0
+cat("Length of matching tips accepted ", length(matching_tips_accepted), "\n") #67164 we have gained 998 new accepted species
+cat("Length of matching tips not accepted ", length(matching_tips_not_accepted), "\n") #14673 we have gained 318 new not accepted species
 
 # End of dealing with tips which were not matching to the WCVP file.
 # Now all tips in the tree should be found in the WCVP file.
 # This means we now need to start dealing with the species in the tree which are not Accepted in the WCVP file.
 # And we need to deal with the tips in the tree which are not species but something else (subsp, var, etc.)
 
-
+"Bletia nitida" %in% tree$tip.label # False
 ############################################################################################################################################################################
 ############################################################################################################################################################################
 ############################################################################################################################################################################
@@ -299,97 +300,145 @@ cat("Length of matching tips not accepted ", length(matching_tips_not_accepted),
 
 # Now I need to create a version of the wcvp which have only accepted names.
 wcvp_accepted <- wcvp[which(wcvp$taxon_status == "Accepted"),]
+wcvp_n_accepted <- wcvp[which(wcvp$taxon_status != "Accepted")]
 
-new_matching_tips_not_accepted <- tree$tip.label[which(!tree$tip.label %in% wcvp_accepted$taxon_name)] # they are all in the old matching tips not accepted.
-cat("There are ",length(matching_tips_not_accepted)-length(new_matching_tips_not_accepted) , " tips in the tree which are both Accepted and Synonym due to different authors. \n")
-cat("This means there are ",length(new_matching_tips_not_accepted)," tips in the tree which are not accepted at all \n") # still 11044 tips are not accepted, which is down from 14355. This means 3311 species are both accepted and synonyms.
+# Because some taxon_names are both accepted and not accepted based on different authors, we need to find all the taxon_names which dont have a version which is accepted.
+new_matching_tips_not_accepted_old <- unique(tree$tip.label[which(!tree$tip.label %in% wcvp_accepted$taxon_name)])
+length(new_matching_tips_not_accepted_old) # 10984
 
+# Stating the number of species which are both accepted and not accepted at the same time.
+cat("There are ",length(matching_tips_not_accepted)-length(new_matching_tips_not_accepted_old) , " tips in the tree which are both Accepted and Synonym due to different authors. \n") # 3689
+cat("This means there are ",length(new_matching_tips_not_accepted_old)," tips in the tree which are not accepted at all \n") # still 10984 tips are not accepted, which is down from 14355. This means 3689 species are both accepted and synonyms.
 
 # Now I need to find the accepted name for all the tips in the tree which are not accepted.
 # I can do this by using the accepted_plant_name_id in the wcvp file.
 # I can then use the accepted_plant_name_id to find the accepted name in the wcvp file.
 
-# I need to find the accepted_plant_name_id for all the tips in the tree which are not accepted.
-new_matching_tips_not_accepted_id <- wcvp$accepted_plant_name_id[which(new_matching_tips_not_accepted %in% wcvp$taxon_name)]
-length(new_matching_tips_not_accepted_id) # 11044
-length(which(is.na(new_matching_tips_not_accepted_id))) # 24 sp are missing an accepted_name_id
-
-# So i need to drop these 24 entries from the vector and the previous vector.
-cat("We have to drop these species as they have no accepted_plant_name_id:", new_matching_tips_not_accepted[which(is.na(new_matching_tips_not_accepted_id))] ,"\n")
-tree <- drop.tip(tree, new_matching_tips_not_accepted[which(is.na(new_matching_tips_not_accepted_id))])
-new_matching_tips_not_accepted <- new_matching_tips_not_accepted[which(!is.na(new_matching_tips_not_accepted_id))]
-new_matching_tips_not_accepted_id <- new_matching_tips_not_accepted_id[which(!is.na(new_matching_tips_not_accepted_id))]
+# I need to find the accepted_plant_name_id for all the tips in the tree which are not accepted but for some reason this vector is shorter than my tip labels
+# What could be causing this?
 
 
-new_matching_tips_not_accepted_accepted_name <- wcvp$taxon_name[which(new_matching_tips_not_accepted_id %in% wcvp$plant_name_id)]
-length(new_matching_tips_not_accepted_accepted_name) # 10843
+# Could it be because there are more than one row where wcvp$taxon_name matches new_matching_tips_not_accepted YES THIS SEEMS TO BE THE CASE!
+# I could test this with a for loop.
+# This for loop loops through all the names in new_matching_tips_not_accepted and checks
+# if there are more than one row in the wcvp file where the taxon_name matches the name in new_matching_tips_not_accepted
+# If there is more than one row, it checks if there is only one accepted_plant_name_id which is not NA
+          # If there is only one accepted_plant_name_id which is not NA, then it prints the name and the accepted_plant_name_id
+          # But this is not the case for any of the tips
+#Otherwise it adds the tip to a vector called test_tip_labels_more_than_1_match
+# Which is then dropped from the tree.
 
-# Are all the accepted names duplicated in wcvp?
-length(new_matching_tips_not_accepted_accepted_name[duplicated(new_matching_tips_not_accepted_accepted_name)]) #21 of these are duplicated
-
-
-# Finding the taxon_status of the accepted name
-new_matching_tips_not_accepted_accepted_name_status <- wcvp$taxon_status[which(new_matching_tips_not_accepted_accepted_name %in% wcvp$taxon_name)]
-length(which(new_matching_tips_not_accepted_accepted_name_status != "Accepted")) # 8970 of these do not point to an accepted species ??
-
-# Creating a dataframe
-rename_df_new_matches_not_accepted <- data.frame(
-  taxon_name = new_matching_tips_not_accepted,
-  accepted_plant_name_id = new_matching_tips_not_accepted_id,
-  accepted_name = new_matching_tips_not_accepted_accepted_name,
-  status_of_accept = new_matching_tips_not_accepted_accepted_name_status
-)
-
-# Okay so I need to loop through the taxon names in rename_df_new_matches_not_accepted_accepted_name and follow the accepted_plant_name_id
-# to the accepted name and then check if the accepted name is accepted or not.
-# I need to do this untill the named pointed to by the accepted_plant_name_id is accepted.
-for(i in seq_along(rename_df_new_matches_not_accepted$taxon_name)){ # 11020 taxon names to loop through
-  cat("Loop ", i ," :",rename_df_new_matches_not_accepted$accepted_name[i]," is ",rename_df_new_matches_not_accepted$status_of_accept[i], " \n")
-  while(rename_df_new_matches_not_accepted$status_of_accept[i] != "Accepted"){ # while the name in the accepted_name column is not accepted
-    if (is.na(rename_df_new_matches_not_accepted$accepted_plant_name_id[i]) | rename_df_new_matches_not_accepted$accepted_plant_name_id[i] == ""){ # If the accepted_plant_name_id is NA then I need to just drop the species from the tree
-      rename_df_new_matches_not_accepted$status_of_accept[i] <- "NA"
-      break
-    } else if (rename_df_new_matches_not_accepted$status_of_accept[i] == "Artificial Hybrid") {
-      rename_df_new_matches_not_accepted$status_of_accept[i] <- "Artificial Hybrid"
-      break
-    } else if (rename_df_new_matches_not_accepted$status_of_accept[i] == "Unplaced") {
-      rename_df_new_matches_not_accepted$status_of_accept[i] <- "Unplaces"
-      break
-    } else if (rename_df_new_matches_not_accepted$status_of_accept[i] == "Local Biotype") {
-      rename_df_new_matches_not_accepted$status_of_accept[i] <- "Local Biotype"
-      break
+test_tip_labels_more_than_1_match <- character(0)
+for(i in seq_along(new_matching_tips_not_accepted)){
+  if (length(which(wcvp$taxon_name %in% new_matching_tips_not_accepted[i])) > 1) {
+    #print(new_matching_tips_not_accepted[i])
+    rows_with_name <- wcvp[which(wcvp$taxon_name %in% new_matching_tips_not_accepted[i])]
+    rows_with_name_id <- rows_with_name$accepted_plant_name_id
+    #print(rows_with_name_id)
+    if(length(rows_with_name_id)-length(is.na(rows_with_name_id)) == 1) {
+      cat("This one can be fixed") # None of the tips can be fixed
+      print(rows_with_name_id)
+      print(!is.na(rows_with_name_id))
+    } else {
+    #print(new_matching_tips_not_accepted[i])
+    test_tip_labels_more_than_1_match <- c(test_tip_labels_more_than_1_match, new_matching_tips_not_accepted[i])
     }
-    rename_df_new_matches_not_accepted$accepted_name[i] <- wcvp$taxon_name[which(wcvp$plant_name_id == rename_df_new_matches_not_accepted$accepted_plant_name_id[i])] # update the accepted_name column with the name pointed to by the accepted_plant_name_id
-    rename_df_new_matches_not_accepted$status_of_accept[i] <- wcvp$taxon_status[which(wcvp$plant_name_id == rename_df_new_matches_not_accepted$accepted_plant_name_id[i])] # check the status of the name pointed to by the accepted_plant_name_id
-    cat(rename_df_new_matches_not_accepted$accepted_name[i]," is ",rename_df_new_matches_not_accepted$status_of_accept[i], " \n")
+  }
+}
+saveRDS(test_tip_labels_more_than_1_match, "test_tip_labels_more_than_1_match.rds")
+test_tip_labels_more_than_1_match <- readRDS("test_tip_labels_more_than_1_match.rds")
+
+# I guess I have to remove these tips from the tree as I am unable to find their accepted name
+tree <- drop.tip(tree, test_tip_labels_more_than_1_match)
+
+# # Updating the tips in the tree which are not accepted
+# new_matching_tips_not_accepted <- unique(tree$tip.label[which(!tree$tip.label %in% wcvp_accepted$taxon_name)]) # is this unique here necessary?
+
+# # Finding their ID's
+# new_matching_tips_not_accepted_id <- wcvp$accepted_plant_name_id[which(wcvp$taxon_name %in% new_matching_tips_not_accepted)]
+# length(new_matching_tips_not_accepted_id) # 11612 
+
+# # Now I need to deal with the species where the matching id is NA
+# length(which(is.na(new_matching_tips_not_accepted_id))) # 189 sp are missing an accepted_name_id
+
+# # So i need to drop these 140 entries from the vector and the previous vector.
+# cat("We have to drop these species as they have no accepted_plant_name_id: \n")
+# for( i in seq_along(new_matching_tips_not_accepted[which(is.na(new_matching_tips_not_accepted_id))])) {
+#   print(new_matching_tips_not_accepted[which(is.na(new_matching_tips_not_accepted_id))][i])
+# }
+
+# # First I drop the species from the tree
+# tree <- drop.tip(tree, new_matching_tips_not_accepted[which(is.na(new_matching_tips_not_accepted_id))])
+
+#new_matching_tips_not_accepted <- new_matching_tips_not_accepted_old[which(!is.na(new_matching_tips_not_accepted_id))] # This is a list of all the names.
+
+# This finds the names and the accepted_plant_name_id for the names which are not accepted
+new_matching_tips_not_accepted_name_id <- wcvp[which(wcvp$taxon_name %in% new_matching_tips_not_accepted_old),c("taxon_name", "accepted_plant_name_id", "taxon_status")] # This line of code works to find the rows where the names are present in wcvp
+dim(new_matching_tips_not_accepted_name_id) # 11612-3
+
+
+# This line of code works to find the rows where the names are present in wcvp
+new_matching_tips_not_accepted_accepted_name <- wcvp[which(wcvp$plant_name_id %in% new_matching_tips_not_accepted_name_id$accepted_plant_name_id),c("taxon_name", "plant_name_id", "taxon_status")]
+colnames(new_matching_tips_not_accepted_accepted_name)[which(colnames(new_matching_tips_not_accepted_accepted_name) == "taxon_name")] <- "accepted_name"
+colnames(new_matching_tips_not_accepted_accepted_name)[which(colnames(new_matching_tips_not_accepted_accepted_name) == "taxon_status")] <- "accepted_name_taxon_status"
+length(new_matching_tips_not_accepted_name_id$accepted_plant_name_id) # 11415
+
+
+# Database of all the names which are not accepted and their accepted_plant_name_id
+new_matching_tips_df_test <- merge(new_matching_tips_not_accepted_name_id, new_matching_tips_not_accepted_accepted_name, by.x = "accepted_plant_name_id", by.y = "plant_name_id", all.x = TRUE)
+dim(new_matching_tips_df_test) # 11612 rows and 5 columns
+
+new_matching_tips_df_test[which(new_matching_tips_df_test$accepted_name_taxon_status != "Accepted")] # 46 rows and 3 columns which we need to remove because the status is not accepted
+new_matching_tips_df_test[which(is.na(new_matching_tips_df_test$accepted_plant_name_id))] # 189 which we need to remove because the accepted_plant_name_id is NA
+length(tree$tip.label) # 77685
+
+# I need to drop these 235 entries from the tree.
+# Dropping tips where the accepted_plant_name_id is NA
+tree <- drop.tip(tree, new_matching_tips_df_test$taxon_name[which(is.na(new_matching_tips_df_test$accepted_plant_name_id))])
+
+# Dropping the tips where the accepted_name_taxon_status is not Accepted
+tree <- drop.tip(tree, new_matching_tips_df_test$taxon_name[which(new_matching_tips_df_test$accepted_name_taxon_status != "Accepted")])
+
+#
+new_matching_tips_df_test_tree <- new_matching_tips_df_test[which(new_matching_tips_df_test$taxon_name %in% tree$tip.label),]
+
+
+# Save the original tip labels
+original_tip_labels <- tree$tip.label
+
+# Create an empty data frame to store changes
+changes_df <- data.frame(original_name = character(0), new_name = character(0), stringsAsFactors = FALSE)
+
+# Loop through the tips and update the tree
+for (i in seq_len(nrow(new_matching_tips_df_test_tree))) {
+  original_name <- new_matching_tips_df_test_tree$taxon_name[i]
+  new_name <- new_matching_tips_df_test_tree$accepted_name[i]
+  
+  # Find the index of the tip in the tree
+  tip_index <- which(tree$tip.label == original_name)
+  
+  if (length(tip_index) > 0) {
+    # Update the tip label in the tree
+    tree$tip.label[tip_index] <- new_name
+    
+    # Save the change to the data frame
+    changes_df <- rbind(changes_df, data.frame(original_name = original_name, new_name = new_name, stringsAsFactors = FALSE))
   }
 }
 
-# Saving file for working faster locally
-saveRDS(rename_df_new_matches_not_accepted, "rename_df_new_matches_not_accepted.rds")
+# Print the changes
+#print(changes_df)
 
-# Loading file when working locally
-# rename_df_new_matches_not_accepted <- readRDS("rename_df_new_matches_not_accepted.rds")
+# Check if tip labels were changed
+changed_tip_labels <- tree$tip.label != original_tip_labels
 
-# Finding the number of names which cannot be resolved to a taxon_status Accepted
-length(rename_df_new_matches_not_accepted$taxon_name[which(rename_df_new_matches_not_accepted$status_of_accept != "Accepted"),]) # 149 names cannot be solved to a name which has the status accepted
-
-# These tips need to be pruned from the dataset and from the tree.
-cat("We have to drop ", length(rename_df_new_matches_not_accepted$taxon_name[which(rename_df_new_matches_not_accepted$status_of_accept != "Accepted"),]),  " species as they cannot be solved to an accepted name \n")
-tree <- drop.tip(tree, rename_df_new_matches_not_accepted$taxon_name[which(rename_df_new_matches_not_accepted$status_of_accept != "Accepted")])
-rename_df_new_matches_not_accepted <- rename_df_new_matches_not_accepted[which(rename_df_new_matches_not_accepted$status_of_accept == "Accepted"),]
-
-
-#tree$tip.label <- ifelse(tree$tip.label %in% rename_df_new_matches_not_accepted$taxon_name, rename_df_new_matches_not_accepted$accepted_name, tree$tip.label)
-tree$tip.label[which(tree$tip.label %in% rename_df_new_matches_not_accepted$taxon_name)] <- rename_df_new_matches_not_accepted$accepted_name # This works because both of them is ordered
-
+# Show the changed tip labels
+length(which(changed_tip_labels == TRUE)) # 10355 tips have had their names changed
 
 # Are all the tips in the tree now found in the WCVP_accepted file?
-cat("Are all the ", length(tree$tip.label)," tips in the tree now found in the WCVP_accepted file? ", all(tree$tip.label %in% wcvp_accepted$taxon_name), "\n")
+cat("Are all the ", length(tree$tip.label)," tips in the tree now found in the WCVP_accepted file? ", all(tree$tip.label %in% wcvp_accepted$taxon_name), "\n") # YES I am so happy!
 
-# Checking how many genera we have left in the tree
-wcvp_SmB_all_accepted <- wcvp[which(wcvp$taxon_name %in% tree$tip.label),]
-length(unique(wcvp_SmB_all_accepted$genus))
+write.tree(tree, "GBMB_all_accepted_names.tre") # Everything here looks fine. The species are in their correct spots
 
 ############################################################################################################################################################################
 ############################################################################################################################################################################
@@ -398,15 +447,15 @@ length(unique(wcvp_SmB_all_accepted$genus))
 # Now we just need to figure out how to make all the tips in the tree have the taxon_rank == Species
 
 # Find all the names in the tree which are found in the wcvp but which are something else than "Species"
-not_species <- tree$tip.label[which(tree$tip.label %in% wcvp$taxon_name[wcvp$taxon_rank != "Species"])] # 4227 names are not species
+not_species <- tree$tip.label[which(tree$tip.label %in% wcvp_accepted$taxon_name[wcvp_accepted$taxon_rank != "Species"])] # 3859 names are not species
 length(not_species) 
 
 # Fixing species that are not accepted and not species by finding their accepted name in the wcvp file
-cat("There are ", length(not_species), " tips in the tree which are not species \n") # 4227
+cat("There are ", length(not_species), " tips in the tree which are not species \n") # 3859
 
 # Fixing species that are accepted but are not species
-acc_not_species <- not_species[which(not_species %in% wcvp$taxon_name[wcvp$taxon_status == "Accepted"])]
-length(acc_not_species) # 4227
+acc_not_species <- not_species[which(not_species %in% wcvp_accepted$taxon_name[wcvp_accepted$taxon_status == "Accepted"])]
+length(acc_not_species) # 3859
 
 # The accepted not species I should be able to find the species by just taking the first 2 elements of the name
 tips_to_rename <- character(0)
@@ -442,20 +491,27 @@ for(i in seq_along(acc_not_species)){
 all(name_for_tips_to_be_renamed %in% wcvp_accepted$taxon_name)
 all(tips_to_drop %in% tree$tip.label)
 all(tips_to_rename %in% tree$tip.label)
+length(name_for_tips_to_be_renamed) == length(tips_to_rename)
 
 # Now i need to drop tips which are not tips which cannot be made into a Species name
 tree <- drop.tip(tree, tips_to_drop)
 
-# Then I need to rename all the tips which are subspecies and others into their species name
-tree$tip.label[which(tree$tip.label %in% tips_to_rename)] <- name_for_tips_to_be_renamed # This works because both of them is ordered
+# Find the indices of tips in the tree that match the split_matchable_tips
+matching_indices <- match(tree$tip.label, tips_to_rename)
 
-cat("Are all the tips in the tree now both taxon_status == Accepted and taxon_rank == Species?",all(tree_test$tip.label %in% wcvp_accepted$taxon_name[which(wcvp_accepted$taxon_rank == "Species")])) # TRUE
+# Replace the matched tips with split_match_name
+tree$tip.label[!is.na(matching_indices)] <- name_for_tips_to_be_renamed
+
+cat("Are all ",length(tree$tip.label)," tips in the tree now both taxon_status == Accepted and taxon_rank == Species?",all(tree$tip.label %in% wcvp_accepted$taxon_name[which(wcvp_accepted$taxon_rank == "Species")])) # TRUE
+
+write.tree(tree, "GBMB_all_accepted_all_species.tre") # Everything here looks fine. The species are in their correct spots
 
 ############################################################################################################################################################################
 ############################################################################################################################################################################
+
 # Now I need to take care of all the duplicate tips in the tree.
-total_dup_names <- length(unique(tree$tip.label[duplicated(tree$tip.label)])) # 4964 tip names are duplicated
-total_dups <- length(tree$tip.label[duplicated(tree$tip.label)]) # 8587 tips in the tree have a duplicate
+total_dup_names <- length(unique(tree$tip.label[duplicated(tree$tip.label)])) # 4855 tip names are duplicated
+total_dups <- length(tree$tip.label[duplicated(tree$tip.label)]) # 7970 tips in the tree have a duplicate
 
 # Find unique duplicated tips
 unique_dup_tips <- unique(tree$tip.label[duplicated(tree$tip.label)])
@@ -472,7 +528,7 @@ for (i in seq_along(unique_dup_tips)) {
 # Create a data frame to store results
 dup_counts_df <- data.frame(tip_label = unique_dup_tips, duplicate_count = dup_counts)
 
-head(dup_counts_df)
+print(dup_counts_df)
 dup_levels <- sort(unique(dup_counts_df$duplicate_count))
 
 
@@ -496,6 +552,184 @@ dup_levels_counts_df <- data.frame(duplicate_count = as.numeric(names(dup_levels
 
 no_mono_dropped_tips <- character(0)
 mono_dups <- character(0)
+
+# ###############################################################################
+# Simple duplicate remover where I remove duplicate tips if there are more than 3
+# If there is 2 I check if they are monophyletic and only remove 1 of them if they are and both if they are not
+# If there is 3 duplicates I check if  any combination of the tips can form a monophyletic clade, if they can, I keep one of the species in the clade and drop the rest, if they cannot I drop all of them.
+
+length_before_dup_removal <- length(tree$tip.label)
+
+# if no duplicates are found, report it and continue
+if (length(tree$tip.label[duplicated(tree$tip.label)]) == 0) {
+  cat("No duplicate species names found in the tree\n")
+} else {
+  # Loop through the duplicated species names
+  list_of_dups <- unique(tree$tip.label[duplicated(tree$tip.label)])
+  for (i in seq_along(list_of_dups)) {
+    cat(i,"  ",list_of_dups[i], "\n")
+    dupli_tips <- which(tree$tip.label == list_of_dups[i])
+    cat("Number of duplicate tips found is: ", length(dupli_tips), "\n")
+
+    if (length(dupli_tips) == 0) {
+      cat("No duplicate tips found for ", list_of_dups[i], "\n")
+      next
+    }
+
+    if (length(dupli_tips) == 2) {
+      if (any(dupli_tips[1] == getSisters(tree, dupli_tips[2]))) {
+
+        cat("Duplicate species of ", list_of_dups[i], " are located next to each other in the tree\n")
+        tree <- drop.tip(tree, tree$tip.label[dupli_tips[1]])
+        mono_dups <- c(mono_dups, list_of_dups[i])
+        next
+      } else {
+
+        cat("Duplicate species are not located next to each other in the tree\n")
+        #cat("Removing both of the species names from the tree \n")
+        # I want to save the species which I had to prune due to non monophyly somewhere.
+        no_mono_dropped_tips <- c(no_mono_dropped_tips, list_of_dups[i])
+        tips_to_drop <- tree$tip.label[dupli_tips]
+        cat("Dropping: ", tips_to_drop, "\n")
+        tree <- drop.tip(tree, tips_to_drop)
+        next
+      }
+    }
+
+    if ( length(dupli_tips) == 3 ){
+      print(dupli_tips)
+      # If any 2 of the duplicated tips are located next to each other in the tree or if all 3 form a monophyletic clade then we are happy.
+      # if any 2 form a monophyletic clade then we can remove the third rogue tip and remove one of the species in the mono clade.
+        if (any(dupli_tips[1] == getSisters(tree, dupli_tips[2] ))) {
+          tree <- drop.tip(tree, tree$tip.label[dupli_tips[3]] )
+          tree <- drop.tip(tree, tree$tip.label[dupli_tips[1]] )
+          mono_dups <- c(mono_dups, list_of_dups[i])
+          next 
+
+        } else if ( any(dupli_tips[1] == getSisters(tree, dupli_tips[3]))) {
+          tree <- drop.tip(tree, tree$tip.label[dupli_tips[2]] )
+          tree <- drop.tip(tree, tree$tip.label[dupli_tips[1]] )
+          mono_dups <- c(mono_dups, list_of_dups[i])
+          next
+
+        }else if ( any(dupli_tips[2] == getSisters(tree, dupli_tips[3] ))){
+          tree <- drop.tip(tree, tree$tip.label[dupli_tips[1]] )
+          tree <- drop.tip(tree, tree$tip.label[dupli_tips[2]] )
+          mono_dups <- c(mono_dups, list_of_dups[i])
+          next
+        } else {
+      cat("None of the 3 tips of ", list_of_dups[i]  ,"form a monophyletic clade \n")
+      no_mono_dropped_tips <- c(no_mono_dropped_tips, list_of_dups[i])
+      tips_to_drop <- tree$tip.label[dupli_tips]
+      cat("Dropping: ", tips_to_drop, "\n")
+      tree <- drop.tip(tree, tips_to_drop)
+      next
+      }
+    }
+    if (length(dupli_tips) > 3) {
+      cat("Too many duplicated tips of ",list_of_dups[i] , " removing all of them \n")
+      no_mono_dropped_tips <- c(no_mono_dropped_tips, list_of_dups[i])
+      tips_to_drop <- tree$tip.label[dupli_tips]
+      cat("Dropping: ", tips_to_drop, "\n")
+      tree <- drop.tip(tree, tips_to_drop)
+      next
+      }
+    }
+  }
+
+ length_after_dup_removal <- length(tree$tip.label)
+
+cat("Tips lost due to them being duplicates is: ", length_before_dup_removal - length_after_dup_removal, "\n") # 10137!!! My fucking god that is many!
+cat("Proportion of duplicated tips solved is ", length(mono_dups)/total_dup_names, "\n")
+cat("Proportion of duplicated tips not solved is ", length(no_mono_dropped_tips)/total_dup_names, "\n")
+cat("The number of duplicated tips left in the tree is: ", length(tree$tip.label[duplicated(tree$tip.label)]), "\n")
+
+
+#########################################################################################################################################################################
+#########################################################################################################################################################################
+#########################################################################################################################################################################
+wcvp_accepted_species <- wcvp_accepted[which(wcvp_accepted$taxon_rank == "Species"),]
+
+# Are all the tip labels in the tree in the WCVP_accepted_species file?
+all(tree$tip.label %in% wcvp_accepted_species$taxon_name)
+
+
+# Check if all the tips in the tree are currently in the WCVP and are Accepted species names
+if (length(tree$tip.label[!(tree$tip.label %in% wcvp$taxon_name[wcvp$taxon_status == "Accepted" & wcvp$taxon_rank == "Species"])]) == 0) {
+  cat("All tips in the tree are in the WCVP file and are Accepted species names\n")
+} else {
+  cat("There are still tips in the tree that are not in the WCVP file or are not Accepted species names\n")
+  cat("The tips are ", tree$tip.label[!(tree$tip.label %in% wcvp$taxon_name[wcvp$taxon_status == "Accepted" & wcvp$taxon_rank == "Species"])], "\n")
+  stop("Stopping the program\n")
+  break
+}
+
+# How many tips are left in the tree
+cat("There are ", length(tree$tip.label), "tips left in the tree") # 64256 tips left in the tree
+cat("In total we have lost ", length(tip_names) - length(tree$tip.label) , " tips from the tree")
+
+# I should now be able to save the tree as a newick file and use it for the next step in the workflow.
+cat("Saving the tree as a newick file \n")
+write.tree(tree, output_file_tree)
+
+
+
+#############################################################################
+# Area with old and outdated code which I might want to use later
+
+
+# # Okay so I need to loop through the taxon names in rename_df_new_matches_not_accepted_accepted_name and follow the accepted_plant_name_id
+# # to the accepted name and then check if the accepted name is accepted or not.
+# # I need to do this untill the named pointed to by the accepted_plant_name_id is accepted.
+
+# # I will create a small dataframe to keep track of how many of the Non-Accepted names cannot be changed to an Accepted name and the reason why.
+# df_finding_accepted_ids <- data.frame(
+#   found_accepted_name = numeric(0),
+#   found_na = numeric(0),
+#   found_artificial_hybrid = numeric(0),
+#   found_unplaced = numeric(0),
+#   found_local_biotype = numeric(0)
+# )
+
+
+# # Running the while loop for each species which is not taxon_status = Accepted
+# for(i in seq_along(rename_df_new_matches_not_accepted$taxon_name)){ # 11020 taxon names to loop through
+#   cat("Loop ", i ," :",rename_df_new_matches_not_accepted$accepted_name[i]," is ",rename_df_new_matches_not_accepted$status_of_accept[i], " \n")
+#   while(rename_df_new_matches_not_accepted$status_of_accept[i] != "Accepted"){ # while the name in the accepted_name column is not accepted
+#     if (is.na(rename_df_new_matches_not_accepted$accepted_plant_name_id[i]) | rename_df_new_matches_not_accepted$accepted_plant_name_id[i] == ""){ # If the accepted_plant_name_id is NA then I need to just drop the species from the tree
+#       rename_df_new_matches_not_accepted$status_of_accept[i] <- "NA"
+#       break
+#     } else if (rename_df_new_matches_not_accepted$status_of_accept[i] == "Artificial Hybrid") {
+#       rename_df_new_matches_not_accepted$status_of_accept[i] <- "Artificial Hybrid"
+#       break
+#     } else if (rename_df_new_matches_not_accepted$status_of_accept[i] == "Unplaced") {
+#       rename_df_new_matches_not_accepted$status_of_accept[i] <- "Unplaced"
+#       break
+#     } else if (rename_df_new_matches_not_accepted$status_of_accept[i] == "Local Biotype") {
+#       rename_df_new_matches_not_accepted$status_of_accept[i] <- "Local Biotype"
+#       break
+#     }
+#     rename_df_new_matches_not_accepted$accepted_name[i] <- wcvp$taxon_name[which(wcvp$plant_name_id == rename_df_new_matches_not_accepted$accepted_plant_name_id[i])] # update the accepted_name column with the name pointed to by the accepted_plant_name_id
+#     rename_df_new_matches_not_accepted$status_of_accept[i] <- wcvp$taxon_status[which(wcvp$plant_name_id == rename_df_new_matches_not_accepted$accepted_plant_name_id[i])] # check the status of the name pointed to by the accepted_plant_name_id
+#     cat(rename_df_new_matches_not_accepted$accepted_name[i]," is ",rename_df_new_matches_not_accepted$status_of_accept[i], " \n")
+#   } 
+# }
+
+
+
+
+
+# # I also want to save the matchable tips, the split_matchable_tips and the not_matchable_tips as a data frame. Just so I can look through them when the script is done.
+# df_matchable_tips <- data.frame(tip = matchable_tips, match = match_name) #
+# df_split_matchable_tips <- data.frame(tip = split_matchable_tips, match = split_match_name) #
+# df_not_matchable_tips <- data.frame(tip = split_not_matchable_tips)
+
+# # Writing the data frames to files
+# write.table(df_matchable_tips, "matchable_tips.txt", sep = "\t", row.names = FALSE) #nolint
+# write.table(df_split_matchable_tips, "split_matchable_tips.txt", sep = "\t", row.names = FALSE) #nolint
+# write.table(df_not_matchable_tips, "not_matchable_tips.txt", sep = "\t", row.names = FALSE) #nolints
+
+
 
 ##############################################################################
 # This function for checking duplicates is more sophisticated
@@ -584,143 +818,3 @@ mono_dups <- character(0)
 
 # # Print the final result
 # print(dup_levels_counts_df)
-
-
-# ###############################################################################
-# Simple duplicate remover where I remove duplicate tips if there are more than 3
-# If there is 2 I check if they are monophyletic and only remove 1 of them if they are and both if they are not
-# If there is 3 duplicates I check if  any combination of the tips can form a monophyletic clade, if they can, I keep one of the species in the clade and drop the rest, if they cannot I drop all of them.
-
-# if no duplicates are found, report it and continue
-if (length(tree$tip.label[duplicated(tree$tip.label)]) == 0) {
-  cat("No duplicate species names found in the tree\n")
-} else {
-  # Loop through the duplicated species names
-  list_of_dups <- unique(tree$tip.label[duplicated(tree$tip.label)])
-  for (i in seq_along(list_of_dups)) {
-    cat(i,"  ",list_of_dups[i], "\n")
-    dupli_tips <- which(tree$tip.label == list_of_dups[i])
-    cat("Number of duplicate tips found is: ", length(dupli_tips), "\n")
-
-    if (length(dupli_tips) == 0) {
-      cat("No duplicate tips found for ", list_of_dups[i], "\n")
-      next
-    }
-
-    if (length(dupli_tips) == 2) {
-      if (any(dupli_tips[1] == getSisters(tree, dupli_tips[2]))) {
-
-        cat("Duplicate species of ", list_of_dups[i], " are located next to each other in the tree\n")
-        tree <- drop.tip(tree, tree$tip.label[dupli_tips[1]])
-        mono_dups <- c(mono_dups, list_of_dups[i])
-        next
-      } else {
-
-        cat("Duplicate species are not located next to each other in the tree\n")
-        #cat("Removing both of the species names from the tree \n")
-        # I want to save the species which I had to prune due to non monophyly somewhere.
-        no_mono_dropped_tips <- c(no_mono_dropped_tips, list_of_dups[i])
-        tips_to_drop <- tree$tip.label[dupli_tips]
-        cat("Dropping: ", tips_to_drop, "\n")
-        tree <- drop.tip(tree, tips_to_drop)
-        next
-      }
-    }
-
-    if ( length(dupli_tips) == 3 ){
-      print(dupli_tips)
-      # If any 2 of the duplicated tips are located next to each other in the tree or if all 3 form a monophyletic clade then we are happy.
-      # if any 2 form a monophyletic clade then we can remove the third rogue tip and remove one of the species in the mono clade.
-        if (any(dupli_tips[1] == getSisters(tree, dupli_tips[2] ))) {
-          tree <- drop.tip(tree, tree$tip.label[dupli_tips[3]] )
-          tree <- drop.tip(tree, tree$tip.label[dupli_tips[1]] )
-          mono_dups <- c(mono_dups, list_of_dups[i])
-          next 
-
-        } else if ( any(dupli_tips[1] == getSisters(tree, dupli_tips[3]))) {
-          tree <- drop.tip(tree, tree$tip.label[dupli_tips[2]] )
-          tree <- drop.tip(tree, tree$tip.label[dupli_tips[1]] )
-          mono_dups <- c(mono_dups, list_of_dups[i])
-          next
-
-        }else if ( any(dupli_tips[2] == getSisters(tree, dupli_tips[3] ))){
-          tree <- drop.tip(tree, tree$tip.label[dupli_tips[1]] )
-          tree <- drop.tip(tree, tree$tip.label[dupli_tips[2]] )
-          mono_dups <- c(mono_dups, list_of_dups[i])
-          next
-        } else {
-      cat("None of the 3 tips of ", list_of_dups[i]  ,"form a monophyletic clade \n")
-      no_mono_dropped_tips <- c(no_mono_dropped_tips, list_of_dups[i])
-      tips_to_drop <- tree$tip.label[dupli_tips]
-      cat("Dropping: ", tips_to_drop, "\n")
-      tree <- drop.tip(tree, tips_to_drop)
-      next
-      }
-    }
-    if (length(dupli_tips) > 3) {
-      cat("Too many duplicated tips of ",list_of_dups[i] , " removing all of them \n")
-      no_mono_dropped_tips <- c(no_mono_dropped_tips, list_of_dups[i])
-      tips_to_drop <- tree$tip.label[dupli_tips]
-      cat("Dropping: ", tips_to_drop, "\n")
-      tree <- drop.tip(tree, tips_to_drop)
-      next
-      }
-    }
-  }
-
- 
-
-
-cat("Proportion of duplicated tips solved is ", length(mono_dups)/total_dup_names, "\n")
-cat("Proportion of duplicated tips not solved is ", length(no_mono_dropped_tips)/total_dup_names, "\n")
-cat("Duplicated species accounted for: " , (length(mono_dups) + length(no_mono_dropped_tips))/total_dup_names, "\n")
-cat("The number of duplicated tips left in the tree is: ", length(tree$tip.label[duplicated(tree$tip.label)]), "\n")
-
-
-
-#########################################################################################################################################################################
-#########################################################################################################################################################################
-#########################################################################################################################################################################
-wcvp_accepted_species <- wcvp_accepted[which(wcvp_accepted$taxon_rank == "Species"),]
-
-# Are all the tip labels in the tree in the WCVP_accepted_species file?
-all(tree$tip.label %in% wcvp_accepted_species$taxon_name)
-
-
-# Check if all the tips in the tree are currently in the WCVP and are Accepted species names
-if (length(tree$tip.label[!(tree$tip.label %in% wcvp$taxon_name[wcvp$taxon_status == "Accepted" & wcvp$taxon_rank == "Species"])]) == 0) {
-  cat("All tips in the tree are in the WCVP file and are Accepted species names\n")
-} else {
-  cat("There are still tips in the tree that are not in the WCVP file or are not Accepted species names\n")
-  cat("The tips are ", tree$tip.label[!(tree$tip.label %in% wcvp$taxon_name[wcvp$taxon_status == "Accepted" & wcvp$taxon_rank == "Species"])], "\n")
-  stop("Stopping the program\n")
-  break
-}
-
-# How many tips are left in the tree
-cat("There are ", length(tree$tip.label), "tips left in the tree") # 64256 tips left in the tree
-cat("In total we have lost ", length(no_mono_dropped_tips) + length(split_not_matchable_tips) + length(split_multi_match) + length(new_matching_tips_not_accepted), " tips from the tree")
-cat(length(no_mono_dropped_tips)," due to duplicate tips not being monophyletic") 
-cat(length(split_not_matchable_tips) + length(split_multi_match), " due to not being able to match the tip to the WCVP file")
-cat(length(new_matching_tips_not_accepted), " due to not being able to find an accepted name for the tip")
-
-# I should now be able to save the tree as a newick file and use it for the next step in the workflow.
-cat("Saving the tree as a newick file \n")
-write.tree(tree, output_file_tree)
-
-# I also want to save the matchable tips, the split_matchable_tips and the not_matchable_tips as a data frame. Just so I can look through them when the script is done.
-df_matchable_tips <- data.frame(tip = matchable_tips, match = match_name) #
-df_split_matchable_tips <- data.frame(tip = split_matchable_tips, match = split_match_name) #
-df_not_matchable_tips <- data.frame(tip = split_not_matchable_tips)
-
-# Writing the data frames to files
-write.table(df_matchable_tips, "matchable_tips.txt", sep = "\t", row.names = FALSE) #nolint
-write.table(df_split_matchable_tips, "split_matchable_tips.txt", sep = "\t", row.names = FALSE) #nolint
-write.table(df_not_matchable_tips, "not_matchable_tips.txt", sep = "\t", row.names = FALSE) #nolints
-
-# Checking number of genera left in the tree
-wcvp_SmB <- wcvp[which(wcvp$taxon_name %in% tree$tip.label),]
-length(unique(wcvp_SmB$genus))
-
-
-

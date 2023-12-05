@@ -14,7 +14,7 @@
 #########################################################################################################################
 
 #Packages
-packages <- c("data.table", "ape", "phytools", "geiger", "castor")
+packages <- c("data.table", "ape", "phytools", "geiger", "castor", "MonoPhy")
 
 # Install packages not yet installed
 installed_packages <- packages %in% rownames(installed.packages())
@@ -30,56 +30,56 @@ invisible(lapply(packages, library, character.only = TRUE))
 ##################  Testing the code by runnin it on GDK through VScode and its built in terminal  ########################
 ###########################################################################################################################
 
-# setwd("/home/au543206/GenomeDK/Trf_models/data") # Set working directory when local
-# wcvp <- readRDS("../workflow/02_adding_orders/wcvp_names_apg_aligned.rds")  # Read the WCVP names file into a data frame
-# tree <- read.tree("GBMB_pruned.tre") # Read the GBMB pruned tree
-# output_path <- "../workflow/02_adding_orders/pruning/"
-# apg <- fread("../TroRaiMo/apgweb_parsed.csv")
-# tips_families <- fread("tips_families.txt")
-# non_monophyletic_orders <- fread("../workflow/02_adding_orders/pruning/non_mono_order.txt", header = FALSE, sep = "\t")
+setwd("/home/au543206/GenomeDK/Trf_models/data") # Set working directory when local
+wcvp <- readRDS("../workflow/02_adding_orders/wcvp_names_apg_aligned.rds")  # Read the WCVP names file into a data frame
+tree <- read.tree("GBMB_pruned.tre") # Read the GBMB pruned tree
+output_path <- "../workflow/02_adding_orders/pruning/"
+apg <- fread("../TroRaiMo/apgweb_parsed.csv")
+tips_families <- fread("tips_families.txt")
+non_monophyletic_orders <- fread("../workflow/02_adding_orders/pruning/non_mono_order.txt", header = FALSE, sep = "\t")
+output_file <- "Orders_which_could_not_be_solved.txt"
 
 ###########################################################################################################################
 ############################# Getting command line file names for workflow ################################################
 ###########################################################################################################################
 
-# # Setting the wd for the script
-setwd("/home/owrisberg/Trf_models/data") # Set working directory when remote
+# # # Setting the wd for the script
+# setwd("/home/owrisberg/Trf_models/data") # Set working directory when remote
 
-# Command line arguments
-input_file_tree <- commandArgs(trailingOnly = TRUE)[1]
-input_file_wcvp <- commandArgs(trailingOnly = TRUE)[2]
-output_file <- commandArgs(trailingOnly = TRUE)[3]
-output_path <- commandArgs(trailingOnly = TRUE)[4]
-apg <- commandArgs(trailingOnly = TRUE)[5]
+# # Command line arguments
+# input_file_tree <- commandArgs(trailingOnly = TRUE)[1]
+# input_file_wcvp <- commandArgs(trailingOnly = TRUE)[2]
+# output_file <- commandArgs(trailingOnly = TRUE)[3]
+# output_path <- commandArgs(trailingOnly = TRUE)[4]
+# apg <- commandArgs(trailingOnly = TRUE)[5]
+
+# # Read the WCVP names file into a data frame
+# cat("Opening ", input_file_wcvp, "\n")  
+# wcvp <- readRDS(input_file_wcvp)
+
+# # Read the GBMB tree
+# cat("Opening ", input_file_tree, "\n")
+# tree <- read.tree(input_file_tree)
+
+# # Loading the apgweb_parsed.csv file
+# cat("Loading the apgweb_parsed.csv file \n")
+# apg <- fread(apg)
+
+#  # Loading tips families so I dont have to wait so fucking long..
+# tips_families <- fread("tips_families.txt")
 
 
-###################################################################################
-##################### Loading files ###############################################
-###################################################################################
-
-# Read the WCVP names file into a data frame
-cat("Opening ", input_file_wcvp, "\n")  
-wcvp <- readRDS(input_file_wcvp)
-
-# Read the GBMB tree
-cat("Opening ", input_file_tree, "\n")
-tree <- read.tree(input_file_tree)
-
-# Loading the list of non-monophyletic orders
-cat("Loading the list of non-monophyletic orders \n")
-non_monophyletic_orders <- fread("../workflow/02_adding_orders/pruning/non_mono_order.txt", header = FALSE, sep = "\t")
-
-# Loading the apgweb_parsed.csv file
-cat("Loading the apgweb_parsed.csv file \n")
-apg <- fread(apg)
-
- # Loading tips families so I dont have to wait so fucking long..
-tips_families <- fread("tips_families.txt")
+# # Loading the list of non-monophyletic orders
+# cat("Loading the list of non-monophyletic orders \n")
+# non_monophyletic_orders <- fread("../workflow/02_adding_orders/pruning/non_mono_order.txt", header = FALSE, sep = "\t")
 
 
 ###################################################################################
 ###########################  Basic clean up  ######################################
 ###################################################################################
+
+# Make tree bifurcating
+tree <- multi2di(tree)
 
 # Remove "_"
 tree$tip.label <- gsub("_", " ", tree$tip.label)
@@ -182,7 +182,7 @@ find_largest_clade <- function(tips_in_order, tree) {
 		if (all(last_tree$tip.label %in% tips_in_order)) {
 		  #cat("All the tips in the subtree are in the order \n")
 		} else {
-		  cat("Not all the tips in the subtree are in the order \n")
+		  #cat("Not all the tips in the subtree are in the order \n")
 		  break
 		}
 
@@ -204,7 +204,82 @@ find_largest_clade <- function(tips_in_order, tree) {
 
   # Check if biggest_subtree is non-empty before returning
   if (length(biggest_subtree) > 0) {
-    return(list(biggest_subtree = biggest_subtree, rogue_species = rogue_species))
+    return(list(biggest_subtree = biggest_subtree, rogue_species = rogue_species, subtree = subtree))
+  } else {
+    return(NULL)
+  }
+}
+#########################################################################################################
+
+# Function for finding the largest monophyletic clade of the tips in the order
+find_largest_clade <- function(tips_in_order, tree) {
+  biggest_subtree <- list()
+  rogue_species <- list()
+  length_biggest_subtree <- 0
+
+  # Looping through all the tips in the order
+  for (i in seq_along(tips_in_order)) {
+
+    # Progress bar
+    if (!i %% 100) cat("Percentage done", format(round((i / length(tips_in_order)) * 100, 2), nsmall = 2), " at ", format(Sys.time(), '%H:%M:%S'), "\n")
+    tip <- tips_in_order[i]
+
+    # Find the node of the tip because getParent only works on nodes
+    node <- which(tree$tip.label == tip)[1]
+
+    # Get the parent node
+    pnode <- getParent(tree, node)
+
+    # Check if the parent node is the root
+    if (pnode != 0) {
+      subtree <- get_subtree_at_node(tree, pnode - Ntip(tree))$subtree
+
+      # Check if there are any tips in the subtree & if they are all found in the order
+      if (length(subtree$tip.label) > 0 && all(subtree$tip.label %in% tips_in_order)) {
+
+        # While all the tip labels are in the order continue "diving" into the tree until you come to a species which is not in the order
+        while (all(subtree$tip.label %in% tips_in_order)) {
+          last_tree <- subtree
+          last_pnode <- pnode
+
+          pnode <- getParent(tree, pnode)
+          subtree <- get_subtree_at_node(tree, pnode - Ntip(tree))$subtree
+        }
+
+        # Select the last tree which contained only tips in the order
+
+        # Checking if the tips in the subtree are all in the order
+        if (all(last_tree$tip.label %in% tips_in_order)) {
+          # cat("All the tips in the subtree are in the order \n")
+        } else {
+          # cat("Not all the tips in the subtree are in the order \n")
+          break
+        }
+
+        # When you find a node where not all the tips are in the order.
+        # If the clade is bigger than the biggest clade found so far then save it as the biggest clade
+        # And update the rogue species in order to see what species are breaking the order
+
+        # Calculate the proportion of tips in the order
+        proportion_in_order <- length(last_tree$tip.label[which(last_tree$tip.label %in% tips_in_order)]) / length(last_tree$tip.label)
+
+        # Check if the proportion is at least 90%
+        if (proportion_in_order >= 0.9) {
+          if (length(last_tree$tip.label) > length(biggest_subtree$tip.label)) {
+            biggest_subtree <- last_tree
+            length_biggest_subtree <- length(biggest_subtree$tip.label)
+            rogue_species <- subtree$tip.label[which(!subtree$tip.label %in% tips_in_order)]
+          }
+        }
+      }
+    }
+  }
+
+  cat("Length of biggest subtree is: ", length_biggest_subtree, "\n")
+
+  # Check if biggest_subtree is non-empty before returning
+  if (length(biggest_subtree) > 0) {
+    return(list(biggest_subtree = biggest_subtree, rogue_species = rogue_species, subtree = subtree))
   } else {
     return(NULL)
   }
@@ -288,10 +363,12 @@ for (i in seq_along(non_monophyletic_orders[[1]])) {
 		next
 	} else {
 		# Here I will loop through the tips in the order and find the largest monophyletic clade which is in the order.
+
 		result <- find_largest_clade(tips_in_order, tree)
 
 		largest_clade <- result$biggest_subtree
 		rogue_species_breaking <- result$rogue_species
+		subtree <- result$subtree
 
 		# If the largest clade contains atleast 90 % of the species in the order. I will save it
 		if ( length(largest_clade$tip.label) >= 0.9 * length(tips_in_order) ) {
@@ -305,6 +382,35 @@ for (i in seq_along(non_monophyletic_orders[[1]])) {
 		} else {
 			cat("Problem order is: ", order, "\n")
 
+			# I want to use MonoPhy to create a tree which shows the Monophyly of the MRCA tree
+			rogue_tips_orders <- tips_family_orders[which(tips_family_orders$name %in% subtree$tip.label)] # Selecting the tips which are in the MRCA tree
+
+			#rogue_sub_tree <- ape::extract.clade(tree, MRCA)
+			rogue_tips_orders <- rogue_tips_orders[, c("name", "order")]
+			monophy <- AssessMonophyly(subtree, rogue_tips_orders)
+
+			#print(monophy)
+			
+			height_per_species <- 0.15
+
+			# Calculate the total height based on the number of species
+			if ( length(subtree$tip.label) < 10){
+				total_height <- 50
+			}else {
+				 total_height <- round(length(subtree$tip.label) * height_per_species)
+			}
+			cat("Total height is: ", total_height, "\n")
+
+
+			# Open PDF file for plotting
+			pdf(paste0(output_path, "rogue_monophy_", order, "_GBMB.pdf"), height = total_height)
+			
+			# Plot using PlotMonophyly
+			PlotMonophyly(monophy, subtree, plot.type='monophyly', ladderize=TRUE, cex=0.5)
+			
+			# Close the PDF file
+			dev.off()
+
 			new_row <- data.frame(order = order,
 				max_clade_found = length(largest_clade$tip.label),
 				total_tips_in_order = length(tips_in_order),
@@ -313,11 +419,15 @@ for (i in seq_along(non_monophyletic_orders[[1]])) {
 
     		no_solvable_tips_family <- rbind(no_solvable_tips_family, new_row)
 			cat("Done with ", order, "\n")
+			
 			}
-		#write.tree(subtree, paste0(output_path, "Rogue_MRCA_tree_", order, "_GBMB.txt"))
+		write.tree(subtree, paste0(output_path, "Rogue_MRCA_tree_", order, "_GBMB.txt"))
 
 	}
 }
+
+
+
 
 cat("Printing output_file to: ",paste0(output_path,output_file), "\n")
 # Writing out the no_solvable_tips_family data frame to a file
