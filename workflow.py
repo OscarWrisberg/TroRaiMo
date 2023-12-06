@@ -801,7 +801,7 @@ gwf.target_from_template(name = "Creating_Common_Format",
                                  output_file = "gbif_common_format.rds",
                                  path_in = workflow_dir+"01_distribution_data/03_taxon_lookup/",
                                  script_dir = script_dir,
-                                 path_out = workflow_dir+"01_distribution_data/04_common_format"
+                                 path_out = workflow_dir+"01_distribution_data/04_common_format/"
                              ))
 
 gwf.target_from_template(name = "APG_preb_occurrences",
@@ -811,7 +811,7 @@ gwf.target_from_template(name = "APG_preb_occurrences",
                                  output_file = "wcvp_names_apg_aligned.rds",
                                  path_in = data_dir,
                                  script_dir = script_dir,
-                                 path_out = workflow_dir+"01_distribution_data/05_APG_aligned/"
+                                 path_out = workflow_dir+"01_distribution_data/04_common_format/"
                              ))
 
 gwf.target_from_template(name = "Taxon_match",
@@ -819,9 +819,9 @@ gwf.target_from_template(name = "Taxon_match",
                                  input_file ="gbif_common_format.rds",
                                  wcvp = "wcvp_names_apg_aligned.rds",
                                  output_file = "gbif_taxon_matched.rds",
-                                 path_in = workflow_dir+"01_distribution_data/05_APG_aligned/",
+                                 path_in = workflow_dir+"01_distribution_data/04_common_format/",
                                  script_dir = script_dir,
-                                 path_out = workflow_dir+"01_distribution_data/06_Taxon_match/"
+                                 path_out = workflow_dir+"01_distribution_data/05_Taxon_match/"
                              ))
 
 gwf.target_from_template(name = "Renaming",
@@ -830,9 +830,9 @@ gwf.target_from_template(name = "Renaming",
                                     wcvp = workflow_dir+"01_distribution_data/05_common_format/wcvp_names_apg_aligned.rds",
                                     renaming_file = "gbif_taxon_matched.rds",
                                     output_file = "gbif_renamed.rds",
-                                    path_in = workflow_dir+"01_distribution_data/06_Taxon_match/",
+                                    path_in = workflow_dir+"01_distribution_data/05_Taxon_match/",
                                     script_dir = script_dir,
-                                    path_out = workflow_dir+"01_distribution_data/07_Renamed"
+                                    path_out = workflow_dir+"01_distribution_data/06_Renamed"
                                 ))
 
 ################################################################################################################################
@@ -901,6 +901,58 @@ gwf.target_from_template(name = "Finding_monophyletic_orders",
                             apg = script_dir+"apgweb_parsed.csv" 
                             ))
 
+order_trees <- [
+"pruned_tree__order_Acorales_GBMB.txt", "pruned_tree__order_Crossosomatales_GBMB.txt", "pruned_tree__order_Gnetales_GBMB.txt", "pruned_tree__order_Piperales_GBMB.txt",
+"pruned_tree__order_Alismatales_GBMB.txt", "pruned_tree__order_Cucurbitales_GBMB.txt", "pruned_tree__order_Gunnerales_GBMB.txt", "pruned_tree__order_Poales_GBMB.txt",
+"pruned_tree__order_Amborellales_GBMB.txt", "pruned_tree__order_Cupressales_GBMB.txt", "pruned_tree__order_Huerteales_GBMB.txt", "pruned_tree__order_Polypodiales-eupolypod_I_GBMB.txt",
+"pruned_tree__order_Aquifoliales_GBMB.txt", "pruned_tree__order_Cycadales_GBMB.txt", "pruned_tree__order_Magnoliales_GBMB.txt", "pruned_tree__order_Ranunculales_GBMB.txt",
+"pruned_tree__order_Arecales_GBMB.txt", "pruned_tree__order_Dilleniales_GBMB.txt", "pruned_tree__order_Malpighiales_GBMB.txt", "pruned_tree__order_Rosales_GBMB.txt",
+"pruned_tree__order_Austrobaileyales_GBMB.txt", "pruned_tree__order_Dioscoreales_GBMB.txt", "pruned_tree__order_Malvales_GBMB.txt", "pruned_tree__order_Santalales_GBMB.txt",
+"pruned_tree__order_Berberidopsidales_GBMB.txt", "pruned_tree__order_Dipsacales_GBMB.txt", "pruned_tree__order_Myrtales_GBMB.txt", "pruned_tree__order_Sapindales_GBMB.txt",
+"pruned_tree__order_Bruniales_GBMB.txt", "pruned_tree__order_Equisetales_GBMB.txt", "pruned_tree__order_Nymphaeales_GBMB.txt", "pruned_tree__order_Solanales_GBMB.txt",
+"pruned_tree__order_Buxales_GBMB.txt", "pruned_tree__order_Ericales_GBMB.txt", "pruned_tree__order_Osmundales_GBMB.txt", "pruned_tree__order_Trochodendrales_GBMB.txt",
+"pruned_tree__order_Canellales_GBMB.txt", "pruned_tree__order_Escalloniales_GBMB.txt", "pruned_tree__order_Pandanales_GBMB.txt", "pruned_tree__order_Vahliales_GBMB.txt",
+"pruned_tree__order_Celastrales_GBMB.txt", "pruned_tree__order_Fabales_GBMB.txt", "pruned_tree__order_Paracryphiales_GBMB.txt", "pruned_tree__order_Vitales_GBMB.txt",
+"pruned_tree__order_Ceratophyllales_GBMB.txt", "pruned_tree__order_Garryales_GBMB.txt", "pruned_tree__order_Petrosaviales_GBMB.txt", "pruned_tree__order_Zingiberales_GBMB.txt",
+"pruned_tree__order_Chloranthales_GBMB.txt", "pruned_tree__order_Ginkgoales_GBMB.txt", "pruned_tree__order_Picramniales_GBMB.txt", "pruned_tree__order_Zygophyllales_GBMB.txt",
+"twice_pruned_tree_Alismatales_GBMB.txt", "twice_pruned_tree_family_Aquifoliales_GBMB.txt", "twice_pruned_tree_family_Myrtales_GBMB.txt", "twice_pruned_tree_Liliales_GBMB.txt",
+"twice_pruned_tree_Apiales_GBMB.txt", "twice_pruned_tree_family_Arecales_GBMB.txt", "twice_pruned_tree_family_Pinales_GBMB.txt", "twice_pruned_tree_Magnoliales_GBMB.txt",
+"twice_pruned_tree_Aquifoliales_GBMB.txt", "twice_pruned_tree_family_Boraginales_GBMB.txt", "twice_pruned_tree_family_Piperales_GBMB.txt", "twice_pruned_tree_Malpighiales_GBMB.txt",
+"twice_pruned_tree_Arecales_GBMB.txt", "twice_pruned_tree_family_Brassicales_GBMB.txt", "twice_pruned_tree_family_Poales_GBMB.txt", "twice_pruned_tree_Metteniusales_GBMB.txt",
+"twice_pruned_tree_Asterales_GBMB.txt", "twice_pruned_tree_family_Commelinales_GBMB.txt", "twice_pruned_tree_family_Proteales_GBMB.txt", "twice_pruned_tree_Nymphaeales_GBMB.txt",
+"twice_pruned_tree_Boraginales_GBMB.txt", "twice_pruned_tree_family_Cupressales_GBMB.txt", "twice_pruned_tree_family_Ranunculales_GBMB.txt", "twice_pruned_tree_Oxalidales_GBMB.txt",
+"twice_pruned_tree_Brassicales_GBMB.txt", "twice_pruned_tree_family_Cycadales_GBMB.txt", "twice_pruned_tree_family_Rosales_GBMB.txt", "twice_pruned_tree_Pandanales_GBMB.txt",
+"twice_pruned_tree_Buxales_GBMB.txt", "twice_pruned_tree_family_Dilleniales_GBMB.txt", "twice_pruned_tree_family_Santalales_GBMB.txt", "twice_pruned_tree_Picramniales_GBMB.txt",
+"twice_pruned_tree_Canellales_GBMB.txt", "twice_pruned_tree_family_Dioscoreales_GBMB.txt", "twice_pruned_tree_family_Sapindales_GBMB.txt", "twice_pruned_tree_Pinales_GBMB.txt",
+"twice_pruned_tree_Caryophyllales_GBMB.txt", "twice_pruned_tree_family_Dipsacales_GBMB.txt", "twice_pruned_tree_family_Solanales_GBMB.txt", "twice_pruned_tree_Proteales_GBMB.txt",
+"twice_pruned_tree_Celastrales_GBMB.txt", "twice_pruned_tree_family_Fabales_GBMB.txt", "twice_pruned_tree_family_Vitales_GBMB.txt", "twice_pruned_tree_Ranunculales_GBMB.txt",
+"twice_pruned_tree_Chloranthales_GBMB.txt", "twice_pruned_tree_family_Fagales_GBMB.txt", "twice_pruned_tree_family_Zingiberales_GBMB.txt", "twice_pruned_tree_Santalales_GBMB.txt",
+"twice_pruned_tree_Cornales_GBMB.txt", "twice_pruned_tree_family_Geraniales_GBMB.txt", "twice_pruned_tree_family_Zygophyllales_GBMB.txt", "twice_pruned_tree_Sapindales_GBMB.txt",
+"twice_pruned_tree_Crossosomatales_GBMB.txt", "twice_pruned_tree_family_Gnetales_GBMB.txt", "twice_pruned_tree_Geraniales_GBMB.txt", "twice_pruned_tree_Saxifragales_GBMB.txt",
+"twice_pruned_tree_Cucurbitales_GBMB.txt", "twice_pruned_tree_family_Laurales_GBMB.txt", "twice_pruned_tree_Gunnerales_GBMB.txt", "twice_pruned_tree_Solanales_GBMB.txt",
+"twice_pruned_tree_Cycadales_GBMB.txt", "twice_pruned_tree_family_Malpighiales_GBMB.txt", "twice_pruned_tree_Icacinales_GBMB.txt", "twice_pruned_tree_Zingiberales_GBMB.txt",
+"twice_pruned_tree_Fagales_GBMB.txt", "twice_pruned_tree_family_Malvales_GBMB.txt", "twice_pruned_tree_Lamiales_GBMB.txt", "twice_pruned_tree_Zygophyllales_GBMB.txt"
+]
+
+orders <- ["Acorales", "Crossosomatales", "Gnetales", "Piperales","Alismatales", "Cucurbitales", "Gunnerales", "Poales","Amborellales", "Cupressales", "Huerteales", "Polypodiales-eupolypod_I",
+"Aquifoliales", "Cycadales", "Magnoliales", "Ranunculales","Arecales", "Dilleniales", "Malpighiales", "Rosales",
+"Austrobaileyales", "Dioscoreales", "Malvales", "Santalales","Berberidopsidales", "Dipsacales", "Myrtales", "Sapindales","Bruniales", "Equisetales", "Nymphaeales", "Solanales","Buxales", "Ericales", "Osmundales", "Trochodendrales",
+"Canellales", "Escalloniales", "Pandanales", "Vahliales","Celastrales", "Fabales", "Paracryphiales", "Vitales","Ceratophyllales", "Garryales", "Petrosaviales", "Zingiberales",
+"Chloranthales", "Ginkgoales", "Picramniales", "Zygophyllales","Alismatales", "Aquifoliales", "Myrtales", "Liliales","Apiales", "Arecales", "Pinales", "Magnoliales",
+"Aquifoliales", "Boraginales", "Piperales", "Malpighiales","Arecales", "Brassicales", "Poales", "Metteniusales","Asterales", "Commelinales", "Proteales", "Nymphaeales",
+"Boraginales", "Cupressales", "Ranunculales", "Oxalidales","Brassicales", "Cycadales", "Rosales", "Pandanales","Buxales", "Dilleniales", "Santalales", "Picramniales","Canellales", "Dioscoreales", "Sapindales", "Pinales",
+"Caryophyllales", "Dipsacales", "Solanales", "Proteales","Celastrales", "Fabales", "Vitales", "Ranunculales","Chloranthales", "Fagales", "Zingiberales", "Santalales",
+"Cornales", "Geraniales", "Zygophyllales", "Sapindales","Crossosomatales", "Gnetales", "Geraniales", "Saxifragales","Cucurbitales", "Laurales", "Gunnerales", "Solanales",
+"Cycadales", "Malpighiales", "Icacinales", "Zingiberales","Fagales", "Malvales", "Lamiales", "Zygophyllales"]
+
+for i in range(len(order_trees)):
+    #### Running the script to find the environmental data for the tips in the trees
+    gwf.target_from_template('Finding_dist_data'+sp[i], Finding_areas_in_wcvp(input_file_tree= order_trees[i],
+                                                        path_out = "",
+                                                        output = "",
+                                                        input_file_wcvp = "",
+                                                        order = orders[i],
+                                                        ))
 
 
 
