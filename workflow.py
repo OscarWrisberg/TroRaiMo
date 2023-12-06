@@ -772,9 +772,9 @@ gwf.target_from_template(name = "GBIF_lookup",
                              template = taxon_look_up(
                                  input_file ="gbif_parsed.rds",
                                  output_file = "gbif_parsed_taxon_data.rds",
-                                 path_in = workflow_dir+"01_distribution_data/03_data_parsing/",
+                                 path_in = workflow_dir+"01_distribution_data/02_data_parsing/",
                                  script_dir = script_dir,
-                                 path_out = workflow_dir+"01_distribution_data/04_taxon_lookup/"
+                                 path_out = workflow_dir+"01_distribution_data/03_taxon_lookup/"
                              ))
 
 gwf.target_from_template(name = "Creating_Common_Format",
@@ -782,9 +782,9 @@ gwf.target_from_template(name = "Creating_Common_Format",
                                  input_file_taxonomy ="gbif_parsed_taxon_data.rds",
                                  input_file_occurrences =workflow_dir+"01_distribution_data/03_data_parsing/gbif_parsed.rds",
                                  output_file = "gbif_common_format.rds",
-                                 path_in = workflow_dir+"01_distribution_data/04_taxon_lookup/",
+                                 path_in = workflow_dir+"01_distribution_data/03_taxon_lookup/",
                                  script_dir = script_dir,
-                                 path_out = workflow_dir+"01_distribution_data/05_common_format"
+                                 path_out = workflow_dir+"01_distribution_data/04_common_format"
                              ))
 
 gwf.target_from_template(name = "APG_preb_occurrences",
@@ -794,7 +794,7 @@ gwf.target_from_template(name = "APG_preb_occurrences",
                                  output_file = "wcvp_names_apg_aligned.rds",
                                  path_in = data_dir,
                                  script_dir = script_dir,
-                                 path_out = workflow_dir+"01_distribution_data/06_APG_aligned/"
+                                 path_out = workflow_dir+"01_distribution_data/05_APG_aligned/"
                              ))
 
 gwf.target_from_template(name = "Taxon_match",
@@ -802,9 +802,9 @@ gwf.target_from_template(name = "Taxon_match",
                                  input_file ="gbif_common_format.rds",
                                  wcvp = "wcvp_names_apg_aligned.rds",
                                  output_file = "gbif_taxon_matched.rds",
-                                 path_in = workflow_dir+"01_distribution_data/06_APG_aligned/",
+                                 path_in = workflow_dir+"01_distribution_data/05_APG_aligned/",
                                  script_dir = script_dir,
-                                 path_out = workflow_dir+"01_distribution_data/07_Taxon_match/"
+                                 path_out = workflow_dir+"01_distribution_data/06_Taxon_match/"
                              ))
 
 gwf.target_from_template(name = "Renaming",
@@ -813,9 +813,9 @@ gwf.target_from_template(name = "Renaming",
                                     wcvp = workflow_dir+"01_distribution_data/05_common_format/wcvp_names_apg_aligned.rds",
                                     renaming_file = "gbif_taxon_matched.rds",
                                     output_file = "gbif_renamed.rds",
-                                    path_in = workflow_dir+"01_distribution_data/07_Taxon_match/",
+                                    path_in = workflow_dir+"01_distribution_data/06_Taxon_match/",
                                     script_dir = script_dir,
-                                    path_out = workflow_dir+"01_distribution_data/08_Renamed"
+                                    path_out = workflow_dir+"01_distribution_data/07_Renamed"
                                 ))
 
 
