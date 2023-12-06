@@ -1,16 +1,38 @@
 # Loading packages
-library(data.table)
-library(dplyr)
-library(ggplot2)
+# Setting Cran mirror
+chooseCRANmirror(ind = 30)
 
-# Command Line arguments
-args <- commandArgs(trailingOnly = TRUE)
-occurences <- as.character(args[1]) # here you define the name of your occurences file
-input_file_taxonomy <- as.character(args[2]) # here you define the name of your input file for taxonomy (i.e WCVP)
-renaming_file <- as.character(args[3]) # Here you define the name of the file from the taxonomy matcher.
-output_file <- as.character(args[3]) # Here you define the name of the output file
+#Packages
+packages <- c("data.table","dplyr","ggplot2","scales")
+
+# Install packages not yet installed
+installed_packages <- packages %in% rownames(installed.packages())
+if (any(installed_packages == FALSE)) {
+  install.packages(packages[!installed_packages])
+}
+
+# Packages loading
+invisible(lapply(packages, library, character.only = TRUE))
+
+##############################################################
+# Set variables for local testing
+setwd("/home/au543206/GenomeDK/Biome_estimation/workflow/06_taxonomy_match")
+occurences <- "../05_create_common_format/gbif_common_format.rds"
+input_file_taxonomy <- "../05_create_common_format/wcvp_names_apg_aligned.rds" 
+renaming_file <- "gbif_taxon_matched.rds"
+output_file <- "gbif_renamed.rds"
+
+##############################################################
+
+# # Command Line arguments for script
+# args <- commandArgs(trailingOnly = TRUE)
+# occurences <- as.character(args[1]) # here you define the name of your occurences file
+# input_file_taxonomy <- as.character(args[2]) # here you define the name of your input file for taxonomy (i.e WCVP)
+# renaming_file <- as.character(args[3]) # Here you define the name of the file from the taxonomy matcher.
+# output_file <- as.character(args[3]) # Here you define the name of the output file
 
 
+###############################################################
 # Load the taxonomic data from wcvp
 taxonomy <- readRDS(input_file_taxonomy)
 
@@ -21,8 +43,7 @@ renaming <- readRDS(renaming_file)
 occurences <- readRDS(occurences)
 
 # Appending the name of the species which is pointed to by the accepted_plant_name_id column in the renaming file from wcvp.
-renaming$accepted_plant_name_id_name <- taxonomy$species[match(renaming$accepted_plant_name_id, taxonomy$plant_name_id)]
-
+renaming$accepted_plant_name_id_name <- taxonomy$taxon_name[match(renaming$accepted_plant_name_id, taxonomy$plant_name_id)]
 
 # Examining if there are any NA's in the renaming file or the occurenced file.
 occurrences_na <- sum(is.na(occurences$accepted_plant_name_id))
@@ -80,7 +101,9 @@ if (renaming_na > 0) {
 #Error in occurences$taxon_name[match(renaming$accepted_plant_name_id,  : 
 #  NAs are not allowed in subscripted assignments
 # Is it because these two accepted_plant_name_id is not the same ID?
-occurences$taxon_name[match(renaming$tip, occurences$tip)] <- renaming$accepted_plant_name_id_name
+
+# Here I am renaming the names in the occurrences file using the renaming file.
+occurences$taxon_name[match(occurences$occurrence_species_name, renaming$occurrence_species_name)] <- renaming$accepted_plant_name_id_name
 
 # Doing some checks to see how much is recovered
 if(length(unique(occurences$taxon_name)) == length(unique(renaming$accepted_plant_name_id_name))){
@@ -90,8 +113,7 @@ if(length(unique(occurences$taxon_name)) == length(unique(renaming$accepted_plan
 }
 
 # Some simple stats
-cat("There are ", length(unique(occurences$accepted_plant_name_id_name)), " unique names in the occurrences file \n")
-cat("There are ", length(occurences$accepted_plant_name_id_name), " occurences in the occurrences file \n")
+cat("There are ", length(unique(occurences$taxon_name)), " unique names in the occurrences file \n")
 
 # Can i print how many species have 1,2,3,4,5,6 .etc occurences? with the species having more than X occurences not being included in the count of X occurences?
 # This would probably be easiest with a sort of for loop and the duplicated function.
@@ -99,14 +121,32 @@ cat("There are ", length(occurences$accepted_plant_name_id_name), " occurences i
 # In order to find the max number of occurences I will use the table function.
 
 #Counting the species
-species_counts <- table((occurences$accepted_plant_name_id_name))
+species_counts <- table((occurences$taxon_name))
 
 # finding the species with the highest count.
 most_common_species <- names(species_counts[which.max(species_counts)])
 
+# Creating a data frame with the number of species with 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 and up to 20 occurrences.
+# This will be done based on species counts.
+sp_per_count <- data.frame(
+  number_of_occurrences = 1:15,
+  number_of_species = rep(0, 15)
+)
+
+# Filling in the actual counts
+sp_per_count$number_of_species[1:15] <- table(species_counts)[1:15]
+
+sp_per_count
+
 # Making a bar plot showing the number of species X the number of occurences using ggplot2
 # I will use the species_counts object to make the plot.
-occurence_plot <- ggplot(data = species_counts, aes(x = species_counts)) + geom_bar() + labs(x = "Number of occurences", y = "Number of species")
+# Create a plot
+occurrence_plot <- ggplot(data = sp_per_count, aes(x = number_of_occurrences, y = number_of_species)) + 
+  geom_bar(stat = "identity") + 
+  labs(x = "Number of occurrences", y = "Number of species") +
+  scale_y_continuous(trans = "log10", breaks = c(1, 10, 100, 1000, 10000, 100000, 250000),
+                     labels = scales::comma)
+
 
 # Saving the plot as a pdf
 ggsave("occurence_plot.pdf", plot = occurence_plot, width = 10, height = 10, units = "cm")

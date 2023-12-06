@@ -1,7 +1,9 @@
 '''
 ------------------------------------------------------------------------------------------------------------------------
-This is gonna be my workflow for the Biome estimation of all vascular plant species using the occurence records of
-Herbarium specimens.
+This is gonna be my workflow for the estimation of speciation, extinction and migration of all vascular plant orders
+species using the occurence records of Herbarium specimens combined with the phylogenetic tree of Smith & Brown 2018.
+
+Lastly this script will fit the ESSE models from Tapestree to the data and estimate the parameters for each order.
 
 The Idea is that if you download the repository then you can run the entire analysis using GWF on a cluster using slurm.
 Ideally it should run the entire analysis as a pipeline where the output of the frist function is the input to the next
@@ -9,7 +11,7 @@ one and result in all the final data output.
 
 Download the repository from Github into a folder for the project.
 When you run the gwf run command, the pipeline should by itself download the necessary data from the internet, and perform
-all the required steps in order. 
+all the required steps in the necessary order. 
 
 ------------------------------------------------------------------------------------------------------------------------
 
@@ -36,7 +38,6 @@ gwf = Workflow()
 ####################################################################################################
 ####################################################################################################
 
-
 ##############################################################
 ##########---- Function for downloading data ----#############
 ##############################################################
@@ -45,16 +46,18 @@ gwf = Workflow()
 # https://github.com/FePhyFoFum/big_seed_plant_trees/releases/download/v0.1/v0.1.zip
 
 # Webpage for trees for individual orders
-# https://www-personal.umich.edu/~eebsmith/big_seed_plant_datasets/trees/
+# https://www-personal.umich.edu/~eebsmith/big_seed_plant_datasets/trees/ # why didnt I just use this.....
 
 def download_data(path_out,
                   smb_doi,
                   kew_doi,
+                  gbif_doi,
                   output_smb,
-                  output_kew):
+                  output_kew,
+                  output_gbif):
     """This function should download all the necessary files for the project"""
     inputs = []
-    outputs = [path_out+output_kew,path_out+output_smb]
+    outputs = [path_out+output_kew,path_out+output_smb,path_out+output_gbif]
     options = {
         'cores': 5,
         'memory': '40g',
@@ -140,10 +143,340 @@ def download_data(path_out,
         date
     fi
 
+    # Checking if file has already been downloaded. If not download it at # https://api.gbif.org/v1/occurrence/download/request/0012129-230828120925497.zip
+    # First im extracting the name of the downloaded file.
+    filename_gbif=$(echo "https://api.gbif.org/v1/occurrence/download/request/0012129-230828120925497.zip" | awk -F "/" '{{print $NF}}')
+    echo "Were trying to download $filename_gbif"
 
-    '''.format(path_out = path_out, smb_doi = smb_doi, kew_doi = kew_doi, output_smb=output_smb, output_kew=output_kew)
+    #Then i am checking if file exists
+    if [ -f $filename_gbif ]; then
+        echo "$filename_gbif is already downloaded"
+    else
+        echo "starting download of GBIF data at: "
+        date
+        wget {gbif_doi}
+        echo "Finished downloading GBIF data at: "
+        date
+    fi
+
+    # Unzipping GBIF data
+    if [ -f {path_out}{output_gbif} ]; then
+        echo "Files from Gbif have already been unzipped"
+    else
+        echo "\n  starting to unzip at GBIF data at: "
+        date
+        unzip -o {path_out}$filename_gbif
+        echo " Finished unzipping GBIF data at :"
+        date
+    fi
+
+
+    '''.format(path_out = path_out, smb_doi = smb_doi, kew_doi = kew_doi, output_smb=output_smb, output_kew=output_kew, gbif_doi = gbif_doi, output_gbif=output_gbif)
 
     return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
+
+
+
+################################################################################################################################################################################
+############################################--------------------- Working on occurrence data ---------------------##############################################################
+################################################################################################################################################################################
+
+##############################################################
+############---- Selecting usefull columns ----###############
+##############################################################
+def Rm_cols(input_file, output_file, path_in,path_out, occurrence_dir):
+    """Here I want to remove unimportant columns from the file in order to save some ram space and increase computing speed"""
+    inputs = [path_in+input_file]
+    outputs = [path_out+output_file]
+    options = {
+        'cores': 5,
+        'memory': '50g',
+        'account':"Biome_estimation",
+        'walltime': "00:10:00"
+    }
+
+    spec = '''
+    #Checking if output dir exists
+    [ -d {occurrence_dir} ] && echo "{occurrence_dir} exist." || {{ echo "{occurrence_dir} does not exist."; mkdir {occurrence_dir}; }}
+
+    #Checking if output dir exists
+    [ -d {path_out} ] && echo "{path_out} exist." || {{ echo "{path_out} does not exist."; mkdir {path_out}; }}
+
+    echo Starting the column removal script
+    
+    date
+
+    cd {path_in}
+
+    # The numbers here are the columns which I want to keep in my data.
+    # and they are 
+    #"gbifID", 1
+    #"establishmentMeans", 34
+    #"habitat", 65
+    #"eventRemarks" 71,
+    #"decimalLatitude" 92
+    #"decimalLongitude" 93
+    #"acceptedNameUsageID" 137
+    #"scientificName" 143
+    #"family" 155
+    #"genus" 157
+    #"taxonRank" 164
+    #"datasetKey" 171
+    #"speciesKey 192
+    #"species" 193
+
+
+    cut -d "\t" -f 1,34,65,71,92,93,137,143,155,157,164,171,192,193 {input_file} > {output_file}
+
+    echo ending the column removal script
+
+    mv {output_file} {path_out}
+    
+    date
+
+    '''.format(input_file=input_file, output_file=output_file, path_in = path_in, path_out = path_out)
+
+    return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
+
+
+##############################################################
+################---- Loading the dataset ----#################
+##############################################################
+
+def Load_data(input_file, output_file, path_in,path_out, script_dir):
+    """Here I load the GBIF data and save it as an rds file for further analysis."""
+    inputs = [path_in+input_file]
+    outputs = [path_out+output_file]
+    options = {
+        'cores': 1,
+        'memory': '50g',
+        'account':"Biome_estimation",
+        'walltime': "00:10:00"
+    }
+
+    spec = '''
+     #Checking if output dir exists
+    [ -d {path_out} ] && echo "{path_out} exist." || {{ echo "{path_out} does not exist."; mkdir {path_out}; }}
+
+    source /home/owrisberg/miniconda3/etc/profile.d/conda.sh
+    conda activate R_env
+
+    cd {path_in}
+
+    echo Starting the R script
+    
+    date
+
+    Rscript --vanilla {script_dir}Downloading_data.r {input_file} {output_file}
+
+    echo Ended the R script
+
+    date
+    
+    mv {output_file} {path_out}
+
+    '''.format(input_file=input_file, output_file=output_file, path_in = path_in, script_dir = script_dir, path_out = path_out)
+
+    return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
+
+
+##############################################################
+################---- Taxon lookup on Gbif ----################
+##############################################################
+def taxon_look_up(input_file, output_file, path_in, script_dir, path_out):
+    """Here the function looks up each unique species in the dataset and finds the taxonomic information for that species."""
+    inputs = [path_in+input_file]
+    outputs = [path_out+output_file]
+    options = {
+        'cores': 5,
+        'memory': '20g',
+        'account':"Biome_estimation",
+        'walltime': "06:00:00"
+    }
+
+    spec = '''
+    #Checking if output dir exists
+    [ -d {path_out} ] && echo "{path_out} exist." || {{ echo "{path_out} does not exist."; mkdir {path_out}; }}
+
+    # Starting up conda env
+    source /home/owrisberg/miniconda3/etc/profile.d/conda.sh
+    conda activate R_env
+
+    # Navigating to input data folder
+    cd {path_in}
+
+    echo Starting the R script
+    
+    date
+
+    # Running the taxon look up script
+    Rscript --vanilla {script_dir}Gbif_taxon_look_up.r {path_in}{input_file} {output_file}
+
+    echo Ended the R script
+
+    date
+
+    mv {output_file} {path_out}
+
+    '''.format(input_file=input_file, output_file=output_file, path_in = path_in, script_dir = script_dir, path_out = path_out)
+
+    return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
+
+##############################################################
+##############---- Creating common format ----################
+##############################################################
+def create_common_format(input_file_occurrences,input_file_taxonomy, output_file, path_in, script_dir, path_out):
+    """Here I want to create a common format between the file which needs names aligned to the WCVP and the WCVP."""
+    inputs = [path_in+input_file_taxonomy, input_file_occurrences]
+    outputs = [path_out+output_file]
+    options = {
+        'cores': 5,
+        'memory': '100g',
+        'account':"Biome_estimation",
+        'walltime': "01:00:00"
+    }
+
+    spec = '''
+
+    #Checking if output dir exists
+    [ -d {path_out} ] && echo "{path_out} exist." || {{ echo "{path_out} does not exist."; mkdir {path_out}; }}
+
+    echo This is the data dir \n
+    echo {script_dir}
+
+    # Starting Conda environment
+    source /home/owrisberg/miniconda3/etc/profile.d/conda.sh
+    conda activate R_env
+
+    #Navigating to folder
+    cd {path_in}
+
+
+    Rscript --vanilla {script_dir}Create_common_format.r {input_file_occurrences} {input_file_taxonomy} {output_file}
+
+    echo Done with Rscript
+
+    mv {output_file} {path_out}
+
+    '''.format(input_file_taxonomy=input_file_taxonomy,input_file_occurrences=input_file_occurrences, output_file=output_file, path_in = path_in, script_dir = script_dir, path_out = path_out)
+
+    return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
+
+##############################################################
+##############---- Preparing WCVP-names file ----################
+##############################################################
+def apg_name_align(apg,wcp, output_file, path_in, script_dir, path_out):
+    """Here I want to create a common format the wcvp and the previous file and update some family names to APGIV."""
+    inputs = [script_dir+apg, path_in+wcp]
+    outputs = [path_out+output_file]
+    options = {
+        'cores': 5,
+        'memory': '10g',
+        'account':"Biome_estimation",
+        'walltime': "01:00:00"
+    }
+
+    spec = '''
+
+    #Checking if output dir exists
+    [ -d {path_out} ] && echo "{path_out} exist." || {{ echo "{path_out} does not exist."; mkdir {path_out}; }}
+
+    echo This is the data dir \n
+    echo {script_dir}
+
+    # Starting Conda environment
+    source /home/owrisberg/miniconda3/etc/profile.d/conda.sh
+    conda activate R_env
+
+    #Navigating to folder
+    cd {path_in}
+
+
+    Rscript --vanilla {script_dir}apg_name_aligner.r {script_dir}{apg} {wcp} {output_file}
+
+    echo Done with Rscript
+
+    mv {output_file} {path_out}
+
+    '''.format(apg=apg,wcp = wcp, output_file=output_file, path_in = path_in, script_dir = script_dir, path_out = path_out)
+
+    return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
+
+##############################################################
+##################---- Taxonomy Matcher ----##################
+##############################################################
+def taxon_match(input_file, output_file, path_in, script_dir, path_out, wcvp):
+    """Here I match the taxa from the GBIF file to the WCVP."""
+    inputs = [path_in+input_file, path_in+wcvp]
+    outputs = [path_out+output_file]
+    options = {
+        'cores': 15,
+        'memory': '75g',
+        'account':"Biome_estimation",
+        'walltime': "48:00:00"
+    }
+
+    spec = '''
+    #Checking if output dir exists
+    [ -d {path_out} ] && echo "{path_out} exist." || {{ echo "{path_out} does not exist."; mkdir {path_out}; }}
+
+    source /home/owrisberg/miniconda3/etc/profile.d/conda.sh
+    conda activate R_env
+
+    cd {path_in}
+
+    echo Starting the Taxon_matcher script at: 
+    date
+    
+    Rscript --vanilla {script_dir}Taxon_matcher.r {input_file} {wcvp} {output_file} 
+
+    mv {output_file} {path_out}
+
+    '''.format(input_file=input_file, output_file=output_file, path_in = path_in, script_dir = script_dir, path_out = path_out, wcvp = wcvp)
+
+    return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
+
+
+
+########################################################################################################################
+####################################---- Taxon renamer ----#############################################################
+########################################################################################################################
+
+def Renamer(input_file, output_file, path_in, script_dir, path_out, wcvp, renaming_file):
+    """This function renames all the species names in the GBIF datafile based on the taxon matcher.
+    This should be done by looping through the GBIF data and looking up each species in the taxon matcher file.
+    The name in the taxon matcher file would then be used to find the accepted_plant_name_id in the WCVP file.
+    and get the correct name from that file. This name would then be used to replace the name in the GBIF data."""
+    inputs = [input_file, wcvp, path_in+renaming_file]
+    outputs = [path_out+output_file]
+    options = {
+        'cores': 5,
+        'memory': '10g',
+        'account':"Biome_estimation",
+        'walltime': "01:00:00"
+    }
+    spec = '''
+
+    #Checking if output dir exists
+    [ -d {path_out} ] && echo "{path_out} exist." || {{ echo "{path_out} does not exist."; mkdir {path_out}; }}
+
+    source /home/owrisberg/miniconda3/etc/profile.d/conda.sh
+    conda activate R_env
+
+    cd {path_in}
+
+    Rscript --vanilla {script_dir}renaming.r {input_file} {wcvp} {renaming_file} {output_file}
+
+
+    mv {output_file} {path_out}
+
+    '''.format(input_file=input_file, output_file=output_file, path_in = path_in, script_dir = script_dir, path_out = path_out, wcvp = wcvp, renaming_file = renaming_file)
+
+    return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
+
+################################################################################################################################################################################
+############################################--------------------- Working on tree data ---------------------##############################################################
+################################################################################################################################################################################
 
 ##############################################################
 #############---- Loading the SmB tree tips ----##############
@@ -185,125 +518,6 @@ def Load_tree(input_file, output_file, path_in,path_out, script_dir):
 
     return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
 
-##############################################################
-#########---- Adding random states to tips file ----##########
-##############################################################
-def sim_state_data(input_file, output_file, path_in,path_out, script_dir, nr_states):
-    """This function should be used to simulate state data for the tips of the SmB tree
-    by writing 0 or 1 for each state defined by nr_states and each tip in the input_file"""
-    inputs = [path_in+input_file]
-    outputs = [path_out+output_file]
-    options = {
-        'cores': 5,
-        'memory': '20g',
-        'account':"Trf_models",
-        'walltime': "01:00:00"
-    }
-
-    spec = '''
-
-    source /home/owrisberg/miniconda3/etc/profile.d/conda.sh
-    conda activate python3_env
-
-    # Going to input folder
-    cd {path_in}
-
-    #Checking if output dir exists
-    [ -d {path_out} ] && echo "{path_out} exist." || {{ echo "{path_out} does not exist."; mkdir {path_out}; }}
-
-    echo Starting the Adding states script
-    date
-
-    # Loading the input file which is the file containing the tips of the SmB tree
-    python3 {script_dir}adding_states.py {input_file} {nr_states} {output_file}
-
-    echo Ended the Adding states script
-    date
-
-    mv {output_file} {path_out}
-
-    '''.format(path_out = path_out, script_dir = script_dir, path_in = path_in, nr_states = nr_states, input_file = input_file, output_file = output_file)
-
-    return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
-
-
-##############################################################
-#############---- Creating covariate files ----##############
-##############################################################
-def sim_covariate_data(input_file, output_file, path_in,path_out, script_dir, nr_states):
-    """This function should be used to simulate the covariate data table through time for the states in the """
-    inputs = [path_in+input_file]
-    outputs = [path_out+output_file]
-    options = {
-        'cores': 5,
-        'memory': '20g',
-        'account':"Trf_models",
-        'walltime': "01:00:00"
-    }
-
-    spec = '''
-
-    source /home/owrisberg/miniconda3/etc/profile.d/conda.sh
-    conda activate python3_env
-
-    # Going to input folder
-    cd {path_in}
-
-    #Checking if output dir exists
-    [ -d {path_out} ] && echo "{path_out} exist." || {{ echo "{path_out} does not exist."; mkdir {path_out}; }}
-
-    echo Starting the Adding states script
-    date
-
-    # Loading the input file which is the file containing the tips of the SmB tree
-    python3 {script_dir}adding_states.py {input_file} {nr_states} {output_file}
-
-    echo Ended the Adding states script
-    date
-
-
-    '''.format(path_out = path_out, script_dir = script_dir, path_in = path_in, nr_states = nr_states, input_file = input_file, output_file = output_file)
-
-
-    return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
-
-#######################################################################
-#######---- Function for Running ESSE on entire SmB tree ----##########
-#######################################################################
-"""
-From the supplement material of the The build-up of the present-day tropical diversity of tetrapods: Line 215-220
-
-_______________________________________________________________________________________________________________________
-As a practical estimate, the inference procedure of the G+E+H ESSE model on mammals
-(4001 species tree with 6 states and 20 free parameters) takes about 2 weeks of computation
-time to estimate a MCMC chain with sufficient Effective Sample Sizes (ESS). Since there are
-|K| - 1 states for |K| regions (see above), adding a region or adding more hidden states
-doubles the number of states, with an exponential increase in the number of coupled equations
-220 and parameters and thus of computational time.
-_______________________________________________________________________________________________________________________
-
-SOOOoooooo if 4001 species with 6 states (2 hidden, in 3 different regions (Tropical, Extratropical, Both)) takes 2 weeks, 
-and a phylogeny with 50 species, 3 different regions and 2 hidden states takes 1 hour to run.
-Then a phylogeny with 80000 species, 3 different regions and 2 hidden states takes 1600 hours to run. which is 66 days.....
-
-This means I have to cut my tree into smaller pieces and run them separately.
-cutting the tree into smaller 
-I think I should aim at getting trees with around 2000 species in them in order to get a reasonable computation time.
-
-I could do this by cutting the tree into smaller pieces based on either
-1. The order of the species (i.e taxonomy of the species)
-    I could potentially use the World checklist of vascular plants to infer the order of the species in the tree and then prune the tree based on this
-
-2. The geographic location of the species (i.e. the region they are found in) (Tropical rainforest, , Both)
-    I.e. by finding subtrees in the phylogeny with a proportion of species in Tropical rainforest over a certain threshold.
-
-3. Time cut off ( i.e. cut the tree into smaller pieces by taking all the branches which )
-    What time cut offs would make sense to use in regards to Tropical rainforest?
-    And how would I find out if this results in some subtrees with more than 2000 species in them?
-
-I think I need to try out all three and compare the results between them.
-
-"""
 ##############################################################
 ##############---- Preparing WCVP-names file ----################
 ##############################################################
@@ -479,7 +693,7 @@ def Forcing_orders(input_file_tree, output_file, path_in,path_out, script_dir, w
 ##############################################################
 ###########---- Downloading distribution data ----############
 ##############################################################
-def Download_gbif_data(, output_file, ,path_out, script_dir):
+def Download_gbif_data( output_file,path_out, script_dir):
     """This Function downloads all the obervations of seed plants based on preserved specimens from GBIF: (doi: doi.org/10.15468/dl.z9atnm)."""
     inputs = []
     outputs = [path_out+output_file]
@@ -521,14 +735,94 @@ workflow_dir = os.path.normpath(os.path.join(script_dir, "../workflow/")) +"/"
 
 
 
-gwf.target_from_template(name = "Download_Data",
+gwf.target_from_template (name = "Download_Data",
                           template=download_data(
                             path_out = data_dir,
                             smb_doi = "https://github.com/FePhyFoFum/big_seed_plant_trees/releases/download/v0.1/v0.1.zip",
                             kew_doi = "http://sftp.kew.org/pub/data-repositories/WCVP/wcvp.zip",
+                            gbif_doi = "https://api.gbif.org/v1/occurrence/download/request/0012129-230828120925497.zip",
                             output_smb ="GBMB.tre",
-                            output_kew = "wcvp_names.csv"
+                            output_kew = "wcvp_names.csv",
+                            output_gbif ="occurrence.txt"
                           ))
+
+#########################################################################################################################
+####################################---- Working on the occurrence data ----#############################################
+#########################################################################################################################
+
+gwf.target_from_template(name = "Removing_cols",
+                          template=Rm_cols(
+                            input_file ="occurrence.txt",
+                            output_file = "occurrence_select.txt",
+                            path_in = data_dir,
+                            occurrence_dir = workflow_dir+"01_distribution_data/",
+                            path_out = workflow_dir+"01_distribution_data/01_rm_cols/",
+                          ))
+
+gwf.target_from_template(name = "Data_Parsing",
+                             template = Load_data(
+                                 input_file ="occurrence_select.txt",
+                                 output_file = "gbif_parsed.rds",
+                                 path_in = workflow_dir+"01_distribution_data/01_rm_cols/",
+                                 script_dir = script_dir,
+                                 path_out = workflow_dir+"01_distribution_data/02_data_parsing/"
+                             ))
+
+gwf.target_from_template(name = "GBIF_lookup",
+                             template = taxon_look_up(
+                                 input_file ="gbif_parsed.rds",
+                                 output_file = "gbif_parsed_taxon_data.rds",
+                                 path_in = workflow_dir+"01_distribution_data/03_data_parsing/",
+                                 script_dir = script_dir,
+                                 path_out = workflow_dir+"01_distribution_data/04_taxon_lookup/"
+                             ))
+
+gwf.target_from_template(name = "Creating_Common_Format",
+                             template = create_common_format(
+                                 input_file_taxonomy ="gbif_parsed_taxon_data.rds",
+                                 input_file_occurrences =workflow_dir+"03_datasplit/gbif_parsed.rds",
+                                 output_file = "gbif_common_format.rds",
+                                 path_in = workflow_dir+"01_distribution_data/04_taxon_lookup/",
+                                 script_dir = script_dir,
+                                 path_out = workflow_dir+"01_distribution_data/05_common_format"
+                             ))
+
+gwf.target_from_template(name = "APG_preb",
+                             template = apg_name_align(
+                                 wcp = "wcvp_names.csv",
+                                 apg ="apgweb_parsed.csv",
+                                 output_file = "wcvp_names_apg_aligned.rds",
+                                 path_in = data_dir,
+                                 script_dir = script_dir,
+                                 path_out = workflow_dir+"01_distribution_data/06_APG_aligned/"
+                             ))
+
+gwf.target_from_template(name = "Taxon_match",
+                             template = taxon_match(
+                                 input_file ="gbif_common_format.rds",
+                                 wcvp = "wcvp_names_apg_aligned.rds",
+                                 output_file = "gbif_taxon_matched.rds",
+                                 path_in = workflow_dir+"01_distribution_data/06_APG_aligned/",
+                                 script_dir = script_dir,
+                                 path_out = workflow_dir+"01_distribution_data/07_Taxon_match/"
+                             ))
+
+gwf.target_from_template(name = "Renaming",
+                                template = Renamer(
+                                    input_file =workflow_dir+"01_distribution_data/05_common_format/gbif_common_format.rds",
+                                    wcvp = workflow_dir+"01_distribution_data/05_common_format/wcvp_names_apg_aligned.rds",
+                                    renaming_file = "gbif_taxon_matched.rds",
+                                    output_file = "gbif_renamed.rds",
+                                    path_in = workflow_dir+"01_distribution_data/07_Taxon_match/",
+                                    script_dir = script_dir,
+                                    path_out = workflow_dir+"01_distribution_data/08_Renamed"
+                                ))
+
+
+
+################################################################################################################################
+############################------- Starting on the tree data -------###########################################################
+################################################################################################################################
 
 gwf.target_from_template(name = "Load_tree",
                           template=Load_tree(
