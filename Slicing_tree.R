@@ -198,7 +198,7 @@ for (i in seq_along(unique_orders)){
   df_number_tips_orders <- rbind(df_number_tips_orders, data.frame(order = unique_orders[i], number_tips = number_tips))
 
   # Save the pruned tree to a file
-  write.tree(pruned_tree, paste0(path_out, "pruned_tree__order_", unique_orders[i], "_GBMB.txt"))
+  write.tree(pruned_tree, paste0(path_out, "pruned_tree_order_", unique_orders[i], "_GBMB.txt"))
   }
 }
 
