@@ -901,8 +901,7 @@ gwf.target_from_template(name = "Finding_monophyletic_orders",
                             apg = script_dir+"apgweb_parsed.csv" 
                             ))
 
-order_trees <- [
-"pruned_tree__order_Acorales_GBMB.txt", "pruned_tree__order_Crossosomatales_GBMB.txt", "pruned_tree__order_Gnetales_GBMB.txt", "pruned_tree__order_Piperales_GBMB.txt",
+order_trees = ["pruned_tree__order_Acorales_GBMB.txt", "pruned_tree__order_Crossosomatales_GBMB.txt", "pruned_tree__order_Gnetales_GBMB.txt", "pruned_tree__order_Piperales_GBMB.txt",
 "pruned_tree__order_Alismatales_GBMB.txt", "pruned_tree__order_Cucurbitales_GBMB.txt", "pruned_tree__order_Gunnerales_GBMB.txt", "pruned_tree__order_Poales_GBMB.txt",
 "pruned_tree__order_Amborellales_GBMB.txt", "pruned_tree__order_Cupressales_GBMB.txt", "pruned_tree__order_Huerteales_GBMB.txt", "pruned_tree__order_Polypodiales-eupolypod_I_GBMB.txt",
 "pruned_tree__order_Aquifoliales_GBMB.txt", "pruned_tree__order_Cycadales_GBMB.txt", "pruned_tree__order_Magnoliales_GBMB.txt", "pruned_tree__order_Ranunculales_GBMB.txt",
@@ -934,7 +933,7 @@ order_trees <- [
 "twice_pruned_tree_Fagales_GBMB.txt", "twice_pruned_tree_family_Malvales_GBMB.txt", "twice_pruned_tree_Lamiales_GBMB.txt", "twice_pruned_tree_Zygophyllales_GBMB.txt"
 ]
 
-orders <- ["Acorales", "Crossosomatales", "Gnetales", "Piperales","Alismatales", "Cucurbitales", "Gunnerales", "Poales","Amborellales", "Cupressales", "Huerteales", "Polypodiales-eupolypod_I",
+orders = ["Acorales", "Crossosomatales", "Gnetales", "Piperales","Alismatales", "Cucurbitales", "Gunnerales", "Poales","Amborellales", "Cupressales", "Huerteales", "Polypodiales-eupolypod_I",
 "Aquifoliales", "Cycadales", "Magnoliales", "Ranunculales","Arecales", "Dilleniales", "Malpighiales", "Rosales",
 "Austrobaileyales", "Dioscoreales", "Malvales", "Santalales","Berberidopsidales", "Dipsacales", "Myrtales", "Sapindales","Bruniales", "Equisetales", "Nymphaeales", "Solanales","Buxales", "Ericales", "Osmundales", "Trochodendrales",
 "Canellales", "Escalloniales", "Pandanales", "Vahliales","Celastrales", "Fabales", "Paracryphiales", "Vitales","Ceratophyllales", "Garryales", "Petrosaviales", "Zingiberales",
@@ -945,14 +944,14 @@ orders <- ["Acorales", "Crossosomatales", "Gnetales", "Piperales","Alismatales",
 "Cornales", "Geraniales", "Zygophyllales", "Sapindales","Crossosomatales", "Gnetales", "Geraniales", "Saxifragales","Cucurbitales", "Laurales", "Gunnerales", "Solanales",
 "Cycadales", "Malpighiales", "Icacinales", "Zingiberales","Fagales", "Malvales", "Lamiales", "Zygophyllales"]
 
-for i in range(len(order_trees)):
-    #### Running the script to find the environmental data for the tips in the trees
-    gwf.target_from_template('Finding_dist_data'+sp[i], Finding_areas_in_wcvp(input_file_tree= order_trees[i],
-                                                        path_out = "",
-                                                        output = "",
-                                                        input_file_wcvp = "",
-                                                        order = orders[i],
-                                                        ))
+# for i in range(len(order_trees)):
+#     #### Running the script to find the environmental data for the tips in the trees
+#     gwf.target_from_template('Finding_dist_data'+sp[i], Finding_areas_in_wcvp(input_file_tree= order_trees[i],
+#                                                         path_out = "",
+#                                                         output = "",
+#                                                         input_file_wcvp = "",
+#                                                         order = orders[i],
+#                                                         ))
 
 
 
