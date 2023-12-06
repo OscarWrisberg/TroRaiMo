@@ -191,7 +191,7 @@ def Rm_cols(input_file, output_file, path_in,path_out, occurrence_dir):
     options = {
         'cores': 5,
         'memory': '50g',
-        'account':"Biome_estimation",
+        'account':"Trf_models",
         'walltime': "00:10:00"
     }
 
@@ -250,7 +250,7 @@ def Load_data(input_file, output_file, path_in,path_out, script_dir):
     options = {
         'cores': 1,
         'memory': '50g',
-        'account':"Biome_estimation",
+        'account':"Trf_models",
         'walltime': "00:10:00"
     }
 
@@ -290,7 +290,7 @@ def taxon_look_up(input_file, output_file, path_in, script_dir, path_out):
     options = {
         'cores': 5,
         'memory': '20g',
-        'account':"Biome_estimation",
+        'account':"Trf_models",
         'walltime': "06:00:00"
     }
 
@@ -332,7 +332,7 @@ def create_common_format(input_file_occurrences,input_file_taxonomy, output_file
     options = {
         'cores': 5,
         'memory': '100g',
-        'account':"Biome_estimation",
+        'account':"Trf_models",
         'walltime': "01:00:00"
     }
 
@@ -372,7 +372,7 @@ def apg_name_align(apg,wcp, output_file, path_in, script_dir, path_out):
     options = {
         'cores': 5,
         'memory': '10g',
-        'account':"Biome_estimation",
+        'account':"Trf_models",
         'walltime': "01:00:00"
     }
 
@@ -412,7 +412,7 @@ def taxon_match(input_file, output_file, path_in, script_dir, path_out, wcvp):
     options = {
         'cores': 15,
         'memory': '75g',
-        'account':"Biome_estimation",
+        'account':"Trf_models",
         'walltime': "48:00:00"
     }
 
@@ -452,7 +452,7 @@ def Renamer(input_file, output_file, path_in, script_dir, path_out, wcvp, renami
     options = {
         'cores': 5,
         'memory': '10g',
-        'account':"Biome_estimation",
+        'account':"Trf_models",
         'walltime': "01:00:00"
     }
     spec = '''
