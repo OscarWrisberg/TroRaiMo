@@ -787,7 +787,7 @@ gwf.target_from_template(name = "Creating_Common_Format",
                                  path_out = workflow_dir+"01_distribution_data/05_common_format"
                              ))
 
-gwf.target_from_template(name = "APG_preb",
+gwf.target_from_template(name = "APG_preb_occurrences",
                              template = apg_name_align(
                                  wcp = "wcvp_names.csv",
                                  apg ="apgweb_parsed.csv",
@@ -833,7 +833,7 @@ gwf.target_from_template(name = "Load_tree",
                             script_dir = script_dir
                           ))
 
-gwf.target_from_template(name = "APG_preb",
+gwf.target_from_template(name = "APG_preb_tree",
                              template = apg_name_align(
                                  wcp = "wcvp_names.csv",
                                  apg ="apgweb_parsed.csv",
