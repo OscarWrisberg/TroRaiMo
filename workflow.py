@@ -234,7 +234,7 @@ def Rm_cols(input_file, output_file, path_in,path_out, occurrence_dir):
     
     date
 
-    '''.format(input_file=input_file, output_file=output_file, path_in = path_in, path_out = path_out)
+    '''.format(input_file=input_file, output_file=output_file, path_in = path_in, path_out = path_out, occurrence_dir = occurrence_dir)
 
     return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
 
