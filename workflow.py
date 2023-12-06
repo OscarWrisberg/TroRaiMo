@@ -248,10 +248,10 @@ def Load_data(input_file, output_file, path_in,path_out, script_dir):
     inputs = [path_in+input_file]
     outputs = [path_out+output_file]
     options = {
-        'cores': 1,
+        'cores': 5,
         'memory': '50g',
         'account':"Trf_models",
-        'walltime': "00:10:00"
+        'walltime': "03:10:00"
     }
 
     spec = '''
@@ -621,6 +621,9 @@ def Slicing_trees(input_file, output_file, path_in,path_out, script_dir, wcvp_fi
 
     spec = '''
 
+    #Checking if output dir exists
+    [ -d {path_out} ] && echo "{path_out} exist." || {{ echo "{path_out} does not exist."; mkdir {path_out}; }}
+
     source /home/owrisberg/miniconda3/etc/profile.d/conda.sh
     conda activate R_env
 
@@ -665,6 +668,9 @@ def Forcing_orders(input_file_tree, output_file, path_in,path_out, script_dir, w
 
     spec = '''
 
+    #Checking if output dir exists
+    [ -d {path_out} ] && echo "{path_out} exist." || {{ echo "{path_out} does not exist."; mkdir {path_out}; }}
+
     source /home/owrisberg/miniconda3/etc/profile.d/conda.sh
     conda activate R_env
 
@@ -693,8 +699,8 @@ def Forcing_orders(input_file_tree, output_file, path_in,path_out, script_dir, w
 ##############################################################
 ###########---- Downloading distribution data ----############
 ##############################################################
-def Download_gbif_data( output_file,path_out, script_dir):
-    """This Function downloads all the obervations of seed plants based on preserved specimens from GBIF: (doi: doi.org/10.15468/dl.z9atnm)."""
+def Finding_areas_in_wcvp(path_out, script_dir):
+    """This Function creates a states file for the tips in WCVP based on the climate column."""
     inputs = []
     outputs = [path_out+output_file]
     options = {
@@ -706,14 +712,25 @@ def Download_gbif_data( output_file,path_out, script_dir):
 
     spec = '''
 
+    #Checking if output dir exists
+    [ -d {path_out} ] && echo "{path_out} exist." || {{ echo "{path_out} does not exist."; mkdir {path_out}; }}
+
     source /home/owrisberg/miniconda3/etc/profile.d/conda.sh
     conda activate R_env
 
     # Going to input folder
     cd {path_in}
 
-    #Checking if output dir exists
-    [ -d {path_out} ] && echo "{path_out} exist." || {{ echo "{path_out} does not exist."; mkdir {path_out}; }}
+    echo Starting the script to find state data for the tips in the wcvp 
+    date
+
+    # Running the R script
+    Rscript --vanilla {script_dir}Finding_monophyletic_clades.R {input_file_tree} {wcvp_file} {output_file} {path_out} {apg}
+
+
+    echo Ended the script to find state data for the tips in the wcvp
+    date
+
 
 
 
@@ -818,8 +835,6 @@ gwf.target_from_template(name = "Renaming",
                                     path_out = workflow_dir+"01_distribution_data/07_Renamed"
                                 ))
 
-
-
 ################################################################################################################################
 ############################------- Starting on the tree data -------###########################################################
 ################################################################################################################################
@@ -885,6 +900,8 @@ gwf.target_from_template(name = "Finding_monophyletic_orders",
                             wcvp_file = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds", 
                             apg = script_dir+"apgweb_parsed.csv" 
                             ))
+
+
 
 
 # gwf.target_from_template(name = "Esse",
