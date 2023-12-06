@@ -436,7 +436,7 @@ def Slicing_trees(input_file, output_file, path_in,path_out, script_dir, wcvp_fi
 
 
 ##############################################################
-###########---- Approach 1 finding the orders ----############
+###########---- Slicing the tree into orders ----############
 ##############################################################
 def Forcing_orders(input_file_tree, output_file, path_in,path_out, script_dir, wcvp_file, apg):
     """This function searchers for the largest monophyletic clades in the orders which are not monophyletic in the GBMB tree."""
@@ -472,6 +472,39 @@ def Forcing_orders(input_file_tree, output_file, path_in,path_out, script_dir, w
 
 
     '''.format(path_out = path_out, script_dir = script_dir, path_in = path_in, input_file_tree = input_file_tree, output_file = output_file, wcvp_file = wcvp_file, apg = apg)
+
+
+    return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
+
+##############################################################
+###########---- Downloading distribution data ----############
+##############################################################
+def Download_gbif_data(, output_file, ,path_out, script_dir):
+    """This Function downloads all the obervations of seed plants based on preserved specimens from GBIF: (doi: doi.org/10.15468/dl.z9atnm)."""
+    inputs = []
+    outputs = [path_out+output_file]
+    options = {
+        'cores': 2,
+        'memory': '10g',
+        'account':"Trf_models",
+        'walltime': "2:00:00"
+    }
+
+    spec = '''
+
+    source /home/owrisberg/miniconda3/etc/profile.d/conda.sh
+    conda activate R_env
+
+    # Going to input folder
+    cd {path_in}
+
+    #Checking if output dir exists
+    [ -d {path_out} ] && echo "{path_out} exist." || {{ echo "{path_out} does not exist."; mkdir {path_out}; }}
+
+
+
+
+    '''.format(path_out = path_out, script_dir = script_dir, output_file = output_file)
 
 
     return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
