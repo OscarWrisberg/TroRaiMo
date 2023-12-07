@@ -26,7 +26,7 @@ println(typeof(ARGS[2]))
 path_to_tree = ARGS[1]
 sampling_freq = parse(Float64,ARGS[2])
 
-println(typeof(sampling_freq)
+println(typeof(sampling_freq))
 
 tree = load_tree(path_to_tree)
 output_name = path_to_tree*"_output"
