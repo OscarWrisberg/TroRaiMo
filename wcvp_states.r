@@ -58,6 +58,9 @@ wcvp <- readRDS(input_file_wcvp)
 # Load the tree
 tree <- read.tree(input_file_tree)
 
+# Load apg
+apg <- fread(apg)
+
 # Filter the wcvp dataset to include only rows where taxon_status == "Accepted"
 wcvp_accepted <- subset(wcvp, taxon_status == "Accepted")
 wcvp_accepted_species <- subset(wcvp_accepted, taxon_rank == "Species")
