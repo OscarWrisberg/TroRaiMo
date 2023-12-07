@@ -699,7 +699,7 @@ def Forcing_orders(input_file_tree, output_file, path_in,path_out, script_dir, w
 ##############################################################
 ###########---- Downloading distribution data ----############
 ##############################################################
-def Finding_areas_in_wcvp(input_file_tree, wcvp_file,path_out, output_file, path_in, order):
+def Finding_areas_in_wcvp(input_file_tree, wcvp_file,path_out, output_file, path_in, order, script_dir):
     """This Function creates a states file for the tips in WCVP based on the climate column."""
     inputs = [path_in+input_file_tree]
     outputs = [path_out+output_file]
@@ -731,7 +731,7 @@ def Finding_areas_in_wcvp(input_file_tree, wcvp_file,path_out, output_file, path
     echo Ended the script to find state data for the tips in the wcvp
     date
 
-    '''.format(path_out = path_out, output_file = output_file, wcvp_file = wcvp_file, order = order, input_file_tree = input_file_tree, path_in = path_in)
+    '''.format(path_out = path_out, output_file = output_file, wcvp_file = wcvp_file, order = order, input_file_tree = input_file_tree, path_in = path_in, script_dir = script_dir)
 
 
     return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
@@ -949,7 +949,8 @@ for i in range(len(order_trees)):
                                                         path_out = workflow_dir+"03_distribution_data",
                                                         output_file = orders[i]+"distribution_data.txt",
                                                         wcvp_file = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds",
-                                                        order = orders[i]
+                                                        order = orders[i],
+                                                        script_dir= script_dir
                                                         ))
 
 
