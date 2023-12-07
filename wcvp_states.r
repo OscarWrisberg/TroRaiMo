@@ -25,7 +25,7 @@ invisible(lapply(packages, library, character.only = TRUE))
 # input_file_wcvp <- "/home/au543206/GenomeDK/Trf_models/workflow/02_adding_orders/wcvp_names_apg_aligned.rds"
 # path_out <- "/home/au543206/GenomeDK/Trf_models/workflow/03_distribution_data/"
 # order_in_question <- as.character("Arecales")
-# apg <- apg <- fread("../../../TroRaiMo/apgweb_parsed.csv")
+# apg  <- fread("../../../TroRaiMo/apgweb_parsed.csv")
 
 
 ################################################################################################################################################
