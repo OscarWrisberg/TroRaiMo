@@ -19,10 +19,16 @@ using PANDA
 # vitales_tree = load_tree("/home/au543206/GenomeDK/Trf_models/workflow/02_adding_orders/pruning/pruned_tree__order_Vitales_GBMB.tre")
 # geraniales_tree = load_tree("/home/au543206/GenomeDK/Trf_models/workflow/02_adding_orders/pruning/twice_pruned_tree_Geraniales_GBMB.tre")
 
-tree = load_tree(ARGS[2])
-output_name = ARGS[1]+"_output"
+println(ARGS[2])
+println(ARGS[3])
 
-output = infer_ClaDS(tree, print_state = 100, f = ARGS[3])
+path_to_tree = ARGS[2]
+sampling_freq = ARGS[3]
+
+tree = load_tree(path_to_tree)
+output_name = path_to_tree+"_output"
+
+output = infer_ClaDS(tree, print_state = 100, f = sampling_freq)
 
 # output_arecales = infer_ClaDS(arecales_tree, print_state = 100, f = 0.2787973)
 # output_zingiberales = infer_ClaDS(zingiberales_tree, print_state = 100, f = 0.229433)
