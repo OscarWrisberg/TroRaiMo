@@ -61,10 +61,12 @@ for (i in seq_along(tree$tip.label)) {
 }
 
 # Print the result dataframe
-print(result_df)
+cat("The number of tips in the tree of ", order, " is ", length(tree$tip.label), "\n")
+
 
 #if there are no NA's or Empty string in the climate column Convert Wet tropical to 1's and everything else but NA or "" to 0's
 if(sum(is.na(result_df$climate_description)) == 0 & sum(result_df$climate_description == "") == 0){
+  cat("There are no missing climate descriptions of the species in the tree")
   result_df$climate_description <- ifelse(result_df$climate_description == "Wet tropical", 1, 0)
   write.table(result_df, file.path(path_out, output), sep = "\t", row.names = FALSE)
 } else {

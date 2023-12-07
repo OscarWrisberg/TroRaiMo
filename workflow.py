@@ -699,15 +699,15 @@ def Forcing_orders(input_file_tree, output_file, path_in,path_out, script_dir, w
 ##############################################################
 ###########---- Downloading distribution data ----############
 ##############################################################
-def Finding_areas_in_wcvp(path_out, script_dir):
+def Finding_areas_in_wcvp(input_file_tree, wcvp_file,path_out, script_dir, output_file, path_in, order):
     """This Function creates a states file for the tips in WCVP based on the climate column."""
-    inputs = []
+    inputs = [path_in+input_file_tree]
     outputs = [path_out+output_file]
     options = {
         'cores': 2,
         'memory': '10g',
         'account':"Trf_models",
-        'walltime': "2:00:00"
+        'walltime': "00:10:00"
     }
 
     spec = '''
@@ -725,17 +725,13 @@ def Finding_areas_in_wcvp(path_out, script_dir):
     date
 
     # Running the R script
-    Rscript --vanilla {script_dir}Finding_monophyletic_clades.R {input_file_tree} {wcvp_file} {output_file} {path_out} {apg}
+    Rscript --vanilla {script_dir}Finding_monophyletic_clades.R {input_file_tree} {output_file} {wcvp_file} {path_out} {order}
 
 
     echo Ended the script to find state data for the tips in the wcvp
     date
 
-
-
-
-
-    '''.format(path_out = path_out, script_dir = script_dir, output_file = output_file)
+    '''.format(path_out = path_out, script_dir = script_dir, output_file = output_file, wcvp_file = wcvp_file, order = order)
 
 
     return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
@@ -944,14 +940,17 @@ orders = ["Acorales", "Crossosomatales", "Gnetales", "Piperales","Alismatales", 
 "Cornales", "Geraniales", "Zygophyllales", "Sapindales","Crossosomatales", "Gnetales", "Geraniales", "Saxifragales","Cucurbitales", "Laurales", "Gunnerales", "Solanales",
 "Cycadales", "Malpighiales", "Icacinales", "Zingiberales","Fagales", "Malvales", "Lamiales", "Zygophyllales"]
 
-# for i in range(len(order_trees)):
-#     #### Running the script to find the environmental data for the tips in the trees
-#     gwf.target_from_template('Finding_dist_data'+sp[i], Finding_areas_in_wcvp(input_file_tree= order_trees[i],
-#                                                         path_out = "",
-#                                                         output = "",
-#                                                         input_file_wcvp = "",
-#                                                         order = orders[i],
-#                                                         ))
+for i in range(len(order_trees)):
+    #### Running the script to find the environmental data for the tips in the trees
+    gwf.target_from_template(name = orders[i]+"_distribution_data",
+                                                        template=Finding_areas_in_wcvp(
+                                                        input_file_tree= order_trees[i],
+                                                        path_in =  workflow_dir+"02_adding_orders/pruning/",
+                                                        path_out = workflow_dir+"03_distribution_data",
+                                                        output_file = orders[i]+"distribution_data.txt",
+                                                        wcvp_file = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds",
+                                                        order = orders[i]
+                                                        ))
 
 
 
