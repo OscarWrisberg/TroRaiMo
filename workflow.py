@@ -699,7 +699,7 @@ def Forcing_orders(input_file_tree, output_file, path_in,path_out, script_dir, w
 ##############################################################
 ###########---- Downloading distribution data ----############
 ##############################################################
-def Finding_areas_in_wcvp(input_file_tree, wcvp_file,path_out, script_dir, output_file, path_in, order):
+def Finding_areas_in_wcvp(input_file_tree, wcvp_file,path_out, output_file, path_in, order):
     """This Function creates a states file for the tips in WCVP based on the climate column."""
     inputs = [path_in+input_file_tree]
     outputs = [path_out+output_file]
