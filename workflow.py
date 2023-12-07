@@ -757,7 +757,7 @@ def Clads_Arecales():
     source /home/owrisberg/miniconda3/etc/profile.d/conda.sh
     conda activate Julia_env
 
-    Julia
+    julia
 
     using Pkg
     Pkg.add("PANDA")
@@ -789,7 +789,7 @@ def Clads_Zingiberales():
     source /home/owrisberg/miniconda3/etc/profile.d/conda.sh
     conda activate Julia_env
 
-    Julia
+    julia
 
     using Pkg
     Pkg.add("PANDA")
@@ -822,7 +822,7 @@ def Clads_Vitales():
     source /home/owrisberg/miniconda3/etc/profile.d/conda.sh
     conda activate Julia_env
     
-    Julia
+    julia
 
     using Pkg
     Pkg.add("PANDA")
@@ -833,7 +833,7 @@ def Clads_Vitales():
     
     using JLD2
     @save "/home/owrisberg/Trf_models/workflow/02_adding_orders/pruning/ output_vitales
-    
+
     '''.format()
 
 
@@ -855,7 +855,7 @@ def Clads_Geraniales():
     source /home/owrisberg/miniconda3/etc/profile.d/conda.sh
     conda activate Julia_env
 
-    Julia
+    julia
 
     using Pkg
     Pkg.add("PANDA")
