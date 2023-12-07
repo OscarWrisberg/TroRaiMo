@@ -27,6 +27,14 @@ input_file_wcvp <- commandArgs(trailingOnly = TRUE)[3]
 path_out <- commandArgs(trailingOnly = TRUE)[4]
 order <- commandArgs(trailingOnly = TRUE)[5]
 
+# Print the command line arguments
+cat("The input file for the tree is ", input_file_tree, "\n")
+cat("The output file is ", output, "\n")
+cat("The input file for the wcvp dataset is ", input_file_wcvp, "\n")
+cat("The path to the output file is ", path_out, "\n")
+cat("The order of the tree is ", order, "\n")
+
+
 ################################################################################################################################################
 ######################################################-- Loading files --#######################################################################
 ################################################################################################################################################
@@ -37,6 +45,7 @@ tree <- read.tree(input_file_tree)
 
 # Filter the wcvp dataset to include only rows where taxon_status == "Accepted"
 wcvp_accepted <- subset(wcvp, taxon_status == "Accepted")
+wcvp_accepted_species <- subset(wcvp_accepted$taxon_rank == "Species")
 
 ################################################################################################################################################
 ###############################################-- Finding Environmental data --################################################################
