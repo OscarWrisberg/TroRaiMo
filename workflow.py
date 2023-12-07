@@ -913,7 +913,7 @@ order_trees = ["pruned_tree__order_Acorales_GBMB.txt", "pruned_tree__order_Cross
 "twice_pruned_tree_Liliales_GBMB.txt","twice_pruned_tree_Apiales_GBMB.txt","twice_pruned_tree_Metteniusales_GBMB.txt","twice_pruned_tree_Asterales_GBMB.txt",
 "twice_pruned_tree_Boraginales_GBMB.txt", "twice_pruned_tree_Oxalidales_GBMB.txt","twice_pruned_tree_Brassicales_GBMB.txt","twice_pruned_tree_Pinales_GBMB.txt",
 "twice_pruned_tree_Caryophyllales_GBMB.txt","twice_pruned_tree_Proteales_GBMB.txt","twice_pruned_tree_Cornales_GBMB.txt",
-"twice_pruned_tree_Crossosomatales_GBMB.txt","twice_pruned_tree_Geraniales_GBMB.txt", "twice_pruned_tree_Saxifragales_GBMB.txt",
+"twice_pruned_tree_Geraniales_GBMB.txt", "twice_pruned_tree_Saxifragales_GBMB.txt",
 "twice_pruned_tree_Icacinales_GBMB.txt","twice_pruned_tree_Fagales_GBMB.txt", "twice_pruned_tree_Lamiales_GBMB.txt"
 ]
 
