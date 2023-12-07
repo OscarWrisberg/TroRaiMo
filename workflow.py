@@ -741,7 +741,7 @@ def Finding_areas_in_wcvp(input_file_tree, wcvp_file,path_out, output_file, path
 ##############################################################
 ###########---- Runnning simple ClaDs models  ----############
 ##############################################################
-def Clads_Arecales():
+def Clads_test(tree, sampling_frequency, done_file):
     """ """
     inputs = ["/home/owrisberg/Trf_models/workflow/02_adding_orders/pruning/pruned_tree__order_Arecales_GBMB.tre"]
     outputs = []
@@ -757,117 +757,11 @@ def Clads_Arecales():
     source /home/owrisberg/miniconda3/etc/profile.d/conda.sh
     conda activate Julia_env
 
-    julia
+    julia ClaDs.jl {tree} {sampling_frequency}
 
-    using Pkg
-    Pkg.add("PANDA")
-    using PANDA
+    touch {done_file}
 
-    arecales_tree = load_tree("/home/owrisberg/Trf_models/workflow/02_adding_orders/pruning/pruned_tree__order_Arecales_GBMB.tre")
-    output_arecales = infer_ClaDS(arecales_tree, print_state = 100, f = 0.2787973)
-
-    using JLD2
-    @save "/home/owrisberg/Trf_models/workflow/02_adding_orders/pruning/ output_arecales
-    '''.format()
-
-
-    return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
-
-def Clads_Zingiberales():
-    """ """
-    inputs = ["/home/owrisberg/Trf_models/workflow/02_adding_orders/pruning/pruned_tree__order_Zingiberales_GBMB.tre"]
-    outputs = []
-    options = {
-        'cores': 10,
-        'memory': '30g',
-        'account':"Trf_models",
-        'walltime': "12:00:00"
-    }
-
-    spec = '''
-
-    source /home/owrisberg/miniconda3/etc/profile.d/conda.sh
-    conda activate Julia_env
-
-    julia
-
-    using Pkg
-    Pkg.add("PANDA")
-    using PANDA
-
-    zingiberales_tree = load_tree("/home/owrisberg/Trf_models/workflow/02_adding_orders/pruning/pruned_tree__order_Zingiberales_GBMB.tre")
-    output_zingiberales = infer_ClaDS(zingiberales_tree, print_state = 100, f = 0.229433)
-
-
-    using JLD2
-    @save "/home/owrisberg/Trf_models/workflow/02_adding_orders/pruning/ output_zingiberales
-    '''.format()
-
-
-    return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
-
-def Clads_Vitales():
-    """ """
-    inputs = ["/home/owrisberg/Trf_models/workflow/02_adding_orders/pruning/pruned_tree__order_Vitales_GBMB.tre"]
-    outputs = []
-    options = {
-        'cores': 10,
-        'memory': '30g',
-        'account':"Trf_models",
-        'walltime': "12:00:00"
-    }
-
-    spec = '''
-
-    source /home/owrisberg/miniconda3/etc/profile.d/conda.sh
-    conda activate Julia_env
-    
-    julia
-
-    using Pkg
-    Pkg.add("PANDA")
-    using PANDA
-
-    vitales_tree = load_tree("/home/owrisberg/Trf_models/workflow/02_adding_orders/pruning/pruned_tree__order_Vitales_GBMB.tre")
-    output_vitales = infer_ClaDS(vitales_tree, print_state = 100, f = 0.2864078)
-    
-    using JLD2
-    @save "/home/owrisberg/Trf_models/workflow/02_adding_orders/pruning/ output_vitales
-
-    '''.format()
-
-
-    return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
-
-def Clads_Geraniales():
-    """ """
-    inputs = ["/home/owrisberg/Trf_models/workflow/02_adding_orders/pruning/twice_pruned_tree_Geraniales_GBMB.tre"]
-    outputs = []
-    options = {
-        'cores': 10,
-        'memory': '30g',
-        'account':"Trf_models",
-        'walltime': "12:00:00"
-    }
-
-    spec = '''
-
-    source /home/owrisberg/miniconda3/etc/profile.d/conda.sh
-    conda activate Julia_env
-
-    julia
-
-    using Pkg
-    Pkg.add("PANDA")
-    using PANDA
-
-    geraniales_tree = load_tree("/home/owrisberg/Trf_models/workflow/02_adding_orders/pruning/twice_pruned_tree_Geraniales_GBMB.tre")
-    output_geraniales = infer_ClaDS(geraniales_tree, print_state = 100, f = 0.4295775)
-    
-    using JLD2
-    @save "/home/owrisberg/Trf_models/workflow/02_adding_orders/pruning/ output_geraniales
-
-    '''.format()
+    '''.format(tree = tree, sampling_frequency = sampling_frequency, done_file = done_file)
 
 
     return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
@@ -1105,20 +999,22 @@ for i in range(len(order_trees)):
                                                         script_dir= script_dir,
                                                         apg = script_dir+"apgweb_parsed.csv"
                                                         ))
-    
 
 
-gwf.target_from_template(name = "ClaDs_Arecales",
-                        template=Clads_Arecales())
+clads_test = ["pruned_tree__order_Arecales_GBMB.tre","pruned_tree__order_Zingiberales_GBMB.tre",
+"pruned_tree__order_Vitales_GBMB.tre","twice_pruned_tree_Geraniales_GBMB.tre"]
 
-gwf.target_from_template(name = "ClaDs_Zingiberales",
-                        template=Clads_Zingiberales())
+samp_freq <- [0.2787973, 0.229433, 0.2864078, 0.4295775]
 
-gwf.target_from_template(name = "ClaDs_Vitales",
-                        template=Clads_Vitales())
 
-gwf.target_from_template(name = "ClaDs_Geraniales",
-                        template=Clads_Geraniales())
+for i in range(len(clads_test)):
+    gwf.target_from_template(name = "ClaDs_"+clads_test[i],
+                             template= Clads_test(
+                                 tree = clads_test[i],
+                                 sampling_frequency = samp_freq[i],
+                                 done_file = "done_"+clads_test[i]
+                             ))
+
 
 
 # gwf.target_from_template(name = "Esse",
