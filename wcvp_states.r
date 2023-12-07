@@ -19,14 +19,13 @@ invisible(lapply(packages, library, character.only = TRUE))
 #######################################################-- Local testing --######################################################################
 ################################################################################################################################################
 
-setwd("/home/au543206/GenomeDK/Trf_models/workflow/02_adding_orders/pruning/")
-input_file_tree <- "pruned_tree__order_Arecales_GBMB.txt"
-output <- "Test_arecales.txt"
-input_file_wcvp <- "/home/au543206/GenomeDK/Trf_models/workflow/02_adding_orders/wcvp_names_apg_aligned.rds",
-path_out <- "/home/au543206/GenomeDK/Trf_models/workflow/03_distribution_data/"
-order <- "Arecales"
-apg <- apg <- fread("../../../TroRaiMo/apgweb_parsed.csv")
-
+# setwd("/home/au543206/GenomeDK/Trf_models/workflow/02_adding_orders/pruning/")
+# input_file_tree <- "pruned_tree__order_Arecales_GBMB.txt"
+# output <- "Test_arecales.txt"
+# input_file_wcvp <- "/home/au543206/GenomeDK/Trf_models/workflow/02_adding_orders/wcvp_names_apg_aligned.rds"
+# path_out <- "/home/au543206/GenomeDK/Trf_models/workflow/03_distribution_data/"
+# order_in_question <- as.character("Arecales")
+# apg <- apg <- fread("../../../TroRaiMo/apgweb_parsed.csv")
 
 
 ################################################################################################################################################
@@ -38,7 +37,7 @@ input_file_tree <- commandArgs(trailingOnly = TRUE)[1]
 output <- commandArgs(trailingOnly = TRUE)[2]
 input_file_wcvp <- commandArgs(trailingOnly = TRUE)[3]
 path_out <- commandArgs(trailingOnly = TRUE)[4]
-order <- commandArgs(trailingOnly = TRUE)[5]
+order_in_question <- commandArgs(trailingOnly = TRUE)[5]
 apg <- commandArgs(trailingOnly = TRUE)[6]
 
 # Print the command line arguments
@@ -72,7 +71,7 @@ tree$tip.label <- gsub('"', '', tree$tip.label)  # nolint
 ################################################################################################################################################
 
 # Find unique families
-unique_families <- unique(wcvp_accepted_species$families)
+unique_families <- unique(wcvp_accepted_species$family)
 unique_families <- as.character(unique_families)
 
 # Create a data frame to store the number of tips in each family
@@ -111,9 +110,9 @@ wcvp_accepted_species_orders <- merge(wcvp_accepted_species, family_orders, by.x
 
 # Creating a subset of wcvp where we only have the accepted species in the order
 cat("Creating a subset of wcvp where we only have the accepted species in the order \n")
-wcvp_accepted_species_orders <- subset(wcvp_accepted_species_orders, order == order)
+wcvp_accepted_species_orders_subset <- wcvp_accepted_species_orders[which(wcvp_accepted_species_orders$order %in% order_in_question),]
 
-print(wcvp_accepted_species_orders)
+print(wcvp_accepted_species_orders_subset)
 
 ################################################################################################################################################
 ###############################################-- Finding Environmental data --################################################################
@@ -133,15 +132,15 @@ if(all(tree$tip.label %in% wcvp_accepted_species_orders$taxon_name) == FALSE){
 
 
 # Loop through each tip in the wcvp_accepted_species_orders
-for (i in seq_along(wcvp_accepted_species_orders$taxon_name)) {
+for (i in seq_along(wcvp_accepted_species_orders_subset$taxon_name)) {
   # Get the species name from the tip
-  species_name <- wcvp_accepted_species_orders$taxon_name[i]
-  cat("The species name is ", species_name, "\n")
+  species_name <- wcvp_accepted_species_orders_subset$taxon_name[i]
+  #cat("The species name is ", species_name, "\n")
 
   # Search for the species name in the wcvp_accepted dataset
   matching_row <- wcvp_accepted[wcvp_accepted$taxon_name == species_name, ]
-  cat("This is the matching row: \n")
-  print(matching_row)
+  #cat("This is the matching row: \n")
+  #print(matching_row)
 
   # If a match is found, record the climate description in the result dataframe
   if (nrow(matching_row) > 0) {
@@ -151,13 +150,13 @@ for (i in seq_along(wcvp_accepted_species_orders$taxon_name)) {
 }
 
 # Print the result dataframe
-cat("The number of tips in the tree of ", order, " is ", length(tree$tip.label), "\n")
-
+cat("The number of tips in the tree of ", order_in_question, " is ", length(tree$tip.label), "\n")
+result_df
 
 #if there are no NA's or Empty string in the climate column Convert Wet tropical to 1's and everything else but NA or "" to 0's
 if(sum(is.na(result_df$climate_description)) == 0 & sum(result_df$climate_description == "") == 0){
-  cat("There are no missing climate descriptions of the species in the tree")
-  result_df$climate_description <- ifelse(result_df$climate_description == "Wet tropical", 1, 0)
+  cat("There are no missing climate descriptions of the species in the wcvp dataset \n")
+  result_df$climate_description <- ifelse(result_df$climate_description == "wet tropical", 1, 0)
   write.table(result_df, file.path(path_out, output), sep = "\t", row.names = FALSE)
 } else {
 	# Report how many species are lacking climate data
@@ -165,3 +164,5 @@ if(sum(is.na(result_df$climate_description)) == 0 & sum(result_df$climate_descri
   cat("There are ", sum(result_df$climate_description == ""), " species with empty string in the climate data \n")
   break
 }
+
+result_df
