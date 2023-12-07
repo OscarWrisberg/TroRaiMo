@@ -45,7 +45,7 @@ tree <- read.tree(input_file_tree)
 
 # Filter the wcvp dataset to include only rows where taxon_status == "Accepted"
 wcvp_accepted <- subset(wcvp, taxon_status == "Accepted")
-wcvp_accepted_species <- subset(wcvp_accepted$taxon_rank == "Species")
+wcvp_accepted_species <- subset(wcvp_accepted, taxon_rank == "Species")
 
 ################################################################################################################################################
 ###############################################-- Finding Environmental data --################################################################
