@@ -143,6 +143,9 @@ cat("Merging the tips_families and family_orders data frames \n")
 tips_family_orders <- merge(tips_families, family_orders, by.x = "families", by.y = "family")
 unique(tips_family_orders$order)
 
+# saving the tips_families_orders
+cat("Saving the tips_families_orders \n")
+write.table(tips_family_orders, paste0(output_path, "tips_family_orders.txt"), sep = "\t", row.names = FALSE)
 
 
 ##########################################################################################################################
