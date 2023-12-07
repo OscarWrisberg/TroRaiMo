@@ -24,7 +24,7 @@ println(ARGS[2])
 println(typeof(ARGS[2]))
 
 path_to_tree = ARGS[1]
-sampling_freq = float(ARGS[2])
+sampling_freq = parse(Float64,ARGS[2])
 
 println(typeof(sampling_freq)
 
