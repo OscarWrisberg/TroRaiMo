@@ -47,6 +47,10 @@ tree <- read.tree(input_file_tree)
 wcvp_accepted <- subset(wcvp, taxon_status == "Accepted")
 wcvp_accepted_species <- subset(wcvp_accepted, taxon_rank == "Species")
 
+# Remove "_"
+tree$tip.label <- gsub("_", " ", tree$tip.label)
+tree$tip.label <- gsub('"', '', tree$tip.label)  # nolint
+
 ################################################################################################################################################
 ###############################################-- Finding Environmental data --################################################################
 ################################################################################################################################################
@@ -58,10 +62,13 @@ result_df <- data.frame(tip_name = character(), climate_description = character(
 for (i in seq_along(tree$tip.label)) {
   # Get the species name from the tip
   species_name <- tree$tip.label[i]
+  cat("The species name is ", species_name, "\n")
 
   # Search for the species name in the wcvp_accepted dataset
   matching_row <- wcvp_accepted[wcvp_accepted$taxon_name == species_name, ]
-  
+  cat("This is the matching row: \n")
+  print(matching_row)
+
   # If a match is found, record the climate description in the result dataframe
   if (nrow(matching_row) > 0) {
     climate_description <- matching_row$climate_description
