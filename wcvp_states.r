@@ -15,6 +15,19 @@ if (any(installed_packages == FALSE)) {
 
 # Packages loading
 invisible(lapply(packages, library, character.only = TRUE))
+################################################################################################################################################
+#######################################################-- Local testing --######################################################################
+################################################################################################################################################
+
+setwd("/home/au543206/GenomeDK/Trf_models/workflow/02_adding_orders/pruning/")
+input_file_tree <- "pruned_tree__order_Arecales_GBMB.txt"
+output <- "Test_arecales.txt"
+input_file_wcvp <- "/home/au543206/GenomeDK/Trf_models/workflow/02_adding_orders/wcvp_names_apg_aligned.rds",
+path_out <- "/home/au543206/GenomeDK/Trf_models/workflow/03_distribution_data/"
+order <- "Arecales"
+apg <- apg <- fread("../../../TroRaiMo/apgweb_parsed.csv")
+
+
 
 ################################################################################################################################################
 ##############################################-- Handling Command Line arguments --#############################################################
