@@ -741,7 +741,7 @@ def Finding_areas_in_wcvp(input_file_tree, wcvp_file,path_out, output_file, path
 ##############################################################
 ###########---- Runnning simple ClaDs models  ----############
 ##############################################################
-def Clads_test(tree, sampling_frequency, done_file):
+def Clads_test(tree, sampling_frequency, done_file, path_in):
     """ """
     inputs = ["/home/owrisberg/Trf_models/workflow/02_adding_orders/pruning/pruned_tree__order_Arecales_GBMB.tre"]
     outputs = []
@@ -757,11 +757,13 @@ def Clads_test(tree, sampling_frequency, done_file):
     source /home/owrisberg/miniconda3/etc/profile.d/conda.sh
     conda activate Julia_env
 
-    julia ClaDs.jl {tree} {sampling_frequency}
+    cd /home/owrisberg/Trf_models/TroRaiMo
+
+    julia ClaDs.jl {path_in}{tree} {sampling_frequency}
 
     touch {done_file}
 
-    '''.format(tree = tree, sampling_frequency = sampling_frequency, done_file = done_file)
+    '''.format(tree = tree, sampling_frequency = sampling_frequency, done_file = done_file, path_in = path_in)
 
 
     return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
@@ -1012,7 +1014,8 @@ for i in range(len(clads_test)):
                              template= Clads_test(
                                  tree = clads_test[i],
                                  sampling_frequency = samp_freq[i],
-                                 done_file = "done_"+clads_test[i]
+                                 done_file = "done_"+clads_test[i],
+                                 path_in = "/home/owrisberg/Trf_models/workflow/02_adding_orders/pruning/"
                              ))
 
 
