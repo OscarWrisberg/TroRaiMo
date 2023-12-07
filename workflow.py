@@ -910,38 +910,28 @@ order_trees = ["pruned_tree__order_Acorales_GBMB.txt", "pruned_tree__order_Cross
 "pruned_tree__order_Celastrales_GBMB.txt", "pruned_tree__order_Fabales_GBMB.txt", "pruned_tree__order_Paracryphiales_GBMB.txt", "pruned_tree__order_Vitales_GBMB.txt",
 "pruned_tree__order_Ceratophyllales_GBMB.txt", "pruned_tree__order_Garryales_GBMB.txt", "pruned_tree__order_Petrosaviales_GBMB.txt", "pruned_tree__order_Zingiberales_GBMB.txt",
 "pruned_tree__order_Chloranthales_GBMB.txt", "pruned_tree__order_Ginkgoales_GBMB.txt", "pruned_tree__order_Picramniales_GBMB.txt", "pruned_tree__order_Zygophyllales_GBMB.txt",
-"twice_pruned_tree_Alismatales_GBMB.txt", "twice_pruned_tree_family_Aquifoliales_GBMB.txt", "twice_pruned_tree_family_Myrtales_GBMB.txt", "twice_pruned_tree_Liliales_GBMB.txt",
-"twice_pruned_tree_Apiales_GBMB.txt", "twice_pruned_tree_family_Arecales_GBMB.txt", "twice_pruned_tree_family_Pinales_GBMB.txt", "twice_pruned_tree_Magnoliales_GBMB.txt",
-"twice_pruned_tree_Aquifoliales_GBMB.txt", "twice_pruned_tree_family_Boraginales_GBMB.txt", "twice_pruned_tree_family_Piperales_GBMB.txt", "twice_pruned_tree_Malpighiales_GBMB.txt",
-"twice_pruned_tree_Arecales_GBMB.txt", "twice_pruned_tree_family_Brassicales_GBMB.txt", "twice_pruned_tree_family_Poales_GBMB.txt", "twice_pruned_tree_Metteniusales_GBMB.txt",
-"twice_pruned_tree_Asterales_GBMB.txt", "twice_pruned_tree_family_Commelinales_GBMB.txt", "twice_pruned_tree_family_Proteales_GBMB.txt", "twice_pruned_tree_Nymphaeales_GBMB.txt",
-"twice_pruned_tree_Boraginales_GBMB.txt", "twice_pruned_tree_family_Cupressales_GBMB.txt", "twice_pruned_tree_family_Ranunculales_GBMB.txt", "twice_pruned_tree_Oxalidales_GBMB.txt",
-"twice_pruned_tree_Brassicales_GBMB.txt", "twice_pruned_tree_family_Cycadales_GBMB.txt", "twice_pruned_tree_family_Rosales_GBMB.txt", "twice_pruned_tree_Pandanales_GBMB.txt",
-"twice_pruned_tree_Buxales_GBMB.txt", "twice_pruned_tree_family_Dilleniales_GBMB.txt", "twice_pruned_tree_family_Santalales_GBMB.txt", "twice_pruned_tree_Picramniales_GBMB.txt",
-"twice_pruned_tree_Canellales_GBMB.txt", "twice_pruned_tree_family_Dioscoreales_GBMB.txt", "twice_pruned_tree_family_Sapindales_GBMB.txt", "twice_pruned_tree_Pinales_GBMB.txt",
-"twice_pruned_tree_Caryophyllales_GBMB.txt", "twice_pruned_tree_family_Dipsacales_GBMB.txt", "twice_pruned_tree_family_Solanales_GBMB.txt", "twice_pruned_tree_Proteales_GBMB.txt",
-"twice_pruned_tree_Celastrales_GBMB.txt", "twice_pruned_tree_family_Fabales_GBMB.txt", "twice_pruned_tree_family_Vitales_GBMB.txt", "twice_pruned_tree_Ranunculales_GBMB.txt",
-"twice_pruned_tree_Chloranthales_GBMB.txt", "twice_pruned_tree_family_Fagales_GBMB.txt", "twice_pruned_tree_family_Zingiberales_GBMB.txt", "twice_pruned_tree_Santalales_GBMB.txt",
-"twice_pruned_tree_Cornales_GBMB.txt", "twice_pruned_tree_family_Geraniales_GBMB.txt", "twice_pruned_tree_family_Zygophyllales_GBMB.txt", "twice_pruned_tree_Sapindales_GBMB.txt",
-"twice_pruned_tree_Crossosomatales_GBMB.txt", "twice_pruned_tree_family_Gnetales_GBMB.txt", "twice_pruned_tree_Geraniales_GBMB.txt", "twice_pruned_tree_Saxifragales_GBMB.txt",
-"twice_pruned_tree_Cucurbitales_GBMB.txt", "twice_pruned_tree_family_Laurales_GBMB.txt", "twice_pruned_tree_Gunnerales_GBMB.txt", "twice_pruned_tree_Solanales_GBMB.txt",
-"twice_pruned_tree_Cycadales_GBMB.txt", "twice_pruned_tree_family_Malpighiales_GBMB.txt", "twice_pruned_tree_Icacinales_GBMB.txt", "twice_pruned_tree_Zingiberales_GBMB.txt",
-"twice_pruned_tree_Fagales_GBMB.txt", "twice_pruned_tree_family_Malvales_GBMB.txt", "twice_pruned_tree_Lamiales_GBMB.txt", "twice_pruned_tree_Zygophyllales_GBMB.txt"
+"twice_pruned_tree_Liliales_GBMB.txt","twice_pruned_tree_Apiales_GBMB.txt", "twice_pruned_tree_Magnoliales_GBMB.txt","twice_pruned_tree_Aquifoliales_GBMB.txt",  "twice_pruned_tree_Malpighiales_GBMB.txt",
+"twice_pruned_tree_Arecales_GBMB.txt", "twice_pruned_tree_Metteniusales_GBMB.txt","twice_pruned_tree_Asterales_GBMB.txt", "twice_pruned_tree_Nymphaeales_GBMB.txt",
+"twice_pruned_tree_Boraginales_GBMB.txt", "twice_pruned_tree_Oxalidales_GBMB.txt","twice_pruned_tree_Brassicales_GBMB.txt","twice_pruned_tree_Pandanales_GBMB.txt",
+"twice_pruned_tree_Buxales_GBMB.txt", "twice_pruned_tree_Picramniales_GBMB.txt","twice_pruned_tree_Canellales_GBMB.txt","twice_pruned_tree_Pinales_GBMB.txt",
+"twice_pruned_tree_Caryophyllales_GBMB.txt","twice_pruned_tree_Proteales_GBMB.txt","twice_pruned_tree_Celastrales_GBMB.txt","twice_pruned_tree_Ranunculales_GBMB.txt",
+"twice_pruned_tree_Chloranthales_GBMB.txt","twice_pruned_tree_Santalales_GBMB.txt","twice_pruned_tree_Cornales_GBMB.txt", "twice_pruned_tree_Sapindales_GBMB.txt",
+"twice_pruned_tree_Crossosomatales_GBMB.txt","twice_pruned_tree_Geraniales_GBMB.txt", "twice_pruned_tree_Saxifragales_GBMB.txt","twice_pruned_tree_Cucurbitales_GBMB.txt", "twice_pruned_tree_Gunnerales_GBMB.txt", "twice_pruned_tree_Solanales_GBMB.txt",
+"twice_pruned_tree_Cycadales_GBMB.txt", "twice_pruned_tree_Icacinales_GBMB.txt", "twice_pruned_tree_Zingiberales_GBMB.txt","twice_pruned_tree_Fagales_GBMB.txt", "twice_pruned_tree_Lamiales_GBMB.txt", "twice_pruned_tree_Zygophyllales_GBMB.txt"
 ]
 
-orders = ["Acorales", "Crossosomatales", "Gnetales", "Piperales","Alismatales", "Cucurbitales", "Gunnerales", "Poales","Amborellales", "Cupressales", "Huerteales", 
-"Aquifoliales", "Cycadales", "Magnoliales", "Ranunculales","Arecales", "Dilleniales", "Malpighiales", "Rosales",
-"Austrobaileyales", "Dioscoreales", "Malvales", "Santalales","Berberidopsidales", "Dipsacales", "Myrtales", "Sapindales","Bruniales", "Equisetales", "Nymphaeales", "Solanales","Buxales", "Ericales", "Osmundales", "Trochodendrales",
-"Canellales", "Escalloniales", "Pandanales", "Vahliales","Celastrales", "Fabales", "Paracryphiales", "Vitales","Ceratophyllales", "Garryales", "Petrosaviales", "Zingiberales",
-"Chloranthales", "Ginkgoales", "Picramniales", "Zygophyllales","Alismatales", "Aquifoliales", "Myrtales", "Liliales","Apiales", "Arecales", "Pinales", "Magnoliales",
-"Aquifoliales", "Boraginales", "Piperales", "Malpighiales","Arecales", "Brassicales", "Poales", "Metteniusales","Asterales", "Commelinales", "Proteales", "Nymphaeales",
-"Boraginales", "Cupressales", "Ranunculales", "Oxalidales","Brassicales", "Cycadales", "Rosales", "Pandanales","Buxales", "Dilleniales", "Santalales", "Picramniales","Canellales", "Dioscoreales", "Sapindales", "Pinales",
-"Caryophyllales", "Dipsacales", "Solanales", "Proteales","Celastrales", "Fabales", "Vitales", "Ranunculales","Chloranthales", "Fagales", "Zingiberales", "Santalales",
-"Cornales", "Geraniales", "Zygophyllales", "Sapindales","Crossosomatales", "Gnetales", "Geraniales", "Saxifragales","Cucurbitales", "Laurales", "Gunnerales", "Solanales",
-"Cycadales", "Malpighiales", "Icacinales", "Zingiberales","Fagales", "Malvales", "Lamiales", "Zygophyllales"]
+orders = ["Acorales", "Crossosomatales", "Gnetales", "Piperales","Alismatales", "Cucurbitales", "Gunnerales", "Poales","Amborellales", "Cupressales", "Huerteales",
+"Aquifoliales", "Cycadales", "Magnoliales", "Ranunculales","Arecales", "Dilleniales", "Malpighiales", "Rosales","Austrobaileyales", "Dioscoreales", "Malvales", "Santalales","Berberidopsidales", "Dipsacales", "Myrtales", "Sapindales",
+"Bruniales", "Equisetales", "Nymphaeales", "Solanales","Buxales", "Ericales", "Osmundales", "Trochodendrales","Canellales", "Escalloniales", "Pandanales", "Vahliales","Celastrales", "Fabales", "Paracryphiales", "Vitales",
+"Ceratophyllales", "Garryales", "Petrosaviales", "Zingiberales","Chloranthales", "Ginkgoales", "Picramniales", "Zygophyllales","Liliales", "Apiales", "Magnoliales", "Aquifoliales", "Malpighiales","Arecales", "Metteniusales", "Asterales", "Nymphaeales",
+"Boraginales", "Oxalidales", "Brassicales", "Pandanales","Buxales", "Picramniales", "Canellales", "Pinales","Caryophyllales", "Proteales", "Celastrales", "Ranunculales","Chloranthales", "Santalales", "Cornales", "Sapindales",
+"Crossosomatales", "Geraniales", "Saxifragales","Cucurbitales", "Gunnerales", "Solanales","Cycadales", "Icacinales", "Zingiberales","Fagales", "Lamiales", "Zygophyllales"
+]
 
-
+# Problematic trees
 # "Polypodiales-eupolypod_I", "pruned_tree__order_Polypodiales-eupolypod_I_GBMB.txt",
+# "Alismatales","twice_pruned_tree_Alismatales_GBMB.txt"
+
 for i in range(len(order_trees)):
     #### Running the script to find the environmental data for the tips in the trees
     gwf.target_from_template(name = orders[i]+"_distribution_data.",
