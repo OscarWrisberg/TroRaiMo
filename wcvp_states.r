@@ -26,6 +26,7 @@ output <- commandArgs(trailingOnly = TRUE)[2]
 input_file_wcvp <- commandArgs(trailingOnly = TRUE)[3]
 path_out <- commandArgs(trailingOnly = TRUE)[4]
 order <- commandArgs(trailingOnly = TRUE)[5]
+apg <- commandArgs(trailingOnly = TRUE)[6]
 
 # Print the command line arguments
 cat("The input file for the tree is ", input_file_tree, "\n")
@@ -41,7 +42,12 @@ cat("The order of the tree is ", order, "\n")
 
 # Load the wcvp dataset
 wcvp <- readRDS(input_file_wcvp)
+
+# Load the tree
 tree <- read.tree(input_file_tree)
+
+# Loading tips families so I dont have to wait so fucking long..
+tips_families <- fread(tips_families_input)
 
 # Filter the wcvp dataset to include only rows where taxon_status == "Accepted"
 wcvp_accepted <- subset(wcvp, taxon_status == "Accepted")
@@ -52,16 +58,71 @@ tree$tip.label <- gsub("_", " ", tree$tip.label)
 tree$tip.label <- gsub('"', '', tree$tip.label)  # nolint
 
 ################################################################################################################################################
+############################################-- Finding the order for each family --#############################################################
+################################################################################################################################################
+
+# Find unique families
+unique_families <- unique(wcvp_accepted_species$families)
+unique_families <- as.character(unique_families)
+
+# Create a data frame to store the number of tips in each family
+df_number_tips <- data.frame(family = character(0), number_tips = numeric(0))
+non_mono_family <- character(0)
+
+# Fixing a wrong family in tips_families
+#tips_families[which(tips_families$name == "Saussurea japonica"),"families"] <- "Asteraceae"
+
+####################################################################################
+####################  Finding the order for each family  ###########################
+####################################################################################
+
+# Find order function
+find_order <- function(fams, apg) {
+  fam_list <- character(0)
+  orders <- character(0)
+
+  for (family in unique(fams)) {
+    order <- apg[which(apg$Syn_Fam == family), "Clade"] # Finding the order of that family in APG file
+    order <- as.character(order[1]) # Selecting the order of the family
+    cat("family ", family, "Order", order, "\n") # Printing the family and order
+    fam_list <- c(fam_list, family)
+    orders <- c(orders, order)
+  }
+
+  df_orders <- data.frame(family = fam_list, order = orders)
+  return(df_orders)
+}
+
+# Running the function
+cat("Finding the order for each of the families \n")
+family_orders <- find_order(unique_families, apg)
+length(family_orders$order)
+
+# Merging the tips_families and family_orders data frames
+cat("Merging the tips_families and family_orders data frames \n")
+wcvp_accepted_species_orders <- merge(wcvp_accepted_species, family_orders, by.x = "family", by.y = "family")
+unique(tips_family_orders$order)
+
+# Creating a subset of wcvp where we only have the accepted species in the order
+cat("Creating a subset of wcvp where we only have the accepted species in the order \n")
+wcvp_accepted_species_orders <- subset(wcvp_accepted_species_orders, order == order)
+
+################################################################################################################################################
 ###############################################-- Finding Environmental data --################################################################
 ################################################################################################################################################
 
 # Create an empty dataframe to store the results
-result_df <- data.frame(tip_name = character(), climate_description = character(), stringsAsFactors = FALSE)
+result_df <- data.frame(taxon_name = character(), climate_description = character(), stringsAsFactors = FALSE)
+
+# Checking if all tip labels are in the tips_family_orders data frame
+cat("Are all the tips in the tree found in the tips_family_order ", all(tree$tip.label %in% tips_family_orders$name). "\n")
+
+# Creating a subset of the tips_family_orders data frame with only the 
 
 # Loop through each tip in the tree
-for (i in seq_along(tree$tip.label)) {
+for (i in seq_along(wcvp_accepted_species_orders$taxon_name)) {
   # Get the species name from the tip
-  species_name <- tree$tip.label[i]
+  species_name <- wcvp_accepted_species_orders$taxon_name[i]
   cat("The species name is ", species_name, "\n")
 
   # Search for the species name in the wcvp_accepted dataset
@@ -72,7 +133,7 @@ for (i in seq_along(tree$tip.label)) {
   # If a match is found, record the climate description in the result dataframe
   if (nrow(matching_row) > 0) {
     climate_description <- matching_row$climate_description
-    result_df <- rbind(result_df, data.frame(tip_name = tip, climate_description = climate_description, stringsAsFactors = FALSE))
+    result_df <- rbind(result_df, data.frame(taxon_name = species_name, climate_description = climate_description, stringsAsFactors = FALSE))
   }
 }
 
