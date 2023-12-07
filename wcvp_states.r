@@ -100,6 +100,8 @@ wcvp_accepted_species_orders <- merge(wcvp_accepted_species, family_orders, by.x
 cat("Creating a subset of wcvp where we only have the accepted species in the order \n")
 wcvp_accepted_species_orders <- subset(wcvp_accepted_species_orders, order == order)
 
+print(wcvp_accepted_species_orders)
+
 ################################################################################################################################################
 ###############################################-- Finding Environmental data --################################################################
 ################################################################################################################################################
@@ -109,6 +111,12 @@ result_df <- data.frame(taxon_name = character(), climate_description = characte
 
 # Check if all the tips in the tree are found in the wcvp_accepted_species_orders
 cat("Are all the tips in the tree found in the wcvp_accepted_species_orders ", all(tree$tip.label %in% wcvp_accepted_species_orders$taxon_name), "\n")
+if(all(tree$tip.label %in% wcvp_accepted_species_orders$taxon_name) == FALSE){
+  cat("Not all the tips in the tree are found in the wcvp_accepted_species_orders \n")
+  cat("The following tips are not found in the wcvp_accepted_species_orders \n")
+  cat(setdiff(tree$tip.label, wcvp_accepted_species_orders$taxon_name), "\n")
+}
+
 
 
 # Loop through each tip in the wcvp_accepted_species_orders
