@@ -19,7 +19,7 @@ using PANDA
 # vitales_tree = load_tree("/home/au543206/GenomeDK/Trf_models/workflow/02_adding_orders/pruning/pruned_tree__order_Vitales_GBMB.tre")
 # geraniales_tree = load_tree("/home/au543206/GenomeDK/Trf_models/workflow/02_adding_orders/pruning/twice_pruned_tree_Geraniales_GBMB.tre")
 
-tree <- load_tree(ARGS[2])
+tree = load_tree(ARGS[2])
 output_name = ARGS[1]+"_output"
 
 output = infer_ClaDS(tree, print_state = 100, f = ARGS[3])

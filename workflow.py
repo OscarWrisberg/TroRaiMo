@@ -1004,7 +1004,7 @@ for i in range(len(order_trees)):
 clads_test = ["pruned_tree__order_Arecales_GBMB.tre","pruned_tree__order_Zingiberales_GBMB.tre",
 "pruned_tree__order_Vitales_GBMB.tre","twice_pruned_tree_Geraniales_GBMB.tre"]
 
-samp_freq <- [0.2787973, 0.229433, 0.2864078, 0.4295775]
+samp_freq = [0.2787973, 0.229433, 0.2864078, 0.4295775]
 
 
 for i in range(len(clads_test)):
