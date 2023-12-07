@@ -22,8 +22,8 @@ using PANDA
 println(ARGS[1])
 println(ARGS[2])
 
-path_to_tree = ARGS[2]
-sampling_freq = ARGS[3]
+path_to_tree = ARGS[1]
+sampling_freq = ARGS[2]
 
 tree = load_tree(path_to_tree)
 output_name = path_to_tree+"_output"
