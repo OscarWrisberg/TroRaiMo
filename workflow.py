@@ -969,7 +969,7 @@ for i in range(len(order_trees)):
                                                         wcvp_file = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds",
                                                         order = orders[i],
                                                         script_dir= script_dir
-                                                        tips_families = script_dir+"apgweb_parsed.csv"
+                                                        apg = script_dir+"apgweb_parsed.csv"
                                                         ))
 
 
