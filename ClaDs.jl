@@ -26,7 +26,7 @@ path_to_tree = ARGS[1]
 sampling_freq = ARGS[2]
 
 tree = load_tree(path_to_tree)
-output_name = path_to_tree+"_output"
+output_name = path_to_tree*"_output"
 
 output = infer_ClaDS(tree, print_state = 100, f = sampling_freq)
 
