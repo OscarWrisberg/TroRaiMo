@@ -725,7 +725,7 @@ def Finding_areas_in_wcvp(input_file_tree, wcvp_file,path_out, output_file, path
     date
 
     # Running the R script
-    Rscript --vanilla {script_dir}Finding_monophyletic_clades.R {input_file_tree} {output_file} {wcvp_file} {path_out} {order}
+    Rscript --vanilla {script_dir}wcvp_states.r {input_file_tree} {output_file} {wcvp_file} {path_out} {order}
 
 
     echo Ended the script to find state data for the tips in the wcvp
