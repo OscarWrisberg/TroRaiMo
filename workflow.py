@@ -964,7 +964,7 @@ for i in range(len(order_trees)):
                                                         input_file_tree= order_trees[i],
                                                         path_in =  workflow_dir+"02_adding_orders/pruning/",
                                                         path_out = workflow_dir+"03_distribution_data",
-                                                        output_file = orders[i]+"distribution_data.txt",
+                                                        output_file = orders[i]+"_distribution_data.txt",
                                                         wcvp_file = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds",
                                                         order = orders[i],
                                                         script_dir= script_dir
