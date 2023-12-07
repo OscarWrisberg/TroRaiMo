@@ -822,8 +822,8 @@ gwf.target_from_template(name = "Taxon_match",
 
 gwf.target_from_template(name = "Renaming",
                                 template = Renamer(
-                                    input_file =workflow_dir+"01_distribution_data/05_common_format/gbif_common_format.rds",
-                                    wcvp = workflow_dir+"01_distribution_data/05_common_format/wcvp_names_apg_aligned.rds",
+                                    input_file =workflow_dir+"01_distribution_data/04_common_format/gbif_common_format.rds",
+                                    wcvp = workflow_dir+"01_distribution_data/04_common_format/wcvp_names_apg_aligned.rds",
                                     renaming_file = "gbif_taxon_matched.rds",
                                     output_file = "gbif_renamed.rds",
                                     path_in = workflow_dir+"01_distribution_data/05_Taxon_match/",
