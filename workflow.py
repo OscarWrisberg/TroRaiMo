@@ -731,7 +731,7 @@ def Finding_areas_in_wcvp(input_file_tree, wcvp_file,path_out, output_file, path
     echo Ended the script to find state data for the tips in the wcvp
     date
 
-    '''.format(path_out = path_out, script_dir = script_dir, output_file = output_file, wcvp_file = wcvp_file, order = order)
+    '''.format(path_out = path_out, output_file = output_file, wcvp_file = wcvp_file, order = order, input_file_tree = input_file_tree)
 
 
     return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
