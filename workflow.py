@@ -699,6 +699,7 @@ def Forcing_orders(input_file_tree, output_file, path_in,path_out, script_dir, w
 ##############################################################
 ###########---- Downloading distribution data ----############
 ##############################################################
+
 def Finding_areas_in_wcvp(input_file_tree, wcvp_file,path_out, output_file, path_in, order, script_dir, apg):
     """This Function creates a states file for the tips in WCVP based on the climate column."""
     inputs = [path_in+input_file_tree]
@@ -737,6 +738,139 @@ def Finding_areas_in_wcvp(input_file_tree, wcvp_file,path_out, output_file, path
 
     return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
 
+##############################################################
+###########---- Runnning simple ClaDs models  ----############
+##############################################################
+def Clads_Arecales():
+    """ """
+    inputs = ["/home/owrisberg/Trf_models/workflow/02_adding_orders/pruning/pruned_tree__order_Arecales_GBMB.tre"]
+    outputs = []
+    options = {
+        'cores': 10,
+        'memory': '30g',
+        'account':"Trf_models",
+        'walltime': "12:00:00"
+    }
+
+    spec = '''
+
+    source /home/owrisberg/miniconda3/etc/profile.d/conda.sh
+    conda activate Julia_env
+
+    Julia
+
+    using Pkg
+    Pkg.add("PANDA")
+    using PANDA
+
+    arecales_tree = load_tree("/home/owrisberg/Trf_models/workflow/02_adding_orders/pruning/pruned_tree__order_Arecales_GBMB.tre")
+    output_arecales = infer_ClaDS(arecales_tree, print_state = 100, f = 0.2787973)
+
+    using JLD2
+    @save "/home/owrisberg/Trf_models/workflow/02_adding_orders/pruning/ output_arecales
+    '''.format()
+
+
+    return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
+
+def Clads_Zingiberales():
+    """ """
+    inputs = ["/home/owrisberg/Trf_models/workflow/02_adding_orders/pruning/pruned_tree__order_Zingiberales_GBMB.tre"]
+    outputs = []
+    options = {
+        'cores': 10,
+        'memory': '30g',
+        'account':"Trf_models",
+        'walltime': "12:00:00"
+    }
+
+    spec = '''
+
+    source /home/owrisberg/miniconda3/etc/profile.d/conda.sh
+    conda activate Julia_env
+
+    Julia
+
+    using Pkg
+    Pkg.add("PANDA")
+    using PANDA
+
+    zingiberales_tree = load_tree("/home/owrisberg/Trf_models/workflow/02_adding_orders/pruning/pruned_tree__order_Zingiberales_GBMB.tre")
+    output_zingiberales = infer_ClaDS(zingiberales_tree, print_state = 100, f = 0.229433)
+
+
+    using JLD2
+    @save "/home/owrisberg/Trf_models/workflow/02_adding_orders/pruning/ output_zingiberales
+    '''.format()
+
+
+    return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
+
+def Clads_Vitales():
+    """ """
+    inputs = ["/home/owrisberg/Trf_models/workflow/02_adding_orders/pruning/pruned_tree__order_Vitales_GBMB.tre"]
+    outputs = []
+    options = {
+        'cores': 10,
+        'memory': '30g',
+        'account':"Trf_models",
+        'walltime': "12:00:00"
+    }
+
+    spec = '''
+
+    source /home/owrisberg/miniconda3/etc/profile.d/conda.sh
+    conda activate Julia_env
+    
+    Julia
+
+    using Pkg
+    Pkg.add("PANDA")
+    using PANDA
+
+    vitales_tree = load_tree("/home/owrisberg/Trf_models/workflow/02_adding_orders/pruning/pruned_tree__order_Vitales_GBMB.tre")
+    output_vitales = infer_ClaDS(vitales_tree, print_state = 100, f = 0.2864078)
+    
+    using JLD2
+    @save "/home/owrisberg/Trf_models/workflow/02_adding_orders/pruning/ output_vitales
+    
+    '''.format()
+
+
+    return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
+
+def Clads_Geraniales():
+    """ """
+    inputs = ["/home/owrisberg/Trf_models/workflow/02_adding_orders/pruning/twice_pruned_tree_Geraniales_GBMB.tre"]
+    outputs = []
+    options = {
+        'cores': 10,
+        'memory': '30g',
+        'account':"Trf_models",
+        'walltime': "12:00:00"
+    }
+
+    spec = '''
+
+    source /home/owrisberg/miniconda3/etc/profile.d/conda.sh
+    conda activate Julia_env
+
+    Julia
+
+    using Pkg
+    Pkg.add("PANDA")
+    using PANDA
+
+    geraniales_tree = load_tree("/home/owrisberg/Trf_models/workflow/02_adding_orders/pruning/twice_pruned_tree_Geraniales_GBMB.tre")
+    output_geraniales = infer_ClaDS(geraniales_tree, print_state = 100, f = 0.4295775)
+    
+    using JLD2
+    @save "/home/owrisberg/Trf_models/workflow/02_adding_orders/pruning/ output_geraniales
+
+    '''.format()
+
+
+    return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
 
 ########################################################################################################################
 ####################################---- Running pipeline ----##########################################################
@@ -971,7 +1105,20 @@ for i in range(len(order_trees)):
                                                         script_dir= script_dir,
                                                         apg = script_dir+"apgweb_parsed.csv"
                                                         ))
+    
 
+
+gwf.target_from_template(name = "ClaDs_Arecales",
+                        template=Clads_Arecales())
+
+gwf.target_from_template(name = "ClaDs_Zingiberales",
+                        template=Clads_Zingiberales())
+
+gwf.target_from_template(name = "ClaDs_Vitales",
+                        template=Clads_Vitales())
+
+gwf.target_from_template(name = "ClaDs_Geraniales",
+                        template=Clads_Geraniales())
 
 
 # gwf.target_from_template(name = "Esse",
