@@ -108,7 +108,7 @@ wcvp_accepted_species_orders <- subset(wcvp_accepted_species_orders, order == or
 result_df <- data.frame(taxon_name = character(), climate_description = character(), stringsAsFactors = FALSE)
 
 # Check if all the tips in the tree are found in the wcvp_accepted_species_orders
-cat("Are all the tips in the tree found in the wcvp_accepted_species_orders ", all(tree$tip.label %in% wcvp_accepted_species_orders$taxon_name). "\n")
+cat("Are all the tips in the tree found in the wcvp_accepted_species_orders ", all(tree$tip.label %in% wcvp_accepted_species_orders$taxon_name), "\n")
 
 
 # Loop through each tip in the wcvp_accepted_species_orders
