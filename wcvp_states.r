@@ -45,7 +45,7 @@ cat("The input file for the tree is ", input_file_tree, "\n")
 cat("The output file is ", output, "\n")
 cat("The input file for the wcvp dataset is ", input_file_wcvp, "\n")
 cat("The path to the output file is ", path_out, "\n")
-cat("The order of the tree is ", order, "\n")
+cat("The order of the tree is ", order_in_question, "\n")
 
 
 ################################################################################################################################################
@@ -151,7 +151,7 @@ for (i in seq_along(wcvp_accepted_species_orders_subset$taxon_name)) {
 
 # Print the result dataframe
 cat("The number of tips in the tree of ", order_in_question, " is ", length(tree$tip.label), "\n")
-result_df
+
 
 #if there are no NA's or Empty string in the climate column Convert Wet tropical to 1's and everything else but NA or "" to 0's
 if(sum(is.na(result_df$climate_description)) == 0 & sum(result_df$climate_description == "") == 0){
@@ -165,4 +165,4 @@ if(sum(is.na(result_df$climate_description)) == 0 & sum(result_df$climate_descri
   break
 }
 
-result_df
+
