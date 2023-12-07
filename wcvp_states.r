@@ -66,9 +66,6 @@ unique_families <- as.character(unique_families)
 df_number_tips <- data.frame(family = character(0), number_tips = numeric(0))
 non_mono_family <- character(0)
 
-# Fixing a wrong family in tips_families
-#tips_families[which(tips_families$name == "Saussurea japonica"),"families"] <- "Asteraceae"
-
 ####################################################################################
 ####################  Finding the order for each family  ###########################
 ####################################################################################
@@ -95,10 +92,9 @@ cat("Finding the order for each of the families \n")
 family_orders <- find_order(unique_families, apg)
 length(family_orders$order)
 
-# Merging the tips_families and family_orders data frames
-cat("Merging the tips_families and family_orders data frames \n")
+# Merging the wcvp and family_orders data frames
+cat("Merging the wcvp and family_orders data frames \n")
 wcvp_accepted_species_orders <- merge(wcvp_accepted_species, family_orders, by.x = "family", by.y = "family")
-unique(tips_family_orders$order)
 
 # Creating a subset of wcvp where we only have the accepted species in the order
 cat("Creating a subset of wcvp where we only have the accepted species in the order \n")
@@ -111,12 +107,11 @@ wcvp_accepted_species_orders <- subset(wcvp_accepted_species_orders, order == or
 # Create an empty dataframe to store the results
 result_df <- data.frame(taxon_name = character(), climate_description = character(), stringsAsFactors = FALSE)
 
-# Checking if all tip labels are in the tips_family_orders data frame
-cat("Are all the tips in the tree found in the tips_family_order ", all(tree$tip.label %in% tips_family_orders$name). "\n")
+# Check if all the tips in the tree are found in the wcvp_accepted_species_orders
+cat("Are all the tips in the tree found in the wcvp_accepted_species_orders ", all(tree$tip.label %in% wcvp_accepted_species_orders$taxon_name). "\n")
 
-# Creating a subset of the tips_family_orders data frame with only the 
 
-# Loop through each tip in the tree
+# Loop through each tip in the wcvp_accepted_species_orders
 for (i in seq_along(wcvp_accepted_species_orders$taxon_name)) {
   # Get the species name from the tip
   species_name <- wcvp_accepted_species_orders$taxon_name[i]
