@@ -46,9 +46,6 @@ wcvp <- readRDS(input_file_wcvp)
 # Load the tree
 tree <- read.tree(input_file_tree)
 
-# Loading tips families so I dont have to wait so fucking long..
-tips_families <- fread(tips_families_input)
-
 # Filter the wcvp dataset to include only rows where taxon_status == "Accepted"
 wcvp_accepted <- subset(wcvp, taxon_status == "Accepted")
 wcvp_accepted_species <- subset(wcvp_accepted, taxon_rank == "Species")
