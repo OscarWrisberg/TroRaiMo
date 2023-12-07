@@ -19,8 +19,8 @@ using PANDA
 # vitales_tree = load_tree("/home/au543206/GenomeDK/Trf_models/workflow/02_adding_orders/pruning/pruned_tree__order_Vitales_GBMB.tre")
 # geraniales_tree = load_tree("/home/au543206/GenomeDK/Trf_models/workflow/02_adding_orders/pruning/twice_pruned_tree_Geraniales_GBMB.tre")
 
+println(ARGS[1])
 println(ARGS[2])
-println(ARGS[3])
 
 path_to_tree = ARGS[2]
 sampling_freq = ARGS[3]
