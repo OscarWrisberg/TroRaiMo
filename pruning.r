@@ -19,10 +19,10 @@ invisible(lapply(packages, library, character.only = TRUE))
 ######################################## Settings for running this script locally. ########################################
 ###########################################################################################################################
 
-setwd("/home/au543206/GenomeDK/Trf_models/data") # Set the working directory when local
-wcvp <- readRDS("../workflow/02_adding_orders/wcvp_names_apg_aligned.rds")  # Read the WCVP names file into a data frame
-tree <- read.tree("GBMB.tre") # Read the GBMB tree
-output_file_tree <- "GBMB_pruned.tre" # Set the name of the output file
+# setwd("/home/au543206/GenomeDK/Trf_models/data") # Set the working directory when local
+# wcvp <- readRDS("../workflow/02_adding_orders/wcvp_names_apg_aligned.rds")  # Read the WCVP names file into a data frame
+# tree <- read.tree("GBMB.tre") # Read the GBMB tree
+# output_file_tree <- "GBMB_pruned.tre" # Set the name of the output file
 
 ###########################################################################################################################
 ########################################### Running the script on the cluster #############################################
