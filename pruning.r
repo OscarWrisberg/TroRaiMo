@@ -19,10 +19,10 @@ invisible(lapply(packages, library, character.only = TRUE))
 ######################################## Settings for running this script locally. ########################################
 ###########################################################################################################################
 
-# setwd("/home/au543206/GenomeDK/Trf_models/data") # Set the working directory when local
-# wcvp <- readRDS("../workflow/02_adding_orders/wcvp_names_apg_aligned.rds")  # Read the WCVP names file into a data frame
-# tree <- read.tree("GBMB.tre") # Read the GBMB tree
-# output_file_tree <- "GBMB_pruned.tre" # Set the name of the output file
+setwd("/home/au543206/GenomeDK/Trf_models/data") # Set the working directory when local
+wcvp <- readRDS("../workflow/02_adding_orders/wcvp_names_apg_aligned.rds")  # Read the WCVP names file into a data frame
+tree <- read.tree("GBMB.tre") # Read the GBMB tree
+output_file_tree <- "GBMB_pruned.tre" # Set the name of the output file
 
 ###########################################################################################################################
 ########################################### Running the script on the cluster #############################################
@@ -72,7 +72,7 @@ cat("Length of matching tips not accepted ", length(matching_tips_not_accepted),
 # I could use the taxonomy_matcher to find the correct name for all the tips in the tree, but I think this would be too time consuming.
 # Instead I am just going to loop through the names and see if I can find a match in the WCVP file using the grep function.
 
-# Initialize empty vectorsq
+# Initialize empty vectors
 not_matchable_tips <- character(0)
 matchable_tips <- character(0)
 match_name <- character(0)
@@ -114,15 +114,15 @@ for (i in seq_along(not_matching_tips)) {
   }
 }
 
-Saving vectors as RDS files
+# Saving vectors as RDS files
 saveRDS(not_matchable_tips, "not_matchable_tips_1.rds") 
 saveRDS(matchable_tips, "matchable_tips_1.rds") 
 saveRDS(match_name, "match_name_1.rds")
 
 # # Loading RDS files
-# not_matchable_tips <- readRDS("not_matchable_tips_1.rds")
-# matchable_tips <- readRDS("matchable_tips_1.rds")
-# match_name <- readRDS("match_name_1.rds")
+not_matchable_tips <- readRDS("not_matchable_tips_1.rds")
+matchable_tips <- readRDS("matchable_tips_1.rds")
+match_name <- readRDS("match_name_1.rds")
 
 
 cat("Are all the matchable tips found in the tree? ", all(matchable_tips %in% tree$tip.label), " and are all the match_names found in the wcvp$taxon_name", all(match_name %in% wcvp$taxon_name), "\n")
@@ -149,7 +149,7 @@ split_matchable_tips <- character(0)
 split_match_name <- character(0)
 split_multi_match <- character(0)
 
-# Loop through the not_matchable_tips
+#Loop through the not_matchable_tips
 for (i in seq_along(not_matchable_tips)) {
   # Writing a progress bar
   if (!i %% 50) cat("Percentage done", format(round((i / length(not_matchable_tips)) * 100, 2), nsmall = 2), " at ", format(Sys.time(), '%H:%M:%S'), "\n")
@@ -216,7 +216,7 @@ for (i in seq_along(not_matchable_tips)) {
   }
 }
 
-Saving vectors as RDS files for easy loading if I need to rerun the script
+# Saving vectors as RDS files for easy loading if I need to rerun the script
 cat("Saving Rds files \n")
 saveRDS(split_not_matchable_tips, "split_not_matchable_tips.rds")
 saveRDS(split_matchable_tips, "split_matchable_tips.rds")
@@ -225,10 +225,10 @@ saveRDS(split_multi_match, "split_multi_match.rds")
 cat("Rds files saved \n")
 
 ## Loading RDS files
-# split_not_matchable_tips <- readRDS("split_not_matchable_tips.rds")
-# split_matchable_tips <- readRDS("split_matchable_tips.rds")
-# split_match_name <- readRDS("split_match_name.rds")
-# split_multi_match <- readRDS("split_multi_match.rds")
+split_not_matchable_tips <- readRDS("split_not_matchable_tips.rds")
+split_matchable_tips <- readRDS("split_matchable_tips.rds")
+split_match_name <- readRDS("split_match_name.rds")
+split_multi_match <- readRDS("split_multi_match.rds")
 
 
 # Are all species accounted for?
@@ -288,7 +288,6 @@ cat("Length of matching tips not accepted ", length(matching_tips_not_accepted),
 # This means we now need to start dealing with the species in the tree which are not Accepted in the WCVP file.
 # And we need to deal with the tips in the tree which are not species but something else (subsp, var, etc.)
 
-"Bletia nitida" %in% tree$tip.label # False
 ############################################################################################################################################################################
 ############################################################################################################################################################################
 ############################################################################################################################################################################
@@ -314,10 +313,6 @@ cat("This means there are ",length(new_matching_tips_not_accepted_old)," tips in
 # I can do this by using the accepted_plant_name_id in the wcvp file.
 # I can then use the accepted_plant_name_id to find the accepted name in the wcvp file.
 
-# I need to find the accepted_plant_name_id for all the tips in the tree which are not accepted but for some reason this vector is shorter than my tip labels
-# What could be causing this?
-
-
 # Could it be because there are more than one row where wcvp$taxon_name matches new_matching_tips_not_accepted YES THIS SEEMS TO BE THE CASE!
 # I could test this with a for loop.
 # This for loop loops through all the names in new_matching_tips_not_accepted and checks
@@ -328,6 +323,7 @@ cat("This means there are ",length(new_matching_tips_not_accepted_old)," tips in
 #Otherwise it adds the tip to a vector called test_tip_labels_more_than_1_match
 # Which is then dropped from the tree.
 
+new_matching_tips_not_accepted <- unique(tree$tip.label[which(!tree$tip.label %in% wcvp_accepted$taxon_name)])
 test_tip_labels_more_than_1_match <- character(0)
 for(i in seq_along(new_matching_tips_not_accepted)){
   if (length(which(wcvp$taxon_name %in% new_matching_tips_not_accepted[i])) > 1) {
@@ -643,7 +639,7 @@ cat("Tips lost due to them being duplicates is: ", length_before_dup_removal - l
 cat("Proportion of duplicated tips solved is ", length(mono_dups)/total_dup_names, "\n")
 cat("Proportion of duplicated tips not solved is ", length(no_mono_dropped_tips)/total_dup_names, "\n")
 cat("The number of duplicated tips left in the tree is: ", length(tree$tip.label[duplicated(tree$tip.label)]), "\n")
-
+cat("The number of tips in the tree is ", length(tree$tip.label))
 
 #########################################################################################################################################################################
 #########################################################################################################################################################################
