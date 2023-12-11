@@ -28,7 +28,7 @@ output_name = path_to_tree*"_output"
 output = infer_ClaDS(tree, print_state = 100, f = sampling_freq)
 
 using JLD2
-@save "/home/owrisberg/Trf_models/workflow/03_distribution_data/"*output_name output
+@save output_name output
 
 
 ###################################################################################################################################################3
