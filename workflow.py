@@ -741,7 +741,7 @@ def Finding_areas_in_wcvp(input_file_tree, wcvp_file,path_out, output_file, path
 ##############################################################
 ###########---- Runnning simple ClaDs models  ----############
 ##############################################################
-def Clads_test(tree, sampling_frequency, done_file, path_in):
+def Clads_test(tree, sampling_frequency, done_file, path_in, output_file):
     """ """
     inputs = ["/home/owrisberg/Trf_models/workflow/02_adding_orders/pruning/pruned_tree__order_Arecales_GBMB.tre"]
     outputs = []
@@ -762,14 +762,14 @@ def Clads_test(tree, sampling_frequency, done_file, path_in):
     echo Starting the Clads script at:
     date
 
-    julia ClaDs.jl {path_in}{tree} {sampling_frequency}
+    julia ClaDs.jl {path_in}{tree} {sampling_frequency} {output_file}
 
     echo Ended the Clads script at:
     date
 
     touch {done_file}
 
-    '''.format(tree = tree, sampling_frequency = sampling_frequency, done_file = done_file, path_in = path_in)
+    '''.format(tree = tree, sampling_frequency = sampling_frequency, done_file = done_file, path_in = path_in, output_file = output_file)
 
 
     return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
@@ -1017,11 +1017,12 @@ samp_freq = [0.2787973, 0.229433, 0.2864078, 0.4295775]
 
 for i in range(len(clads_test)):
     gwf.target_from_template(name = "ClaDs_"+clads_test[i],
-                             template= Clads_test(
+                                 template= Clads_test(
                                  tree = clads_test[i],
                                  sampling_frequency = samp_freq[i],
                                  done_file = "done_"+clads_test[i],
-                                 path_in = "/home/owrisberg/Trf_models/workflow/02_adding_orders/pruning/"
+                                 path_in = "/home/owrisberg/Trf_models/workflow/02_adding_orders/pruning/",
+                                 output = "Clads_output_"+clads_test[i]+".jld2"
                              ))
 
 
