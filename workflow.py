@@ -759,7 +759,13 @@ def Clads_test(tree, sampling_frequency, done_file, path_in):
 
     cd /home/owrisberg/Trf_models/TroRaiMo
 
+    echo Starting the Clads script at:
+    date
+
     julia ClaDs.jl {path_in}{tree} {sampling_frequency}
+
+    echo Ended the Clads script at:
+    date
 
     touch {done_file}
 
