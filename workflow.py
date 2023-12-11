@@ -746,10 +746,10 @@ def Clads_test(tree, sampling_frequency, done_file, path_in):
     inputs = ["/home/owrisberg/Trf_models/workflow/02_adding_orders/pruning/pruned_tree__order_Arecales_GBMB.tre"]
     outputs = []
     options = {
-        'cores': 10,
-        'memory': '30g',
+        'cores': 20,
+        'memory': '50g',
         'account':"Trf_models",
-        'walltime': "12:00:00"
+        'walltime': "20:00:00"
     }
 
     spec = '''
@@ -763,6 +763,63 @@ def Clads_test(tree, sampling_frequency, done_file, path_in):
     date
 
     julia ClaDs.jl {path_in}{tree} {sampling_frequency}
+
+    echo Ended the Clads script at:
+    date
+
+    touch {done_file}
+
+    '''.format(tree = tree, sampling_frequency = sampling_frequency, done_file = done_file, path_in = path_in)
+
+
+    return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
+
+##############################################################
+###########---- Runnning simple ClaDs models  ----############
+##############################################################
+def Clads_test_2(tree, sampling_frequency, done_file, path_in):
+    """ """
+    inputs = ["/home/owrisberg/Trf_models/workflow/02_adding_orders/pruning/pruned_tree__order_Arecales_GBMB.tre"]
+    outputs = []
+    options = {
+        'cores': 20,
+        'memory': '50g',
+        'account':"Trf_models",
+        'walltime': "20:00:00"
+    }
+
+    spec = '''
+
+    source /home/owrisberg/miniconda3/etc/profile.d/conda.sh
+    conda activate Julia_env
+
+    cd /home/owrisberg/Trf_models/TroRaiMo
+
+    echo Starting the Clads script at:
+    date
+
+    julia
+
+    using Pkg
+    using PANDA
+
+    println({path_in}{tree})
+    println({sampling_frequency})
+
+    path_to_tree = {path_in}{tree}
+    sampling_freq = parse(Float64,{sampling_frequency})
+
+    println(typeof(sampling_freq))
+
+    tree = load_tree(path_to_tree)
+    output_name = path_to_tree*"_output"
+
+    output = infer_ClaDS(tree, print_state = 100, f = sampling_freq)
+
+    using JLD2
+    @save "/home/owrisberg/Trf_models/workflow/03_distribution_data/"*output_name output
+
+    exit()
 
     echo Ended the Clads script at:
     date
@@ -1021,6 +1078,14 @@ for i in range(len(clads_test)):
                                  tree = clads_test[i],
                                  sampling_frequency = samp_freq[i],
                                  done_file = "done_"+clads_test[i],
+                                 path_in = "/home/owrisberg/Trf_models/workflow/02_adding_orders/pruning/"
+                             ))
+    
+    gwf.target_from_template(name = "ClaDs_test_no_script"+clads_test[i],
+                             template= Clads_test_2(
+                                 tree = clads_test[i],
+                                 sampling_frequency = samp_freq[i],
+                                 done_file = "done_2_"+clads_test[i],
                                  path_in = "/home/owrisberg/Trf_models/workflow/02_adding_orders/pruning/"
                              ))
 
