@@ -385,7 +385,7 @@ for (i in seq_along(non_monophyletic_orders[[1]])) {
 		if ( length(largest_clade$tip.label) >= 0.9 * length(tips_in_order) ) {
 			cat("The largest monophyletic clade in the order contains atleat 90 % of the tips in the order \n")
 			cat("Saving the largest clade \n")
-  			write.tree(order_tree, paste0(output_path,"orders/", "pruned_tree_", order, "_GBMB.tre"))
+  			write.tree(largest_clade, paste0(output_path,"orders/", "pruned_tree_", order, "_GBMB.tre"))
 			cat("Done with ", order, "\n")
 			
 		# If it dosent I will save the order to a file and save the number of tips in the largest clade and the total number of tips in the order
