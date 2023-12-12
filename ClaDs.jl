@@ -23,7 +23,7 @@ output_name = ARGS[3]
 
 
 # Measure the time to load the tree
-time_load_tree, _ = @elapsed tree = load_tree(path_to_tree)
+time_load_tree = @elapsed tree = load_tree(path_to_tree)
 println("Time to load the tree: $time_load_tree seconds")
 
 # Calculating sampling frequency
@@ -38,9 +38,9 @@ println("Time to load the tree: $time_load_tree seconds")
 
 
 # Measure the time to run infer_ClaDS
-time_infer, _ = @elapsed output = infer_ClaDS(tree, print_state = 100, f = sampling_freq)
+time_infer = @elapsed output = infer_ClaDS(tree, print_state = 100, f = sampling_freq)
 println("Time to run infer_ClaDS: $time_infer seconds")
 
 # Measure the time to save the output
-time_save_output, _ = @elapsed @save output_name output
+time_save_output = @elapsed @save output_name output
 println("Time to save output: $time_save_output seconds")
