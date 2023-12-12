@@ -655,9 +655,9 @@ def Slicing_trees(input_file, output_file, path_in,path_out, script_dir, wcvp_fi
 ##############################################################
 ###########---- Slicing the tree into orders ----############
 ##############################################################
-def Forcing_orders(input_file_tree, output_file, path_in,path_out, script_dir, wcvp_file, apg):
+def Forcing_orders(input_file_tree, output_file, path_in,path_out, script_dir, wcvp_file, apg, input_from_before):
     """This function searchers for the largest monophyletic clades in the orders which are not monophyletic in the GBMB tree."""
-    inputs = [path_in+input_file_tree, wcvp_file]
+    inputs = [path_in+input_file_tree, wcvp_file, input_from_before]
     outputs = [path_out+output_file]
     options = {
         'cores': 10,
@@ -939,7 +939,8 @@ gwf.target_from_template(name = "Finding_monophyletic_orders",
                             path_out = workflow_dir+"02_adding_orders/pruning/", 
                             script_dir = script_dir, 
                             wcvp_file = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds", 
-                            apg = script_dir+"apgweb_parsed.csv" 
+                            apg = script_dir+"apgweb_parsed.csv",
+                            input_from_before=workflow_dir+"02_adding_orders/pruning/GBMB_sp_per_orders_pruning.txt"
                             ))
 
 # I find the list of trees again, or somehow change the scripts so they print all the good trees into a single folder where I can just run the script on all of them.
