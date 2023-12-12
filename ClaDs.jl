@@ -1,19 +1,17 @@
 # Loading packages
-using Pkg
 using PANDA
 using JLD2
 
 # Measure the time to load Pkg
-time_load_pkg = @elapsed using Pkg
+#time_load_pkg = @elapsed using Pkg
 
 # Measure the time to load PANDA
-time_load_panda, _ = @time using PANDA
+time_load_panda = @elapsed using PANDA
 
 # Measure the time to load JLD2
-time_load_jld2, _ = @time using JLD2
+time_load_jld2 = @elapsed using JLD2
 
 # Print the time to load the packages
-println("Time to load Pkg: $time_load_pkg seconds")
 println("Time to load PANDA: $time_load_panda seconds")
 println("Time to load JLD2: $time_load_jld2 seconds")
 
@@ -24,6 +22,9 @@ sampling_freq = parse(Float64, ARGS[2])
 # Measure the time to load the tree
 time_load_tree, _ = @time tree = load_tree(path_to_tree)
 println("Time to load the tree: $time_load_tree seconds")
+
+# Calculating sampling frequency
+
 
 # Measure the time to run infer_ClaDS
 time_infer, _ = @time output = infer_ClaDS(tree, print_state = 100, f = sampling_freq)

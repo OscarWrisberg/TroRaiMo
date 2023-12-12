@@ -744,10 +744,10 @@ def Finding_areas_in_wcvp(input_file_tree, wcvp_file,path_out, output_file, path
 def Clads_test(tree, sampling_frequency, done_file, path_in, output_file):
     """ """
     inputs = ["/home/owrisberg/Trf_models/workflow/02_adding_orders/pruning/pruned_tree__order_Arecales_GBMB.tre"]
-    outputs = []
+    outputs = [done_file, output_file]
     options = {
-        'cores': 20,
-        'memory': '50g',
+        'cores': 10,
+        'memory': '100g',
         'account':"Trf_models",
         'walltime': "20:00:00"
     }
@@ -917,7 +917,7 @@ gwf.target_from_template(name = "slicing_Trees_pruning",
                             input_file = "GBMB_pruned.tre",
                             output_file = "GBMB_sp_per_orders_pruning.txt",
                             path_in = data_dir,
-                            path_out = workflow_dir+"02_adding_orders/pruning/",
+                            path_out = workflow_dir+"02_adding_orders/pruning",
                             script_dir = script_dir,
                             wcvp_file = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds",
                             apg = script_dir+"apgweb_parsed.csv"
