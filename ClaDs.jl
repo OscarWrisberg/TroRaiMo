@@ -19,7 +19,7 @@ println("Time to load JLD2: $time_load_jld2 seconds")
 path_to_tree = ARGS[1]
 sampling_freq = parse(Float64, ARGS[2])
 output_name = ARGS[3]
-tips_orders_family = ARGS[4]
+#tips_orders_family = ARGS[4]
 
 
 # Measure the time to load the tree
