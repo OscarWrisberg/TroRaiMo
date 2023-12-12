@@ -1024,15 +1024,15 @@ clads_test = ["pruned_tree__order_Arecales_GBMB.tre","pruned_tree__order_Zingibe
 samp_freq = [0.2787973, 0.229433, 0.2864078, 0.4295775]
 
 
-for i in range(len(clads_test)):
-    gwf.target_from_template(name = "ClaDs_"+clads_test[i],
-                                 template= Clads(
-                                 tree = clads_test[i],
-                                 sampling_frequency = samp_freq[i],
-                                 done_file = "done_"+clads_test[i],
-                                 path_in = "/home/owrisberg/Trf_models/workflow/02_adding_orders/pruning/",
-                                 output_file = "Clads_output_"+clads_test[i]+".jld2"
-                             ))
+# for i in range(len(clads_test)):
+#     gwf.target_from_template(name = "ClaDs_"+clads_test[i],
+#                                  template= Clads(
+#                                  tree = clads_test[i],
+#                                  sampling_frequency = samp_freq[i],
+#                                  done_file = "done_"+clads_test[i],
+#                                  path_in = "/home/owrisberg/Trf_models/workflow/02_adding_orders/pruning/",
+#                                  output_file = "Clads_output_"+clads_test[i]+".jld2"
+#                              ))
 
 
 
