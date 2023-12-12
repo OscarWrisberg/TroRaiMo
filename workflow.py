@@ -1026,7 +1026,7 @@ samp_freq = [0.2787973, 0.229433, 0.2864078, 0.4295775]
 
 for i in range(len(clads_test)):
     gwf.target_from_template(name = "ClaDs_"+clads_test[i],
-                                 template= Clads_test(
+                                 template= Clads(
                                  tree = clads_test[i],
                                  sampling_frequency = samp_freq[i],
                                  done_file = "done_"+clads_test[i],
