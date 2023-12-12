@@ -1,8 +1,25 @@
-# Load the required packages
-library(ape)
-library(data.table)
-library(dplyr)
-library(phytools)
+#########################################################################################################################
+################################################## Loading packages  ####################################################
+#########################################################################################################################
+
+# Setting Cran mirror
+chooseCRANmirror(ind = 30)
+
+#Packages
+packages <- c("data.table", "ape", "phytools", "geiger", "castor", "dplyr")
+
+# Install packages not yet installed
+installed_packages <- packages %in% rownames(installed.packages())
+if (any(installed_packages == FALSE)) {
+  install.packages(packages[!installed_packages])
+}
+
+# Packages loading
+invisible(lapply(packages, library, character.only = TRUE))
+
+#########################################################################################################################
+###########################################--- Loading files ---#########################################################
+#########################################################################################################################
 
 # Command line arguments
 input_file_tree <- commandArgs(trailingOnly = TRUE)[1]
@@ -121,7 +138,7 @@ for (i in seq_along(unique_families)) {
 }
 
 # Save the data frame to a text file
-cat("Writing out file to ", file.path(path_out, output), "\n")
+#cat("Writing out file to ", file.path(path_out, output), "\n")
 write.table(df_number_tips, file.path(path_out, "GBMB_sp_per_families.txt"), sep = "\t", row.names = FALSE)
 
 
