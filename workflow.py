@@ -1022,7 +1022,7 @@ for i in range(len(clads_test)):
                                  sampling_frequency = samp_freq[i],
                                  done_file = "done_"+clads_test[i],
                                  path_in = "/home/owrisberg/Trf_models/workflow/02_adding_orders/pruning/",
-                                 output = "Clads_output_"+clads_test[i]+".jld2"
+                                 output_file = "Clads_output_"+clads_test[i]+".jld2"
                              ))
 
 
