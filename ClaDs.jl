@@ -34,7 +34,7 @@ println("Time to load the tree: $time_load_tree seconds")
 
 
 # Finding all the tips in the tree
-tips = find_tips(tree)
+#tips = find_tips(tree)
 
 
 # Measure the time to run infer_ClaDS
