@@ -366,7 +366,7 @@ for (i in seq_along(non_monophyletic_orders[[1]])) {
 		if( is.monophyletic(tree, tips_in_order) == TRUE){
 				order_tree <- drop.tip(tree, tip = tree$tip.label[!tree$tip.label %in% tips_in_order])
 				 # Save the pruned tree to a file
-  				write.tree(order_tree, paste0(output_path, "twice_pruned_tree_", order, "_GBMB.txt"))
+  				write.tree(order_tree, paste0(output_path,"orders/", "pruned_tree_", order, "_GBMB.tre"))
 				cat("Done with ", order, "\n")
 		}
 
@@ -385,7 +385,7 @@ for (i in seq_along(non_monophyletic_orders[[1]])) {
 		if ( length(largest_clade$tip.label) >= 0.9 * length(tips_in_order) ) {
 			cat("The largest monophyletic clade in the order contains atleat 90 % of the tips in the order \n")
 			cat("Saving the largest clade \n")
-			write.tree(largest_clade, paste0(output_path, "twice_pruned_tree_", order, "_GBMB.txt"))
+  			write.tree(order_tree, paste0(output_path,"orders/", "pruned_tree_", order, "_GBMB.tre"))
 			cat("Done with ", order, "\n")
 			
 		# If it dosent I will save the order to a file and save the number of tips in the largest clade and the total number of tips in the order
@@ -436,7 +436,7 @@ for (i in seq_along(non_monophyletic_orders[[1]])) {
 			cat("Done with ", order, "\n")
 			
 			}
-		write.tree(subtree, paste0(output_path, "Rogue_MRCA_tree_", order, "_GBMB.txt"))
+		#write.tree(subtree, paste0(output_path, "Rogue_MRCA_tree_", order, "_GBMB.txt")) # biggest 
 	}
 }
 
