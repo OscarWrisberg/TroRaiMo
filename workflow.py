@@ -741,7 +741,7 @@ def Finding_areas_in_wcvp(input_file_tree, wcvp_file,path_out, output_file, path
 ##############################################################
 ###########---- Runnning simple ClaDs models  ----############
 ##############################################################
-def Clads_test(tree, sampling_frequency, done_file, path_in, output_file):
+def Clads(tree, sampling_frequency, done_file, path_in, output_file,wcvp_input, order, apg):
     """ """
     inputs = ["/home/owrisberg/Trf_models/workflow/02_adding_orders/pruning/pruned_tree__order_Arecales_GBMB.tre"]
     outputs = [done_file, output_file]
@@ -759,17 +759,25 @@ def Clads_test(tree, sampling_frequency, done_file, path_in, output_file):
 
     cd /home/owrisberg/Trf_models/TroRaiMo
 
-    echo Starting the Clads script at:
+    echo Starting the R script at:
     date
 
-    julia ClaDs.jl {path_in}{tree} {sampling_frequency} {output_file}
+    sampling_frequency = Rscript --vanilla sampling_frequency.R {tree} {wcvp_input} {order} {apg}
+
+    echo Ended the R script at:
+    data
+
+    echo Starting the Julia script at:
+    date
+
+    julia ClaDs.jl {path_in}{tree} $sampling_frequency {output_file}
 
     echo Ended the Clads script at:
     date
 
     touch {done_file}
 
-    '''.format(tree = tree, sampling_frequency = sampling_frequency, done_file = done_file, path_in = path_in, output_file = output_file)
+    '''.format(tree = tree, sampling_frequency = sampling_frequency, done_file = done_file, path_in = path_in, output_file = output_file, wcvp_input = wcvp_input, order = order, apg = apg)
 
 
     return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
@@ -934,6 +942,7 @@ gwf.target_from_template(name = "Finding_monophyletic_orders",
                             apg = script_dir+"apgweb_parsed.csv" 
                             ))
 
+# I find the list of trees again, or somehow change the scripts so they print all the good trees into a single folder where I can just run the script on all of them.
 order_trees = ["pruned_tree__order_Acorales_GBMB.txt", "pruned_tree__order_Crossosomatales_GBMB.txt", "pruned_tree__order_Gnetales_GBMB.txt", "pruned_tree__order_Piperales_GBMB.txt",
 "pruned_tree__order_Alismatales_GBMB.txt", "pruned_tree__order_Cucurbitales_GBMB.txt", "pruned_tree__order_Gunnerales_GBMB.txt", "pruned_tree__order_Poales_GBMB.txt",
 "pruned_tree__order_Amborellales_GBMB.txt", "pruned_tree__order_Cupressales_GBMB.txt", "pruned_tree__order_Huerteales_GBMB.txt",
@@ -994,19 +1003,19 @@ orders = ["Acorales", "Crossosomatales", "Gnetales", "Piperales","Alismatales", 
 
 
 
-for i in range(len(order_trees)):
-    #### Running the script to find the environmental data for the tips in the trees
-    gwf.target_from_template(name = orders[i]+"_distribution_data.",
-                                                        template=Finding_areas_in_wcvp(
-                                                        input_file_tree= order_trees[i],
-                                                        path_in =  workflow_dir+"02_adding_orders/pruning/",
-                                                        path_out = workflow_dir+"03_distribution_data/",
-                                                        output_file = orders[i]+"_distribution_data.txt",
-                                                        wcvp_file = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds",
-                                                        order = orders[i],
-                                                        script_dir= script_dir,
-                                                        apg = script_dir+"apgweb_parsed.csv"
-                                                        ))
+# for i in range(len(order_trees)):
+#     #### Running the script to find the environmental data for the tips in the trees
+#     gwf.target_from_template(name = orders[i]+"_distribution_data.",
+#                                                         template=Finding_areas_in_wcvp(
+#                                                         input_file_tree= order_trees[i],
+#                                                         path_in =  workflow_dir+"02_adding_orders/pruning/",
+#                                                         path_out = workflow_dir+"03_distribution_data/",
+#                                                         output_file = orders[i]+"_distribution_data.txt",
+#                                                         wcvp_file = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds",
+#                                                         order = orders[i],
+#                                                         script_dir= script_dir,
+#                                                         apg = script_dir+"apgweb_parsed.csv"
+#                                                         ))
 
 
 clads_test = ["pruned_tree__order_Arecales_GBMB.tre","pruned_tree__order_Zingiberales_GBMB.tre",
