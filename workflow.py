@@ -762,14 +762,14 @@ def Clads(tree, done_file, path_in, output_file,wcvp_input, order, apg, script_d
     echo Starting the R script at:
     date
 
-    Rscript --vanilla {script_dir}sampling_frequency.r {tree} {wcvp_input} {order} {apg} 
+    #Rscript --vanilla {script_dir}sampling_frequency.r {tree} {wcvp_input} {order} {apg} 
 
     sampling_frequency=$(Rscript --vanilla {script_dir}sampling_frequency.r {tree} {wcvp_input} {order} {apg} 2>/dev/null)
 
     echo Sampling frequency is $sampling_frequency
 
     echo Ended the R script at:
-    data
+    date
 
     echo Starting the Julia script at:
     date
