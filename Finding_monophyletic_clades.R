@@ -371,6 +371,10 @@ for (i in seq_along(non_monophyletic_orders[[1]])) {
 		}
 
 	} else if (length(rogue_tips) == 0) { # Trees which have already had the rogue tips pruned
+		cat("The number of rogue tips is 0 \n")
+		cat("Extracting the order \n")
+		order_tree <- drop.tip(tree, tip = tree$tip.label[!tree$tip.label %in% tips_in_order])
+		write.tree(order_tree, paste0(output_path,"orders/", "pruned_tree_", order, "_GBMB.tre"))
 		next
 	} else {
 		# Here I will loop through the tips in the order and find the largest monophyletic clade which is in the order.
