@@ -774,7 +774,7 @@ def Clads(tree, done_file, path_in, output_file,wcvp_input, order, apg, script_d
     echo Starting the Julia script at:
     date
 
-    julia ClaDs.jl {path_in}{tree} $sampling_frequency {output_file}
+    julia {scipt_dir}ClaDs.jl {path_in}{tree} $sampling_frequency {output_file}
 
     echo Ended the Clads script at:
     date
