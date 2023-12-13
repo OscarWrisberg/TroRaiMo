@@ -762,7 +762,7 @@ def Clads(tree, done_file, path_in, output_file,wcvp_input, order, apg):
     echo Starting the R script at:
     date
 
-    sampling_frequency = Rscript --vanilla sampling_frequency.R {tree} {wcvp_input} {order} {apg}
+    sampling_frequency=$(Rscript --vanilla sampling_frequency.R {tree} {wcvp_input} {order} {apg})
 
     echo Sampling frequency is $sampling_frequency
 
