@@ -18,7 +18,8 @@ apg <- commandArgs(trailingOnly = TRUE)[4]
 chooseCRANmirror(ind = 30)
 
 #Packages
-packages <- c("data.table", "ape", "phytools", "geiger", "castor", "MonoPhy")
+packages <- c("data.table", "ape", "phytools")
+# , "geiger", "castor", "MonoPhy"
 
 # Install packages not yet installed
 installed_packages <- packages %in% rownames(installed.packages())
