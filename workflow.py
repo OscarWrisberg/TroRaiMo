@@ -744,7 +744,7 @@ def Finding_areas_in_wcvp(input_file_tree, wcvp_file,path_out, output_file, path
 def Clads(tree, done_file, path_in, output_file,wcvp_input, order, apg, script_dir):
     """ """
     inputs = [path_in+tree,wcvp_input,apg]
-    outputs = [done_file, output_file]
+    outputs = [done_file, path_in+output_file]
     options = {
         'cores': 10,
         'memory': '100g',
@@ -1007,7 +1007,7 @@ for i in range(len(orders)):
                                  wcvp_input = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds",
                                  order = orders[i],
                                  apg = script_dir+"apgweb_parsed.csv",
-                                 done_file = workflow_dir+"/02_adding_orders/pruning/done/"+orders[i],
+                                 done_file = workflow_dir+"/02_adding_orders/pruning/orders/done/"+orders[i],
                                  path_in = workflow_dir+"02_adding_orders/pruning/orders/",
                                  output_file = "Clads_output_"+orders[i]+".jld2",
                                  script_dir=script_dir
