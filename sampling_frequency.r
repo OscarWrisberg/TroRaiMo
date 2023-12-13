@@ -9,7 +9,7 @@
 # Fetching arguments
 # Command line arguments
 path_to_tree <- commandArgs(trailingOnly = TRUE)[1]
-input_file_wcvp <- commandArgs(trailingOnly = TRUE)[2]
+wcvp <- commandArgs(trailingOnly = TRUE)[2]
 order_in_question <- commandArgs(trailingOnly = TRUE)[3]
 apg <- commandArgs(trailingOnly = TRUE)[4]
 
