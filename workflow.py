@@ -757,7 +757,7 @@ def Clads(tree, done_file, path_in, output_file,wcvp_input, order, apg, script_d
     source /home/owrisberg/miniconda3/etc/profile.d/conda.sh
     conda activate Julia_env
 
-    cd /home/owrisberg/Trf_models/TroRaiMo
+    cd {path_in}
 
     echo Starting the R script at:
     date
