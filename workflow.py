@@ -743,7 +743,7 @@ def Finding_areas_in_wcvp(input_file_tree, wcvp_file,path_out, output_file, path
 ##############################################################
 def Clads(tree, done_file, path_in, output_file,wcvp_input, order, apg):
     """ """
-    inputs = [tree,wcvp_input,apg]
+    inputs = [path_in+tree,wcvp_input,apg]
     outputs = [done_file, output_file]
     options = {
         'cores': 10,
