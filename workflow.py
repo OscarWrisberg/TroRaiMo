@@ -947,7 +947,7 @@ gwf.target_from_template(name = "Finding_monophyletic_orders",
 
 # I find the list of trees again, or somehow change the scripts so they print all the good trees into a single folder where I can just run the script on all of them.
 order_trees=["pruned_tree_order_Alismatales_GBMB.tre", "pruned_tree_order_Crossosomatales_GBMB.tre", "pruned_tree_order_Gunnerales_GBMB.tre", "pruned_tree_order_Poales_GBMB.tre",
-"pruned_tree_order_Amborellales_GBMB.tre", "pruned_tree_order_Cucurbitales_GBMB.tre", "pruned_tree_order_Huerteales_GBMB.tre", "pruned_tree_order_Polypodiales-eupolypod_I_GBMB.tre",
+"pruned_tree_order_Amborellales_GBMB.tre", "pruned_tree_order_Cucurbitales_GBMB.tre", "pruned_tree_order_Huerteales_GBMB.tre",
 "pruned_tree_order_Aquifoliales_GBMB.tre", "pruned_tree_order_Cupressales_GBMB.tre", "pruned_tree_order_Magnoliales_GBMB.tre", "pruned_tree_order_Ranunculales_GBMB.tre",
 "pruned_tree_order_Arecales_GBMB.tre", "pruned_tree_order_Cycadales_GBMB.tre", "pruned_tree_order_Malpighiales_GBMB.tre", "pruned_tree_order_Rosales_GBMB.tre",
 "pruned_tree_order_Austrobaileyales_GBMB.tre", "pruned_tree_order_Dilleniales_GBMB.tre", "pruned_tree_order_Malvales_GBMB.tre", "pruned_tree_order_Santalales_GBMB.tre",
@@ -964,7 +964,7 @@ order_trees=["pruned_tree_order_Alismatales_GBMB.tre", "pruned_tree_order_Crosso
 
 
 orders=["Alismatales", "Crossosomatales", "Gunnerales", "Poales",
-"Amborellales", "Cucurbitales", "Huerteales", "Polypodiales-eupolypod_I",
+"Amborellales", "Cucurbitales", "Huerteales",
 "Aquifoliales", "Cupressales", "Magnoliales", "Ranunculales",
 "Arecales", "Cycadales", "Malpighiales", "Rosales",
 "Austrobaileyales", "Dilleniales", "Malvales", "Santalales",
