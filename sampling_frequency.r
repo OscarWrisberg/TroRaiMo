@@ -110,4 +110,4 @@ number_tips_in_tree <- length(tree$tip.label)
 # Calculating the sampling frequency
 sampling_freq <- number_tips_in_tree/number_species_in_order
 
-return(sampling_freq)
+cat(sampling_freq)
