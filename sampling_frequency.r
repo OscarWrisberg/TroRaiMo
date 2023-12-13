@@ -11,7 +11,7 @@
 path_to_tree <- commandArgs(trailingOnly = TRUE)[1]
 wcvp <- commandArgs(trailingOnly = TRUE)[2]
 order_in_question <- commandArgs(trailingOnly = TRUE)[3]
-apg <- commandArgs(trailingOnly = TRUE)[4]
+path_apg <- commandArgs(trailingOnly = TRUE)[4]
 
 # Rcode needed to run to get the sampling frequency
 # Setting Cran mirror
