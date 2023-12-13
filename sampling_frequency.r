@@ -93,7 +93,7 @@ find_order <- function(fams, apg) {
 
 # Running the function
 family_orders <- find_order(unique_families, apg)
-length(family_orders$order)
+#length(family_orders$order)
 
 # Merging the wcvp and family_orders data frames
 wcvp_accepted_species_orders <- merge(wcvp_accepted_species, family_orders, by.x = "family", by.y = "family")
