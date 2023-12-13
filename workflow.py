@@ -741,7 +741,7 @@ def Finding_areas_in_wcvp(input_file_tree, wcvp_file,path_out, output_file, path
 ##############################################################
 ###########---- Runnning simple ClaDs models  ----############
 ##############################################################
-def Clads(tree, done_file, path_in, output_file,wcvp_input, order, apg):
+def Clads(tree, done_file, path_in, output_file,wcvp_input, order, apg, script_dir):
     """ """
     inputs = [path_in+tree,wcvp_input,apg]
     outputs = [done_file, output_file]
@@ -762,7 +762,9 @@ def Clads(tree, done_file, path_in, output_file,wcvp_input, order, apg):
     echo Starting the R script at:
     date
 
-    sampling_frequency=$(Rscript --vanilla sampling_frequency.R {tree} {wcvp_input} {order} {apg} 2>&1)
+    Rscript --vanilla {script_dir}sampling_frequency.R {tree} {wcvp_input} {order} {apg}
+
+    sampling_frequency=$(Rscript --vanilla {script_dir}sampling_frequency.R {tree} {wcvp_input} {order} {apg} 2>&1)
 
     echo Sampling frequency is $sampling_frequency
 
@@ -779,7 +781,7 @@ def Clads(tree, done_file, path_in, output_file,wcvp_input, order, apg):
 
     touch {done_file}
 
-    '''.format(tree = tree, done_file = done_file, path_in = path_in, output_file = output_file, wcvp_input = wcvp_input, order = order, apg = apg)
+    '''.format(tree = tree, done_file = done_file, path_in = path_in, output_file = output_file, wcvp_input = wcvp_input, order = order, apg = apg, script_dir = script_dir)
 
 
     return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
@@ -1007,7 +1009,8 @@ for i in range(len(orders)):
                                  apg = script_dir+"apgweb_parsed.csv",
                                  done_file = workflow_dir+"/02_adding_orders/pruning/done/"+orders[i],
                                  path_in = workflow_dir+"02_adding_orders/pruning/orders/",
-                                 output_file = "Clads_output_"+orders[i]+".jld2"
+                                 output_file = "Clads_output_"+orders[i]+".jld2",
+                                 script_dir=script_dir
                              ))
 
 
