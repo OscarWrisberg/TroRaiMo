@@ -1,10 +1,10 @@
 # Prepare some paths test script locally
-path_to_tree = "/home/au543206/GenomeDK/Trf_models/workflow/02_adding_orders/pruning/pruned_tree__order_Zingiberales_GBMB.tre"
-output_name = "test_output.jld2"
-tips_orders_family = "/home/au543206/GenomeDK/Trf_models/workflow/02_adding_orders/pruning/tips_family_orders.txt"
-wcvp = "/home/au543206/GenomeDK/Trf_models/workflow/02_adding_orders/wcvp_names_apg_aligned.rds"  # Read the WCVP names file into a data frame"
-order_in_question = "Zingiberales"
-path_apg = "/home/au543206/GenomeDK/Trf_models/TroRaiMo/apgweb_parsed.csv"
+# path_to_tree = "/home/au543206/GenomeDK/Trf_models/workflow/02_adding_orders/pruning/pruned_tree__order_Zingiberales_GBMB.tre"
+# output_name = "test_output.jld2"
+# tips_orders_family = "/home/au543206/GenomeDK/Trf_models/workflow/02_adding_orders/pruning/tips_family_orders.txt"
+# wcvp = "/home/au543206/GenomeDK/Trf_models/workflow/02_adding_orders/wcvp_names_apg_aligned.rds"  # Read the WCVP names file into a data frame"
+# order_in_question = "Zingiberales"
+# path_apg = "/home/au543206/GenomeDK/Trf_models/TroRaiMo/apgweb_parsed.csv"
 
 # Fetching arguments
 # Command line arguments
@@ -44,7 +44,7 @@ apg <- file.path(path_apg)
 wcvp <- readRDS(input_file_wcvp)
 
 # Load the tree
-tree <- read.tree(input_file_tree)
+tree <- read.tree(path_to_tree)
 
 # Load apg
 apg <- fread(apg)

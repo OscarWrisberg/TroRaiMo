@@ -15,27 +15,19 @@ time_load_jld2 = @elapsed using JLD2
 println("Time to load PANDA: $time_load_panda seconds")
 println("Time to load JLD2: $time_load_jld2 seconds")
 
+# Prepare some paths test script locally
+# path_to_tree = "/home/au543206/GenomeDK/Trf_models/workflow/02_adding_orders/pruning/pruned_tree__order_Zingiberales_GBMB.tre"
+# output_name = "test_output.jld2"
+
 # Fetching arguments
 path_to_tree = ARGS[1]
 sampling_freq = parse(Float64, ARGS[2])
 output_name = ARGS[3]
-#tips_orders_family = ARGS[4]
 
 
 # Measure the time to load the tree
 time_load_tree = @elapsed tree = load_tree(path_to_tree)
 println("Time to load the tree: $time_load_tree seconds")
-
-# Calculating sampling frequency
-# Loading the tips_orders_family.txt
-#tips_orders_family = readlines(tips_orders_family)
-
-# Subsetting the tips_orders_family.txt so I only have the rows for the order
-
-
-# Finding all the tips in the tree
-#tips = find_tips(tree)
-
 
 # Measure the time to run infer_ClaDS
 time_infer = @elapsed output = infer_ClaDS(tree, print_state = 100, f = sampling_freq)
