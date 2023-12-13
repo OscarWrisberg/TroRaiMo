@@ -1006,7 +1006,7 @@ for i in range(len(orders)):
                                  order = orders[i],
                                  apg = script_dir+"apgweb_parsed.csv",
                                  done_file = workflow_dir+"/02_adding_orders/pruning/done/"+orders[i],
-                                 path_in = workflow_dir+"/02_adding_orders/pruning/",
+                                 path_in = workflow_dir+"02_adding_orders/pruning/orders/",
                                  output_file = "Clads_output_"+orders[i]+".jld2"
                              ))
 
