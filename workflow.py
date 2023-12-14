@@ -58,7 +58,7 @@ def download_data(path_out,
                   output_paleo):
     """This function should download all the necessary files for the project"""
     inputs = []
-    outputs = [path_out+output_kew,path_out+output_smb,path_out+output_gbif, path_out+output_paleo]
+    outputs = [path_out+output_kew,path_out+output_smb,path_out+output_gbif, path_out+"paleo_clim/"+output_paleo]
     options = {
         'cores': 5,
         'memory': '40g',
@@ -177,7 +177,13 @@ def download_data(path_out,
         date
     fi
 
+    #Checking if output dir exists
+    [ -d {path_out}paleo_clim/ ] && echo "{path_out}paleo_clim/ exist." || {{ echo "{path_out}paleo_clim/ does not exist."; mkdir {path_out}paleo_clim/; }}
 
+    # Going to subfolder
+    cd {path_out}paleo_clim/
+
+    
     # Extracting the name of the downloaded file without query parameters.
     filename_paleo=$(echo "https://zenodo.org/records/6620748/All_NC_files.zip?download=1" | awk -F "/" '{split($NF, name, "?"); print name[1]}')
     echo "We're trying to download $filename_paleo"
