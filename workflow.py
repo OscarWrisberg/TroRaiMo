@@ -54,10 +54,11 @@ def download_data(path_out,
                   gbif_doi,
                   output_smb,
                   output_kew,
-                  output_gbif):
+                  output_gbif,
+                  output_paleo):
     """This function should download all the necessary files for the project"""
     inputs = []
-    outputs = [path_out+output_kew,path_out+output_smb,path_out+output_gbif]
+    outputs = [path_out+output_kew,path_out+output_smb,path_out+output_gbif, path_out+output_paleo]
     options = {
         'cores': 5,
         'memory': '40g',
@@ -72,6 +73,12 @@ def download_data(path_out,
 
     # Webpage for trees for individual orders
     # https://www-personal.umich.edu/~eebsmith/big_seed_plant_datasets/trees/   
+
+    # Webpage for paleoclimates
+    # https://zenodo.org/records/6620748/All_NC_files.zip?download=1
+
+    # Webpage for GBIF data
+    # https://api.gbif.org/v1/occurrence/download/request/0012129-230828120925497.zip
 
     #Checking if output dir exists
     [ -d {path_out} ] && echo "{path_out} exist." || {{ echo "{path_out} does not exist."; mkdir {path_out}; }}
@@ -171,7 +178,38 @@ def download_data(path_out,
     fi
 
 
-    '''.format(path_out = path_out, smb_doi = smb_doi, kew_doi = kew_doi, output_smb=output_smb, output_kew=output_kew, gbif_doi = gbif_doi, output_gbif=output_gbif)
+    # Extracting the name of the downloaded file without query parameters.
+    filename_paleo=$(echo "https://zenodo.org/records/6620748/All_NC_files.zip?download=1" | awk -F "/" '{split($NF, name, "?"); print name[1]}')
+    echo "We're trying to download $filename_paleo"
+
+
+    #Then i am checking if file exists
+    if [ -f $filename_paleo ]; then
+        echo "$filename_paleo is already downloaded"
+    else
+        echo "Starting downlaod of paleoclimate data at: "
+        date
+        wget {paleo_doi}
+        echo "Finished downloading paleoclimate data at: "
+        date
+    fi
+
+    # Unzipping paleo data
+    if [ -f {path_out}{output_paleo} ]; then
+        echo "Files from 
+        Paleo data has already been unzipped"
+    else
+        echo "\n  starting to unzip paleodata data at: "
+        date
+        unzip -o {path_out}$filename_paleo
+        echo " Finished unzipping paleodata data at :"
+        date
+        cd $filename_paleo
+        mv * ../.
+    fi
+
+
+    '''.format(path_out = path_out, smb_doi = smb_doi, kew_doi = kew_doi, output_smb=output_smb, output_kew=output_kew, gbif_doi = gbif_doi, output_gbif=output_gbif, paleo_doi = paleo_doi, output_paleo = output_paleo)
 
     return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
 
@@ -803,9 +841,11 @@ gwf.target_from_template (name = "Download_Data",
                             smb_doi = "https://github.com/FePhyFoFum/big_seed_plant_trees/releases/download/v0.1/v0.1.zip",
                             kew_doi = "http://sftp.kew.org/pub/data-repositories/WCVP/wcvp.zip",
                             gbif_doi = "https://api.gbif.org/v1/occurrence/download/request/0012129-230828120925497.zip",
+                            paleo_doi = "https://zenodo.org/records/6620748/All_NC_files.zip?download=1",
                             output_smb ="GBMB.tre",
                             output_kew = "wcvp_names.csv",
-                            output_gbif ="occurrence.txt"
+                            output_gbif ="occurrence.txt",
+                            output_paleo="500Ma_Pohletal2022_DIB_PhaneroContinentalClimate.nc"
                           ))
 
 #########################################################################################################################
