@@ -186,7 +186,7 @@ def download_data(path_out,
 
     
     # Extracting the name of the downloaded file without query parameters.
-    filename_paleo=$(echo "https://zenodo.org/records/6620748/All_NC_files.zip?download=1" | awk -F "/" 'split($NF, name, "?"); print name[1]')
+    filename_paleo=$(echo "https://zenodo.org/records/6620748/All_NC_files.zip?download=1" | awk -F "/" '{{split($NF, name, "?"); print name[1]}}')
     echo "We're trying to download $filename_paleo"
 
 
