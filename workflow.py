@@ -202,13 +202,13 @@ def download_data(path_out,
     fi
 
     # Unzipping paleo data
-    if [ -f {path_out}{output_paleo} ]; then
+    if [ -f {path_out}paleo_clim/{output_paleo} ]; then
         echo "Files from 
         Paleo data has already been unzipped"
     else
         echo "\n  starting to unzip paleodata data at: "
         date
-        unzip -o {path_out}$filename_paleo
+        unzip -o {path_out}paleo_clim/$filename_paleo
         echo " Finished unzipping paleodata data at :"
         date
         cd $filename_paleo
