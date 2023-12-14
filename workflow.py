@@ -213,7 +213,7 @@ def download_data(path_out,
         unzip -o {path_out}paleo_clim/$filename_paleo
         echo " Finished unzipping paleodata data at :"
         date
-        cd $filename_paleo
+        cd ${{filename_paleo%.zip}}
         mv * ../.
     fi
 
