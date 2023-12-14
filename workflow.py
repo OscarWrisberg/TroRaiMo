@@ -201,6 +201,8 @@ def download_data(path_out,
         date
     fi
 
+    mv 'All_NC_files.zip?download=1' All_NC_files.zip
+
     # Unzipping paleo data
     if [ -f {path_out}paleo_clim/{output_paleo} ]; then
         echo "Files from 
