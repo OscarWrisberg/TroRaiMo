@@ -56,10 +56,12 @@ def download_data(path_out,
                   output_smb,
                   output_kew,
                   output_gbif,
-                  output_paleo):
+                  output_paleo,
+                  done_dir,
+                  done):
     """This function should download all the necessary files for the project"""
     inputs = []
-    outputs = [path_out+output_kew,path_out+output_smb,path_out+output_gbif, path_out+"paleo_clim/"+output_paleo]
+    outputs = [path_out+output_kew,path_out+output_smb,path_out+output_gbif, path_out+"paleo_clim/"+output_paleo, done_dir+done]
     options = {
         'cores': 5,
         'memory': '40g',
@@ -80,6 +82,12 @@ def download_data(path_out,
 
     # Webpage for GBIF data
     # https://api.gbif.org/v1/occurrence/download/request/0012129-230828120925497.zip
+
+    # Webpage for Kew data
+    # http://sftp.kew.org/pub/data-repositories/WCVP/wcvp.zip
+
+    # Creating a done folder to keep track of which steps have been completed
+    [ -d {done_dir} ] && echo "{done_dir} exist." || {{ echo "{done_dir} does not exist."; mkdir {done_dir}; }}
 
     #Checking if output dir exists
     [ -d {path_out} ] && echo "{path_out} exist." || {{ echo "{path_out} does not exist."; mkdir {path_out}; }}
@@ -217,10 +225,50 @@ def download_data(path_out,
     fi
 
 
-    '''.format(path_out = path_out, smb_doi = smb_doi, kew_doi = kew_doi, output_smb=output_smb, output_kew=output_kew, gbif_doi = gbif_doi, output_gbif=output_gbif, paleo_doi = paleo_doi, output_paleo = output_paleo)
+    touch {done_dir}{done}:
+
+    
+
+
+    '''.format(path_out = path_out, smb_doi = smb_doi, kew_doi = kew_doi, output_smb=output_smb, output_kew=output_kew, gbif_doi = gbif_doi,
+                output_gbif=output_gbif, paleo_doi = paleo_doi, output_paleo = output_paleo, done_dir = done_dir, done = done)
 
     return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
 
+################################################################################################################################################################################
+############################################--------------------- Working on paleoclimatic data ---------------------##############################################################
+################################################################################################################################################################################
+
+def paleo_clim_area(output_file, data_dir, script_dir,done_dir, done):
+    """Here I calculate the area of the Tropical rainforests through time."""
+    inputs = [data_dir,done_dir+"Download_Data"]
+    outputs = [data_dir+output_file,done_dir+done]
+    options = {
+        'cores': 5,
+        'memory': '10g',
+        'account':"Trf_models",
+        'walltime': "00:10:00"
+    }
+
+    spec = '''
+    
+    # Going to datadir
+    cd {data_dir}
+
+    echo Starting the R script
+    
+    date
+
+    Rscript --vanilla {script_dir}calculating_paleoclim.r {data_dir} {output_file}
+
+    echo Ended the R script
+
+    touch {done}
+
+
+    '''.format(output_file=output_file, script_dir = script_dir, data_dir = data_dir, done=done)
+
+    return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
 
 
 ################################################################################################################################################################################
@@ -230,10 +278,10 @@ def download_data(path_out,
 ##############################################################
 ############---- Selecting usefull columns ----###############
 ##############################################################
-def Rm_cols(input_file, output_file, path_in,path_out, occurrence_dir):
+def Rm_cols(input_file, output_file, path_in,path_out, occurrence_dir, done, done_dir):
     """Here I want to remove unimportant columns from the file in order to save some ram space and increase computing speed"""
-    inputs = [path_in+input_file]
-    outputs = [path_out+output_file]
+    inputs = [path_in+input_file, done_dir+"Download_Data"]
+    outputs = [path_out+output_file,done_dir+done]
     options = {
         'cores': 5,
         'memory': '50g',
@@ -280,7 +328,9 @@ def Rm_cols(input_file, output_file, path_in,path_out, occurrence_dir):
     
     date
 
-    '''.format(input_file=input_file, output_file=output_file, path_in = path_in, path_out = path_out, occurrence_dir = occurrence_dir)
+    touch {done_dir}{done}
+
+    '''.format(input_file=input_file, output_file=output_file, path_in = path_in, path_out = path_out, occurrence_dir = occurrence_dir, done = done)
 
     return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
 
@@ -289,10 +339,10 @@ def Rm_cols(input_file, output_file, path_in,path_out, occurrence_dir):
 ################---- Loading the dataset ----#################
 ##############################################################
 
-def Load_data(input_file, output_file, path_in,path_out, script_dir):
+def Load_data(input_file, output_file, path_in,path_out, script_dir, done_dir, done):
     """Here I load the GBIF data and save it as an rds file for further analysis."""
-    inputs = [path_in+input_file]
-    outputs = [path_out+output_file]
+    inputs = [path_in+input_file, done_dir+"Removing_cols"]
+    outputs = [path_out+output_file,done_dir+done]
     options = {
         'cores': 5,
         'memory': '50g',
@@ -321,6 +371,8 @@ def Load_data(input_file, output_file, path_in,path_out, script_dir):
     
     mv {output_file} {path_out}
 
+    touch {done_dir}{done}
+
     '''.format(input_file=input_file, output_file=output_file, path_in = path_in, script_dir = script_dir, path_out = path_out)
 
     return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
@@ -329,10 +381,10 @@ def Load_data(input_file, output_file, path_in,path_out, script_dir):
 ##############################################################
 ################---- Taxon lookup on Gbif ----################
 ##############################################################
-def taxon_look_up(input_file, output_file, path_in, script_dir, path_out):
+def taxon_look_up(input_file, output_file, path_in, script_dir, path_out, done_dir, done):
     """Here the function looks up each unique species in the dataset and finds the taxonomic information for that species."""
-    inputs = [path_in+input_file]
-    outputs = [path_out+output_file]
+    inputs = [path_in+input_file, done_dir+"Load_data"]
+    outputs = [path_out+output_file,done_dir+done]
     options = {
         'cores': 5,
         'memory': '20g',
@@ -364,17 +416,19 @@ def taxon_look_up(input_file, output_file, path_in, script_dir, path_out):
 
     mv {output_file} {path_out}
 
-    '''.format(input_file=input_file, output_file=output_file, path_in = path_in, script_dir = script_dir, path_out = path_out)
+    touch {done_dir}{done}
+
+    '''.format(input_file=input_file, output_file=output_file, path_in = path_in, script_dir = script_dir, path_out = path_out, done_dir = done_dir, done = done)
 
     return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
 
 ##############################################################
 ##############---- Creating common format ----################
 ##############################################################
-def create_common_format(input_file_occurrences,input_file_taxonomy, output_file, path_in, script_dir, path_out):
+def create_common_format(input_file_occurrences,input_file_taxonomy, output_file, path_in, script_dir, path_out, done_dir, done):
     """Here I want to create a common format between the file which needs names aligned to the WCVP and the WCVP."""
-    inputs = [path_in+input_file_taxonomy, input_file_occurrences]
-    outputs = [path_out+output_file]
+    inputs = [path_in+input_file_taxonomy, input_file_occurrences, done_dir+"Taxon_lookup"]
+    outputs = [path_out+output_file,done_dir+done]
     options = {
         'cores': 5,
         'memory': '100g',
@@ -404,17 +458,19 @@ def create_common_format(input_file_occurrences,input_file_taxonomy, output_file
 
     mv {output_file} {path_out}
 
-    '''.format(input_file_taxonomy=input_file_taxonomy,input_file_occurrences=input_file_occurrences, output_file=output_file, path_in = path_in, script_dir = script_dir, path_out = path_out)
+    touch {done_dir}{done}
+
+    '''.format(input_file_taxonomy=input_file_taxonomy,input_file_occurrences=input_file_occurrences, output_file=output_file, path_in = path_in, script_dir = script_dir, path_out = path_out, done_dir = done_dir, done = done)
 
     return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
 
 ##############################################################
 ##############---- Preparing WCVP-names file ----################
 ##############################################################
-def apg_name_align(apg,wcp, output_file, path_in, script_dir, path_out):
+def apg_name_align(apg,wcp, output_file, path_in, script_dir, path_out, done_dir, done):
     """Here I want to create a common format the wcvp and the previous file and update some family names to APGIV."""
-    inputs = [script_dir+apg, path_in+wcp]
-    outputs = [path_out+output_file]
+    inputs = [script_dir+apg, path_in+wcp, done_dir+"Create_common_format"]
+    outputs = [path_out+output_file,done_dir+done]
     options = {
         'cores': 5,
         'memory': '10g',
@@ -444,17 +500,19 @@ def apg_name_align(apg,wcp, output_file, path_in, script_dir, path_out):
 
     mv {output_file} {path_out}
 
-    '''.format(apg=apg,wcp = wcp, output_file=output_file, path_in = path_in, script_dir = script_dir, path_out = path_out)
+    touch {done_dir}{done}
+
+    '''.format(apg=apg,wcp = wcp, output_file=output_file, path_in = path_in, script_dir = script_dir, path_out = path_out, done_dir = done_dir, done = done)
 
     return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
 
 ##############################################################
 ##################---- Taxonomy Matcher ----##################
 ##############################################################
-def taxon_match(input_file, output_file, path_in, script_dir, path_out, wcvp):
+def taxon_match(input_file, output_file, path_in, script_dir, path_out, wcvp, done_dir, done):
     """Here I match the taxa from the GBIF file to the WCVP."""
-    inputs = [path_in+input_file, path_in+wcvp]
-    outputs = [path_out+output_file]
+    inputs = [path_in+input_file, path_in+wcvp, done_dir+"APG_name_align"]
+    outputs = [path_out+output_file,done_dir+done]
     options = {
         'cores': 15,
         'memory': '75g',
@@ -478,7 +536,9 @@ def taxon_match(input_file, output_file, path_in, script_dir, path_out, wcvp):
 
     mv {output_file} {path_out}
 
-    '''.format(input_file=input_file, output_file=output_file, path_in = path_in, script_dir = script_dir, path_out = path_out, wcvp = wcvp)
+    touch {done_dir}{done}
+
+    '''.format(input_file=input_file, output_file=output_file, path_in = path_in, script_dir = script_dir, path_out = path_out, wcvp = wcvp, done_dir = done_dir, done = done)
 
     return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
 
@@ -488,13 +548,13 @@ def taxon_match(input_file, output_file, path_in, script_dir, path_out, wcvp):
 ####################################---- Taxon renamer ----#############################################################
 ########################################################################################################################
 
-def Renamer(input_file, output_file, path_in, script_dir, path_out, wcvp, renaming_file):
+def Renamer(input_file, output_file, path_in, script_dir, path_out, wcvp, renaming_file, done  , done_dir):
     """This function renames all the species names in the GBIF datafile based on the taxon matcher.
     This should be done by looping through the GBIF data and looking up each species in the taxon matcher file.
     The name in the taxon matcher file would then be used to find the accepted_plant_name_id in the WCVP file.
     and get the correct name from that file. This name would then be used to replace the name in the GBIF data."""
-    inputs = [input_file, wcvp, path_in+renaming_file]
-    outputs = [path_out+output_file]
+    inputs = [input_file, wcvp, path_in+renaming_file, done_dir+"Taxon_matcher"]
+    outputs = [path_out+output_file,done_dir+done]
     options = {
         'cores': 5,
         'memory': '10g',
@@ -516,7 +576,9 @@ def Renamer(input_file, output_file, path_in, script_dir, path_out, wcvp, renami
 
     mv {output_file} {path_out}
 
-    '''.format(input_file=input_file, output_file=output_file, path_in = path_in, script_dir = script_dir, path_out = path_out, wcvp = wcvp, renaming_file = renaming_file)
+    touch {done_dir}{done}
+
+    '''.format(input_file=input_file, output_file=output_file, path_in = path_in, script_dir = script_dir, path_out = path_out, wcvp = wcvp, renaming_file = renaming_file, done = done, done_dir = done_dir)
 
     return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
 
@@ -527,10 +589,10 @@ def Renamer(input_file, output_file, path_in, script_dir, path_out, wcvp, renami
 ##############################################################
 #############---- Loading the SmB tree tips ----##############
 ##############################################################
-def Load_tree(input_file, output_file, path_in,path_out, script_dir):
+def Load_tree(input_file, output_file, path_in,path_out, script_dir, done_dir, done):
     """Here I load the SmB tree and save it as an rds file for further analysis."""
-    inputs = [path_in+input_file]
-    outputs = [path_out+output_file]
+    inputs = [path_in+input_file, done_dir+"Download_Data"]
+    outputs = [path_out+output_file,done_dir+done]
     options = {
         'cores': 10,
         'memory': '15g',
@@ -560,17 +622,19 @@ def Load_tree(input_file, output_file, path_in,path_out, script_dir):
     
     mv {output_file} {path_out}
 
-    '''.format(input_file=input_file, output_file=output_file, path_in = path_in,script_dir = script_dir, path_out = path_out)
+    touch {done_dir}{done}
+
+    '''.format(input_file=input_file, output_file=output_file, path_in = path_in,script_dir = script_dir, path_out = path_out, done_dir = done_dir, done = done)
 
     return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
 
 ##############################################################
 ##############---- Preparing WCVP-names file ----################
 ##############################################################
-def apg_name_align(apg,wcp, output_file, path_in, script_dir, path_out):
+def apg_name_align(apg,wcp, output_file, path_in, script_dir, path_out, done_dir, done):
     """Here I want to create a common format the wcvp and the previous file and update some family names to APGIV."""
-    inputs = [script_dir+apg, path_in+wcp]
-    outputs = [path_out+output_file]
+    inputs = [script_dir+apg, path_in+wcp, done_dir+"Load_tree"]
+    outputs = [path_out+output_file,done_dir+done]
     options = {
         'cores': 5,
         'memory': '10g',
@@ -600,7 +664,9 @@ def apg_name_align(apg,wcp, output_file, path_in, script_dir, path_out):
 
     mv {output_file} {path_out}
 
-    '''.format(apg=apg,wcp = wcp, output_file=output_file, path_in = path_in, script_dir = script_dir, path_out = path_out)
+    touch {done_dir}{done}
+
+    '''.format(apg=apg,wcp = wcp, output_file=output_file, path_in = path_in, script_dir = script_dir, path_out = path_out, done_dir = done_dir, done = done)
 
     return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
 
@@ -609,14 +675,14 @@ def apg_name_align(apg,wcp, output_file, path_in, script_dir, path_out):
 ##############################################################
 ####---- Pruning the GBMB tree for tips not in WCVP ----######
 ##############################################################
-def pruning_tree(wcp,tree, output_file, path_in, script_dir, path_out):
+def pruning_tree(wcp,tree, output_file, path_in, script_dir, path_out, done_dir, done):
     """Here I am looping through the tips in the GBMB tree to see if they are in the WCVP.
     If there is no exact match for the tip, I will look for a fuzzy match allowing for 1 substitution, insertion or deletion.
     If the tip name is longer than 2 IE. a subsp or a variety I will then search for just the genus and species epithet.
     Lastly I check if this has introduced any duplicate species in the tree.
     If the duplicates are sister species I will then remove one of them at random and if they are not I will remove both of them"""
-    inputs = [wcp, path_in+tree]
-    outputs = [path_out+output_file]
+    inputs = [wcp, path_in+tree, done_dir+"APG_name_align"]
+    outputs = [path_out+output_file, done_dir+done]
     options = {
         'cores': 5,
         'memory': '20g',
@@ -646,7 +712,9 @@ def pruning_tree(wcp,tree, output_file, path_in, script_dir, path_out):
 
     mv {output_file} {path_out}
 
-    '''.format(wcp = wcp, output_file=output_file, path_in = path_in, script_dir = script_dir, path_out = path_out, tree = tree)
+    touch {done_dir}{done}
+
+    '''.format(wcp = wcp, output_file=output_file, path_in = path_in, script_dir = script_dir, path_out = path_out, tree = tree, done_dir = done_dir, done = done)
 
     return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
 
@@ -654,10 +722,10 @@ def pruning_tree(wcp,tree, output_file, path_in, script_dir, path_out):
 ##############################################################
 #############---- Approach 1 finding the orders ----##############
 ##############################################################
-def Slicing_trees(input_file, output_file, path_in,path_out, script_dir, wcvp_file, apg):
+def Slicing_trees(input_file, output_file, path_in,path_out, script_dir, wcvp_file, apg, done_dir, done):
     """This function slices the GBMB tree into subtrees based on the order and families of the species in the tree. """
-    inputs = [path_in+input_file, wcvp_file]
-    outputs = [path_out+output_file]
+    inputs = [path_in+input_file, wcvp_file, done_dir+"Pruning_tree"]
+    outputs = [path_out+output_file, done_dir+done]
     options = {
         'cores': 5,
         'memory': '10g',
@@ -689,8 +757,9 @@ def Slicing_trees(input_file, output_file, path_in,path_out, script_dir, wcvp_fi
     echo Ended the Adding orders script
     date
 
+    touch {done_dir}{done}
 
-    '''.format(path_out = path_out, script_dir = script_dir, path_in = path_in, input_file = input_file, output_file = output_file, wcvp_file = wcvp_file, apg = apg)
+    '''.format(path_out = path_out, script_dir = script_dir, path_in = path_in, input_file = input_file, output_file = output_file, wcvp_file = wcvp_file, apg = apg, done_dir = done_dir, done = done)
 
 
     return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
@@ -701,10 +770,10 @@ def Slicing_trees(input_file, output_file, path_in,path_out, script_dir, wcvp_fi
 ##############################################################
 ###########---- Slicing the tree into orders ----############
 ##############################################################
-def Forcing_orders(input_file_tree, output_file, path_in,path_out, script_dir, wcvp_file, apg, input_from_before):
+def Forcing_orders(input_file_tree, output_file, path_in,path_out, script_dir, wcvp_file, apg, input_from_before, done_dir, done):
     """This function searchers for the largest monophyletic clades in the orders which are not monophyletic in the GBMB tree."""
-    inputs = [path_in+input_file_tree, wcvp_file, input_from_before]
-    outputs = [path_out+output_file]
+    inputs = [path_in+input_file_tree, wcvp_file, input_from_before, done_dir+"Slicing_trees"]
+    outputs = [path_out+output_file, done_dir+done]
     options = {
         'cores': 10,
         'memory': '30g',
@@ -736,15 +805,16 @@ def Forcing_orders(input_file_tree, output_file, path_in,path_out, script_dir, w
     echo Ended the Forcing monophyly script
     date
 
-
-    '''.format(path_out = path_out, script_dir = script_dir, path_in = path_in, input_file_tree = input_file_tree, output_file = output_file, wcvp_file = wcvp_file, apg = apg)
+    touch {done_dir}{done}
+    
+    '''.format(path_out = path_out, script_dir = script_dir, path_in = path_in, input_file_tree = input_file_tree, output_file = output_file, wcvp_file = wcvp_file, apg = apg, done_dir = done_dir, done = done)
 
 
     return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
 
-##############################################################
-###########---- Downloading distribution data ----############
-##############################################################
+##########################################################################################################################################################################################
+##################################################################---- Splitting the analysis into subtrees ----##########################################################################
+##########################################################################################################################################################################################
 
 def Finding_areas_in_wcvp(input_file_tree, wcvp_file,path_out, output_file, path_in, order, script_dir, apg):
     """This Function creates a states file for the tips in WCVP based on the climate column."""
@@ -840,6 +910,7 @@ def Clads(tree, done_file, path_in, output_file,wcvp_input, order, apg, script_d
 script_dir = os.path.dirname(getsourcefile(download_data)) + "/"
 data_dir = os.path.normpath(os.path.join(script_dir, "../data/")) +"/"
 workflow_dir = os.path.normpath(os.path.join(script_dir, "../workflow/")) +"/"
+done_dir = os.path.normpath(os.path.join(script_dir, "../done/")) +"/"
 
 
 
@@ -853,7 +924,8 @@ gwf.target_from_template (name = "Download_Data",
                             output_smb ="GBMB.tre",
                             output_kew = "wcvp_names.csv",
                             output_gbif ="occurrence.txt",
-                            output_paleo="500Ma_Pohletal2022_DIB_PhaneroContinentalClimate.csv"
+                            output_paleo="500Ma_Pohletal2022_DIB_PhaneroContinentalClimate.csv",
+                            done = "Download_Data"
                           ))
 
 #########################################################################################################################
@@ -867,6 +939,8 @@ gwf.target_from_template(name = "Removing_cols",
                             path_in = data_dir,
                             occurrence_dir = workflow_dir+"01_distribution_data/",
                             path_out = workflow_dir+"01_distribution_data/01_rm_cols/",
+                            done = "Removing_cols",
+                            done_dir = done_dir
                           ))
 
 gwf.target_from_template(name = "Data_Parsing",
@@ -875,7 +949,9 @@ gwf.target_from_template(name = "Data_Parsing",
                                  output_file = "gbif_parsed.rds",
                                  path_in = workflow_dir+"01_distribution_data/01_rm_cols/",
                                  script_dir = script_dir,
-                                 path_out = workflow_dir+"01_distribution_data/02_data_parsing/"
+                                 path_out = workflow_dir+"01_distribution_data/02_data_parsing/",
+                                 done= "Data_Parsing",
+                                 done_dir = done_dir
                              ))
 
 gwf.target_from_template(name = "GBIF_lookup",
@@ -884,7 +960,9 @@ gwf.target_from_template(name = "GBIF_lookup",
                                  output_file = "gbif_parsed_taxon_data.rds",
                                  path_in = workflow_dir+"01_distribution_data/02_data_parsing/",
                                  script_dir = script_dir,
-                                 path_out = workflow_dir+"01_distribution_data/03_taxon_lookup/"
+                                 path_out = workflow_dir+"01_distribution_data/03_taxon_lookup/",
+                                 done = "GBIF_lookup",
+                                 done_dir = done_dir
                              ))
 
 gwf.target_from_template(name = "Creating_Common_Format",
@@ -894,7 +972,9 @@ gwf.target_from_template(name = "Creating_Common_Format",
                                  output_file = "gbif_common_format.rds",
                                  path_in = workflow_dir+"01_distribution_data/03_taxon_lookup/",
                                  script_dir = script_dir,
-                                 path_out = workflow_dir+"01_distribution_data/04_common_format/"
+                                 path_out = workflow_dir+"01_distribution_data/04_common_format/",
+                                 done = "Creating_Common_Format",
+                                 done_dir = done_dir
                              ))
 
 gwf.target_from_template(name = "APG_preb_occurrences",
@@ -904,7 +984,9 @@ gwf.target_from_template(name = "APG_preb_occurrences",
                                  output_file = "wcvp_names_apg_aligned.rds",
                                  path_in = data_dir,
                                  script_dir = script_dir,
-                                 path_out = workflow_dir+"01_distribution_data/04_common_format/"
+                                 path_out = workflow_dir+"01_distribution_data/04_common_format/",
+                                 done = "APG_preb_occurrences",
+                                 done_dir = done_dir
                              ))
 
 gwf.target_from_template(name = "Taxon_match",
@@ -914,7 +996,9 @@ gwf.target_from_template(name = "Taxon_match",
                                  output_file = "gbif_taxon_matched.rds",
                                  path_in = workflow_dir+"01_distribution_data/04_common_format/",
                                  script_dir = script_dir,
-                                 path_out = workflow_dir+"01_distribution_data/05_Taxon_match/"
+                                 path_out = workflow_dir+"01_distribution_data/05_Taxon_match/",
+                                 done = "Taxon_match",
+                                 done_dir = done_dir
                              ))
 
 gwf.target_from_template(name = "Renaming",
@@ -925,8 +1009,23 @@ gwf.target_from_template(name = "Renaming",
                                     output_file = "gbif_renamed.rds",
                                     path_in = workflow_dir+"01_distribution_data/05_Taxon_match/",
                                     script_dir = script_dir,
-                                    path_out = workflow_dir+"01_distribution_data/06_Renamed"
+                                    path_out = workflow_dir+"01_distribution_data/06_Renamed",
+                                    done = "Renaming",
+                                    done_dir = done_dir
                                 ))
+################################################################################################################################
+##########################------- Starting on the paleoclim data -------########################################################
+################################################################################################################################
+
+gwf.target_from_template(name = "Paleo_clim_area",
+                                template = paleo_clim_area(
+                                    output_file="paleoclim_area.csv",
+                                    data_dir = data_dir,
+                                    script_dir = script_dir,
+                                    done_dir = done_dir,
+                                    done = "Paleo_clim_area"
+                                ))
+
 
 ################################################################################################################################
 ############################------- Starting on the tree data -------###########################################################
@@ -938,7 +1037,9 @@ gwf.target_from_template(name = "Load_tree",
                             output_file = "GBMB_tips.txt",
                             path_in = data_dir,
                             path_out = data_dir,
-                            script_dir = script_dir
+                            script_dir = script_dir,
+                            done= "Load_tree",
+                            done_dir= done_dir
                           ))
 
 gwf.target_from_template(name = "APG_preb_tree",
@@ -948,7 +1049,9 @@ gwf.target_from_template(name = "APG_preb_tree",
                                  output_file = "wcvp_names_apg_aligned.rds",
                                  path_in = data_dir,
                                  script_dir = script_dir,
-                                 path_out = workflow_dir+"02_adding_orders/"
+                                 path_out = workflow_dir+"02_adding_orders/",
+                                 done = "APG_preb_tree",
+                                 done_dir= done_dir
                              ))
 
 gwf.target_from_template(name = "Pruning_tree",
@@ -958,7 +1061,9 @@ gwf.target_from_template(name = "Pruning_tree",
                                 output_file = "GBMB_pruned.tre",
                                 path_in = data_dir,
                                 path_out = data_dir,
-                                script_dir = script_dir
+                                script_dir = script_dir,
+                                done= "Pruning_tree",
+                                done_dir= done_dir
                             ))
     
 gwf.target_from_template(name = "slicing_Trees_no_pruning",
@@ -969,7 +1074,9 @@ gwf.target_from_template(name = "slicing_Trees_no_pruning",
                             path_out = workflow_dir+"02_adding_orders/no_pruning/",
                             script_dir = script_dir,
                             wcvp_file = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds",
-                            apg = script_dir+"apgweb_parsed.csv"
+                            apg = script_dir+"apgweb_parsed.csv",
+                            done = "slicing_Trees_no_pruning",
+                            done_dir= done_dir
                             ))
 
 gwf.target_from_template(name = "slicing_Trees_pruning",
@@ -980,7 +1087,9 @@ gwf.target_from_template(name = "slicing_Trees_pruning",
                             path_out = workflow_dir+"02_adding_orders/pruning/",
                             script_dir = script_dir,
                             wcvp_file = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds",
-                            apg = script_dir+"apgweb_parsed.csv"
+                            apg = script_dir+"apgweb_parsed.csv",
+                            done = "slicing_Trees_pruning",
+                            done = done_dir
                             ))
 
 gwf.target_from_template(name = "Finding_monophyletic_orders",
@@ -992,7 +1101,9 @@ gwf.target_from_template(name = "Finding_monophyletic_orders",
                             script_dir = script_dir, 
                             wcvp_file = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds", 
                             apg = script_dir+"apgweb_parsed.csv",
-                            input_from_before=workflow_dir+"02_adding_orders/pruning/GBMB_sp_per_orders_pruning.txt"
+                            input_from_before=workflow_dir+"02_adding_orders/pruning/GBMB_sp_per_orders_pruning.txt",
+                            done_dir= done_dir,
+                            done = "Finding_monophyletic_orders"
                             ))
 
 # I find the list of trees again, or somehow change the scripts so they print all the good trees into a single folder where I can just run the script on all of them.
