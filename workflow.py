@@ -200,7 +200,7 @@ def download_data(path_out,
         date
     fi
 
-    mv 'All_NC_files.zip?download=1' All_NC_files.zip
+    mv 'All_CSV_files.zip?download=1' All_CSV_files.zip
 
     # Unzipping paleo data
     if [ -f {path_out}paleo_clim/{output_paleo} ]; then
@@ -792,7 +792,7 @@ def Clads(tree, done_file, path_in, output_file,wcvp_input, order, apg, script_d
     inputs = [path_in+tree,wcvp_input,apg]
     outputs = [done_file, path_in+output_file]
     options = {
-        'cores': 10,
+        'cores': 20,
         'memory': '200g',
         'account':"Trf_models",
         'walltime': "24:00:00"
