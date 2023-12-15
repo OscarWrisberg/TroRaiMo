@@ -76,7 +76,7 @@ def download_data(path_out,
     # https://www-personal.umich.edu/~eebsmith/big_seed_plant_datasets/trees/   
 
     # Webpage for paleoclimates
-    # https://zenodo.org/records/6620748/files/All_NC_files.zip?download=1
+    # https://zenodo.org/records/6620748/files/All_CSV_files.zip?download=1
 
     # Webpage for GBIF data
     # https://api.gbif.org/v1/occurrence/download/request/0012129-230828120925497.zip
@@ -183,10 +183,9 @@ def download_data(path_out,
 
     # Going to subfolder
     cd {path_out}paleo_clim/
-
     
     # Extracting the name of the downloaded file without query parameters.
-    filename_paleo=$(echo "https://zenodo.org/records/6620748/files/All_NC_files.zip?download=1" | awk -F "/" '{{split($NF, name, "?"); print name[1]}}')
+    filename_paleo=$(echo {paleo_doi} | awk -F "/" '{{split($NF, name, "?"); print name[1]}}')
     echo "We're trying to download $filename_paleo"
 
 
@@ -850,7 +849,7 @@ gwf.target_from_template (name = "Download_Data",
                             smb_doi = "https://github.com/FePhyFoFum/big_seed_plant_trees/releases/download/v0.1/v0.1.zip",
                             kew_doi = "http://sftp.kew.org/pub/data-repositories/WCVP/wcvp.zip",
                             gbif_doi = "https://api.gbif.org/v1/occurrence/download/request/0012129-230828120925497.zip",
-                            paleo_doi = "https://zenodo.org/records/6620748/files/All_NC_files.zip?download=1",
+                            paleo_doi = "https://zenodo.org/records/6620748/files/All_CSV_files.zip?download=1",
                             output_smb ="GBMB.tre",
                             output_kew = "wcvp_names.csv",
                             output_gbif ="occurrence.txt",
