@@ -246,7 +246,7 @@ def download_data(path_out,
 
 def paleo_clim_area(output_file, data_dir, script_dir,done_dir, done):
     """Here I calculate the area of the Tropical rainforests through time."""
-    inputs = [data_dir,done_dir+"Download_Data"]
+    inputs = [data_dir, done_dir+"Download_Data"]
     outputs = [data_dir+output_file,done_dir+done]
     options = {
         'cores': 5,
@@ -259,6 +259,9 @@ def paleo_clim_area(output_file, data_dir, script_dir,done_dir, done):
     
     # Going to datadir
     cd {data_dir}
+
+    source /home/owrisberg/miniconda3/etc/profile.d/conda.sh
+    conda activate R_env
 
     echo Starting the R script
     
