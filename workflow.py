@@ -230,7 +230,7 @@ def download_data(path_out,
     fi
 
 
-    touch {done_dir}{done}:
+    touch {done_dir}{done}
 
     
 
