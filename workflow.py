@@ -208,7 +208,12 @@ def download_data(path_out,
         date
     fi
 
+    # If the file is downloaded but it has the wrong name, then rename it.
+    if [ -f All_CSV_files.zip ]; then
+        echo "All_CSV_files.zip is already renamed"
+    else
     mv 'All_CSV_files.zip?download=1' All_CSV_files.zip
+    fi
 
     # Unzipping paleo data
     if [ -f {path_out}paleo_clim/{output_paleo} ]; then
