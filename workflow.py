@@ -373,7 +373,7 @@ def Load_data(input_file, output_file, path_in,path_out, script_dir, done_dir, d
 
     touch {done_dir}{done}
 
-    '''.format(input_file=input_file, output_file=output_file, path_in = path_in, script_dir = script_dir, path_out = path_out)
+    '''.format(input_file=input_file, output_file=output_file, path_in = path_in, script_dir = script_dir, path_out = path_out, done_dir = done_dir, done = done)
 
     return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
 
