@@ -6,7 +6,7 @@
 chooseCRANmirror(ind = 30)
 
 #Packages
-packages <- c("raster","ncdf4","ggplot2","dplyr","data.table")
+packages <- c("terra","ggplot2","dplyr","data.table")
 
 # Install packages not yet installed
 installed_packages <- packages %in% rownames(installed.packages())
