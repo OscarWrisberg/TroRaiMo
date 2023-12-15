@@ -1089,7 +1089,7 @@ gwf.target_from_template(name = "slicing_Trees_pruning",
                             wcvp_file = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds",
                             apg = script_dir+"apgweb_parsed.csv",
                             done = "slicing_Trees_pruning",
-                            done = done_dir
+                            done_dir = done_dir
                             ))
 
 gwf.target_from_template(name = "Finding_monophyletic_orders",
