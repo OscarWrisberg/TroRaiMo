@@ -268,10 +268,10 @@ def paleo_clim_area(output_file, data_dir, script_dir,done_dir, done):
 
     echo Ended the R script
 
-    touch {done}
+    touch {done_dir}{done}
 
 
-    '''.format(output_file=output_file, script_dir = script_dir, data_dir = data_dir, done=done)
+    '''.format(output_file=output_file, script_dir = script_dir, data_dir = data_dir, done=done, done_dir = done_dir)
 
     return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
 
@@ -488,7 +488,7 @@ def apg_name_align(apg,wcp, output_file, path_in, script_dir, path_out, done_dir
     #Checking if output dir exists
     [ -d {path_out} ] && echo "{path_out} exist." || {{ echo "{path_out} does not exist."; mkdir {path_out}; }}
 
-    echo This is the data dir \n
+    echo This is the script dir \n
     echo {script_dir}
 
     # Starting Conda environment
@@ -498,10 +498,13 @@ def apg_name_align(apg,wcp, output_file, path_in, script_dir, path_out, done_dir
     #Navigating to folder
     cd {path_in}
 
-
+    echo Starting the R script at:
+    date
+    
     Rscript --vanilla {script_dir}apg_name_aligner.r {script_dir}{apg} {wcp} {output_file}
 
-    echo Done with Rscript
+    echo Done with Rscript at
+    date
 
     mv {output_file} {path_out}
 
