@@ -291,7 +291,7 @@ def Rm_cols(input_file, output_file, path_in,path_out, occurrence_dir, done, don
         'cores': 5,
         'memory': '50g',
         'account':"Trf_models",
-        'walltime': "00:10:00"
+        'walltime': "00:20:00"
     }
 
     spec = '''
