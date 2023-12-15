@@ -474,7 +474,7 @@ def create_common_format(input_file_occurrences,input_file_taxonomy, output_file
 ##############################################################
 def apg_name_align(apg,wcp, output_file, path_in, script_dir, path_out, done_dir, done):
     """Here I want to create a common format the wcvp and the previous file and update some family names to APGIV."""
-    inputs = [script_dir+apg, path_in+wcp, done_dir+"Create_common_format"]
+    inputs = [script_dir+apg, path_in+wcp, done_dir+"Creating_Common_Format"]
     outputs = [path_out+output_file,done_dir+done]
     options = {
         'cores': 5,
