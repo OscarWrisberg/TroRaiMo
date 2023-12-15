@@ -264,7 +264,6 @@ def paleo_clim_area(output_file, data_dir, script_dir,done_dir, done):
     conda activate R_env
 
     echo Starting the R script
-    
     date
 
     Rscript --vanilla {script_dir}calculating_paleoclim.r {data_dir} {output_file}
@@ -628,10 +627,7 @@ def Load_tree(input_file, output_file, path_in,path_out, script_dir, done_dir, d
     Rscript --vanilla {script_dir}R_tree_loading.r {input_file} {output_file}
 
     echo Ended the R script
-
     date
-    
-    mv {output_file} {path_out}
 
     touch {done_dir}{done}
 
