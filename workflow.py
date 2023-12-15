@@ -925,7 +925,8 @@ gwf.target_from_template (name = "Download_Data",
                             output_kew = "wcvp_names.csv",
                             output_gbif ="occurrence.txt",
                             output_paleo="500Ma_Pohletal2022_DIB_PhaneroContinentalClimate.csv",
-                            done = "Download_Data"
+                            done = "Download_Data",
+                            done_dir= done_dir
                           ))
 
 #########################################################################################################################
