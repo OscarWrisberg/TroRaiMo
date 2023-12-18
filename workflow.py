@@ -577,7 +577,7 @@ def Renamer(input_file, output_file, path_in, script_dir, path_out, wcvp, renami
     This should be done by looping through the GBIF data and looking up each species in the taxon matcher file.
     The name in the taxon matcher file would then be used to find the accepted_plant_name_id in the WCVP file.
     and get the correct name from that file. This name would then be used to replace the name in the GBIF data."""
-    inputs = [input_file, wcvp, path_in+renaming_file, done_dir+"Taxon_matcher"]
+    inputs = [input_file, wcvp, path_in+renaming_file, done_dir+"Taxon_match"]
     outputs = [path_out+output_file,done_dir+done]
     options = {
         'cores': 5,
