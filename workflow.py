@@ -920,7 +920,7 @@ def Clads(tree, done_file, path_in, output_file,wcvp_input, order, apg, script_d
 
     touch {done_dir}{done_file}
 
-    '''.format(tree = tree, done_file = done_file, path_in = path_in, output_file = output_file, wcvp_input = wcvp_input, order = order, apg = apg, script_dir = script_dir)
+    '''.format(tree = tree, done_file = done_file, path_in = path_in, output_file = output_file, wcvp_input = wcvp_input, order = order, apg = apg, script_dir = script_dir, done_dir = done_dir)
 
 
     return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
