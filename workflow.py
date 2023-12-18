@@ -944,7 +944,7 @@ def Clads(tree, done_file, path_in, output_file,wcvp_input, order, apg, script_d
 ################---- Runnning ESSE model  ----################
 ##############################################################
 def Esse(path_in, tree_file,tip_states_file,paleo_clim_file, out_states_file, out_file, hidden_states, script_dir, done_dir, done):
-    """ """
+    """ Function for running the ESSE model on the tree of each order. """
     inputs = [path_in+tree_file,tip_states_file,paleo_clim_file]
     outputs = []
     options = {
@@ -972,7 +972,7 @@ def Esse(path_in, tree_file,tip_states_file,paleo_clim_file, out_states_file, ou
 
     touch {done_dir}{done}
 
-    '''.format(processors = options['cores'], tree_file = tree_file, tip_states_file = tip_states_file, paleo_clim_file = paleo_clim_file,
+    '''.format(processors = options['cores'], memory = options['memory'], tree_file = tree_file, tip_states_file = tip_states_file, paleo_clim_file = paleo_clim_file,
                 out_states_file = out_states_file, out_file = out_file, hidden_states = hidden_states, script_dir = script_dir, path_in = path_in,
                 done_dir = done_dir, done = done)
 
@@ -1252,14 +1252,16 @@ for i in range(len(orders)):
 
     gwf.target_from_template(name = orders[i]+"_Esse",
                                 template= Esse(
-                                tree = order_trees[i],
+                                tree_file = order_trees[i],
                                 order = orders[i],
-                                distribution_data = workflow_dir+"03_distribution_data/"+orders[i]+"_distribution_data.txt",
-                                environment_data = workflow_dir+"03_distribution_data/paleoclim_area.csv",
-                                done_file = orders[i]+"_Esse",
+                                tip_states_file = workflow_dir+"03_distribution_data/"+orders[i]+"_distribution_data.txt",
+                                paleo_clim_file = workflow_dir+"03_distribution_data/paleoclim_area.csv",
+                                done = orders[i]+"_Esse",
                                 path_in = workflow_dir+"02_adding_orders/pruning/orders/",
                                 output_file = "Esse_output_"+orders[i]+".jld2",
                                 script_dir=script_dir,
-                                done_dir = done_dir
+                                done_dir = done_dir,
+                                out_states = "Esse_states_"+orders[i]+".csv",
+                                out_file = "Esse_"+orders[i]+".jld2",
+                                hidden_states = 0
                              ))
-
