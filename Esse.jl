@@ -40,3 +40,13 @@ out = joinpath(out_file)
 esse(tree, out, hidden_states, envdata_file = paleo_data, 
   states_file = tip_states, out_states = out_states, cov_mod = ("s",))
 
+
+# Saving the output in a JLD2 file.
+@save output_name output
+
+# Savint the output in R
+r_output = replace(output_name, r"\.jld2" => ".R")
+
+# Also save the output to an R file
+save_ClaDS_in_R(output,  r_output)
+

@@ -38,9 +38,11 @@ gwf = Workflow()
 ####################################################################################################
 ####################################################################################################
 
-##############################################################
-##########---- Function for downloading data ----#############
-##############################################################
+###################################################################################################################################################################################
+###################################################################################################################################################################################
+#########################################################################---- Function for downloading data ----###################################################################
+###################################################################################################################################################################################
+###################################################################################################################################################################################
 
 # Webpage for Smith and Brown combined trees
 # https://github.com/FePhyFoFum/big_seed_plant_trees/releases/download/v0.1/v0.1.zip
@@ -240,9 +242,11 @@ def download_data(path_out,
 
     return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
 
-################################################################################################################################################################################
+###################################################################################################################################################################################
+###################################################################################################################################################################################
 ############################################--------------------- Working on paleoclimatic data ---------------------##############################################################
-################################################################################################################################################################################
+###################################################################################################################################################################################
+###################################################################################################################################################################################
 
 def paleo_clim_area(output_file, data_dir, script_dir,done_dir, done):
     """Here I calculate the area of the Tropical rainforests through time."""
@@ -280,7 +284,7 @@ def paleo_clim_area(output_file, data_dir, script_dir,done_dir, done):
         echo output_file is : {output_file}
         echo script_dir is : {script_dir}
         if [ -e {script_dir}{output_file} ]; then
-            echo "But {output_file} is in {script_dir}"
+            echo "But {output_file} is in {script_dir}, so were copying it to {data_dir} instead, See ReadMe for more info"
             cp {script_dir}{output_file} {data_dir}
             touch {done_dir}{done}
         else
@@ -293,9 +297,10 @@ def paleo_clim_area(output_file, data_dir, script_dir,done_dir, done):
 
     return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
 
-
+################################################################################################################################################################################
 ################################################################################################################################################################################
 ############################################--------------------- Working on occurrence data ---------------------##############################################################
+################################################################################################################################################################################
 ################################################################################################################################################################################
 
 ##############################################################
@@ -448,6 +453,7 @@ def taxon_look_up(input_file, output_file, path_in, script_dir, path_out, done_d
 ##############################################################
 ##############---- Creating common format ----################
 ##############################################################
+
 def create_common_format(input_file_occurrences,input_file_taxonomy, output_file, path_in, script_dir, path_out, done_dir, done):
     """Here I want to create a common format between the file which needs names aligned to the WCVP and the WCVP."""
     inputs = [path_in+input_file_taxonomy, input_file_occurrences, done_dir+"GBIF_lookup"]
@@ -487,9 +493,9 @@ def create_common_format(input_file_occurrences,input_file_taxonomy, output_file
 
     return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
 
-##############################################################
+#################################################################
 ##############---- Preparing WCVP-names file ----################
-##############################################################
+#################################################################
 def apg_name_align(apg,wcp, output_file, path_in, script_dir, path_out, done_dir, done):
     """Here I want to create a common format the wcvp and the previous file and update some family names to APGIV."""
     inputs = [script_dir+apg, path_in+wcp, done_dir+"Creating_Common_Format"]
@@ -570,9 +576,9 @@ def taxon_match(input_file, output_file, path_in, script_dir, path_out, wcvp, do
 
 
 
-########################################################################################################################
-####################################---- Taxon renamer ----#############################################################
-########################################################################################################################
+###################################################################
+######################---- Taxon renamer ----######################
+###################################################################
 
 def Renamer(input_file, output_file, path_in, script_dir, path_out, wcvp, renaming_file, done  , done_dir):
     """This function renames all the species names in the GBIF datafile based on the taxon matcher.
@@ -609,7 +615,9 @@ def Renamer(input_file, output_file, path_in, script_dir, path_out, wcvp, renami
     return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
 
 ################################################################################################################################################################################
-############################################--------------------- Working on tree data ---------------------##############################################################
+################################################################################################################################################################################
+############################################--------------------- Working on tree data ---------------------####################################################################
+################################################################################################################################################################################
 ################################################################################################################################################################################
 
 ##############################################################
@@ -834,12 +842,13 @@ def Forcing_orders(input_file_tree, output_file, path_in,path_out, script_dir, w
 
 
     return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
-
+#########################################################################################################################################################################################
 ##########################################################################################################################################################################################
 ##################################################################---- Splitting the analysis into subtrees ----##########################################################################
 ##########################################################################################################################################################################################
+##########################################################################################################################################################################################
 
-def Finding_areas_in_wcvp(input_file_tree, wcvp_file,path_out, output_file, path_in, order, script_dir, apg):
+def Finding_areas_in_wcvp(input_file_tree, wcvp_file,path_out, output_file, path_in, order, script_dir, apg, done_dir, done):
     """This Function creates a states file for the tips in WCVP based on the climate column."""
     inputs = [path_in+input_file_tree]
     outputs = [path_out+output_file]
@@ -871,11 +880,14 @@ def Finding_areas_in_wcvp(input_file_tree, wcvp_file,path_out, output_file, path
     echo Ended the script to find state data for the tips in the wcvp
     date
 
+    touch {done_dir}{done}
+
     '''.format(path_out = path_out, output_file = output_file, wcvp_file = wcvp_file, order = order,
-     input_file_tree = input_file_tree, path_in = path_in, script_dir = script_dir, apg = apg)
+     input_file_tree = input_file_tree, path_in = path_in, script_dir = script_dir, apg = apg, done_dir = done_dir, done = done)
 
 
     return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
+
 
 ##############################################################
 ###########---- Runnning simple ClaDs models  ----############
@@ -886,9 +898,9 @@ def Clads(tree, done_file, path_in, output_file,wcvp_input, order, apg, script_d
     outputs = [done_dir+done_file, path_in+output_file]
     options = {
         'cores': 20,
-        'memory': '200g',
+        'memory': '250g',
         'account':"Trf_models",
-        'walltime': "30:00:00"
+        'walltime': "48:00:00"
     }
 
     spec = '''
@@ -925,9 +937,53 @@ def Clads(tree, done_file, path_in, output_file,wcvp_input, order, apg, script_d
 
     return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
 
-########################################################################################################################
-####################################---- Running pipeline ----##########################################################
-########################################################################################################################
+
+
+
+##############################################################
+################---- Runnning ESSE model  ----################
+##############################################################
+def Esse(path_in, tree_file,tip_states_file,paleo_clim_file, out_states_file, out_file, hidden_states, script_dir, done_dir, done):
+    """ """
+    inputs = [path_in+tree_file,tip_states_file,paleo_clim_file]
+    outputs = []
+    options = {
+        'cores': 25,
+        'memory': '250g',
+        'account':"Trf_models",
+        'walltime': "120:00:00"
+    }
+
+    spec = '''
+
+    source /home/owrisberg/miniconda3/etc/profile.d/conda.sh
+    conda activate Julia_env
+
+    cd {path_in}
+
+    echo Starting the Julia script at:
+    date
+    echo using {processors} processors, {memory} gb-RAM and {hidden_states} hidden states.
+
+    julia {script_dir}Esse.jl {processors} {tree_file} {tip_states_file} {paleo_clim_file} {out_states_file} {out_file} {hidden_states}
+
+    echo Ended the Julia script at:
+    date
+
+    touch {done_dir}{done}
+
+    '''.format(processors = options['cores'], tree_file = tree_file, tip_states_file = tip_states_file, paleo_clim_file = paleo_clim_file,
+                out_states_file = out_states_file, out_file = out_file, hidden_states = hidden_states, script_dir = script_dir, path_in = path_in,
+                done_dir = done_dir, done = done)
+
+
+    return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
+
+################################################################################################################################################################################
+################################################################################################################################################################################
+######################################################################---- Running pipeline ----################################################################################
+################################################################################################################################################################################
+################################################################################################################################################################################
 
 # Setting up some global variables with relative paths 
 script_dir = os.path.dirname(getsourcefile(download_data)) + "/"
@@ -935,7 +991,9 @@ data_dir = os.path.normpath(os.path.join(script_dir, "../data/")) +"/"
 workflow_dir = os.path.normpath(os.path.join(script_dir, "../workflow/")) +"/"
 done_dir = os.path.normpath(os.path.join(script_dir, "../done/")) +"/"
 
-
+#########################################################################################################################
+#############################################---- Downloading Data ----##################################################
+#########################################################################################################################
 
 gwf.target_from_template (name = "Download_Data",
                           template=download_data(
@@ -1146,8 +1204,6 @@ order_trees=["pruned_tree_order_Alismatales_GBMB.tre", "pruned_tree_order_Crosso
 "pruned_tree_order_Commelinales_GBMB.tre", "pruned_tree_order_Gnetales_GBMB.tre", "pruned_tree_order_Piperales_GBMB.tre"
 ]
 
-
-
 orders=["Alismatales", "Crossosomatales", "Gunnerales", "Poales",
 "Amborellales", "Cucurbitales", "Huerteales",
 "Aquifoliales", "Cupressales", "Magnoliales", "Ranunculales",
@@ -1164,44 +1220,46 @@ orders=["Alismatales", "Crossosomatales", "Gunnerales", "Poales",
 ]
 
 
-
-# for i in range(len(order_trees)):
-#     #### Running the script to find the environmental data for the tips in the trees
-#     gwf.target_from_template(name = orders[i]+"_distribution_data.",
-#                                                         template=Finding_areas_in_wcvp(
-#                                                         input_file_tree= order_trees[i],
-#                                                         path_in =  workflow_dir+"02_adding_orders/pruning/",
-#                                                         path_out = workflow_dir+"03_distribution_data/",
-#                                                         output_file = orders[i]+"_distribution_data.txt",
-#                                                         wcvp_file = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds",
-#                                                         order = orders[i],
-#                                                         script_dir= script_dir,
-#                                                         apg = script_dir+"apgweb_parsed.csv"
-#                                                         ))
-
-
-
-
-
 for i in range(len(orders)):
-    gwf.target_from_template(name = "ClaDs_"+orders[i],
-                                 template= Clads(
-                                 tree = order_trees[i],
-                                 wcvp_input = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds",
-                                 order = orders[i],
-                                 apg = script_dir+"apgweb_parsed.csv",
-                                 done_file = workflow_dir+"/02_adding_orders/pruning/orders/done/"+orders[i],
-                                 path_in = workflow_dir+"02_adding_orders/pruning/orders/",
-                                 output_file = "Clads_output_"+orders[i]+".jld2",
-                                 script_dir=script_dir,
-                                 done_dir = done_dir
+#Running the script to find the environmental data for the tips in the trees
+    gwf.target_from_template(name = orders[i]+"_distribution_data.",
+                                template=Finding_areas_in_wcvp(
+                                input_file_tree= order_trees[i],
+                                path_in =  workflow_dir+"02_adding_orders/pruning/",
+                                path_out = workflow_dir+"03_distribution_data/",
+                                output_file = orders[i]+"_distribution_data.txt",
+                                wcvp_file = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds",
+                                order = orders[i],
+                                script_dir= script_dir,
+                                apg = script_dir+"apgweb_parsed.csv",
+                                done_dir= done_dir,
+                                done= orders[i]+"_distribution_data"
+                                ))
+
+
+    gwf.target_from_template(name = orders[i]+"_ClaDs",
+                                template= Clads(
+                                tree = order_trees[i],
+                                wcvp_input = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds",
+                                order = orders[i],
+                                apg = script_dir+"apgweb_parsed.csv",
+                                done_file = orders[i]+"_ClaDs",
+                                path_in = workflow_dir+"02_adding_orders/pruning/orders/",
+                                output_file = "Clads_output_"+orders[i]+".jld2",
+                                script_dir=script_dir,
+                                done_dir = done_dir
                              ))
 
+    gwf.target_from_template(name = orders[i]+"_Esse",
+                                template= Esse(
+                                tree = order_trees[i],
+                                order = orders[i],
+                                distribution_data = workflow_dir+"03_distribution_data/"+orders[i]+"_distribution_data.txt",
+                                environment_data = workflow_dir+"03_distribution_data/paleoclim_area.csv",
+                                done_file = orders[i]+"_Esse",
+                                path_in = workflow_dir+"02_adding_orders/pruning/orders/",
+                                output_file = "Esse_output_"+orders[i]+".jld2",
+                                script_dir=script_dir,
+                                done_dir = done_dir
+                             ))
 
-
-# gwf.target_from_template(name = "Esse",
-#                           template=Esse(
-#                             path_in = data_dir,
-#                             path_out = "/home/owrisberg/Trf_models/Esse_test",
-#                             script_dir = script_dir
-#                           ))
