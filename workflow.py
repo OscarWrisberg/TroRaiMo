@@ -289,8 +289,6 @@ def paleo_clim_area(output_file, data_dir, script_dir,done_dir, done):
         fi
     fi
 
-
-
     '''.format(output_file=output_file, script_dir = script_dir, data_dir = data_dir, done=done, done_dir = done_dir)
 
     return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
@@ -885,7 +883,7 @@ def Finding_areas_in_wcvp(input_file_tree, wcvp_file,path_out, output_file, path
 def Clads(tree, done_file, path_in, output_file,wcvp_input, order, apg, script_dir, done_dir):
     """ """
     inputs = [path_in+tree,wcvp_input,apg,done_dir+"Finding_monophyletic_orders"]
-    outputs = [done_file, path_in+output_file]
+    outputs = [done_dir+done_file, path_in+output_file]
     options = {
         'cores': 20,
         'memory': '200g',
@@ -920,7 +918,7 @@ def Clads(tree, done_file, path_in, output_file,wcvp_input, order, apg, script_d
     echo Ended the Clads script at:
     date
 
-    touch {done_file}
+    touch {done_dir}{done_file}
 
     '''.format(tree = tree, done_file = done_file, path_in = path_in, output_file = output_file, wcvp_input = wcvp_input, order = order, apg = apg, script_dir = script_dir)
 
