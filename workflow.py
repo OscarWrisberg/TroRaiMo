@@ -277,10 +277,12 @@ def paleo_clim_area(output_file, data_dir, script_dir,done_dir, done):
         touch "${done_dir}${done}"
     else
         echo "$package_name is not installed."
+        echo output_file is : {output_file}
+        echo script_dir is : {script_dir}
         if [ -e "{output_file}/{script_dir}" ]; then
-            echo "But ${output_file} is in ${script_dir}"
-            cp "${script_dir}${output_file}" "$data_dir"
-            touch "${done_dir}${done}"
+            echo "But {output_file} is in {script_dir}"
+            cp "{script_dir}{output_file}" "$data_dir"
+            touch "{done_dir}{done}"
         else
             echo "${output_file} is not in ${script_dir}"
             echo "Please check the repository for solutions"
