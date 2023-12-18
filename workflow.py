@@ -448,7 +448,7 @@ def taxon_look_up(input_file, output_file, path_in, script_dir, path_out, done_d
 ##############################################################
 def create_common_format(input_file_occurrences,input_file_taxonomy, output_file, path_in, script_dir, path_out, done_dir, done):
     """Here I want to create a common format between the file which needs names aligned to the WCVP and the WCVP."""
-    inputs = [path_in+input_file_taxonomy, input_file_occurrences, done_dir+"Taxon_lookup"]
+    inputs = [path_in+input_file_taxonomy, input_file_occurrences, done_dir+"GBIF_lookup"]
     outputs = [path_out+output_file,done_dir+done]
     options = {
         'cores': 5,
