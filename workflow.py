@@ -1253,7 +1253,6 @@ for i in range(len(orders)):
     gwf.target_from_template(name = orders[i]+"_Esse",
                                 template= Esse(
                                 tree_file = order_trees[i],
-                                order = orders[i],
                                 tip_states_file = workflow_dir+"03_distribution_data/"+orders[i]+"_distribution_data.txt",
                                 paleo_clim_file = workflow_dir+"03_distribution_data/paleoclim_area.csv",
                                 done = orders[i]+"_Esse",
