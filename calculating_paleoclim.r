@@ -25,10 +25,14 @@ invisible(lapply(packages, library, character.only = TRUE))
 # # Command line arguments
 data_dir <- commandArgs(trailingOnly = TRUE)[1]
 output <- commandArgs(trailingOnly = TRUE)[2]
-
-
-#paleo_clim_folder <- "/home/au543206/GenomeDK/Trf_models/data/paleo_clim"
 paleo_clim_folder <- data_dir
+
+
+# Part for loading the paleo_clim data on a local machine.
+# paleo_clim_folder <- "/home/au543206/GenomeDK/Trf_models/data/paleo_clim/" # You have to edit this yourself to the folder where the paleo_clim data is stored
+# paleo_clim_folder <- data_dir
+# output <- "paleoclim_area.csv"
+# setwd(paleo_clim_folder)
 
 # Here I list the order of the paleo_clim files
 paleo_clim_order <- c(
@@ -108,3 +112,4 @@ time_series_data$time_ago <- as.numeric(time_series_data$time_ago)
 
 write.table(time_series_data, file = output, sep = ",", row.names = FALSE)
 
+# writing the data to a csv file and savint 
