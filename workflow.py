@@ -850,7 +850,7 @@ def Forcing_orders(input_file_tree, output_file, path_in,path_out, script_dir, w
 
 def Finding_areas_in_wcvp(input_file_tree, wcvp_file,path_out, output_file, path_in, order, script_dir, apg, done_dir, done):
     """This Function creates a states file for the tips in WCVP based on the climate column."""
-    inputs = [path_in+input_file_tree]
+    inputs = [done_dir+"Finding_monophyletic_orders"]
     outputs = [path_out+output_file]
     options = {
         'cores': 2,
