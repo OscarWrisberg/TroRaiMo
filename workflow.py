@@ -1257,10 +1257,9 @@ for i in range(len(orders)):
                                 paleo_clim_file = workflow_dir+"03_distribution_data/paleoclim_area.csv",
                                 done = orders[i]+"_Esse",
                                 path_in = workflow_dir+"02_adding_orders/pruning/orders/",
-                                output_file = "Esse_output_"+orders[i]+".jld2",
+                                out_file = "Esse_output_"+orders[i]+".jld2",
                                 script_dir=script_dir,
                                 done_dir = done_dir,
                                 out_states = "Esse_states_"+orders[i]+".csv",
-                                out_file = "Esse_"+orders[i]+".jld2",
                                 hidden_states = 0
                              ))
