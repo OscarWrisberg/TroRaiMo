@@ -390,7 +390,7 @@ def Load_data(input_file, output_file, path_in,path_out, script_dir, done_dir, d
 ##############################################################
 def taxon_look_up(input_file, output_file, path_in, script_dir, path_out, done_dir, done):
     """Here the function looks up each unique species in the dataset and finds the taxonomic information for that species."""
-    inputs = [path_in+input_file, done_dir+"Load_data"]
+    inputs = [path_in+input_file, done_dir+"Data_Parsing"]
     outputs = [path_out+output_file,done_dir+done]
     options = {
         'cores': 5,
