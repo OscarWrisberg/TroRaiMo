@@ -256,36 +256,38 @@ def paleo_clim_area(output_file, data_dir, script_dir,done_dir, done):
     }
 
     spec = '''
-    
+        
     package_name="libgdal-dev"
     
     if dpkg -s "$package_name" >/dev/null 2>&1; then
         echo "$package_name is installed."
         # Going to datadir
-        cd {data_dir}
-
+        cd "$data_dir"
+    
         source /home/owrisberg/miniconda3/etc/profile.d/conda.sh
         conda activate R_env
-
+    
         echo Starting the R script
         date
-
-        Rscript --vanilla {script_dir}calculating_paleoclim.r {data_dir} {output_file}
-
+    
+        Rscript --vanilla "${script_dir}calculating_paleoclim.r" "$data_dir" "$output_file"
+    
         echo Ended the R script
-
-        touch {done_dir}{done}
+    
+        touch "${done_dir}${done}"
     else
-      echo "$package_name is not installed."
-      if [ -e "{output_file}/{script_dir}"]; then
-        echo "But {output_file} is in {script_dir}"
-        cp {script_dir}{output_file} {data_dir}
-        touch {done_dir}{done}
-      else
-        echo "{output_file} is not in {script_dir}"
-        echo "Please check the repository for solutions"
+        echo "$package_name is not installed."
+        if [ -e "${output_file}/${script_dir}" ]; then
+            echo "But ${output_file} is in ${script_dir}"
+            cp "${script_dir}${output_file}" "$data_dir"
+            touch "${done_dir}${done}"
+        else
+            echo "${output_file} is not in ${script_dir}"
+            echo "Please check the repository for solutions"
+        fi
     fi
-
+    
+    
 
     '''.format(output_file=output_file, script_dir = script_dir, data_dir = data_dir, done=done, done_dir = done_dir)
 
