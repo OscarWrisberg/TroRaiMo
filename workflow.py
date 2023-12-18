@@ -866,13 +866,13 @@ def Finding_areas_in_wcvp(input_file_tree, wcvp_file,path_out, output_file, path
 ##############################################################
 def Clads(tree, done_file, path_in, output_file,wcvp_input, order, apg, script_dir, done_dir):
     """ """
-    inputs = [path_in+tree,wcvp_input,apg,done_dir+"Forcing_orders"]
+    inputs = [path_in+tree,wcvp_input,apg,done_dir+"Finding_monophyletic_orders"]
     outputs = [done_file, path_in+output_file]
     options = {
         'cores': 20,
         'memory': '200g',
         'account':"Trf_models",
-        'walltime': "24:00:00"
+        'walltime': "30:00:00"
     }
 
     spec = '''
