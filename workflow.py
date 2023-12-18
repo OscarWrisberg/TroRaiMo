@@ -535,7 +535,7 @@ def apg_name_align(apg,wcp, output_file, path_in, script_dir, path_out, done_dir
 ##############################################################
 def taxon_match(input_file, output_file, path_in, script_dir, path_out, wcvp, done_dir, done):
     """Here I match the taxa from the GBIF file to the WCVP."""
-    inputs = [path_in+input_file, path_in+wcvp, done_dir+"APG_name_align"]
+    inputs = [path_in+input_file, path_in+wcvp, done_dir+"APG_preb_occurrences"]
     outputs = [path_out+output_file,done_dir+done]
     options = {
         'cores': 15,
