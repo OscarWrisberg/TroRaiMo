@@ -801,7 +801,7 @@ def Slicing_trees(input_file, output_file, path_in,path_out, script_dir, wcvp_fi
 ##############################################################
 def Forcing_orders(input_file_tree, output_file, path_in,path_out, script_dir, wcvp_file, apg, input_from_before, done_dir, done):
     """This function searchers for the largest monophyletic clades in the orders which are not monophyletic in the GBMB tree."""
-    inputs = [path_in+input_file_tree, wcvp_file, input_from_before, done_dir+"Slicing_trees"]
+    inputs = [path_in+input_file_tree, wcvp_file, input_from_before, done_dir+"slicing_Trees_pruning"]
     outputs = [path_out+output_file, done_dir+done]
     options = {
         'cores': 10,
