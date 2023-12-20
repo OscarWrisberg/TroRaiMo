@@ -86,11 +86,11 @@ tips_families <- find_family(matching_tips, wcvp)
 head(tips_families)
 
 # Write tip families to a text file
-write.table(tips_families, paste0(path_out+"tips_families.txt"), sep = "\t", row.names = FALSE) #nolint
+write.table(tips_families, paste0(path_out,"tips_families.txt"), sep = "\t", row.names = FALSE) #nolint
 ##########################################################################################################
 
 # Loading tips families so I dont have to wait so fucking long..
-tips_families <- fread(paste0(path_out+"tips_families.txt"))
+tips_families <- fread(paste0(path_out,"tips_families.txt"))
 
 # Find unique families
 unique_families <- unique(tips_families$families)
