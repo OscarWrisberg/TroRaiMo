@@ -741,8 +741,6 @@ def pruning_tree(wcp,tree, output_file, path_in, script_dir, path_out, done_dir,
 
     echo Done with Rscript
 
-    mv {output_file} {path_out}
-
     touch {done_dir}{done}
 
     '''.format(wcp = wcp, output_file=output_file, path_in = path_in, script_dir = script_dir, path_out = path_out, tree = tree, done_dir = done_dir, done = done)

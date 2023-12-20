@@ -661,7 +661,7 @@ if (length(tree$tip.label[!(tree$tip.label %in% wcvp$taxon_name[wcvp$taxon_statu
 }
 
 # How many tips are left in the tree
-cat("There are ", length(tree$tip.label), "tips left in the tree") # 64256 tips left in the tree
+cat("There are ", length(tree$tip.label), "tips left in the tree \n") # 64256 tips left in the tree
 cat("In total we have lost ", length(tip_names) - length(tree$tip.label) , " tips from the tree")
 
 # I should now be able to save the tree as a newick file and use it for the next step in the workflow.
