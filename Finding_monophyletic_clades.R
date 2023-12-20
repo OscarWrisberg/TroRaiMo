@@ -161,77 +161,6 @@ find_largest_clade <- function(tips_in_order, tree) {
   # Looping through all the tips in the order
   for (i in seq_along(tips_in_order)) {
 
-	# Progress bar
-	if (!i %% 100) cat("Percentage done", format(round((i / length(tips_in_order)) * 100, 2), nsmall = 2), " at ", format(Sys.time(), '%H:%M:%S'), "\n")
-    tip <- tips_in_order[i]
-
-	# Find the node of the tip because getParent only works on nodes
-    node <- which(tree$tip.label == tip)[1]
-	
-	# Get the parent node
-    pnode <- getParent(tree, node)
-
-	# Check if the parent node is the root
-    if (pnode != 0) {
-      subtree <- get_subtree_at_node(tree, pnode - Ntip(tree))$subtree
-
-	  # Check if there are any tips in the subtree & if they are all found in the order
-      if (length(subtree$tip.label) > 0 && all(subtree$tip.label %in% tips_in_order)) {
-
-		# While all the tip labels are in the order continue "diving" into the tree untill you come to a species which is not in the order
-        while (all(subtree$tip.label %in% tips_in_order)) { # i could change this so the while loop continues diving into the tree untill it find a clade with more than 10 % rogue tips.
-          last_tree <- subtree
-          last_pnode <- pnode
-
-          pnode <- getParent(tree, pnode)
-          subtree <- get_subtree_at_node(tree, pnode - Ntip(tree))$subtree
-        }
-
-		# Select the last tree which  contained only tips in the order
-		
-
-		# Checking if the tips in the subtree are all in the order
-		if (all(last_tree$tip.label %in% tips_in_order)) {
-		  #cat("All the tips in the subtree are in the order \n")
-		} else {
-		  #cat("Not all the tips in the subtree are in the order \n")
-		  break
-		}
-
-		# When you find a node where not all the tips are in the order.
-		# If the clade is bigger than the biggest clade found so far then save it as the biggest clade
-		# And update the rogue species in order to see what species are breaking the order
-        
-		if (length(last_tree$tip.label) > length(biggest_subtree$tip.label)) {
-          biggest_subtree <- last_tree
-          length_biggest_subtree <- length(biggest_subtree$tip.label)
-          rogue_species <- subtree$tip.label[which(!subtree$tip.label %in% tips_in_order)]
-        }
-
-      }
-    }
-  }
-
-  cat("Length of biggest subtree is: ", length_biggest_subtree, "\n")
-
-  # Check if biggest_subtree is non-empty before returning
-  if (length(biggest_subtree) > 0) {
-    return(list(biggest_subtree = biggest_subtree, rogue_species = rogue_species, subtree = subtree))
-  } else {
-    return(NULL)
-  }
-}
-#########################################################################################################
-
-# Function for finding the largest monophyletic clade of the tips in the order
-find_largest_clade <- function(tips_in_order, tree) {
-  biggest_subtree <- list()
-  rogue_species <- list()
-  length_biggest_subtree <- 0
-
-  # Looping through all the tips in the order
-  for (i in seq_along(tips_in_order)) {
-
     # Progress bar
     if (!i %% 100) cat("Percentage done", format(round((i / length(tips_in_order)) * 100, 2), nsmall = 2), " at ", format(Sys.time(), '%H:%M:%S'), "\n")
     tip <- tips_in_order[i]
@@ -358,6 +287,9 @@ for (i in seq_along(non_monophyletic_orders[[1]])) {
 	# finding the tips which are descendants of the MRCA and are not in the order
 	rogue_tips <- descendants[which(!descendants %in% tips_in_order)]
 	cat(" and the number of rogue tips is:", length(rogue_tips), "\n ")
+
+	cat(" is ( length(rogue_tips) <= (0.1 * length(tips_in_order)) & length(rogue_tips) > 0 )== TRUE \n")
+	print(length(rogue_tips) <= (0.1 * length(tips_in_order)) & length(rogue_tips) > 0)
 
 	# If the number of rogue tips is smaller than 10 % of the number of tips in the order
 	if ( length(rogue_tips) <= (0.1 * length(tips_in_order)) & length(rogue_tips) > 0){
