@@ -33,14 +33,14 @@ invisible(lapply(packages, library, character.only = TRUE))
 ##################  Testing the code by runnin it on GDK through VScode and its built in terminal  ########################
 ###########################################################################################################################
 
-# setwd("/home/au543206/GenomeDK/Trf_models/data") # Set working directory when local
-# wcvp <- readRDS("../workflow/02_adding_orders/wcvp_names_apg_aligned.rds")  # Read the WCVP names file into a data frame
-# tree <- read.tree("GBMB_pruned.tre") # Read the GBMB pruned tree
-# output_path <- "../workflow/02_adding_orders/pruning/"
-# apg <- fread("../TroRaiMo/apgweb_parsed.csv")
-# tips_families <- fread("tips_families.txt")
-# non_monophyletic_orders <- fread("../workflow/02_adding_orders/pruning/non_mono_order.txt", header = FALSE, sep = "\t")
-# output_file <- "Orders_which_could_not_be_solved.txt"
+setwd("/home/au543206/GenomeDK/Trf_models/data") # Set working directory when local
+wcvp <- readRDS("../workflow/02_adding_orders/wcvp_names_apg_aligned.rds")  # Read the WCVP names file into a data frame
+tree <- read.tree("GBMB_pruned.tre") # Read the GBMB pruned tree
+output_path <- "../workflow/02_adding_orders/pruning/"
+apg <- fread("../TroRaiMo/apgweb_parsed.csv")
+tips_families <- fread(paste0(output_path+"tips_families.txt"))
+non_monophyletic_orders <- fread("../workflow/02_adding_orders/pruning/non_mono_order.txt", header = FALSE, sep = "\t")
+output_file <- "Orders_which_could_not_be_solved.txt"
 
 ###########################################################################################################################
 ############################# Getting command line file names for workflow ################################################
@@ -69,7 +69,7 @@ cat("Loading the apgweb_parsed.csv file \n")
 apg <- fread(apg)
 
  # Loading tips families so I dont have to wait so fucking long..
-tips_families <- fread("tips_families.txt")
+tips_families <- fread(paste0(output_path+"tips_families.txt"),)
 
 
 # Loading the list of non-monophyletic orders
@@ -106,7 +106,8 @@ df_number_tips <- data.frame(family = character(0), number_tips = numeric(0))
 non_mono_family <- character(0)
 
 # Dropping tips which are outlier taxa based on MonoPhy
-outlier_taxa <- c("Androya decaryi","Pteleocarpa lamponga", "Tectaria heracleifolia", "Streptopus parviflorus","Streptopus amplexifolius","Streptopus koreanus","Streptopus lanceolatus","Streptopus ovalis","Streptopus obtusatus","Streptopus parasimplex")
+outlier_taxa <- c("Androya decaryi","Pteleocarpa lamponga", "Tectaria heracleifolia", "Streptopus parviflorus","Streptopus amplexifolius","Streptopus koreanus",
+"Streptopus lanceolatus","Streptopus ovalis","Streptopus obtusatus","Streptopus parasimplex")
 tree <- drop.tip(tree, tip = outlier_taxa)
 
 # Fixing a wrong family in tips_families
@@ -268,11 +269,11 @@ for (i in seq_along(non_monophyletic_orders[[1]])) {
 
 	# Finding the tips in the order
 	cat("Starting on ",order, " \n")
-	tips_in_order <- tips_family_orders$name[which(tips_family_orders$order == order)] # Selecting the tips which are in the selected order
-	cat("Number of tips in the order: ", length(tips_in_order), "   ") 
+	tips_in_order_1 <- tips_family_orders$name[which(tips_family_orders$order == order)] # Selecting the tips which are in the selected order
+	cat("Number of tips in the order: ", length(tips_in_order_1), "   ") 
 
 	# Finding all the tips in the tree which are in the order
-	tips_in_order <- tips_in_order[which(tips_in_order %in% tree$tip.label)]
+	tips_in_order <- tips_in_order_1[which(tips_in_order_1 %in% tree$tip.label)]
 
 	#Counting the number of tips in the order which are in the tree
 	cat("Number of tips in the order which are in the tree: ", length(tips_in_order), "  \n")
@@ -287,6 +288,7 @@ for (i in seq_along(non_monophyletic_orders[[1]])) {
 	# finding the tips which are descendants of the MRCA and are not in the order
 	rogue_tips <- descendants[which(!descendants %in% tips_in_order)]
 	cat(" and the number of rogue tips is:", length(rogue_tips), "\n ")
+
 
 	cat("Checking if the number of rogue tips is smaller than 10 % of the number of tips in the order \n")
 	cat("and if the number of rogue tips is larger than 0 \n")
