@@ -69,7 +69,7 @@ cat("Loading the apgweb_parsed.csv file \n")
 apg <- fread(apg)
 
  # Loading tips families so I dont have to wait so fucking long..
-tips_families <- fread(paste0(output_path+"tips_families.txt"),)
+tips_families <- fread(paste0(output_path,"tips_families.txt"),)
 
 
 # Loading the list of non-monophyletic orders

@@ -37,7 +37,7 @@ println("Time to run infer_ClaDS: $time_infer seconds")
 time_save_output = @elapsed @save output_name output
 println("Time to save output: $time_save_output seconds")
 
-r_output = replace(output_name, r"\.jld2" => ".R")
+r_output = replace(output_name, r"\.jld2" => ".Rdata")
 
 # Also save the output to an R file
 save_ClaDS_in_R(output,  r_output)
