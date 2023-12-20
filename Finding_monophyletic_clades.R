@@ -288,8 +288,12 @@ for (i in seq_along(non_monophyletic_orders[[1]])) {
 	rogue_tips <- descendants[which(!descendants %in% tips_in_order)]
 	cat(" and the number of rogue tips is:", length(rogue_tips), "\n ")
 
-	cat(" is ( length(rogue_tips) <= (0.1 * length(tips_in_order)) & length(rogue_tips) > 0 )== TRUE \n")
-	print(length(rogue_tips) <= (0.1 * length(tips_in_order)) & length(rogue_tips) > 0)
+	cat("Checking if the number of rogue tips is smaller than 10 % of the number of tips in the order \n")
+	cat("and if the number of rogue tips is larger than 0 \n")
+	cat("length(rogue_tips) : ", length(rogue_tips), "\n")
+	cat("length(tips_in_order) : ", length(tips_in_order), "\n")
+	cat("length(rogue_tips) <= 0.1 * length(tips_in_order) : " ,length(rogue_tips) <= 0.1 * length(tips_in_order), " \n" )
+	cat("length(rogue_tips) > 0 : ", length(rogue_tips) > 0, "\n")
 
 	# If the number of rogue tips is smaller than 10 % of the number of tips in the order
 	if ( length(rogue_tips) <= (0.1 * length(tips_in_order)) & length(rogue_tips) > 0){
