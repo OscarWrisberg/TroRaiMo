@@ -33,14 +33,14 @@ invisible(lapply(packages, library, character.only = TRUE))
 ##################  Testing the code by runnin it on GDK through VScode and its built in terminal  ########################
 ###########################################################################################################################
 
-setwd("/home/au543206/GenomeDK/Trf_models/data") # Set working directory when local
-wcvp <- readRDS("../workflow/02_adding_orders/wcvp_names_apg_aligned.rds")  # Read the WCVP names file into a data frame
-tree <- read.tree("GBMB_pruned.tre") # Read the GBMB pruned tree
-output_path <- "../workflow/02_adding_orders/pruning/"
-apg <- fread("../TroRaiMo/apgweb_parsed.csv")
-tips_families <- fread(paste0(output_path+"tips_families.txt"))
-non_monophyletic_orders <- fread("../workflow/02_adding_orders/pruning/non_mono_order.txt", header = FALSE, sep = "\t")
-output_file <- "Orders_which_could_not_be_solved.txt"
+# setwd("/home/au543206/GenomeDK/Trf_models/data") # Set working directory when local
+# wcvp <- readRDS("../workflow/02_adding_orders/wcvp_names_apg_aligned.rds")  # Read the WCVP names file into a data frame
+# tree <- read.tree("GBMB_pruned.tre") # Read the GBMB pruned tree
+# output_path <- "../workflow/02_adding_orders/pruning/"
+# apg <- fread("../TroRaiMo/apgweb_parsed.csv")
+# tips_families <- fread(paste0(output_path,"tips_families.txt"))
+# non_monophyletic_orders <- fread("../workflow/02_adding_orders/pruning/non_mono_order.txt", header = FALSE, sep = "\t")
+# output_file <- "Orders_which_could_not_be_solved.txt"
 
 ###########################################################################################################################
 ############################# Getting command line file names for workflow ################################################
