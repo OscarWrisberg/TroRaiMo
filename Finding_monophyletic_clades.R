@@ -345,6 +345,9 @@ for (i in seq_along(non_monophyletic_orders[[1]])) {
 	# Finding all the tips in the tree which are in the order
 	tips_in_order <- tips_in_order[which(tips_in_order %in% tree$tip.label)]
 
+	#Counting the number of tips in the order which are in the tree
+	cat("Number of tips in the order which are in the tree: ", length(tips_in_order), "  \n")
+	
 	# Finding the MRCA of the tips in the order
 	MRCA <- getMRCA(tree, tips_in_order)
 
@@ -357,7 +360,7 @@ for (i in seq_along(non_monophyletic_orders[[1]])) {
 	cat(" and the number of rogue tips is:", length(rogue_tips), "\n ")
 
 	# If the number of rogue tips is smaller than 10 % of the number of tips in the order
-	if ( length(rogue_tips) <= 0.1 * length(tips_in_order) & length(rogue_tips) > 0){
+	if ( length(rogue_tips) <= (0.1 * length(tips_in_order)) & length(rogue_tips) > 0){
 		cat("The number of rogue tips is smaller than 10 % of the number of tips in the order \n")
 		cat("Pruning the rogue tips and extracting the order \n")
 		tree <- drop.tip(tree, tip = rogue_tips)
