@@ -21,12 +21,16 @@ println("Time to load JLD2: $time_load_jld2 seconds")
 
 # Fetching arguments
 path_to_tree = ARGS[1]
-sampling_freq = parse(Float64, ARGS[2])
+sampling_freq = ARGS[2]
 output_name = ARGS[3]
 
 # Measure the time to load the tree
 time_load_tree = @elapsed tree = load_tree(path_to_tree)
 println("Time to load the tree: $time_load_tree seconds")
+
+# Load the array of floats from the sampling_freq file
+sampling_freq = readdlm(sampling_freq)
+sampling_freq = float(sampling_freq)
 
 # Measure the time to run infer_ClaDS
 time_infer = @elapsed output = infer_ClaDS(tree, print_state = 100, f = sampling_freq)
