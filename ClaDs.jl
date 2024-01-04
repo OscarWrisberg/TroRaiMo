@@ -1,15 +1,8 @@
 using Pkg
 # Check if Tapestree and Distributed are installed
-if !haskey(Pkg.installed(), "PANDA") || !haskey(Pkg.installed(), "JLD2") || !haskey(Pkg.installed(), "DataFrames") || !haskey(Pkg.installed(), "DelimitedFiles") || !haskey(Pkg.installed(), "Base") 
+if !haskey(Pkg.installed(), "PANDA") || !haskey(Pkg.installed(), "JLD2") || !haskey(Pkg.installed(), "DataFrames") || !haskey(Pkg.installed(), "DelimitedFiles")
 	# Install Tapestree and Distributed
-	Pkg.add(["PANDA", "JLD2", "DataFrames", "DelimitedFiles", "Base"])
-else
-	# Load Tapestree and Distributed
-	using PANDA
-	using JLD2
-	using DataFrames
-	using DelimitedFiles
-	using Base
+	Pkg.add(["PANDA", "JLD2", "DataFrames", "DelimitedFiles"])
 end
 
 # Measure the time to load Pkg
@@ -21,9 +14,18 @@ time_load_panda = @elapsed using PANDA
 # Measure the time to load JLD2
 time_load_jld2 = @elapsed using JLD2
 
+# Measure the time to load DataFrames
+time_load_dataframes = @elapsed using DataFrames
+
+# Measure the time to load DelimitedFiles
+time_load_delimitedfiles = @elapsed using DelimitedFiles
+
 # Print the time to load the packages
 println("Time to load PANDA: $time_load_panda seconds")
 println("Time to load JLD2: $time_load_jld2 seconds")
+println("Time to load DataFrames: $time_load_dataframes seconds")
+println("Time to load DelimitedFiles: $time_load_delimitedfiles seconds")
+
 
 # Prepare some paths test script locally
 #path_to_tree = "/home/au543206/GenomeDK/Trf_models/workflow/02_adding_orders/pruning/orders/pruned_tree_order_Zingiberales_GBMB.tre"
