@@ -161,4 +161,4 @@ merged_data <- merge(tree_species, genera_in_order, by.x = "genus", by.y = "gene
 # Now I can select the species name and the sampling fraction columns and then I have the sampling fraction for each species in the tree
 sampling_fraction <- merged_data[,c("species", "sampling_freq")]
 
-write.table(sampling_fraction, file = paste0(path_out,order_in_question,"_sampling_fraction.txt", sep = "\t", row.names = FALSE))
+write.table(sampling_fraction, file = paste0(path_out,order_in_question,"_sampling_fraction.txt"), sep = "\t", row.names = FALSE))
