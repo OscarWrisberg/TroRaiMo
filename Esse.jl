@@ -3,6 +3,10 @@ if !haskey(Pkg.installed(), "Tapestree") || !haskey(Pkg.installed(), "Distribute
 	# Install Tapestree and Distributed
 	using Pkg
 	Pkg.add(["Tapestree", "Distributed"])
+else
+	# Load Tapestree and Distributed
+	using Tapestree
+	using Distributed
 end
 
 

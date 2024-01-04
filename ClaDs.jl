@@ -1,9 +1,16 @@
-# Loading packages
-using PANDA
-using JLD2
-using DelimitedFiles
-using Base
-using DataFrames
+# Check if Tapestree and Distributed are installed
+if !haskey(Pkg.installed(), "PANDA") || !haskey(Pkg.installed(), "JLD2") || !haskey(Pkg.installed(), "DataFrames") || !haskey(Pkg.installed(), "DelimitedFiles") || !haskey(Pkg.installed(), "Base") 
+	# Install Tapestree and Distributed
+	using Pkg
+	Pkg.add(["PANDA", "JLD2", "DataFrames", "DelimitedFiles", "Base"])
+else
+	# Load Tapestree and Distributed
+	using PANDA
+	using JLD2
+	using DataFrames
+	using DelimitedFiles
+	using Base
+end
 
 # Measure the time to load Pkg
 #time_load_pkg = @elapsed using Pkg
