@@ -1,6 +1,7 @@
 # Loading packages
 using PANDA
 using JLD2
+using DelimitedFiles
 
 # Measure the time to load Pkg
 #time_load_pkg = @elapsed using Pkg
@@ -47,20 +48,20 @@ save_ClaDS_in_R(output,  r_output)
 
 
 # Load the saved data
-cd("/home/au543206/GenomeDK/Trf_models/workflow/02_adding_orders/pruning/orders")
-@load "Clads_output_Zingiberales.jld2" output
+# cd("/home/au543206/GenomeDK/Trf_models/workflow/02_adding_orders/pruning/orders")
+# @load "Clads_output_Zingiberales.jld2" output
 
-plot_CladsOutput(output, method = "DTT")
+# plot_CladsOutput(output, method = "DTT")
 
-plot_CladsOutput(output)
+# plot_CladsOutput(output)
 
-plot_CladsOutput(output, method = "RTT")
+# plot_CladsOutput(output, method = "RTT")
 
-plot_CladsOutput(output, method = "density")
+# plot_CladsOutput(output, method = "density")
 
-plot_CladsOutput(output, method = "chain")
+# plot_CladsOutput(output, method = "chain")
 
-tip_rate(output,"Strelitzia_reginae" )
-tip_rate(output,"Etlingera_yunnanensis")
+# tip_rate(output,"Strelitzia_reginae" )
+# tip_rate(output,"Etlingera_yunnanensis")
 
-tip_labels(tree)
+# tip_labels(tree)
