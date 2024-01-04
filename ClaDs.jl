@@ -56,8 +56,8 @@ sampling_freq = sampling_freq[2:end,:] # Remove the first row with column names
 sampling_freq = DataFrame(sampling_freq, [:species, :frequency])
 name_list_tips = DataFrame(name_list_tips, [:species, :nr_in_tree])
 
-print0(sampling_freq)
-print0(name_list_tips)
+print(sampling_freq)
+print(name_list_tips)
 
 # Join the sampling_freq array with the name_list_tips array by matching the first column in each array.
 sampling_freq_joined = innerjoin(sampling_freq, name_list_tips, on = "species")
