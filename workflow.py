@@ -936,7 +936,7 @@ def sampling_frequency(input_file_tree, wcvp_file,path_out, output_file, path_in
 ##############################################################
 ###########---- Runnning simple ClaDs models  ----############
 ##############################################################
-def Clads(tree, done_file, path_in, output_file,wcvp_input, order, apg, script_dir, done_dir):
+def Clads(tree, done_file, path_in, output_file,wcvp_input, order, apg, script_dir, done_dir, sampling_frequency):
     """ """
     inputs = [path_in+tree,wcvp_input,apg,done_dir+"Finding_monophyletic_orders",done_dir+order+"_Sampling_fraction"]
     outputs = [done_dir+done_file, path_in+output_file]
@@ -954,29 +954,30 @@ def Clads(tree, done_file, path_in, output_file,wcvp_input, order, apg, script_d
 
     cd {path_in}
 
-    echo Starting the R script at:
-    date
+    # echo Starting the R script at:
+    # date
 
-    #Rscript --vanilla {script_dir}sampling_frequency.r {tree} {wcvp_input} {order} {apg} 
+    # #Rscript --vanilla {script_dir}sampling_frequency.r {tree} {wcvp_input} {order} {apg} 
 
-    sampling_frequency=$(Rscript --vanilla {script_dir}sampling_frequency.r {tree} {wcvp_input} {order} {apg} 2>/dev/null)
+    # sampling_frequency=$(Rscript --vanilla {script_dir}sampling_frequency.r {tree} {wcvp_input} {order} {apg} 2>/dev/null)
 
-    echo Sampling frequency is $sampling_frequency
+    # echo Sampling frequency is $sampling_frequency
 
-    echo Ended the R script at:
-    date
+    # echo Ended the R script at:
+    # date
 
     echo Starting the Julia script at:
     date
 
-    julia {script_dir}ClaDs.jl {path_in}{tree} $sampling_frequency {output_file}
+    julia {script_dir}ClaDs.jl {path_in}{tree} {sampling_frequency} {output_file}
 
     echo Ended the Clads script at:
     date
 
     touch {done_dir}{done_file}
 
-    '''.format(tree = tree, done_file = done_file, path_in = path_in, output_file = output_file, wcvp_input = wcvp_input, order = order, apg = apg, script_dir = script_dir, done_dir = done_dir)
+    '''.format(tree = tree, done_file = done_file, path_in = path_in, output_file = output_file, wcvp_input = wcvp_input, order = order,
+                apg = apg, script_dir = script_dir, done_dir = done_dir, sampling_frequency = sampling_frequency)
 
 
     return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
@@ -1306,7 +1307,8 @@ for i in range(len(orders)):
                                 path_in = workflow_dir+"02_adding_orders/pruning/orders/",
                                 output_file = "Clads_output_"+orders[i]+".jld2",
                                 script_dir=script_dir,
-                                done_dir = done_dir
+                                done_dir = done_dir,
+                                sampling_frequency= workflow_dir+"03_distribution_data/"+orders[i]+"_sampling_fraction.txt"
                              ))
 
     gwf.target_from_template(name = orders[i]+"_Esse",
