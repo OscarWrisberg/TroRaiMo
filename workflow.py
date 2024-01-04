@@ -888,11 +888,57 @@ def Finding_areas_in_wcvp(input_file_tree, wcvp_file,path_out, output_file, path
 
 
 ##############################################################
+#########---- Finding the sampling frequency  ----############
+##############################################################
+
+
+def sampling_frequency(input_file_tree, wcvp_file,path_out, output_file, path_in, order, script_dir, apg, done_dir, done):
+    """This function calculates the number of species sampled per genus in each subtree.
+    This is then used by the ClaDs model to get a better result on speciation"""
+    inputs = [done_dir+"Finding_monophyletic_orders"]
+    outputs = [path_out+output_file]
+    options = {
+        'cores': 2,
+        'memory': '10g',
+        'account':"Trf_models",
+        'walltime': "00:10:00"
+    }
+
+    spec = '''
+
+    #Checking if output dir exists
+    [ -d {path_out} ] && echo "{path_out} exist." || {{ echo "{path_out} does not exist."; mkdir {path_out}; }}
+
+    source /home/owrisberg/miniconda3/etc/profile.d/conda.sh
+    conda activate R_env
+
+    # Going to input folder
+    cd {path_in}
+
+    echo Starting the script to find the sampling frequency for the tips in the wcvp 
+    date
+
+    # Running the R script
+    Rscript --vanilla {script_dir}sampling_frequency.r {input_file_tree} {wcvp_file} {order} {apg} {path_out}
+
+
+    echo Ended the script to find sampling frequency for the tips in the wcvp
+    date
+
+    touch {done_dir}{done}
+
+    '''.format(path_out = path_out, output_file = output_file, wcvp_file = wcvp_file, order = order,
+     input_file_tree = input_file_tree, path_in = path_in, script_dir = script_dir, apg = apg, done_dir = done_dir, done = done)
+
+
+    return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
+
+##############################################################
 ###########---- Runnning simple ClaDs models  ----############
 ##############################################################
 def Clads(tree, done_file, path_in, output_file,wcvp_input, order, apg, script_dir, done_dir):
     """ """
-    inputs = [path_in+tree,wcvp_input,apg,done_dir+"Finding_monophyletic_orders"]
+    inputs = [path_in+tree,wcvp_input,apg,done_dir+"Finding_monophyletic_orders",done_dir+order+"_Sampling_fraction"]
     outputs = [done_dir+done_file, path_in+output_file]
     options = {
         'cores': 20,
@@ -1233,6 +1279,21 @@ for i in range(len(orders)):
                                 done_dir= done_dir,
                                 done= orders[i]+"_distribution_data"
                                 ))
+    
+    gwf.target_from_template(name = orders[i]+"_Sampling_fraction",
+                             template = sampling_frequency(
+                                    input_file_tree= order_trees[i],
+                                    path_in =  workflow_dir+"02_adding_orders/pruning/orders/",
+                                    path_out = workflow_dir+"03_distribution_data/",
+                                    output_file = orders[i]+"_sampling_fraction.txt",
+                                    wcvp_file = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds",
+                                    order = orders[i],
+                                    script_dir= script_dir,
+                                    apg = script_dir+"apgweb_parsed.csv",
+                                    done_dir= done_dir,
+                                    done= orders[i]+"_Sampling_fraction"
+    ))
+                             
 
 
     gwf.target_from_template(name = orders[i]+"_ClaDs",
@@ -1252,7 +1313,7 @@ for i in range(len(orders)):
                                 template= Esse(
                                 tree_file = order_trees[i],
                                 tip_states_file = workflow_dir+"03_distribution_data/"+orders[i]+"_distribution_data.txt",
-                                paleo_clim_file = workflow_dir+"03_distribution_data/paleoclim_area.csv",
+                                paleo_clim_file = data_dir+"paleoclim_area.csv",
                                 done = orders[i]+"_Esse",
                                 path_in = workflow_dir+"02_adding_orders/pruning/orders/",
                                 out_file = "Esse_output_"+orders[i]+".jld2",
