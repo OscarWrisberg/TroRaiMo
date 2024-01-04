@@ -48,16 +48,16 @@ name_list_tips = tip_labels(tree)
 # Replacing "_" with " " in each entry in name_list_tips
 name_list_tips = replace.(name_list_tips, "_" => " ")
 
-# Add a column to name_list_tips with the numbers 1 to 700.
-name_list_tips = hcat(name_list_tips, 1:700)
+# Add a column to name_list_tips with the numbers 1 to the number of tips in the tree.
+name_list_tips = hcat(name_list_tips, 1:n_tips(tree))
 
 # Converting to DataFrames
 sampling_freq = sampling_freq[2:end,:] # Remove the first row with column names
 sampling_freq = DataFrame(sampling_freq, [:species, :frequency])
 name_list_tips = DataFrame(name_list_tips, [:species, :nr_in_tree])
 
-sampling_freq
-name_list_tips
+print0(sampling_freq)
+print0(name_list_tips)
 
 # Join the sampling_freq array with the name_list_tips array by matching the first column in each array.
 sampling_freq_joined = innerjoin(sampling_freq, name_list_tips, on = "species")
