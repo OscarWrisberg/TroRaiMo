@@ -31,7 +31,7 @@ println("Time to load the tree: $time_load_tree seconds")
 
 # Load the array of floats from the sampling_freq file
 sampling_freq = readdlm(sampling_freq)
-sampling_freq = float(sampling_freq)
+sampling_freq = float.(sampling_freq)
 
 # Measure the time to run infer_ClaDS
 time_infer = @elapsed output = infer_ClaDS(tree, print_state = 100, f = sampling_freq)
