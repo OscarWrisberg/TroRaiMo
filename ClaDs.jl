@@ -1,7 +1,7 @@
+using Pkg
 # Check if Tapestree and Distributed are installed
 if !haskey(Pkg.installed(), "PANDA") || !haskey(Pkg.installed(), "JLD2") || !haskey(Pkg.installed(), "DataFrames") || !haskey(Pkg.installed(), "DelimitedFiles") || !haskey(Pkg.installed(), "Base") 
 	# Install Tapestree and Distributed
-	using Pkg
 	Pkg.add(["PANDA", "JLD2", "DataFrames", "DelimitedFiles", "Base"])
 else
 	# Load Tapestree and Distributed

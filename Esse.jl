@@ -1,7 +1,7 @@
+using Pkg
 # Check if Tapestree and Distributed are installed
 if !haskey(Pkg.installed(), "Tapestree") || !haskey(Pkg.installed(), "Distributed")
 	# Install Tapestree and Distributed
-	using Pkg
 	Pkg.add(["Tapestree", "Distributed"])
 else
 	# Load Tapestree and Distributed
