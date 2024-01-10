@@ -16,9 +16,9 @@ invisible(lapply(packages, library, character.only = TRUE))
 
 ##############################################################
 # Set variables for local testing
-setwd("/home/au543206/GenomeDK/Biome_estimation/workflow/06_taxonomy_match")
-occurences <- "../05_create_common_format/gbif_common_format.rds"
-input_file_taxonomy <- "../05_create_common_format/wcvp_names_apg_aligned.rds" 
+setwd("/home/au543206/GenomeDK/Trf_models/workflow/01_distribution_data/05_Taxon_match/")
+occurences_input <- "../04_common_format/gbif_common_format.rds"
+input_file_taxonomy <- "../04_common_format/wcvp_names_apg_aligned.rds" 
 renaming_file <- "gbif_taxon_matched.rds"
 output_file <- "gbif_renamed.rds"
 
@@ -26,7 +26,7 @@ output_file <- "gbif_renamed.rds"
 
 # # Command Line arguments for script
 # args <- commandArgs(trailingOnly = TRUE)
-# occurences <- as.character(args[1]) # here you define the name of your occurences file
+# occurences_input <- as.character(args[1]) # here you define the name of your occurences file
 # input_file_taxonomy <- as.character(args[2]) # here you define the name of your input file for taxonomy (i.e WCVP)
 # renaming_file <- as.character(args[3]) # Here you define the name of the file from the taxonomy matcher.
 # output_file <- as.character(args[3]) # Here you define the name of the output file
@@ -103,7 +103,20 @@ if (renaming_na > 0) {
 # Is it because these two accepted_plant_name_id is not the same ID?
 
 # Here I am renaming the names in the occurrences file using the renaming file.
-occurences$taxon_name[match(occurences$occurrence_species_name, renaming$occurrence_species_name)] <- renaming$accepted_plant_name_id_name
+# This is probably most easily done using the match function, but I somehow have to take into account that there are some names in the occurrences file which are not in the renaming file.
+head(occurences)
+
+# Find out which names in the occurrences file are not in the renaming file.
+occurences_not_in_renaming <- occurences[!occurences$accepted_plant_name_id %in% renaming$accepted_plant_name_id,]
+
+
+
+# Renaming the names in the occurrences file
+occurences$taxon_name[matched_indices_no_na] <- renaming$accepted_plant_name_id_name[matched_indices_no_na]
+
+# Removing the rows where there are no matches
+occurences_test <- occurences[!matched_indices_na,]
+head(occurences_test)
 
 # Doing some checks to see how much is recovered
 if(length(unique(occurences$taxon_name)) == length(unique(renaming$accepted_plant_name_id_name))){

@@ -942,7 +942,7 @@ def Clads(tree, done_file, path_in, output_file,wcvp_input, order, apg, script_d
     outputs = [done_dir+done_file, path_in+output_file]
     options = {
         'cores': 20,
-        'memory': '400g',
+        'memory': '600g',
         'account':"Trf_models",
         'walltime': "96:00:00"
     }

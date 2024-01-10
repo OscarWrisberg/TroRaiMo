@@ -1,14 +1,31 @@
+# Loading packages
+# Setting Cran mirror
+chooseCRANmirror(ind = 30)
+
+#Packages
+packages <- c("data.table","dplyr","tidyr")
+
+# Install packages not yet installed
+installed_packages <- packages %in% rownames(installed.packages())
+if (any(installed_packages == FALSE)) {
+  install.packages(packages[!installed_packages])
+}
+
+# Packages loading
+invisible(lapply(packages, library, character.only = TRUE))
+
+# Files for local testing
+# setwd("/home/au543206/GenomeDK/Trf_models/data/")
+# apg_in <- "/home/au543206/GenomeDK/Trf_models/TroRaiMo/apgweb_parsed.csv"
+# wcp_in <- "wcvp_names.csv"
+# output_file <- "wcvp_names_apg_aligned.rds"
+
 
 # Command Line arguments
 args <- commandArgs(trailingOnly = TRUE)
 apg_in <- as.character(args[1]) # here you define the name of your input file
 wcp_in <- as.character(args[2]) # here you define the name of your input file
 output_file <- as.character(args[3]) # Here you define the name of the output file
-
-
-# Loading packages
-library(data.table)
-library(dplyr)
 
 
 # Loading name files
@@ -60,13 +77,13 @@ unique(apg$Syn_Fam[!apg$Syn_Fam %in% wcp$family])
 wcp$family.apg <- apg$Acc_Fam[match(wcp$family, apg$Syn_Fam)]
 
 # Trying with a for loop instead of a match function.
-for(family in unique(wcp$family)){
-  if(family %in% apg$Syn_Fam){
-    wcp[which(wcp$family == family),]$family.apg <- apg[which(apg$Syn_Fam == family),]$Acc_Fam
-    cat("Family ", family, " has been updated to ", apg[which(apg$Syn_Fam == family),]$Acc_Fam, "\n")
-  }else{
-    cat("Family ", family, " is not in the apg file \n")  }
-}
+# for(family in unique(wcp$family)){
+#   if(family %in% apg$Syn_Fam){
+#     wcp[which(wcp$family == family),]$family.apg <- apg[which(apg$Syn_Fam == family),]$Acc_Fam
+#     cat("Family ", family, " has been updated to ", apg[which(apg$Syn_Fam == family),]$Acc_Fam, "\n")
+#   }else{
+#     cat("Family ", family, " is not in the apg file \n")  }
+# }
 
 #Why is there some NA's in the family.apg column?
 # There should'nt be any NA's in the family.apg column.
