@@ -1272,7 +1272,7 @@ for i in range(len(orders)):
     
     gwf.target_from_template(name = orders[i]+"_distribution_data.",
                                 template=Finding_areas_in_wcvp(
-                                input_file_tree= order_trees[i],
+                                input_file_tree= "pruned_tree_order_"+orders[i]+"_GBMB.tre",
                                 path_in =  workflow_dir+"02_adding_orders/pruning/orders/",
                                 path_out = workflow_dir+"03_distribution_data/",
                                 output_file = orders[i]+"_distribution_data.txt",
