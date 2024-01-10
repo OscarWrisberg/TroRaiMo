@@ -1255,7 +1255,7 @@ orders = ["Apiales","Arecales","Fabales","Ranunculales","Asparagales","Austrobai
           "Gnetales","Sapindales","Brassicales","Buxales","Gunnerales","Solanales","Caryophyllales","Canellales","Huerteales","Trochodendrales","Cornales","Celastrales","Magnoliales","Vahliales",
           "Fagales","Ceratophyllales","Malpighiales","Gentianales","Chloranthales","Malvales","Vitales","Geraniales","Commelinales","Myrtales","Icacinales","Crossosomatales","Nymphaeales","Zingiberales",
           "Lamiales","Cucurbitales","Pandanales","Laurales","Cupressales","Paracryphiales","Zygophyllales","Liliales","Cycadales","Petrosaviales","Oxalidales","Metteniusales","Dilleniales","Picramniales",
-          "Proteales","Alismatales","Dioscoreales","Pinales","Saxifragales","Amborellales","Dipsacales","Piperales","Aquifoliales","Ericales","Poales","Escalloniales","Polypodiales-eupolypodI"]
+          "Proteales","Alismatales","Dioscoreales","Pinales","Saxifragales","Amborellales","Dipsacales","Piperales","Aquifoliales","Ericales","Poales","Escalloniales"]
 
 
 # Orders that I need to remove or join with their sister order because they are too small in my tree. 
