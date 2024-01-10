@@ -1249,24 +1249,27 @@ order_trees=["pruned_tree_order_Alismatales_GBMB.tre", "pruned_tree_order_Crosso
 "pruned_tree_order_Commelinales_GBMB.tre", "pruned_tree_order_Gnetales_GBMB.tre", "pruned_tree_order_Piperales_GBMB.tre"
 ]
 
-orders=["Alismatales", "Crossosomatales", "Gunnerales", "Poales",
-"Amborellales", "Cucurbitales", "Huerteales",
-"Aquifoliales", "Cupressales", "Magnoliales", "Ranunculales",
-"Arecales", "Cycadales", "Malpighiales", "Rosales",
-"Austrobaileyales", "Dilleniales", "Malvales", "Santalales",
-"Berberidopsidales", "Dioscoreales", "Myrtales", "Sapindales",
-"Bruniales", "Dipsacales", "Nymphaeales", "Solanales",
-"Buxales", "Ericales", "Pandanales", "Trochodendrales",
-"Canellales", "Escalloniales", "Paracryphiales", "Vahliales",
-"Celastrales", "Fabales", "Petrosaviales", "Vitales",
-"Ceratophyllales", "Garryales", "Picramniales", "Zingiberales",
-"Chloranthales", "Ginkgoales", "Pinales", "Zygophyllales",
-"Commelinales", "Gnetales", "Piperales"
-]
+
+# Fixed it so it should now contain all orders.
+orders = ["Apiales","Arecales","Fabales","Ranunculales","Asparagales","Austrobaileyales","Garryales","Rosales","Asterales","Berberidopsidales","Ginkgoales","Santalales","Boraginales","Bruniales",
+          "Gnetales","Sapindales","Brassicales","Buxales","Gunnerales","Solanales","Caryophyllales","Canellales","Huerteales","Trochodendrales","Cornales","Celastrales","Magnoliales","Vahliales",
+          "Fagales","Ceratophyllales","Malpighiales","Gentianales","Chloranthales","Malvales","Vitales","Geraniales","Commelinales","Myrtales","Icacinales","Crossosomatales","Nymphaeales","Zingiberales",
+          "Lamiales","Cucurbitales","Pandanales","Laurales","Cupressales","Paracryphiales","Zygophyllales","Liliales","Cycadales","Petrosaviales","Oxalidales","Metteniusales","Dilleniales","Picramniales",
+          "Proteales","Alismatales","Dioscoreales","Pinales","Saxifragales","Amborellales","Dipsacales","Piperales","Aquifoliales","Ericales","Poales","Escalloniales","Polypodiales-eupolypodI"]
+
+
+# Orders that I need to remove or join with their sister order because they are too small in my tree. 
+# Amborellales
+# Trochodendrales
+# Vahliales # Could maybe join with Saxifragales
+# Petrosaviales # Could maybe join with Lili
+# Ceratophyllales
+# Ginkgoales
 
 
 for i in range(len(orders)):
 #Running the script to find the environmental data for the tips in the trees
+    
     gwf.target_from_template(name = orders[i]+"_distribution_data.",
                                 template=Finding_areas_in_wcvp(
                                 input_file_tree= order_trees[i],
