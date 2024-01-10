@@ -1302,7 +1302,7 @@ for i in range(len(orders)):
 
     gwf.target_from_template(name = orders[i]+"_ClaDs",
                                 template= Clads(
-                                input_file_tree= "pruned_tree_order_"+orders[i]+"_GBMB.tre",
+                                tree= "pruned_tree_order_"+orders[i]+"_GBMB.tre",
                                 wcvp_input = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds",
                                 order = orders[i],
                                 apg = script_dir+"apgweb_parsed.csv",
@@ -1315,8 +1315,8 @@ for i in range(len(orders)):
                              ))
 
     gwf.target_from_template(name = orders[i]+"_Esse",
-                                template= Esse(
-                                input_file_tree= "pruned_tree_order_"+orders[i]+"_GBMB.tre",
+                                template = Esse(
+                                tree_file = "pruned_tree_order_"+orders[i]+"_GBMB.tre",
                                 tip_states_file = workflow_dir+"03_distribution_data/"+orders[i]+"_distribution_data.txt",
                                 paleo_clim_file = data_dir+"paleoclim_area.csv",
                                 done = orders[i]+"_Esse",
