@@ -1251,11 +1251,12 @@ order_trees=["pruned_tree_order_Alismatales_GBMB.tre", "pruned_tree_order_Crosso
 
 
 # Fixed it so it should now contain all orders.
-orders = ["Apiales","Arecales","Fabales","Ranunculales","Asparagales","Austrobaileyales","Garryales","Rosales","Asterales","Berberidopsidales","Ginkgoales","Santalales","Boraginales","Bruniales",
-          "Gnetales","Sapindales","Brassicales","Buxales","Gunnerales","Solanales","Caryophyllales","Canellales","Huerteales","Trochodendrales","Cornales","Celastrales","Magnoliales","Vahliales",
-          "Fagales","Ceratophyllales","Malpighiales","Gentianales","Chloranthales","Malvales","Vitales","Geraniales","Commelinales","Myrtales","Icacinales","Crossosomatales","Nymphaeales","Zingiberales",
-          "Lamiales","Cucurbitales","Pandanales","Laurales","Cupressales","Paracryphiales","Zygophyllales","Liliales","Cycadales","Petrosaviales","Oxalidales","Metteniusales","Dilleniales","Picramniales",
-          "Proteales","Alismatales","Dioscoreales","Pinales","Saxifragales","Amborellales","Dipsacales","Piperales","Aquifoliales","Ericales","Poales","Escalloniales"]
+orders = ["Alismatales", "Amborellales", "Aquifoliales", "Arecales", "Asparagales", "Asterales", "Berberidopsidales", "Boraginales", "Brassicales", "Bruniales", "Buxales", "Canellales", "Caryophyllales",
+"Celastrales", "Chloranthales", "Commelinales", "Cornales", "Crossosomatales", "Cucurbitales", "Cupressales", "Dilleniales", "Dioscoreales", "Ericales", "Escalloniales", "Fabales", "Fagales",
+"Gentianales", "Geraniales", "Ginkgoales", "Gnetales", "Gunnerales", "Huerteales", "Icacinales", "Lamiales", "Laurales", "Liliales", "Magnoliales", "Malpighiales", "Malvales", "Metteniusales",
+"Myrtales", "Nymphaeales", "Oxalidales", "Pandanales", "Paracryphiales", "Petrosaviales", "Pinales", "Piperales", "Poales", "Proteales", "Ranunculales", "Rosales", "Santalales", "Sapindales",
+"Saxifragales", "Solanales", "Trochodendrales", "Vahliales", "Vitales", "Zingiberales", "Zygophyllales"
+]
 
 
 # Orders that I need to remove or join with their sister order because they are too small in my tree. 
