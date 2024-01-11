@@ -580,7 +580,7 @@ def taxon_match(input_file, output_file, path_in, script_dir, path_out, wcvp, do
 ######################---- Taxon renamer ----######################
 ###################################################################
 
-def Renamer(input_file, output_file, path_in, script_dir, path_out, wcvp, renaming_file, done  , done_dir):
+def Renamer(input_file, output_file, path_in, script_dir, path_out, wcvp, renaming_file, done, done_dir, raw_occurrences):
     """This function renames all the species names in the GBIF datafile based on the taxon matcher.
     This should be done by looping through the GBIF data and looking up each species in the taxon matcher file.
     The name in the taxon matcher file would then be used to find the accepted_plant_name_id in the WCVP file.
@@ -589,7 +589,7 @@ def Renamer(input_file, output_file, path_in, script_dir, path_out, wcvp, renami
     outputs = [path_out+output_file,done_dir+done]
     options = {
         'cores': 5,
-        'memory': '10g',
+        'memory': '100g',
         'account':"Trf_models",
         'walltime': "01:00:00"
     }
@@ -603,14 +603,16 @@ def Renamer(input_file, output_file, path_in, script_dir, path_out, wcvp, renami
 
     cd {path_in}
 
-    Rscript --vanilla {script_dir}renaming.r {input_file} {wcvp} {renaming_file} {output_file}
+    Rscript --vanilla {script_dir}renaming.r {input_file} {wcvp} {renaming_file} {output_file} {raw_occurrences}
 
 
     mv {output_file} {path_out}
 
     touch {done_dir}{done}
 
-    '''.format(input_file=input_file, output_file=output_file, path_in = path_in, script_dir = script_dir, path_out = path_out, wcvp = wcvp, renaming_file = renaming_file, done = done, done_dir = done_dir)
+    '''.format(input_file=input_file, output_file=output_file, path_in = path_in, script_dir = script_dir,
+                path_out = path_out, wcvp = wcvp, renaming_file = renaming_file, done = done,
+                done_dir = done_dir, raw_occurrences = raw_occurrences)
 
     return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
 
@@ -1138,7 +1140,8 @@ gwf.target_from_template(name = "Renaming",
                                     script_dir = script_dir,
                                     path_out = workflow_dir+"01_distribution_data/06_Renamed",
                                     done = "Renaming",
-                                    done_dir = done_dir
+                                    done_dir = done_dir,
+                                    raw_occurrences=workflow_dir+"01_distribution_data/02_data_parsing/gbif_parsed.rds"
                                 ))
 ################################################################################################################################
 ##########################------- Starting on the paleoclim data -------########################################################
