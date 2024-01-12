@@ -30,9 +30,8 @@ paleo_clim_folder <- data_dir
 
 # Part for loading the paleo_clim data on a local machine.
 # paleo_clim_folder <- "/home/au543206/GenomeDK/Trf_models/data/paleo_clim/" # You have to edit this yourself to the folder where the paleo_clim data is stored
-# paleo_clim_folder <- data_dir
 # output <- "paleoclim_area.csv"
-# setwd(paleo_clim_folder)
+setwd(paleo_clim_folder)
 
 # Here I list the order of the paleo_clim files
 paleo_clim_order <- c(
@@ -88,7 +87,7 @@ for (i in seq_along(paleo_clim_order)){
 
 	# Calculate the total area of the cells that are defined as tropical and others
 	total_area_rainforest <- sum(paleo_file[paleo_file$koppen == 12 | paleo_file$koppen == 13]$area)
-	total_area_other <- sum(paleo_file[paleo_file$koppen != 12 | paleo_file$koppen != 13]$area)
+	total_area_other <- sum(paleo_file[paleo_file$koppen != 12 & paleo_file$koppen != 13]$area) 
 	
 	# I think this is fine for now
 	# Add the vars to the time_series_data data frame

@@ -1,6 +1,6 @@
 using Pkg
 # Check if Tapestree and Distributed are installed
-if !haskey(Pkg.installed(), "PANDA") || !haskey(Pkg.installed(), "JLD2") || !haskey(Pkg.installed(), "DataFrames") || !haskey(Pkg.installed(), "DelimitedFiles")
+if !haskey(Pkg.installed(), "PANDA") || !haskey(Pkg.installed(), "JLD2") || !haskey(Pkg.installed(), "DataFrames") || !haskey(Pkg.installed(), "DelimitedFiles") || !haskey(Pkg.installed(), "Distributed")
 	# Install Tapestree and Distributed
 	Pkg.add(["PANDA", "JLD2", "DataFrames", "DelimitedFiles"])
 end
@@ -36,6 +36,13 @@ println("Time to load DelimitedFiles: $time_load_delimitedfiles seconds")
 path_to_tree = ARGS[1]
 sampling_freq_file = ARGS[2]
 output_name = ARGS[3]
+processors = parse(Int, ARGS[4])
+
+# The first argument is the number of processors available to the Tapestree
+# Load Tapestree and Distributed
+using Distributed
+addprocs(processors)
+@everywhere using PANDA
 
 # Measure the time to load the tree
 time_load_tree = @elapsed tree = load_tree(path_to_tree)
