@@ -1,6 +1,6 @@
 using Pkg
 # Check if Tapestree and Distributed are installed
-if !haskey(Pkg.installed(), "PANDA") || !haskey(Pkg.installed(), "JLD2") || !haskey(Pkg.installed(), "DataFrames") || !haskey(Pkg.installed(), "DelimitedFiles") || !haskey(Pkg.installed(), "Distributed")
+if !haskey(Pkg.installed(), "PANDA") || !haskey(Pkg.installed(), "JLD2") || !haskey(Pkg.installed(), "DataFrames") || !haskey(Pkg.installed(), "DelimitedFiles")
 	# Install Tapestree and Distributed
 	Pkg.add(["PANDA", "JLD2", "DataFrames", "DelimitedFiles"])
 end
@@ -28,21 +28,15 @@ println("Time to load DelimitedFiles: $time_load_delimitedfiles seconds")
 
 
 # Prepare some paths test script locally
-#path_to_tree = "/home/au543206/GenomeDK/Trf_models/workflow/02_adding_orders/pruning/orders/pruned_tree_order_Zingiberales_GBMB.tre"
-#sampling_freq_file = "/home/au543206/GenomeDK/Trf_models/workflow/03_distribution_data/Zingiberales_sampling_fraction.txt"
-# output_name = "test_output.jld2"
+path_to_tree = "/home/au543206/GenomeDK/Trf_models/workflow/02_adding_orders/pruning/orders/pruned_tree_order_Zingiberales_GBMB.tre"
+sampling_freq_file = "/home/au543206/GenomeDK/Trf_models/workflow/03_distribution_data/Zingiberales_sampling_fraction.txt"
+output_name = "test_output.jld2"
+
 
 # Fetching arguments
 path_to_tree = ARGS[1]
 sampling_freq_file = ARGS[2]
 output_name = ARGS[3]
-processors = parse(Int, ARGS[4])
-
-# The first argument is the number of processors available to the Tapestree
-# Load Tapestree and Distributed
-using Distributed
-addprocs(processors)
-@everywhere using PANDA
 
 # Measure the time to load the tree
 time_load_tree = @elapsed tree = load_tree(path_to_tree)
@@ -64,7 +58,7 @@ sampling_freq = DataFrame(sampling_freq, [:species, :frequency])
 name_list_tips = DataFrame(name_list_tips, [:species, :nr_in_tree])
 
 println(sampling_freq)
-println(name_list_tips)
+#println(name_list_tips)
 
 # Join the sampling_freq array with the name_list_tips array by matching the first column in each array.
 sampling_freq_joined = innerjoin(sampling_freq, name_list_tips, on = "species")

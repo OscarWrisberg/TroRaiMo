@@ -42,7 +42,7 @@ out = joinpath(out_file)
 
 
 esse(tree, out, hidden_states, envdata_file = paleo_data, 
-  states_file = tip_states, out_states = out_states, cov_mod = ("s",))
+  states_file = tip_states, out_states = out_states, cov_mod = ("s",), parallel = true)
 
 
 # Saving the output in a JLD2 file.

@@ -943,10 +943,10 @@ def Clads(tree, done_file, path_in, output_file,wcvp_input, order, apg, script_d
     inputs = [path_in+tree,wcvp_input,apg,done_dir+"Finding_monophyletic_orders",done_dir+order+"_Sampling_fraction"]
     outputs = [done_dir+done_file, path_in+output_file]
     options = {
-        'cores': 20,
-        'memory': '600g',
+        'cores': 1,
+        'memory': '2500g',
         'account':"Trf_models",
-        'walltime': "96:00:00"
+        'walltime': "120:00:00"
     }
 
     spec = '''
@@ -961,7 +961,7 @@ def Clads(tree, done_file, path_in, output_file,wcvp_input, order, apg, script_d
 
     # #Rscript --vanilla {script_dir}sampling_frequency.r {tree} {wcvp_input} {order} {apg} 
 
-    # sampling_frequency=$(Rscript --vanilla {script_dir}sampling_frequency.r {tree} {wcvp_input} {order} {apg} 2>/dev/null)
+    # sampling_frequency=$(Rscript --vanilla {script_dir}sampling_frequency.r {tree} {wcvp_input} {order} {apg}
 
     # echo Sampling frequency is $sampling_frequency
 

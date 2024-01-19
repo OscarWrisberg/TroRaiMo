@@ -17,12 +17,13 @@ invisible(lapply(packages, library, character.only = TRUE))
 ##############################################################
 # Set variables for local testing
 # setwd("/home/au543206/GenomeDK/Trf_models/workflow/01_distribution_data/05_Taxon_match/") # local
-# setwd("/home/owrisberg/Trf_models/workflow/01_distribution_data/05_Taxon_match") # srun
-# occurences_input <- "../04_common_format/gbif_common_format.rds"
-# input_file_taxonomy <- "../04_common_format/wcvp_names_apg_aligned.rds" 
-# renaming_file <- "gbif_taxon_matched.rds"
-# output_file <- "gbif_renamed.rds"
-# raw_occurences <- readRDS("/home/owrisberg/Trf_models/workflow/01_distribution_data/02_data_parsing/gbif_parsed.rds") # srun 
+setwd("/home/owrisberg/Trf_models/workflow/01_distribution_data/05_Taxon_match") # srun
+occurences_input <- "../04_common_format/gbif_common_format.rds"
+input_file_taxonomy <- "../04_common_format/wcvp_names_apg_aligned.rds" 
+renaming_file <- "gbif_taxon_matched.rds"
+output_file <- "gbif_renamed.rds"
+raw_occurences_file <- "/home/owrisberg/Trf_models/workflow/01_distribution_data/02_data_parsing/gbif_parsed.rds" # srun 
+
 ##############################################################
 
 # # Command Line arguments for script
@@ -31,7 +32,7 @@ occurences_input <- as.character(args[1]) # here you define the name of your occ
 input_file_taxonomy <- as.character(args[2]) # here you define the name of your input file for taxonomy (i.e WCVP)
 renaming_file <- as.character(args[3]) # Here you define the name of the file from the taxonomy matcher.
 output_file <- as.character(args[4]) # Here you define the name of the output file
-raw_occurences <- as.character(args[5]) # Here you define the name of the raw occurences file
+raw_occurences_file <- as.character(args[5]) # Here you define the name of the raw occurences file
 
 ###############################################################
 # Load the taxonomic data from wcvp
@@ -42,6 +43,9 @@ renaming <- readRDS(renaming_file)
 
 # Load the occurences file
 occurences <- readRDS(occurences_input)
+
+# Loading the raw occurrences file
+raw_occurences <- readRDS(raw_occurences_file)
 
 # Appending the name of the species which is pointed to by the accepted_plant_name_id column in the renaming file from wcvp.
 renaming$accepted_plant_name_id_name <- taxonomy$taxon_name[match(renaming$accepted_plant_name_id, taxonomy$plant_name_id)]
@@ -148,6 +152,10 @@ cat("Appending the names from the renaming file to the raw_occurences file \n")
 cat("Unfurtunately there are some names in the raw_occurences file which are not found in the renaming file \n")
 cat("The reason for this is that these names are not accepted in the GBIF taxonomy and the taxonomy look up on GBIF did not return any valid names for me to match to the WCVP taxonomy \n")
 cat("These names can be found in the file bad_names.rds \n")
+
+# Saving the bad names
+bad_names <- raw_occurences[!raw_occurences$species %in% occurences_no_na$occurrence_species_name,]
+write.table(bad_names, file = "bad_names.txt", sep = "\t", row.names = FALSE)
 
 ## Removing occurrences from raw_occurences that do not have a species name found in the occurrences_no_na file
 raw_occurences_no_na <- raw_occurences[raw_occurences$species %in% occurences_no_na$occurrence_species_name,]

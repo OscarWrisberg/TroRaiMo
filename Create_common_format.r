@@ -53,7 +53,7 @@ taxonomy_dat <- sapply(taxonomy, "[[", "data")
 ## removing lines that do not include all required columns
 cat("Removing lines which do not include all the required columns \n")
 cols <- c("key", # gbifID
-          "scientificName", # scientificName
+          "scientificName", # scientificName If I remove the species 
           "authorship", # authorship
           "taxonomicStatus", #taxonomicStatus
           "rank", # taxonRank ?

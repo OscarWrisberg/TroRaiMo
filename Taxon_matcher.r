@@ -7,20 +7,31 @@
 #################### Settings for local testing of the script #####################
 ###################################################################################
 
-# setting the wd
-# setwd("/home/au543206/GenomeDK/Biome_estimation/workflow/05_create_common_format") # Mounted drive
-# setwd("/home/owrisberg/Biome_estimation/workflow/05_create_common_format") # Drive when using SRUN
-
-# input_file <- "gbif_common_format.rds"
-# wcvp_input_file <- "wcvp_names_apg_aligned.rds"
-# output_file <- "gbif_taxon_matched.rds"
+###setting the wd
+setwd("/home/au543206/GenomeDK/Trf_models/workflow/01_distribution_data/04_common_format")
+input_file <- "gbif_common_format.rds"
+wcvp_input_file <- "wcvp_names_apg_aligned.rds"
+output_file <- "gbif_taxon_matched.rds"
 
 ###################################################################################
 ###################################################################################
 
-library(tidyr)
-library(data.table)
-library(dplyr)
+# Loading packages
+# Setting Cran mirror
+chooseCRANmirror(ind = 30)
+
+#Packages
+packages <- c("data.table","dplyr","tidyr")
+
+# Install packages not yet installed
+installed_packages <- packages %in% rownames(installed.packages())
+if (any(installed_packages == FALSE)) {
+  install.packages(packages[!installed_packages])
+}
+
+# Packages loading
+invisible(lapply(packages, library, character.only = TRUE))
+#####################################################################################
 
 DB.name="GBIF"
 
@@ -80,8 +91,7 @@ if (DB.name == "GBIF") {
   input <- readRDS(input_file)
   cat("Finished reading GBIF inputfile at: ", format(Sys.time(), "%H:%M:%S"), "\n")
 
-  # RENAMING
-  # remove old family field # do this only if you have used the APG4 family lookup, otherwise we just rename the column
+  # RENAMING family column
   input$family.apg <- input$family
   input <- input %>%
     dplyr::select(-family)
@@ -120,10 +130,11 @@ if (DB.name == "GBIF") {
 
 # Merging occurrences and WCVP
 # This is SUPER important as this is deemed a strict match if the fields match
+# Why does it result in all the accepted_plant_name_id's being NA, apparantly because there are no matching columns...
 res <- merge(dataset, wc_all_sub, all.x = TRUE,
-             by=c("taxon_rank",
-                 "family.apg", 
+             by=c("taxon_rank", 
                  "genus",
+                 "family.apg",
                  "genus_hybrid",
                  "species",
                  "species_hybrid",
