@@ -848,13 +848,13 @@ def Forcing_orders(input_file_tree, output_file, path_in,path_out, script_dir, w
 ##########################################################################################################################################################################################
 ##########################################################################################################################################################################################
 
-def Finding_areas_in_wcvp(input_file_tree, wcvp_file,path_out, output_file, path_in, order, script_dir, apg, done_dir, done):
+def Finding_areas_in_wcvp(input_file_tree, wcvp_file,path_out, output_file, path_in, order, script_dir, apg, done_dir, done, renamed_occurrences, koppen_biome):
     """This Function creates a states file for the tips in WCVP based on the climate column."""
-    inputs = [done_dir+"Finding_monophyletic_orders"]
+    inputs = [done_dir+"Finding_monophyletic_orders", renamed_occurrences]
     outputs = [path_out+output_file]
     options = {
         'cores': 2,
-        'memory': '10g',
+        'memory': '100g',
         'account':"Trf_models",
         'walltime': "00:10:00"
     }
@@ -874,7 +874,7 @@ def Finding_areas_in_wcvp(input_file_tree, wcvp_file,path_out, output_file, path
     date
 
     # Running the R script
-    Rscript --vanilla {script_dir}wcvp_states.r {input_file_tree} {output_file} {wcvp_file} {path_out} {order} {apg}
+    Rscript --vanilla {script_dir}wcvp_states.r {input_file_tree} {output_file} {wcvp_file} {path_out} {order} {apg} {renamed_occurrences} {koppen_biome}
 
 
     echo Ended the script to find state data for the tips in the wcvp
@@ -883,7 +883,8 @@ def Finding_areas_in_wcvp(input_file_tree, wcvp_file,path_out, output_file, path
     touch {done_dir}{done}
 
     '''.format(path_out = path_out, output_file = output_file, wcvp_file = wcvp_file, order = order,
-     input_file_tree = input_file_tree, path_in = path_in, script_dir = script_dir, apg = apg, done_dir = done_dir, done = done)
+     input_file_tree = input_file_tree, path_in = path_in, script_dir = script_dir, apg = apg, done_dir = done_dir, done = done,
+     renamed_occurrences = renamed_occurrences, koppen_biome = koppen_biome)
 
 
     return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
@@ -1285,9 +1286,13 @@ for i in range(len(orders)):
                                 script_dir= script_dir,
                                 apg = script_dir+"apgweb_parsed.csv",
                                 done_dir= done_dir,
-                                done= orders[i]+"_distribution_data"
+                                done= orders[i]+"_distribution_data",
+                                renamed_occurrences = workflow_dir+"01_distribution_data/06_Renamed/gbif_renamed.rds", 
+                                koppen_biome = script_dir+"koppen_geiger_0p01.tif"
                                 ))
     
+
+
     gwf.target_from_template(name = orders[i]+"_Sampling_fraction",
                              template = sampling_frequency(
                                     input_file_tree= "pruned_tree_order_"+orders[i]+"_GBMB.tre",

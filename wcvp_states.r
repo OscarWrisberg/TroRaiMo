@@ -5,7 +5,7 @@
 chooseCRANmirror(ind = 30)
 
 #Packages
-packages <- c("data.table", "ape", "phytools", "geiger", "castor", "MonoPhy", "terra", "dplyr", "ggplot2")
+packages <- c("data.table", "ape", "phytools", "geiger", "castor", "MonoPhy", "terra", "dplyr", "ggplot2", "sp","sf")
 
 # Install packages not yet installed
 installed_packages <- packages %in% rownames(installed.packages())
@@ -15,33 +15,34 @@ if (any(installed_packages == FALSE)) {
 
 # Packages loading
 invisible(lapply(packages, library, character.only = TRUE))
+
 ################################################################################################################################################
 #######################################################-- Local testing --######################################################################
 ################################################################################################################################################
 
-setwd("/home/owrisberg/Trf_models/workflow/02_adding_orders/pruning/orders") # srun
-input_file_tree <- "pruned_tree_order_Arecales_GBMB.tre"
-output <- "Test_arecales.txt"
-input_file_wcvp <- "/home/owrisberg/Trf_models/workflow/02_adding_orders/wcvp_names_apg_aligned.rds" #srun
-path_out <- "/home/owrisberg/Trf_models/workflow/03_distribution_data/" #srun
-order_in_question <- as.character("Arecales")
-apg  <- "../../../../TroRaiMo/apgweb_parsed.csv"
-renamed_occurence_file <- "/home/owrisberg/Trf_models/workflow/01_distribution_data/05_Taxon_match/gbif_renamed.rds" #srun
-koppen_biome_file <- "../../../../TroRaiMo/koppen_geiger_0p01.tif" #srun
+# setwd("/home/owrisberg/Trf_models/workflow/02_adding_orders/pruning/orders") # srun
+# input_file_tree <- "pruned_tree_order_Arecales_GBMB.tre"
+# output <- "Test_arecales.txt"
+# input_file_wcvp <- "/home/owrisberg/Trf_models/workflow/02_adding_orders/wcvp_names_apg_aligned.rds" #srun
+# path_out <- "/home/owrisberg/Trf_models/workflow/03_distribution_data/" #srun
+# order_in_question <- as.character("Arecales")
+# apg  <- "../../../../TroRaiMo/apgweb_parsed.csv"
+# renamed_occurence_file <- "/home/owrisberg/Trf_models/workflow/01_distribution_data/06_Renamed/gbif_renamed.rds" #srun
+# koppen_biome_file <- "../../../../TroRaiMo/koppen_geiger_0p01.tif" #srun
 
 ################################################################################################################################################
 ##############################################-- Handling Command Line arguments --#############################################################
 ################################################################################################################################################
 
 # Command line arguments
-# input_file_tree <- commandArgs(trailingOnly = TRUE)[1]
-# output <- commandArgs(trailingOnly = TRUE)[2]
-# input_file_wcvp <- commandArgs(trailingOnly = TRUE)[3]
-# path_out <- commandArgs(trailingOnly = TRUE)[4]
-# order_in_question <- commandArgs(trailingOnly = TRUE)[5]
-# apg <- commandArgs(trailingOnly = TRUE)[6]
-# renamed_occurence <- commandArgs(trailingOnly = TRUE)[7]
-# koppen_biome <- commandArgs(trailingOnly = TRUE)[8]
+input_file_tree <- commandArgs(trailingOnly = TRUE)[1]
+output <- commandArgs(trailingOnly = TRUE)[2]
+input_file_wcvp <- commandArgs(trailingOnly = TRUE)[3]
+path_out <- commandArgs(trailingOnly = TRUE)[4]
+order_in_question <- commandArgs(trailingOnly = TRUE)[5]
+apg <- commandArgs(trailingOnly = TRUE)[6]
+renamed_occurence <- commandArgs(trailingOnly = TRUE)[7]
+koppen_biome <- commandArgs(trailingOnly = TRUE)[8]
 
 # Print the command line arguments
 cat("The input file for the tree is ", input_file_tree, "\n")
@@ -130,75 +131,52 @@ print(wcvp_accepted_species_orders_subset)
 # Subset the renamed_occurence dataset to only include the species in the tree
 cat("Subsetting the renamed_occurence dataset to only include the species in the tree \n\n")
 renamed_occurence_subset <- renamed_occurence[which(renamed_occurence$wcvp_taxon_name %in% tree$tip.label),]
+dim(renamed_occurence_subset) 
 
+#Remove occurences with NA in decimalLatitude or decimalLongitude
+cat("Removing occurences with NA in decimalLatitude or decimalLongitude \n\n")
+renamed_occurence_subset <- renamed_occurence_subset[which(!is.na(renamed_occurence_subset$decimalLatitude) & !is.na(renamed_occurence_subset$decimalLongitude)),]
+dim(renamed_occurence_subset) # 76483
+
+# How many of the species in the tree are found in the renamed_occurence_subset
+cat("Out of ",length(tree$tip.label),"tips in the tree there are ",length(tree$tip.label[which(tree$tip.label %in% renamed_occurence_subset$wcvp_taxon_name)]),"of the species in the tree are found in the renamed_occurence_subset \n\n")
 
 # Loading the Koppen biomes data
 cat("Loading the Koppen biomes data \n\n")
 koppen_biome_map <- rast(koppen_biome_file)
 
-# Add a new column to the csv file which is Tropical rainforest or not.
-cat("Adding a new column to the csv file which is Tropical rainforest or not \n\n")
-koppen_biome_map_tropical_rainforest <- ifel(koppen_biome_map == 1 | koppen_biome_map == 2, 1, 0)
-
-
-# Converting the latitudes and longitudes of the occurrences to spatial points
-cat("Converting the latitudes and longitudes to spatial points \n\n")
-coordinates <- c("decimalLongitude", "decimalLatitude")
-
-# Create a SpatVector object and defining crs
-spatial_points <- vect(renamed_occurence_subset, geom = coordinates)
-crs(spatial_points) <- "+proj=longlat +datum=WGS84"
-
-# Extracting the koppen biomes for each of the occurences
-cat("Extracting the koppen biomes for each of the occurences \n\n")
-extracted_biomes <- extract(koppen_biome_map_tropical_rainforest, spatial_points)
-renamed_occurence_subset$koppen_biome <- extracted_biomes
-
-# Counting the number of occurrences in each biome per species
-cat("Counting the number of occurrences in each biome per species \n\n")
-biome_count <- renamed_occurence_subset[, .(count = .N), by = .(wcvp_taxon_name, koppen_biome)]
-
-points_df <- as.data.frame(spatial_points)
-
-# Create a ggplot using the raster data
-plot1 <- ggplot() +
-  geom_raster(data = terra::vect(koppen_biome_map_tropical_rainforest), aes(x = x, y = y, fill = layer)) +
-  
-  # Add spatial points
-  geom_point(data = points_df, aes(x = x, y = y), color = "red", size = 3) +
-  
-  # Customize plot appearance
-  scale_fill_gradient(low = "white", high = "blue") +  # Adjust color scale for raster
-  theme_minimal()
-
-pdf("koppen_biome_map.pdf")
-plot(koppen_biome_map_tropical_rainforest)
-plot(spatial_points, col="red", pch=16, cex=0.5)
-dev.off()
-
-# pdf("spatial_points.pdf")
-# plot(spatial_points, col="red", pch=16, cex=1)
-# dev.off()
-
-
-if (all(tree$tip.label %in% renamed_occurence_subset$wcvp_taxon_name)) {
-  
-# THings that I probably need to do in this step:
-# Convert the latitudes and longitudes to spatial points.
-# check for "bad" spatial points IE. points that are not on land. ( could potentially use a R package for this)
-# Calculate the number of occurrences falling inside biomes 12 and 13 (tropical rainforest) and the number of occurrences falling outside biomes 12 and 13 (not tropical rainforest).
-# Calculate the proportion of occurrences falling inside biomes 12 and 13 (tropical rainforest) and the proportion of occurrences falling outside biomes 12 and 13 (not tropical rainforest).
-# This could then be used to create some different files with the in which we have the presence-absence of the species in the different biomes.
-  # We would make this presence absence file for several different cut-off points for the proportion of species occurrences needing to be in a biome in order for it to be registered as present.
-  # These cutoffs could be 0.1, 0.25
-
-  # Loading the Koppen biomes data
-  cat("Loading the Koppen biomes data \n\n")
-  koppen_biome_map <- read.csv(koppen_biome_file, sep = ",", header = TRUE)
+result_summary[which(result_summary$proportion_in_tropical_rainforest < 0.5),]
 
 
 
-} else {
+
+##################################################################################################################################################################
+##################################################################################################################################################################
+
+if (all(tree$tip.label %in% renamed_occurence_subset$wcvp_taxon_name)) { # If all the tip labels are found in the occurences use only them to create the presence absence matrix
+
+  # Add a new column to the csv file which is Tropical rainforest or not.
+  cat("Adding a new column to the csv file which is Tropical rainforest or not \n\n")
+  koppen_biome_map_tropical_rainforest <- ifel(koppen_biome_map == 1 | koppen_biome_map == 2, 1, 0)
+
+  # Extracting the biome for each of the occurrences
+  renamed_occurence_subset$in_tropical_rainforest <- terra::extract(koppen_biome_map_tropical_rainforest, renamed_occurence_subset[,c("decimalLongitude", "decimalLatitude")])[,2]
+
+  # Remove occurences with NA in in_tropical_rainforest
+  cat("Removing ", length(which(is.na(terra::extract(koppen_biome_map_tropical_rainforest, renamed_occurence_subset[,c("decimalLongitude", "decimalLatitude")])[,2]))) ," occurences with NA in in_tropical_rainforest \n\n")
+  renamed_occurence_subset <- renamed_occurence_subset[which(!is.na(renamed_occurence_subset$in_tropical_rainforest)),]
+
+  # Summarize the number of occurrences which are inside and outside the tropical rainforest
+  result_summary <- aggregate(renamed_occurence_subset$in_tropical_rainforest, by = list(renamed_occurence_subset$wcvp_taxon_name), FUN = function(x) c(sum(x == 1), sum(x == 0)))
+
+  # Calculate the proportion of occurrences inside the tropical rainforest biome
+  result_summary$proportion_in_tropical_rainforest <- result_summary$x[,1]/(result_summary$x[,1] + result_summary$x[,2])
+  result_summary$proportion_outside_tropical_rainforest <- result_summary$x[,2]/(result_summary$x[,1] + result_summary$x[,2])
+
+##################################################################################################################################################################
+##################################################################################################################################################################
+
+} else { # If all the species are not found in the occurrences, see if the species missing from the occurrences are found in the WCVP
   renamed_occurence_subset <- renamed_occurence[which(renamed_occurence$wcvp_taxon_name %in% tree$tip.label),]
   cat("Not all the species in the tree are found in the renamed_occurence_subset \n\n")
   cat("The following species are not found in the renamed_occurence_subset: \n")
@@ -211,90 +189,133 @@ if (all(tree$tip.label %in% renamed_occurence_subset$wcvp_taxon_name)) {
 
   # Subsetting wcvp to only include accepted species and species with a climate description
   wcvp_subset <- wcvp_subset[which(wcvp_subset$taxon_status == "Accepted" & wcvp_subset$climate_description != "" & wcvp_subset$taxon_rank == "Species"),]
-  head(wcvp_subset)
   cat("Are all the missing sp found in WCVP and do they have a Climate description: ", all(missing_sp %in% wcvp_subset$taxon_name), "\n")
-  if (all(missing_sp %in% wcvp_subset$taxon_name)) {
+
+##################################################################################################################################################################
+
+  if (all(missing_sp %in% wcvp_subset$taxon_name)) { # If all the missing species are found in the wcvp use the wcvp climate column to add the missing species to the presence absence matrix
+
     # use the koppen biome maps for the species represented in the renamed_occurence_subset
+    # Add a new column to the csv file which is Tropical rainforest or not.
+    cat("Adding a new column to the csv file which is Tropical rainforest or not \n\n")
+    koppen_biome_map_tropical_rainforest <- ifel(koppen_biome_map == 1 | koppen_biome_map == 2, 1, 0)
+
+    # Extracting the biome for each of the occurrences
+    renamed_occurence_subset$in_tropical_rainforest <- terra::extract(koppen_biome_map_tropical_rainforest, renamed_occurence_subset[,c("decimalLongitude", "decimalLatitude")])[,2]
+
+    # Remove occurences with NA in in_tropical_rainforest
+    cat("Removing ", length(which(is.na(terra::extract(koppen_biome_map_tropical_rainforest, renamed_occurence_subset[,c("decimalLongitude", "decimalLatitude")])[,2]))) ," occurences with NA in in_tropical_rainforest \n\n")
+    renamed_occurence_subset <- renamed_occurence_subset[which(!is.na(renamed_occurence_subset$in_tropical_rainforest)),]
+
+    # Summarize the number of occurrences which are inside and outside the tropical rainforest
+    result_summary <- aggregate(renamed_occurence_subset$in_tropical_rainforest, by = list(renamed_occurence_subset$wcvp_taxon_name), FUN = function(x) c(sum(x == 1), sum(x == 0)))
+
+    # Splitting the second column, which is a column containing a dataframe with 2 columns, into two individual columns
+    result_summary <- cbind(result_summary[,1] , as.data.frame(result_summary[,2]))
+    
+    # Changing the column names
+    result_summary <- setNames(result_summary, c("wcvp_taxon_name", "occurrences_trf", "occurrences_non_trf"))
+
+    # Calculate the proportion of occurrences inside the tropical rainforest biome
+    result_summary$proportion_in_tropical_rainforest <- result_summary$occurrences_trf/(result_summary$occurrences_trf + result_summary$occurrences_non_trf)
+    result_summary$proportion_outside_tropical_rainforest <- result_summary$occurrences_non_trf/(result_summary$occurrences_trf + result_summary$occurrences_non_trf)
 
     # Use the wcvp_subset to find the biome for the rest of the species
+    cat("Using the wcvp_subset to find the biome for the rest of the species \n\n")
+
+    # First I will find the species which are missing from the GBif dataset
+    missing_sp <- setdiff(tree$tip.label, renamed_occurence_subset$wcvp_taxon_name)
+
+    # I will then find their climate description in the wcvp_subset
+    missing_sp_climate <- wcvp_subset[which(wcvp_subset$taxon_name %in% missing_sp),]
+
+    # Now we convert the climate description from wcvp to an estimation of biome.
+    missing_sp_climate$koppen_biome <- ifelse(missing_sp_climate$climate_description == "wet tropical", 1, 0)
+
+    # If missing_sp_climate$koppen_biome is == 1 then the proportion_in_tropical_rainforest is 1, otherwise it is 0
+    missing_sp_result_add <- data.frame(wcvp_taxon_name = missing_sp_climate$taxon_name, occurrences_trf = NA , occurrences_non_trf = NA, proportion_in_tropical_rainforest = ifelse(missing_sp_climate$koppen_biome == 1, 1, 0), proportion_outside_tropical_rainforest = ifelse(missing_sp_climate$koppen_biome == 1, 0, 1))
+
+
+    # Now we can add the missing_sp_climate species to the result_summary
+    result_summary <- rbind(result_summary, missing_sp_result_add)
+
+##################################################################################################################################################################
+
   } else {
     cat("Not all the missing species are found in the wcvp dataset \n")
     cat("The following species are found in the wcvp dataset \n")
     cat(missing_sp, "\n")
     cat("The following species are not found in the wcvp dataset \n")
     cat(setdiff(missing_sp, wcvp_subset$taxon_name), "\n")
-    break
+    wcvp_missing_sp <- setdiff(missing_sp, wcvp_subset$taxon_name)
+
+    cat("In order for the pipeline to progess were removing the missing species from the tree, but they can be found in a file called", paste0("Missing_sp_",order,".txt"))
+    write.table(wcvp_missing_sp, file = paste0(path_out, "Missing_sp_",order,".txt"), sep = "\t", row.names = FALSE, col.names = FALSE, quote = FALSE)
+
+    # dropping the missing species from the tree.
+    tree <- ape::drop.tip(tree, wcvp_missing_sp)
+
+    # Starting over but this time with the missing species removed from the tree
+    renamed_occurence_subset <- renamed_occurence[which(renamed_occurence$wcvp_taxon_name %in% tree$tip.label),]
+    missing_sp <- setdiff(tree$tip.label, renamed_occurence_subset$wcvp_taxon_name)
+
+    # subsetting the wcvp dataset to only include the species in the tree
+    wcvp_subset <- wcvp[which(wcvp$taxon_name %in% tree$tip.label),]
+
+    # Subsetting wcvp to only include accepted species and species with a climate description
+    wcvp_subset <- wcvp_subset[which(wcvp_subset$taxon_status == "Accepted" & wcvp_subset$climate_description != "" & wcvp_subset$taxon_rank == "Species"),]
+    cat("Are all the missing sp found in WCVP and do they have a Climate description: ", all(missing_sp %in% wcvp_subset$taxon_name), "\n")
+
+####################################################################################################################################################################
+
+    # use the koppen biome maps for the species represented in the renamed_occurence_subset
+    # Add a new column to the csv file which is Tropical rainforest or not.
+    cat("Adding a new column to the csv file which is Tropical rainforest or not \n\n")
+    koppen_biome_map_tropical_rainforest <- ifel(koppen_biome_map == 1 | koppen_biome_map == 2, 1, 0)
+
+    # Extracting the biome for each of the occurrences
+    renamed_occurence_subset$in_tropical_rainforest <- terra::extract(koppen_biome_map_tropical_rainforest, renamed_occurence_subset[,c("decimalLongitude", "decimalLatitude")])[,2]
+
+    # Remove occurences with NA in in_tropical_rainforest
+    cat("Removing ", length(which(is.na(terra::extract(koppen_biome_map_tropical_rainforest, renamed_occurence_subset[,c("decimalLongitude", "decimalLatitude")])[,2]))) ," occurences with NA in in_tropical_rainforest \n\n")
+    renamed_occurence_subset <- renamed_occurence_subset[which(!is.na(renamed_occurence_subset$in_tropical_rainforest)),]t
+
+    # Summarize the number of occurrences which are inside and outside the tropical rainforest
+    result_summary <- aggregate(renamed_occurence_subset$in_tropical_rainforest, by = list(renamed_occurence_subset$wcvp_taxon_name), FUN = function(x) c(sum(x == 1), sum(x == 0)))
+
+    # Splitting the second column, which is a column containing a dataframe with 2 columns, into two individual columns
+    result_summary <- cbind(result_summary[,1] , as.data.frame(result_summary[,2]))
+
+    # Changing the column names
+    result_summary <- setNames(result_summary, c("wcvp_taxon_name", "occurrences_trf", "occurrences_non_trf"))
+
+    # Calculate the proportion of occurrences inside the tropical rainforest biome
+    result_summary$proportion_in_tropical_rainforest <- result_summary$occurrences_trf/(result_summary$occurrences_trf + result_summary$occurrences_non_trf)
+    result_summary$proportion_outside_tropical_rainforest <- result_summary$occurrences_non_trf/(result_summary$occurrences_trf + result_summary$occurrences_non_trf)
+
+    # Use the wcvp_subset to find the biome for the rest of the species
+    cat("Using the wcvp_subset to find the biome for the rest of the species \n\n")
+
+    # First I will find the species which are missing from the GBif dataset
+    missing_sp <- setdiff(tree$tip.label, renamed_occurence_subset$wcvp_taxon_name)
+
+    # I will then find their climate description in the wcvp_subset
+    missing_sp_climate <- wcvp_subset[which(wcvp_subset$taxon_name %in% missing_sp),]
+
+    # Now we convert the climate description from wcvp to an estimation of biome.
+    missing_sp_climate$koppen_biome <- ifelse(missing_sp_climate$climate_description == "wet tropical", 1, 0)
+
+    # If missing_sp_climate$koppen_biome is == 1 then the proportion_in_tropical_rainforest is 1, otherwise it is 0
+    missing_sp_result_add <- data.frame(wcvp_taxon_name = missing_sp_climate$taxon_name, occurrences_trf = NA , occurrences_non_trf = NA, proportion_in_tropical_rainforest = ifelse(missing_sp_climate$koppen_biome == 1, 1, 0), proportion_outside_tropical_rainforest = ifelse(missing_sp_climate$koppen_biome == 1, 0, 1))
+    
+    # Now we can add the missing_sp_climate species to the result_summary
+    result_summary <- rbind(result_summary, missing_sp_result_add)
+
   }
 }
 
 
 
-
-
-species_missing_in_gbif <- tree$tip.label[which(!tree$tip.label %in% renamed_occurence_subset$wcvp_taxon_name)]
-
-
-# Loading the Koppen biomes data
-cat("Loading the Koppen biomes data \n\n")
-koppen_biome_map <- read.csv(koppen_biome, sep = ",", header = TRUE)
-
-# Add a new column to the csv file which is Tropical rainforest or not.
-cat("Adding a new column to the csv file which is Tropical rainforest or not \n\n")
-koppen_biome_map$koppen <- ifelse(koppen_biome_map$koppen == 12 | koppen_biome_map$koppen == 13, 1, 0)
-
-# Converting the latitudes and longitudes to spatial points
-cat("Converting the latitudes and longitudes to spatial points \n\n")
-coordinates(renamed_occurence_subset)  <- c(decimalLongitude,decimalLatitude) 
-
-
-################################################################################################################################################
-#############################################-- Finding Environmental data WCVP --##############################################################
-################################################################################################################################################
-
-# Create an empty dataframe to store the results
-result_df <- data.frame(taxon_name = character(), climate_description = character(), stringsAsFactors = FALSE)
-
-# Check if all the tips in the tree are found in the wcvp_accepted_species_orders
-cat("Are all the tips in the tree found in the wcvp_accepted_species_orders ", all(tree$tip.label %in% wcvp_accepted_species_orders$taxon_name), "\n")
-if(all(tree$tip.label %in% wcvp_accepted_species_orders$taxon_name) == FALSE){
-  cat("Not all the tips in the tree are found in the wcvp_accepted_species_orders \n")
-  cat("The following tips are not found in the wcvp_accepted_species_orders \n")
-  cat(setdiff(tree$tip.label, wcvp_accepted_species_orders$taxon_name), "\n")
-}
-
-
-# Loop through each tip in the wcvp_accepted_species_orders
-for (i in seq_along(wcvp_accepted_species_orders_subset$taxon_name)) {
-  # Get the species name from the tip
-  species_name <- wcvp_accepted_species_orders_subset$taxon_name[i]
-  #cat("The species name is ", species_name, "\n")
-
-  # Search for the species name in the wcvp_accepted dataset
-  matching_row <- wcvp_accepted[wcvp_accepted$taxon_name == species_name, ]
-  #cat("This is the matching row: \n")
-  #print(matching_row)
-
-  # If a match is found, record the climate description in the result dataframe
-  if (nrow(matching_row) > 0) {
-    climate_description <- matching_row$climate_description
-    result_df <- rbind(result_df, data.frame(taxon_name = species_name, climate_description = climate_description, stringsAsFactors = FALSE))
-  }
-}
-
-# Print the result dataframe
-cat("The number of tips in the tree of ", order_in_question, " is ", length(tree$tip.label), "\n")
-
-
-#if there are no NA's or Empty string in the climate column Convert Wet tropical to 1's and everything else but NA or "" to 0's
-if(sum(is.na(result_df$climate_description)) == 0 & sum(result_df$climate_description == "") == 0){
-  cat("There are no missing climate descriptions of the species in the wcvp dataset \n")
-  result_df$climate_description <- ifelse(result_df$climate_description == "wet tropical", 1, 0)
-  write.table(result_df, file.path(path_out, output), sep = "\t", row.names = FALSE)
-} else {
-	# Report how many species are lacking climate data
-  cat("There are ", sum(is.na(result_df$climate_description)), " species with NA in the climate data \n")
-  cat("There are ", sum(result_df$climate_description == ""), " species with empty string in the climate data \n")
-  break
-}
-
+# Now I need to save the result summary dataframe to a file which can be read by ESSE
+write.table(result_summary, file = paste0(path_out, output), sep = "\t", row.names = FALSE, col.names = TRUE, quote = FALSE)
 
