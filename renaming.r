@@ -17,12 +17,12 @@ invisible(lapply(packages, library, character.only = TRUE))
 ##############################################################
 # Set variables for local testing
 # setwd("/home/au543206/GenomeDK/Trf_models/workflow/01_distribution_data/05_Taxon_match/") # local
-setwd("/home/owrisberg/Trf_models/workflow/01_distribution_data/05_Taxon_match") # srun
-occurences_input <- "../04_common_format/gbif_common_format.rds"
-input_file_taxonomy <- "../04_common_format/wcvp_names_apg_aligned.rds" 
-renaming_file <- "gbif_taxon_matched.rds"
-output_file <- "gbif_renamed.rds"
-raw_occurences_file <- "/home/owrisberg/Trf_models/workflow/01_distribution_data/02_data_parsing/gbif_parsed.rds" # srun 
+# setwd("/home/owrisberg/Trf_models/workflow/01_distribution_data/05_Taxon_match") # srun
+# occurences_input <- "../04_common_format/gbif_common_format.rds"
+# input_file_taxonomy <- "../04_common_format/wcvp_names_apg_aligned.rds" 
+# renaming_file <- "gbif_taxon_matched.rds"
+# output_file <- "gbif_renamed.rds"
+# raw_occurences_file <- "/home/owrisberg/Trf_models/workflow/01_distribution_data/02_data_parsing/gbif_parsed.rds" # srun 
 
 ##############################################################
 
