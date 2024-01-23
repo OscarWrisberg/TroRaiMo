@@ -41,7 +41,7 @@ input_file_wcvp <- commandArgs(trailingOnly = TRUE)[3]
 path_out <- commandArgs(trailingOnly = TRUE)[4]
 order_in_question <- commandArgs(trailingOnly = TRUE)[5]
 apg <- commandArgs(trailingOnly = TRUE)[6]
-renamed_occurence <- commandArgs(trailingOnly = TRUE)[7]
+renamed_occurence_file <- commandArgs(trailingOnly = TRUE)[7]
 koppen_biome <- commandArgs(trailingOnly = TRUE)[8]
 
 # Print the command line arguments

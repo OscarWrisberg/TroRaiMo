@@ -1255,7 +1255,7 @@ order_trees=["pruned_tree_order_Alismatales_GBMB.tre", "pruned_tree_order_Crosso
 
 
 # Fixed it so it should now contain all orders.
-orders = ["Alismatales", "Amborellales", "Aquifoliales", "Arecales", "Asparagales", "Asterales", "Berberidopsidales", "Boraginales", "Brassicales", "Bruniales", "Buxales", "Canellales", "Caryophyllales",
+orders = ["Alismatales", "Amborellales","Apiales", "Aquifoliales", "Arecales", "Asparagales", "Asterales", "Berberidopsidales", "Boraginales", "Brassicales", "Bruniales", "Buxales", "Canellales", "Caryophyllales",
 "Celastrales", "Chloranthales", "Commelinales", "Cornales", "Crossosomatales", "Cucurbitales", "Cupressales", "Dilleniales", "Dioscoreales", "Ericales", "Escalloniales", "Fabales", "Fagales",
 "Gentianales", "Geraniales", "Ginkgoales", "Gnetales", "Gunnerales", "Huerteales", "Icacinales", "Lamiales", "Laurales", "Liliales", "Magnoliales", "Malpighiales", "Malvales", "Metteniusales",
 "Myrtales", "Nymphaeales", "Oxalidales", "Pandanales", "Paracryphiales", "Petrosaviales", "Pinales", "Piperales", "Poales", "Proteales", "Ranunculales", "Rosales", "Santalales", "Sapindales",
