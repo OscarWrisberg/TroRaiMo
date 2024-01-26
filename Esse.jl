@@ -18,6 +18,7 @@ paleo_clim_file = parse(Int, ARGS[4])
 out_states_file = parse(Int, ARGS[5])
 out_file = parse(Int, ARGS[6])
 hidden_states = parse(Int, ARGS[7])
+percentage_for_present = parse(Int, ARGS[8])
 
 # The first argument is the number of processors available to the Tapestree
 # Load Tapestree and Distributed
@@ -31,6 +32,8 @@ tree = joinpath(tree_file)
 # Load the tip states
 tip_states = joinpath(tip_states_file)
 
+# Convert the percentage present per biome in the tip_states files into a presence absence matrix
+
 # Load the paleoenvironmental data
 paleo_data = joinpath(paleo_clim_file)
 
@@ -39,6 +42,8 @@ out_states = joinpath(out_states_file)
 
 # Setting the outdir for the MCMC data
 out = joinpath(out_file)
+
+# If there are any tips in the tree which are not in the distribution data, drop them.
 
 
 esse(tree, out, hidden_states, envdata_file = paleo_data, 

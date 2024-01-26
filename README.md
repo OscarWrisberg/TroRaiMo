@@ -17,7 +17,8 @@ Your first step is to acess your high performance cluster and download the githu
 ```
 git clone git@github.com:OscarWrisberg/TroRaiMo.git
 ```
-Make sure conda is installed on your server. This can by downloading it and running the installer: 
+Make sure conda is installed on your server.
+This can by downloading it and running the installer as so:  
 ```
 wget https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-x86_64.sh -O miniforge.sh
 chmod +x miniforge.sh
@@ -73,5 +74,5 @@ If you have any questions or problems regarding the pipeline dont hesitate to co
 
 # Percularities
 ## Paleoenvironmental Data
-Due too not being able to install libgdal-dev on the cluster used for this project, the paleoenvironmental data was downloaded and processed on a local machine. The processed data was then uploaded to the github repository. The code written as a part of this pipeline should work on a machine with libgdal-dev installed, and will produce the same results as the data uploaded to the repository.
+Due too not being able to install libgdal-dev on the cluster used for this project, the paleoenvironmental data was downloaded and processed on a local machine. The processed data was then uploaded to the github repository. The pipeline will check if libgdal-dev is installed and if it is it will run the code producing the results. If libgdal-dev isent installed the code will fetch the results from the github repository. 
 

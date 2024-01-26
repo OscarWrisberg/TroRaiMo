@@ -42,7 +42,7 @@ path_out <- commandArgs(trailingOnly = TRUE)[4]
 order_in_question <- commandArgs(trailingOnly = TRUE)[5]
 apg <- commandArgs(trailingOnly = TRUE)[6]
 renamed_occurence_file <- commandArgs(trailingOnly = TRUE)[7]
-koppen_biome <- commandArgs(trailingOnly = TRUE)[8]
+koppen_biome_file <- commandArgs(trailingOnly = TRUE)[8]
 
 # Print the command line arguments
 cat("The input file for the tree is ", input_file_tree, "\n")
