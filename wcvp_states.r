@@ -145,11 +145,6 @@ cat("Out of ",length(tree$tip.label),"tips in the tree there are ",length(tree$t
 cat("Loading the Koppen biomes data \n\n")
 koppen_biome_map <- rast(koppen_biome_file)
 
-result_summary[which(result_summary$proportion_in_tropical_rainforest < 0.5),]
-
-
-
-
 ##################################################################################################################################################################
 ##################################################################################################################################################################
 
