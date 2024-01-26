@@ -273,7 +273,7 @@ if (all(tree$tip.label %in% renamed_occurence_subset$wcvp_taxon_name)) { # If al
 
     # Remove occurences with NA in in_tropical_rainforest
     cat("Removing ", length(which(is.na(terra::extract(koppen_biome_map_tropical_rainforest, renamed_occurence_subset[,c("decimalLongitude", "decimalLatitude")])[,2]))) ," occurences with NA in in_tropical_rainforest \n\n")
-    renamed_occurence_subset <- renamed_occurence_subset[which(!is.na(renamed_occurence_subset$in_tropical_rainforest)),]t
+    renamed_occurence_subset <- renamed_occurence_subset[which(!is.na(renamed_occurence_subset$in_tropical_rainforest)),]
 
     # Summarize the number of occurrences which are inside and outside the tropical rainforest
     result_summary <- aggregate(renamed_occurence_subset$in_tropical_rainforest, by = list(renamed_occurence_subset$wcvp_taxon_name), FUN = function(x) c(sum(x == 1), sum(x == 0)))
