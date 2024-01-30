@@ -1297,7 +1297,7 @@ orders = ["Alismatales", "Amborellales","Apiales", "Aquifoliales", "Arecales", "
 "Saxifragales", "Solanales", "Trochodendrales", "Vahliales", "Vitales", "Zingiberales", "Zygophyllales"
 ]
 
-percentages =[0.1,0.2,0.3,0.4]
+percentages =["0.1","0.2","0.3","0.4"]
 
 
 # Orders that I need to remove or join with their sister order because they are too small in my tree. 
