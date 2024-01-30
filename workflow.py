@@ -1340,7 +1340,7 @@ for i in range(len(orders)):
                                 out_states_file= workflow_dir+"03_distribution_data/"+orders[i]+"_states_"+percentages[j]+".txt",
                                 script_dir= script_dir,
                                 done_dir= done_dir,
-                                done= "States_converter_"+orders[i]+"_("+percentages[j]+")",
+                                done= "States_converter_"+orders[i]+"_"+percentages[j]+"",
                                 percentage_for_present= percentages[j]
                                 ))
         
