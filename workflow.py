@@ -1332,7 +1332,7 @@ for i in range(len(orders)):
                                 template=states_converter(
                                 path_in= workflow_dir+"03_distribution_data/",
                                 tip_states_file= workflow_dir+"03_distribution_data/"+orders[i]+"_distribution_data.txt",
-                                out_states_file= orders[i]+"_states_("+percentages[j]+").txt",
+                                out_states_file= workflow_dir+"03_distribution_data/"+orders[i]+"_states_("+percentages[j]+").txt",
                                 script_dir= script_dir,
                                 done_dir= done_dir,
                                 done= "States_converter_"+orders[i]+"_("+percentages[j]+")",
