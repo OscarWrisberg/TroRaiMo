@@ -996,7 +996,7 @@ def states_converter(path_in,tip_states_file, out_states_file, script_dir, done_
         'cores': 1,
         'memory': '1g',
         'account':"Trf_models",
-        'walltime': "00:00:10"
+        'walltime': "00:00:240"
     }
 
     spec = '''
