@@ -37,6 +37,13 @@ transform!(tip_states, :proportion_in_tropical_rainforest => ByRow(x -> x > perc
 println("Selecting subset of columns")
 tip_states_subset = tip_states[:,[:wcvp_taxon_name, :present_in_trf, :present_outside_trf]]
 
+# Convert to matrix and remove the header
+tip_states_subset = Matrix(tip_states_subset)
+tip_states_subset = tip_states_subset[2:end,:]
+
 # Save as a tab seperated file
 println("Saving as a tab seperated file")
 writedlm(joinpath(out_file), tip_states_subset, '\t')
+
+# Exit
+println("Done")
