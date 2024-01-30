@@ -14,7 +14,7 @@ using DelimitedFiles
 # Take 6 command line arguments
 tip_states_file = string(ARGS[1])
 out_file = string(ARGS[2])
-percentage_for_present = parse(Int, ARGS[3])
+percentage_for_present = parse(Float64, ARGS[3])
 
 # Load the tip states file
 tip_states = readdlm(tip_states_file, '\t')
