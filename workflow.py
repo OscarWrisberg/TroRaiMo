@@ -1339,7 +1339,7 @@ for i in range(len(orders)):
                                 percentage_for_present= percentages[i]
                                 ))
         
-        gwf.target_from_template(name = orders[i]+"_Esse",
+        gwf.target_from_template(name = orders[i]+"_Esse_"+percentages[j],
                                     template = Esse(
                                     tree_file = "pruned_tree_order_"+orders[i]+"_GBMB.tre", # Input tree
                                     tip_states_file = workflow_dir+"03_distribution_data/"+orders[i]+"_states_("+percentages[i]+").txt", 
@@ -1353,7 +1353,7 @@ for i in range(len(orders)):
                                     hidden_states = 0, 
                                  ))
         
-        gwf.target_from_template(name = orders[i]+"_Esse_Hidden_States",
+        gwf.target_from_template(name = orders[i]+"_Esse_Hidden_States"+percentages[j],
                                     template = Esse(
                                     tree_file = "pruned_tree_order_"+orders[i]+"_GBMB.tre", # Input tree
                                     tip_states_file = workflow_dir+"03_distribution_data/"+orders[i]+"_states_("+percentages[i]+").txt", 
