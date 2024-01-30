@@ -1328,7 +1328,7 @@ for i in range(len(orders)):
                                 koppen_biome = script_dir+"koppen_geiger_0p01.tif"
                                 ))
     for i in range(len(percentages)):
-        gwf.target_from_template(name = orders[i]+"_states_converter("+percentages[i]+")",
+        gwf.target_from_template(name = orders[i]+"_states_converter_"+percentages[i],
                                 template=states_converter(
                                 path_in= workflow_dir+"03_distribution_data/",
                                 tip_states_file= orders[i]+"_distribution_data.txt",
