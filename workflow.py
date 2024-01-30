@@ -985,6 +985,41 @@ def Clads(tree, done_file, path_in, output_file,wcvp_input, order, apg, script_d
 
     return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
 
+##############################################################
+######---- Calculating states files for Esse Model  ----######
+##############################################################
+def states_converter(path_in,tip_states_file, out_states_file, script_dir, done_dir, done, percentage_for_present):
+    """ A small julia program which writes the necessary states file for a given proportion of occurrences present per biome."""
+    inputs = [tip_states_file]
+    outputs = [done_dir+done, out_states_file]
+    options = {
+        'cores': 1,
+        'memory': '1g',
+        'account':"Trf_models",
+        'walltime': "00:00:10"
+    }
+
+    spec = '''
+
+    source /home/owrisberg/miniconda3/etc/profile.d/conda.sh
+    conda activate Julia_env
+
+    cd {path_in}
+
+    echo Starting the Julia script at:
+
+    julia {script_dir}states_converter.jl {tip_states_file} {out_states_file} {percentage_for_present}
+
+    echo Ended the Julia script at:
+    date
+
+    touch {done_dir}{done}
+
+    '''.format(tip_states_file = tip_states_file, out_states_file = out_states_file, percentage_for_present = percentage_for_present, script_dir = script_dir, path_in = path_in, done_dir = done_dir, done = done)
+
+
+    return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
+
 
 
 
@@ -1262,6 +1297,8 @@ orders = ["Alismatales", "Amborellales","Apiales", "Aquifoliales", "Arecales", "
 "Saxifragales", "Solanales", "Trochodendrales", "Vahliales", "Vitales", "Zingiberales", "Zygophyllales"
 ]
 
+percentages =[0.1,0.2,0.3,0.4]
+
 
 # Orders that I need to remove or join with their sister order because they are too small in my tree. 
 # Amborellales
@@ -1290,7 +1327,45 @@ for i in range(len(orders)):
                                 renamed_occurrences = workflow_dir+"01_distribution_data/06_Renamed/gbif_renamed.rds", 
                                 koppen_biome = script_dir+"koppen_geiger_0p01.tif"
                                 ))
-    
+    for i in range(len(percentages)):
+        gwf.target_from_template(name = orders[i]+"_states_converter("+percentages[i]+")",
+                                template=states_converter(
+                                path_in= workflow_dir+"03_distribution_data/",
+                                tip_states_file= orders[i]+"_distribution_data.txt",
+                                out_states_file= orders[i]+"_states_("+percentages[i]+").txt",
+                                script_dir= script_dir,
+                                done_dir= done_dir,
+                                done= "States_converter_"+orders[i]+"_("+percentages[i]+")",
+                                percentage_for_present= percentages[i]
+                                ))
+        
+        gwf.target_from_template(name = orders[i]+"_Esse",
+                                    template = Esse(
+                                    tree_file = "pruned_tree_order_"+orders[i]+"_GBMB.tre", # Input tree
+                                    tip_states_file = workflow_dir+"03_distribution_data/"+orders[i]+"_states_("+percentages[i]+").txt", 
+                                    paleo_clim_file = data_dir+"paleoclim_area.csv", # File with paleoclimatic variables
+                                    done = orders[i]+"_Esse",
+                                    path_in = workflow_dir+"02_adding_orders/pruning/orders/",
+                                    out_file = "Esse_output_"+orders[i]+".jld2",
+                                    script_dir=script_dir,
+                                    done_dir = done_dir,
+                                    out_states_file = "Esse_states_"+orders[i]+"_("+percentages[i]+").csv", # File with the states for each tip after being processed for the Esse model
+                                    hidden_states = 0, 
+                                 ))
+        
+        gwf.target_from_template(name = orders[i]+"_Esse_Hidden_States",
+                                    template = Esse(
+                                    tree_file = "pruned_tree_order_"+orders[i]+"_GBMB.tre", # Input tree
+                                    tip_states_file = workflow_dir+"03_distribution_data/"+orders[i]+"_states_("+percentages[i]+").txt", 
+                                    paleo_clim_file = data_dir+"paleoclim_area.csv", # File with paleoclimatic variables
+                                    done = orders[i]+"_Esse",
+                                    path_in = workflow_dir+"02_adding_orders/pruning/orders/",
+                                    out_file = "Esse_output_"+orders[i]+".jld2",
+                                    script_dir=script_dir,
+                                    done_dir = done_dir,
+                                    out_states_file = "Esse_states_"+orders[i]+"_("+percentages[i]+").csv", # File with the states for each tip after being processed for the Esse model
+                                    hidden_states = 2, 
+                                 ))
 
 
     gwf.target_from_template(name = orders[i]+"_Sampling_fraction",
@@ -1323,17 +1398,3 @@ for i in range(len(orders)):
                                 sampling_frequency= workflow_dir+"03_distribution_data/"+orders[i]+"_sampling_fraction.txt"
                              ))
 
-    gwf.target_from_template(name = orders[i]+"_Esse",
-                                template = Esse(
-                                tree_file = "pruned_tree_order_"+orders[i]+"_GBMB.tre", # Input tree
-                                tip_states_file = workflow_dir+"03_distribution_data/"+orders[i]+"_distribution_data.txt", # Raw file with the states for each tip
-                                paleo_clim_file = data_dir+"paleoclim_area.csv", # File with paleoclimatic variables
-                                done = orders[i]+"_Esse",
-                                path_in = workflow_dir+"02_adding_orders/pruning/orders/",
-                                out_file = "Esse_output_"+orders[i]+".jld2",
-                                script_dir=script_dir,
-                                done_dir = done_dir,
-                                out_states_file = "Esse_states_"+orders[i]+"_0.4.csv", # File with the states for each tip after being processed for the Esse model
-                                hidden_states = 0, 
-                                percentage_for_present = 0.4 # percentage of species occuring in a biome to be considered present
-                             ))
