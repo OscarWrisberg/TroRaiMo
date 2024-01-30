@@ -1311,7 +1311,6 @@ percentages =["0.1","0.2","0.3","0.4"]
 
 for i in range(len(orders)):
 #Running the script to find the environmental data for the tips in the trees
-    
     gwf.target_from_template(name = orders[i]+"_distribution_data.",
                                 template=Finding_areas_in_wcvp(
                                 input_file_tree= "pruned_tree_order_"+orders[i]+"_GBMB.tre",
@@ -1327,8 +1326,9 @@ for i in range(len(orders)):
                                 renamed_occurrences = workflow_dir+"01_distribution_data/06_Renamed/gbif_renamed.rds", 
                                 koppen_biome = script_dir+"koppen_geiger_0p01.tif"
                                 ))
-    for i in range(len(percentages)):
-        gwf.target_from_template(name = orders[i]+"_states_converter_"+percentages[i],
+    
+    for j in range(len(percentages)):
+        gwf.target_from_template(name = orders[i]+"_states_converter_"+percentages[j],
                                 template=states_converter(
                                 path_in= workflow_dir+"03_distribution_data/",
                                 tip_states_file= orders[i]+"_distribution_data.txt",
