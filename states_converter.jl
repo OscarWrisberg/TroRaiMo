@@ -12,8 +12,8 @@ using DataFrames
 using DelimitedFiles
 
 # Take 6 command line arguments
-tip_states_file = parse(str, ARGS[1])
-out_file = parse(str, ARGS[2])
+tip_states_file = string(ARGS[1])
+out_file = string(ARGS[2])
 percentage_for_present = parse(Int, ARGS[3])
 
 # Load the tip states file
