@@ -991,7 +991,7 @@ def Clads(tree, done_file, path_in, output_file,wcvp_input, order, apg, script_d
 ##############################################################
 ################---- Runnning ESSE model  ----################
 ##############################################################
-def Esse(path_in, tree_file,tip_states_file,paleo_clim_file, out_states_file, out_file, hidden_states, script_dir, done_dir, done):
+def Esse(path_in, tree_file,tip_states_file,paleo_clim_file, out_states_file, out_file, hidden_states, script_dir, done_dir, done, percentage_for_present):
     """ Function for running the ESSE model on the tree of each order. """
     inputs = [path_in+tree_file,tip_states_file,paleo_clim_file]
     outputs = []
@@ -1013,7 +1013,7 @@ def Esse(path_in, tree_file,tip_states_file,paleo_clim_file, out_states_file, ou
     date
     echo using {processors} processors, {memory} gb-RAM and {hidden_states} hidden states.
 
-    julia {script_dir}Esse.jl {processors} {tree_file} {tip_states_file} {paleo_clim_file} {out_states_file} {out_file} {hidden_states}
+    julia {script_dir}Esse.jl {processors} {tree_file} {tip_states_file} {paleo_clim_file} {out_states_file} {out_file} {hidden_states} {percentage_for_present}
 
     echo Ended the Julia script at:
     date
@@ -1022,7 +1022,7 @@ def Esse(path_in, tree_file,tip_states_file,paleo_clim_file, out_states_file, ou
 
     '''.format(processors = options['cores'], memory = options['memory'], tree_file = tree_file, tip_states_file = tip_states_file, paleo_clim_file = paleo_clim_file,
                 out_states_file = out_states_file, out_file = out_file, hidden_states = hidden_states, script_dir = script_dir, path_in = path_in,
-                done_dir = done_dir, done = done)
+                done_dir = done_dir, done = done, percentage_for_present = percentage_for_present)
 
 
     return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
@@ -1150,7 +1150,7 @@ gwf.target_from_template(name = "Renaming",
 
 gwf.target_from_template(name = "Paleo_clim_area",
                                 template = paleo_clim_area(
-                                    output_file="paleoclim_area.csv",
+                                    output_file="paleoclim_area.txt",
                                     data_dir = data_dir,
                                     script_dir = script_dir,
                                     done_dir = done_dir,
@@ -1325,14 +1325,15 @@ for i in range(len(orders)):
 
     gwf.target_from_template(name = orders[i]+"_Esse",
                                 template = Esse(
-                                tree_file = "pruned_tree_order_"+orders[i]+"_GBMB.tre",
-                                tip_states_file = workflow_dir+"03_distribution_data/"+orders[i]+"_distribution_data.txt",
-                                paleo_clim_file = data_dir+"paleoclim_area.csv",
+                                tree_file = "pruned_tree_order_"+orders[i]+"_GBMB.tre", # Input tree
+                                tip_states_file = workflow_dir+"03_distribution_data/"+orders[i]+"_distribution_data.txt", # Raw file with the states for each tip
+                                paleo_clim_file = data_dir+"paleoclim_area.csv", # File with paleoclimatic variables
                                 done = orders[i]+"_Esse",
                                 path_in = workflow_dir+"02_adding_orders/pruning/orders/",
                                 out_file = "Esse_output_"+orders[i]+".jld2",
                                 script_dir=script_dir,
                                 done_dir = done_dir,
-                                out_states_file = "Esse_states_"+orders[i]+".csv",
-                                hidden_states = 0
+                                out_states_file = "Esse_states_"+orders[i]+"_0.4.csv", # File with the states for each tip after being processed for the Esse model
+                                hidden_states = 0, 
+                                percentage_for_present = 0.4 # percentage of species occuring in a biome to be considered present
                              ))

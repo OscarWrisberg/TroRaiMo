@@ -109,6 +109,6 @@ time_series_data$time_ago <- as.numeric(time_series_data$time_ago)
 #   geom_smooth(aes(x = time_ago, y = total_area_other), color = "black") +
 #   theme_bw()
 
-write.table(time_series_data, file = output, sep = ",", row.names = FALSE)
+write.table(time_series_data, file = output, sep = "\t", row.names = FALSE)
 
 # writing the data to a csv file and savint 
