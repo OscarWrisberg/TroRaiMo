@@ -1006,7 +1006,12 @@ def states_converter(path_in,tip_states_file, out_states_file, script_dir, done_
 
     cd {path_in}
 
+    echo tip_states_file {tip_states_file}
+    echo out_states_file {out_states_file}
+    echo percentage for present {percentage_for_present}
+
     echo Starting the Julia script at:
+    date
 
     julia {script_dir}states_converter.jl {tip_states_file} {out_states_file} {percentage_for_present}
 
@@ -1015,9 +1020,9 @@ def states_converter(path_in,tip_states_file, out_states_file, script_dir, done_
 
     touch {done_dir}{done}
 
-    '''.format(tip_states_file = tip_states_file, out_states_file = out_states_file, percentage_for_present = percentage_for_present, script_dir = script_dir, path_in = path_in, done_dir = done_dir, done = done)
-
-
+    '''.format(tip_states_file = tip_states_file, out_states_file = out_states_file, percentage_for_present = percentage_for_present, script_dir = script_dir,
+                path_in = path_in, done_dir = done_dir, done = done)
+    
     return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
 
 
@@ -1353,7 +1358,7 @@ for i in range(len(orders)):
                                     hidden_states = 0, 
                                  ))
         
-        gwf.target_from_template(name = orders[i]+"_Esse_Hidden_States"+percentages[j],
+        gwf.target_from_template(name = orders[i]+"_Esse_Hidden_States_"+percentages[j],
                                     template = Esse(
                                     tree_file = "pruned_tree_order_"+orders[i]+"_GBMB.tre", # Input tree
                                     tip_states_file = workflow_dir+"03_distribution_data/"+orders[i]+"_states_("+percentages[j]+").txt", 
