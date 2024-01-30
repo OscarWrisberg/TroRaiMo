@@ -244,10 +244,10 @@ if (all(tree$tip.label %in% renamed_occurence_subset$wcvp_taxon_name)) { # If al
     cat(setdiff(missing_sp, wcvp_subset$taxon_name), "\n")
     wcvp_missing_sp <- setdiff(missing_sp, wcvp_subset$taxon_name)
 
-    missing_sp_file_name <- paste0("Missing_sp_",order,".txt")
+    missing_sp_file_name <- paste0("Missing_sp_",order_in_question,".txt")
 
     cat("In order for the pipeline to progess were removing the missing species from the tree, but they can be found in a file called ", missing_sp_file_name, "\n")
-    write.table(wcvp_missing_sp, file = paste0(path_out, "Missing_sp_",order,".txt"), sep = "\t", row.names = FALSE, col.names = FALSE, quote = FALSE)
+    write.table(wcvp_missing_sp, file = paste0(path_out, "Missing_sp_",order_in_question,".txt"), sep = "\t", row.names = FALSE, col.names = FALSE, quote = FALSE)
 
     # dropping the missing species from the tree.
     tree <- ape::drop.tip(tree, wcvp_missing_sp)
