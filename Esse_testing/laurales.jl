@@ -1,13 +1,23 @@
 using Tapestree, DelimitedFiles, PANDA, DataFrames
 
+
 # set working directory
 cd("/home/au543206/Documents/TroRaiMo/Esse_testing")
 
 # Loading tree
-tree = load_tree("/home/au543206/Documents/TroRaiMo/Esse_testing/pruned_tree_order_Laurales_GBMB.tre")
+tree = read_newick("/home/au543206/Documents/TroRaiMo/Esse_testing/pruned_tree_order_Laurales_GBMB.tre")
 
 # Load the array of floats from the sampling_freq file
-sampling_freq = readdlm("Laurales_sampling_fraction.txt")
+sampling_freq_array = readdlm("Laurales_sampling_fraction.txt")
+sampling_freq_array = sampling_freq_array[2:end,:] # Remove the first row with column names
+
+sp  = convert(Vector{String},  sampling_freq_array[:,1])
+sp  = replace.(sp, " " => "_")
+rho = convert(Vector{Float64}, sampling_freq_array[:,2])
+rho = Dict(sp[i] => rho[i] for i in 1:lastindex(sp))
+
+
+
 name_list_tips = tip_labels(tree)
 
 # Replacing "_" with " " in each entry in name_list_tips
@@ -33,8 +43,8 @@ sampling_freq_array = sampling_freq_joined[!, :frequency]
 sampling_freq_joined
 
 
-#sp  = convert(Vector{String},  sampling_freq_array[:,1])
-#sp  = replace.(sp, " " => "_")
+sp  = convert(Vector{String},  sampling_freq_array[:,1])
+sp  = replace.(sp, " " => "_")
 
 sp = sampling_freq_array[:,1]
 
@@ -43,11 +53,16 @@ rho = Dict(sp[i] => rho[i] for i in 1:lastindex(sp))
 
 tr = tree
 
-r, tv = insane_cbd(tr,
+r, tv = insane_cbd(tree,
                    nburn   = 1_000,
                    niter   = 100_000,
                    nthin   = 1_000,
                    nflush  = 1_000,
-                   ofile   = "/home/au543206/Documents/TroRaiMo/Esse_testing",
-                   tρ      = rho)
+                   ofile   = "/home/au543206/Documents/TroRaiMo/Esse_testing_cbd",
+                   tρ      = rho,
+                   mxthf   = 0.05)
+
+
+
+iread("../Esse_testing_cbd.txt")
 

@@ -24,11 +24,11 @@ using DelimitedFiles
 
 # Take 6 command line arguments
 processors = parse(Int, ARGS[1])
-tree_file = parse(Int, ARGS[2])
-tip_states_file = parse(Int, ARGS[3])
-paleo_clim_file = parse(Int, ARGS[4])
-out_states_file = parse(Int, ARGS[5])
-out_file = parse(Int, ARGS[6])
+tree_file = ARGS[2]
+tip_states_file = ARGS[3]
+paleo_clim_file = ARGS[4]
+out_states_file = ARGS[5]
+out_file = ARGS[6]
 hidden_states = parse(Int, ARGS[7])
 
 # The first argument is the number of processors available to the Tapestree

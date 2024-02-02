@@ -15,6 +15,12 @@ library(data.table)
 # Set working directory
 setwd("/home/au543206/Documents/Tact_trees")
 
+
+
+
+############################################################################################################
+####################  Loading the tree and cutting it into subtrees  #######################################
+############################################################################################################
 # Load tree
 tree <- read.tree("gbmb_matched_monophyletic_orders_63306956-323.tacted.newick.tre")
 
@@ -32,6 +38,8 @@ df_tips$no_text <- gsub("[^0-9]", "", df_tips$tip_label)
 tree$tip.label <- gsub("[^0-9]", "", tree$tip.label)
 
 # Load wcvp
+# The problem with Melanies Tacted trees is that wcvp have changed the wcvp_index since their special edition
+# This means that if you download the newest issue of 
 wcvp <- readRDS("/home/au543206/Documents/world_checklist/World_checklist_downloads/01_24_2024/wcvp_names_apg_aligned.rds")
 wcvp_old <- fread("/home/au543206/Documents/world_checklist/checklist_names.txt", sep = "|")
 wcvp_special_edition <- fread("/home/au543206/Documents/world_checklist/World_checklist_downloads/Special_edition/wcvp_names.txt", sep = "|")
@@ -72,6 +80,9 @@ df_tips[which(is.na(df_tips$wcvp_special_edition)),]
 
 # The two other dataframes agree on a name for these 19 species so Ill just add them to the wcvp_special_edition dataframe column
 df_tips$wcvp_special_edition[which(is.na(df_tips$wcvp_special_edition))] <- df_tips$wcvp[which(is.na(df_tips$wcvp_special_edition))]
+
+# All the tip labels are in the wcvp_special_edition dataframe
+all(tree$tip.label %in% df_tips$wcvp_special_edition)
 
 # Rename all the tips in the tree based on the wcvp_special edition names and if they are missing use the wcvp names
 tree$tip.label <- df_tips$wcvp_special_edition
