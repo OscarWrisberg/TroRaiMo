@@ -38,8 +38,7 @@ addprocs(processors)
 @everywhere using Tapestree
 
 # Load a tree file
-tree = read_newick(tree_file)
-
+tree = joinpath(tree_file)
 
 states = joinpath(tip_states_file)
 
