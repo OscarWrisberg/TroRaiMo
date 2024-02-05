@@ -38,15 +38,13 @@ addprocs(processors)
 @everywhere using Tapestree
 
 # Load a tree file
-tree = joinpath(tree_file)
+tree = read_newick(tree_file)
 
 
-states = joinpath()
+states = joinpath(tip_states_file)
 
 # Load the paleoenvironmental data
 paleo_data = joinpath(paleo_clim_file)
-paleo_data
-
 
 # Setting the out directory for states
 out_states = joinpath(out_states_file)
