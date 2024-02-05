@@ -11,6 +11,12 @@ using Distributed
 using DataFrames
 using DelimitedFiles
 
+
+# Local testing
+tip_states_file = "/home/au543206/GenomeDK/Trf_models/workflow/03_distribution_data/Arecales_distribution_data.txt"
+out_file = "whatever2"
+percentage_for_present = 0.2
+
 # Take the command line arguments
 println("Command line arguments")
 tip_states_file = string(ARGS[1])
@@ -39,7 +45,6 @@ tip_states_subset = tip_states[:,[:wcvp_taxon_name, :present_in_trf, :present_ou
 
 # Convert to matrix and remove the header
 tip_states_subset = Matrix(tip_states_subset)
-tip_states_subset = tip_states_subset[2:end,:]
 
 # Change " " to "_" in each species name_list_tips
 println("Changing ' ' to '_' in each species name")
