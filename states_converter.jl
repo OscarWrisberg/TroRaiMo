@@ -41,6 +41,10 @@ tip_states_subset = tip_states[:,[:wcvp_taxon_name, :present_in_trf, :present_ou
 tip_states_subset = Matrix(tip_states_subset)
 tip_states_subset = tip_states_subset[2:end,:]
 
+# Change " " to "_" in each species name_list_tips
+println("Changing ' ' to '_' in each species name")
+tip_states_subset[:,1] = replace.(tip_states_subset[:,1], " " => "_")
+
 # Save as a tab seperated file
 println("Saving as a tab seperated file")
 writedlm(joinpath(out_file), tip_states_subset, '\t')
