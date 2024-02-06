@@ -101,6 +101,10 @@ for (i in seq_along(paleo_clim_order)){
 # Convert time_ago to numeric
 time_series_data$time_ago <- as.numeric(time_series_data$time_ago)
 
+# Remove the first row of the data frame to only have the data
+# Because the esse function from Tapestree loads the file itself..
+time_series_data <- time_series_data[-1,]
+
 # Plot the data with ggplot Tropical area should be green dots and the other area should be ivory dots
 # ggplot(data = time_series_data) +
 #   geom_point(aes(x = time_ago, y = total_area_rainforest), color = "green") +
