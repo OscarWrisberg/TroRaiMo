@@ -44,12 +44,6 @@ states = joinpath(tip_states_file)
 # Load the paleoenvironmental data
 paleo_data = joinpath(paleo_clim_file)
 
-# Load paleo data
-envdata_file = readdlm(paleo_data)
-
-# Remove first row
-envdata_file = envdata_file[2:end,:]
-
 # Setting the out directory for states
 out_states = joinpath(out_states_file)
 
@@ -58,7 +52,7 @@ out = joinpath(out_file)
 
 # Running the ESSE model
 Tapestree.esse(tree, out, hidden_states,
- 	envdata_file = envdata_file, 
+ 	envdata_file = paleo_data, 
 	states_file = states,
 	out_states = out_states,
 	cov_mod = ("s",),
