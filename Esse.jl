@@ -53,6 +53,19 @@ out_states = joinpath(output_folder,out_states_file)
 out_file = joinpath(output_folder, out_file)
 out_states = joinpath(output_folder, out_states_file)
 
+# Running Esse with the following parameters
+println("Running ESSE with the following parameters:")
+println("Tree file: $tree")
+println("out_file: $out_file")
+println("Hidden states: $hidden_states")
+println("Paleo data file: $paleo_data")
+println("Tip states file: $states")
+println("Out states file: $out_states")
+println('Cov mod: ("s",)')
+println('Parallel: true')
+println('mc: "mh"')
+println('ncch: 3')
+
 
 # Running the ESSE model
 Tapestree.esse(tree, out_file, hidden_states,
