@@ -1021,7 +1021,7 @@ def Calculating_priors( done_file, path_in, output_file,script_dir, done_dir, in
 ##############################################################
 def Clads_priors(tree, done_file, path_in, output_file,wcvp_input, order, apg, script_dir, done_dir, sampling_frequency, prior_file):
     """ """
-    inputs = [path_in+tree,wcvp_input,apg,done_dir+"Finding_monophyletic_orders",done_dir+order+"_Sampling_fraction"]
+    inputs = [path_in+tree,wcvp_input,apg,done_dir+"Finding_monophyletic_orders",done_dir+order+"_Sampling_fraction", {path_in}+{prior_file}]
     outputs = [done_dir+done_file, path_in+output_file]
     options = {
         'cores': 1,
