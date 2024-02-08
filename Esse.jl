@@ -21,7 +21,7 @@ using PANDA
 # out_file = "Esse_output_"+orders[i]+".jld2"
 # hidden_states = 2
 
-# Take 6 command line arguments
+# Take command line arguments
 processors = parse(Int, ARGS[1])
 tree_file = ARGS[2]
 tip_states_file = ARGS[3]
@@ -61,10 +61,7 @@ println("Hidden states: $hidden_states")
 println("Paleo data file: $paleo_data")
 println("Tip states file: $states")
 println("Out states file: $out_states")
-println('Cov mod: ("s",)')
-println('Parallel: true')
-println('mc: "mh"')
-println('ncch: 3')
+
 
 
 # Running the ESSE model

@@ -1311,6 +1311,10 @@ orders = ["Alismatales", "Amborellales","Apiales", "Aquifoliales", "Arecales", "
 "Saxifragales", "Solanales", "Trochodendrales", "Vahliales", "Vitales", "Zingiberales", "Zygophyllales"
 ]
 
+# Orders that need a to be run with a modified prior
+orders_new_prior = ["Apiales","Arecales","Asparagales","Asterales","Brassicales","Caryophyllales","Ericales","Fabales","Gentiales", "Lamiales","Laurales","Malpighiales",
+                    "Malvales","Myrtales","Poales","Ranunculales","Rosales","Sapindales","Saxifragales","Solanales","Zingiberales"]
+
 percentages =["0.1","0.2","0.3","0.4"]
 
 
