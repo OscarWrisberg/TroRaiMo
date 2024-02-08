@@ -1496,7 +1496,7 @@ for i in range(len(orders_not_in_orders_new_prior)):
 gwf.target_from_template(name = "Calculating_priors",
                             template=Calculating_priors(
                             done_file = "Calculating_priors",
-                            path_in = workflow_dir + "02_adding_orders/pruning/orders",
+                            path_in = workflow_dir + "02_adding_orders/pruning/orders/",
                             output_file = "priors.txt",
                             script_dir = script_dir,
                             done_dir = done_dir,
