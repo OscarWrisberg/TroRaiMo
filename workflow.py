@@ -1365,7 +1365,7 @@ for i in range(len(orders)):
                                     paleo_clim_file = data_dir+"paleoclim_area.csv", # File with paleoclimatic variables
                                     done = orders[i]+"_Esse",
                                     path_in = workflow_dir+"02_adding_orders/pruning/orders/",
-                                    save_file = "Esse_output_"+orders[i]+".jld2",
+                                    save_file = "Esse_output_"+orders[i]+"_"+percentages[j]+".jld2",
                                     script_dir=script_dir,
                                     done_dir = done_dir,
                                     out_states_file = "Esse_states_"+orders[i]+"_"+percentages[j]+".csv", 
