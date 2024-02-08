@@ -49,7 +49,7 @@ paleo_data = joinpath(paleo_clim_file)
 out_states = joinpath(out_states_file)
 
 # Setting the outdir for the MCMC data
-out_file = joinpath(output_file)
+out_file = joinpath(out_file)
 out_states = joinpath(out_states_file)
 
 
