@@ -23,6 +23,7 @@ invisible(lapply(packages, library, character.only = TRUE))
 
 # Command line arguments
 folder_path <- commandArgs(trailingOnly = TRUE)[1]
+output_file <- commandArgs(trailingOnly = TRUE)[2]
 
 # Get a list of all Rdata files in the folder
 file_list <- list.files(folder_path, pattern = "Clads_output_.*\\.Rdata", full.names = TRUE)
