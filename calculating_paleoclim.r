@@ -103,6 +103,9 @@ time_series_data$time_ago <- as.numeric(time_series_data$time_ago)
 # Because the esse function from Tapestree loads the file itself..
 time_series_data <- time_series_data[-1,]
 
+# Sort the data frame by time_ago
+time_series_data <- time_series_data[order(time_series_data$time_ago),]
+
 # Plot the data with ggplot Tropical area should be green dots and the other area should be ivory dots
 # ggplot(data = time_series_data) +
 #   geom_point(aes(x = time_ago, y = total_area_rainforest), color = "green") +
@@ -111,6 +114,6 @@ time_series_data <- time_series_data[-1,]
 #   geom_smooth(aes(x = time_ago, y = total_area_other), color = "black") +
 #   theme_bw()
 
-write.table(time_series_data, file = output, sep = "\t", row.names = FALSE)
+write.table(time_series_data, file = output, sep = " ", row.names = FALSE)
 
 
