@@ -28,9 +28,8 @@ tip_states_file = ARGS[3]
 paleo_clim_file = ARGS[4]
 out_states_file = ARGS[5]
 out_file = ARGS[6]
-out_states = ARGS[7]
-save_file = ARGS[8]
-hidden_states = parse(Int, ARGS[9])
+save_file = ARGS[7]
+hidden_states = parse(Int, ARGS[8])
 
 # The first argument is the number of processors available to the Tapestree
 # Load Tapestree and Distributed
