@@ -1375,7 +1375,7 @@ for i in range(len(orders)):
                                     template = Esse(
                                     tree_file = "pruned_tree_order_"+orders[i]+"_GBMB.tre", # Input tree
                                     tip_states_file = workflow_dir+"03_distribution_data/"+orders[i]+"_states_"+percentages[j]+".txt", 
-                                    paleo_clim_file = data_dir+"paleoclim_area.csv", # File with paleoclimatic variables
+                                    paleo_clim_file = data_dir+"paleoclim_area.txt", # File with paleoclimatic variables
                                     done = orders[i]+"_Esse",
                                     path_in = workflow_dir+"02_adding_orders/pruning/orders/",
                                     save_file = "Esse_output_"+orders[i]+"_"+percentages[j]+".jld2",
