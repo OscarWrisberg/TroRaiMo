@@ -63,6 +63,9 @@ for (i in 1:length(file_list)) { # This loop takes atleast 30 mins to run ....
 
 rm(CladsOutput)
 
+# Extract the unique extinction rates
+unique_extinction <- unique(clads_tip_lambda$extinction)
+
 # Calculate the mean and standard deviation of the unique extinction rates
 mean_extinction <- mean(unique_extinction)
 log(mean_extinction)
