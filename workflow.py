@@ -1368,9 +1368,9 @@ for i in range(len(orders)):
                                     save_file = "Esse_output_"+orders[i]+"_"+percentages[j]+".jld2",
                                     script_dir=script_dir,
                                     done_dir = done_dir,
-                                    out_states_file = "Esse_states_"+orders[i]+"_"+percentages[j]+".csv", 
+                                    out_states_file = "Esse_states_"+orders[i]+"_"+percentages[j], 
                                     hidden_states = 2,
-                                    out_file = "Esse_output_"+orders[i]+"_hidden_states_"+percentages[j]+".txt"
+                                    out_file = "Esse_output_"+orders[i]+"_hidden_states_"+percentages[j]"
                                  ))
 
 
