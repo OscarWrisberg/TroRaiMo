@@ -1031,10 +1031,10 @@ def states_converter(path_in,tip_states_file, out_states_file, script_dir, done_
 ##############################################################
 ################---- Runnning ESSE model  ----################
 ##############################################################
-def Esse(path_in, tree_file,tip_states_file,paleo_clim_file, out_states_file, out_file, hidden_states, script_dir, done_dir, done):
+def Esse(path_in, tree_file,tip_states_file,paleo_clim_file, out_states_file, out_file, hidden_states, script_dir, done_dir, done, save_file):
     """ Function for running the ESSE model on the tree of each order. """
     inputs = [path_in+tree_file,tip_states_file,paleo_clim_file]
-    outputs = []
+    outputs = [save_file]
     options = {
         'cores': 10,
         'memory': '30g',
@@ -1053,7 +1053,7 @@ def Esse(path_in, tree_file,tip_states_file,paleo_clim_file, out_states_file, ou
     date
     echo using {processors} processors, {memory} gb-RAM and {hidden_states} hidden states.
 
-    julia {script_dir}Esse.jl {processors} {tree_file} {tip_states_file} {paleo_clim_file} {out_states_file} {out_file} {hidden_states}
+    julia {script_dir}Esse.jl {processors} {tree_file} {tip_states_file} {paleo_clim_file} {out_file} {out_states_file} {save_file} {hidden_states}
 
     echo Ended the Julia script at:
     date
@@ -1365,14 +1365,13 @@ for i in range(len(orders)):
                                     paleo_clim_file = data_dir+"paleoclim_area.csv", # File with paleoclimatic variables
                                     done = orders[i]+"_Esse",
                                     path_in = workflow_dir+"02_adding_orders/pruning/orders/",
-                                    out_file = "Esse_output_"+orders[i]+".jld2",
+                                    save_file = "Esse_output_"+orders[i]+".jld2",
                                     script_dir=script_dir,
                                     done_dir = done_dir,
                                     out_states_file = "Esse_states_"+orders[i]+"_"+percentages[j]+".csv", 
-                                    hidden_states = 2, 
+                                    hidden_states = 2,
+                                    out_file = "Esse_output_"+orders[i]+"_hidden_states_"+percentages[j]+".txt"
                                  ))
-        
-        # kommentar
 
 
     gwf.target_from_template(name = orders[i]+"_Sampling_fraction",
