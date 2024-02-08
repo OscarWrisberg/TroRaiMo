@@ -37,6 +37,7 @@ output_name = "test_output.jld2"
 path_to_tree = ARGS[1]
 sampling_freq_file = ARGS[2]
 output_name = ARGS[3]
+extinction_prior_file = ARGS[4]
 
 # Measure the time to load the tree
 time_load_tree = @elapsed tree = load_tree(path_to_tree)
@@ -66,10 +67,19 @@ sampling_freq_joined = innerjoin(sampling_freq, name_list_tips, on = "species")
 # pull out the frequency column as an array
 sampling_freq_array = sampling_freq_joined[!, :frequency]
 
+# Load the extinction prior
+extinction_prior = readdlm(extinction_prior_file)
+extinction_mean = extinction_prior[1]
+extinction_sd = extinction_prior[2]
+
 # Measure the time to run infer_ClaDS
 time_infer = @elapsed output = infer_ClaDS(tree,
- print_state = 100,
-f = sampling_freq_array,)
+ 					  print_state = 100,
+					  f = sampling_freq_array,
+					  prior_ε = "lognormal",
+					  logε0 = extinction_mean,
+					  sdε =	extinction_sd)
+
 println("Time to run infer_ClaDS: $time_infer seconds")
 
 # Measure the time to save the output

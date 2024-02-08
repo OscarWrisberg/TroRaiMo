@@ -50,10 +50,14 @@ for (i in 1:length(file_list)) { # This loop takes atleast 2 hours to run ....
 	tree <- CladsOutput$tree
 
 	# Append the tip names and tip rate speciation to the dataframe
-	clads_tip_lambda <- rbind(clads_tip_lambda, data.frame(order = order_name, tip_label = tree$tip.label, lambda = CladsOutput$lambdatip_map))
+	clads_tip_lambda <- rbind(clads_tip_lambda, data.frame(order = order_name,
+														   tip_label = tree$tip.label,
+														   lambda = CladsOutput$lambdatip_map,
+														   extinction = CladsOutput$eps_map
+														   ))
 	
 	# print dim of the dataframe to keep track of the progress
-	print(dim(clads_tip_lambda))
+	cat("The dataset contains ",dim(clads_tip_lambda[1], " rows and ", dim(clads_tip_lambda[2]), " columns\n")
 
 	# Remove the CladsOutput object from the environment
 	rm(CladsOutput)
@@ -238,3 +242,18 @@ legend_b <- get_legend(
 # add the legend underneath the row we made earlier. Give it 10%
 # of the height of one plot (via rel_heights).
 plot_grid(prow, legend_b, ncol = 1, rel_heights = c(1, .1))
+
+
+# Calculate the mean and standard deviation of the unique extinction rates
+mean_extinction <- mean(unique_extinction)
+log(mean_extinction)
+sd_extinction <- sd(unique_extinction)
+log(sd_extinction)
+
+unique_orders <- unique(clads_tip_lambda$order)
+
+# make a dataframe with the unique extinction rates and the orders
+extinction_per_order <- data.frame(order = unique_orders, extinction = unique_extinction)
+
+# print the dataframe sorted by extinction rate
+extinction_per_order[order(-extinction_per_order$extinction), ]

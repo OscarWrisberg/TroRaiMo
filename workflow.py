@@ -945,7 +945,7 @@ def Clads(tree, done_file, path_in, output_file,wcvp_input, order, apg, script_d
     outputs = [done_dir+done_file, path_in+output_file]
     options = {
         'cores': 1,
-        'memory': '1200g',
+        'memory': '800g',
         'account':"Trf_models",
         'walltime': "120:00:00"
     }
@@ -956,18 +956,6 @@ def Clads(tree, done_file, path_in, output_file,wcvp_input, order, apg, script_d
     conda activate Julia_env
 
     cd {path_in}
-
-    # echo Starting the R script at:
-    # date
-
-    # #Rscript --vanilla {script_dir}sampling_frequency.r {tree} {wcvp_input} {order} {apg} 
-
-    # sampling_frequency=$(Rscript --vanilla {script_dir}sampling_frequency.r {tree} {wcvp_input} {order} {apg}
-
-    # echo Sampling frequency is $sampling_frequency
-
-    # echo Ended the R script at:
-    # date
 
     echo Starting the Julia script at:
     date
@@ -986,6 +974,86 @@ def Clads(tree, done_file, path_in, output_file,wcvp_input, order, apg, script_d
     return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
 
 ##############################################################
+################---- Calculating Priors  ----#################
+##############################################################
+def Calculating_priors( done_file, path_in, output_file,script_dir, done_dir, input_folder):
+    """ """
+    inputs = [path_in + "Clads_output_Aquifoliales.R", path_in + "Clads_output_Canellales.R", path_in + "Clads_output_Cupressales.R",
+                path_in + "Clads_output_Escalloniales.R", path_in + "Clads_output_Nymphaeales.R", path_in + "Clads_output_Zygophyllales.R",
+                path_in + "Clads_output_Austrobaileyales.R", path_in + "Clads_output_Celastrales.R", path_in + "Clads_output_Cycadales.R",
+                path_in + "Clads_output_Garryales.R", path_in + "Clads_output_Paracryphiales.R", path_in + "Clads_output_Berberidopsidales.R",
+                path_in + "Clads_output_Chloranthales.R", path_in + "Clads_output_Dilleniales.R", path_in + "Clads_output_Gnetales.R", path_in + "Clads_output_Picramniales.R",
+                path_in + "Clads_output_Bruniales.R", path_in + "Clads_output_Commelinales.R", path_in + "Clads_output_Dioscoreales.R", path_in + "Clads_output_Gunnerales.R",
+                path_in + "Clads_output_Pinales.R", path_in + "Clads_output_Buxales.R", path_in + "Clads_output_Crossosomatales.R", path_in + "Clads_output_Dipsacales.R",
+                path_in + "Clads_output_Huerteales.R", path_in + "Clads_output_Vitales.R"]
+    outputs = [output_file, done_dir+done_file]
+    options = {
+        'cores': 1,
+        'memory': '10g',
+        'account':"Trf_models",
+        'walltime': "00:01:00"
+    }
+
+    spec = '''
+
+    source /home/owrisberg/miniconda3/etc/profile.d/conda.sh
+    conda activate R_env
+
+    cd {path_in}
+
+    echo Starting the R script at:
+    date
+
+    Rscript --vanilla {script_dir}sampling_frequency.r {input_folder} {output_file}
+
+    echo Ended the R script at:
+    date
+
+    touch {done_dir}{done_file}
+
+    '''.format( done_file = done_file, path_in = path_in, output_file = output_file,script_dir = script_dir, done_dir = done_dir,input_folder = input_folder)
+
+
+    return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
+
+##############################################################
+#######---- Runnning ClaDs models with new priors  ----#######
+##############################################################
+def Clads_priors(tree, done_file, path_in, output_file,wcvp_input, order, apg, script_dir, done_dir, sampling_frequency, prior_file):
+    """ """
+    inputs = [path_in+tree,wcvp_input,apg,done_dir+"Finding_monophyletic_orders",done_dir+order+"_Sampling_fraction"]
+    outputs = [done_dir+done_file, path_in+output_file]
+    options = {
+        'cores': 1,
+        'memory': '600g',
+        'account':"Trf_models",
+        'walltime': "120:00:00"
+    }
+
+    spec = '''
+
+    source /home/owrisberg/miniconda3/etc/profile.d/conda.sh
+    conda activate Julia_env
+
+    cd {path_in}
+
+    echo Starting the Julia script at:
+    date
+
+    julia {script_dir}ClaDs_new_prior.jl {path_in}{tree} {sampling_frequency} {output_file} {prior_file}
+
+    echo Ended the Clads script at:
+    date
+
+    touch {done_dir}{done_file}
+
+    '''.format(tree = tree, done_file = done_file, path_in = path_in, output_file = output_file, wcvp_input = wcvp_input, order = order,
+                apg = apg, script_dir = script_dir, done_dir = done_dir, sampling_frequency = sampling_frequency, prior_file = prior_file)
+
+
+    return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
+
+##############################################################
 ######---- Calculating states files for Esse Model  ----######
 ##############################################################
 def states_converter(path_in,tip_states_file, out_states_file, script_dir, done_dir, done, percentage_for_present):
@@ -996,7 +1064,7 @@ def states_converter(path_in,tip_states_file, out_states_file, script_dir, done_
         'cores': 1,
         'memory': '1g',
         'account':"Trf_models",
-        'walltime': "00:00:240"
+        'walltime': "00:00:600"
     }
 
     spec = '''
@@ -1315,6 +1383,12 @@ orders = ["Alismatales", "Amborellales","Apiales", "Aquifoliales", "Arecales", "
 orders_new_prior = ["Apiales","Arecales","Asparagales","Asterales","Brassicales","Caryophyllales","Ericales","Fabales","Gentiales", "Lamiales","Laurales","Malpighiales",
                     "Malvales","Myrtales","Poales","Ranunculales","Rosales","Sapindales","Saxifragales","Solanales","Zingiberales"]
 
+orders_not_in_orders_new_prior = ["Alismatales", "Amborellales", "Aquifoliales", "Berberidopsidales", "Boraginales", "Bruniales", "Buxales",
+                                "Canellales", "Celastrales", "Chloranthales", "Commelinales", "Cornales", "Crossosomatales", "Cucurbitales",
+                                "Cupressales", "Dilleniales", "Dioscoreales", "Escalloniales", "Fagales", "Gunnerales", "Huerteales", "Icacinales",
+                                "Liliales", "Magnoliales", "Metteniusales", "Nymphaeales", "Oxalidales", "Pandanales", "Paracryphiales", "Petrosaviales",
+                                "Pinales", "Piperales", "Proteales", "Santalales", "Trochodendrales", "Vahliales", "Vitales", "Zygophyllales"]
+
 percentages =["0.1","0.2","0.3","0.4"]
 
 
@@ -1404,18 +1478,44 @@ for i in range(len(orders)):
     ))
                              
 
-
-    gwf.target_from_template(name = orders[i]+"_ClaDs",
+for i in range(len(orders_not_in_orders_new_prior)):
+    gwf.target_from_template(name = orders_not_in_orders_new_prior[i]+"_ClaDs",
                                 template= Clads(
-                                tree= "pruned_tree_order_"+orders[i]+"_GBMB.tre",
+                                tree= "pruned_tree_order_"+orders_not_in_orders_new_prior[i]+"_GBMB.tre",
                                 wcvp_input = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds",
-                                order = orders[i],
+                                order = orders_not_in_orders_new_prior[i],
                                 apg = script_dir+"apgweb_parsed.csv",
-                                done_file = orders[i]+"_ClaDs",
+                                done_file = orders_not_in_orders_new_prior[i]+"_ClaDs",
                                 path_in = workflow_dir+"02_adding_orders/pruning/orders/",
-                                output_file = "Clads_output_"+orders[i]+".jld2",
+                                output_file = "Clads_output_"+orders_not_in_orders_new_prior[i]+".jld2",
                                 script_dir=script_dir,
                                 done_dir = done_dir,
-                                sampling_frequency= workflow_dir+"03_distribution_data/"+orders[i]+"_sampling_fraction.txt"
+                                sampling_frequency= workflow_dir+"03_distribution_data/"+orders_not_in_orders_new_prior[i]+"_sampling_fraction.txt"
+                             ))
+    
+gwf.target_from_template(name = "Calculating_priors",
+                            template=Calculating_priors(
+                            done_file = "Calculating_priors",
+                            path_in = workflow_dir + "02_adding_orders/pruning/orders",
+                            output_file = "priors.txt",
+                            script_dir = script_dir,
+                            done_dir = done_dir,
+                            input_folder = workflow_dir + "02_adding_orders/pruning/orders"
+                            ))
+
+for i in range(len(orders_new_prior)):
+    gwf.target_from_template(name = orders_new_prior[i]+"_ClaDs",
+                                template= Clads_priors(
+                                tree= "pruned_tree_order_"+orders_new_prior[i]+"_GBMB.tre",
+                                wcvp_input = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds",
+                                order = orders_new_prior[i],
+                                apg = script_dir+"apgweb_parsed.csv",
+                                done_file = orders_new_prior[i]+"_ClaDs",
+                                path_in = workflow_dir+"02_adding_orders/pruning/orders/",
+                                output_file = "Clads_output_"+orders_new_prior[i]+".jld2",
+                                script_dir=script_dir,
+                                done_dir = done_dir,
+                                sampling_frequency= workflow_dir+"03_distribution_data/"+orders_new_prior[i]+"_sampling_fraction.txt",
+                                prior_file = workflow_dir+"02_adding_orders/pruning/orders/priors.txt"
                              ))
 
