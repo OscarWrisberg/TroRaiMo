@@ -991,7 +991,7 @@ def Calculating_priors( done_file, path_in, output_file,script_dir, done_dir, in
         'cores': 1,
         'memory': '10g',
         'account':"Trf_models",
-        'walltime': "00:01:00"
+        'walltime': "00:30:00"
     }
 
     spec = '''
