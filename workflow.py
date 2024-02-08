@@ -1053,7 +1053,7 @@ def Esse(path_in, tree_file,tip_states_file,paleo_clim_file, out_states_file, ou
     date
     echo using {processors} processors, {memory} gb-RAM and {hidden_states} hidden states.
 
-    julia {script_dir}Esse.jl {processors} {tree_file} {tip_states_file} {paleo_clim_file} {out_file} {out_states_file} {save_file} {hidden_states}
+    julia {script_dir}Esse.jl {processors} {tree_file} {tip_states_file} {paleo_clim_file} {out_states_file} {out_file} {save_file} {hidden_states}
 
     echo Ended the Julia script at:
     date
