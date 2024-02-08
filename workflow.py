@@ -1370,7 +1370,7 @@ for i in range(len(orders)):
                                     done_dir = done_dir,
                                     out_states_file = "Esse_states_"+orders[i]+"_"+percentages[j], 
                                     hidden_states = 2,
-                                    out_file = "Esse_output_"+orders[i]+"_hidden_states_"+percentages[j]"
+                                    out_file = "Esse_output_"+orders[i]+"_hidden_states_"+percentages[j]
                                  ))
 
 
