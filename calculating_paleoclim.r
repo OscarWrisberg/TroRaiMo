@@ -96,8 +96,6 @@ for (i in seq_along(paleo_clim_order)){
 }
 
 
-#time_series_data
-
 # Convert time_ago to numeric
 time_series_data$time_ago <- as.numeric(time_series_data$time_ago)
 
@@ -115,4 +113,4 @@ time_series_data <- time_series_data[-1,]
 
 write.table(time_series_data, file = output, sep = "\t", row.names = FALSE)
 
-# writing the data to a csv file and savint 
+

@@ -1062,7 +1062,7 @@ def Esse(path_in, tree_file,tip_states_file,paleo_clim_file, out_states_file, ou
 
     '''.format(processors = options['cores'], memory = options['memory'], tree_file = tree_file, tip_states_file = tip_states_file, paleo_clim_file = paleo_clim_file,
                 out_states_file = out_states_file, out_file = out_file, hidden_states = hidden_states, script_dir = script_dir, path_in = path_in,
-                done_dir = done_dir, done = done)
+                done_dir = done_dir, done = done, save_file = save_file)
 
 
     return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
