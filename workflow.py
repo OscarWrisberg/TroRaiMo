@@ -1031,7 +1031,7 @@ def states_converter(path_in,tip_states_file, out_states_file, script_dir, done_
 ##############################################################
 ################---- Runnning ESSE model  ----################
 ##############################################################
-def Esse(path_in, tree_file,tip_states_file,paleo_clim_file, out_states_file, out_file, hidden_states, script_dir, done_dir, done, save_file):
+def Esse(path_in, tree_file,tip_states_file,paleo_clim_file, out_states_file, out_file, hidden_states, script_dir, done_dir, done, save_file, output_folder, path_out):
     """ Function for running the ESSE model on the tree of each order. """
     inputs = [path_in+tree_file,tip_states_file,paleo_clim_file]
     outputs = [save_file]
@@ -1047,13 +1047,19 @@ def Esse(path_in, tree_file,tip_states_file,paleo_clim_file, out_states_file, ou
     source /home/owrisberg/miniconda3/etc/profile.d/conda.sh
     conda activate Julia_env
 
+    # Cheking if path_out folder exists otherwise create it
+    [ -d {path_out} ] && echo "{path_out} exist." || {{ echo "{path_out} does not exist."; mkdir {path_out}; }}
+    
+    # Cheking if output folder exists otherwise create it
+    [ -d {output_folder} ] && echo "{output_folder} exist." || {{ echo "{output_folder} does not exist."; mkdir {output_folder}; }}
+
     cd {path_in}
 
     echo Starting the Julia script at:
     date
     echo using {processors} processors, {memory} gb-RAM and {hidden_states} hidden states.
 
-    julia {script_dir}Esse.jl {processors} {tree_file} {tip_states_file} {paleo_clim_file} {out_states_file} {out_file} {save_file} {hidden_states}
+    julia {script_dir}Esse.jl {processors} {tree_file} {tip_states_file} {paleo_clim_file} {out_states_file} {out_file} {save_file} {hidden_states} {output_folder}
 
     echo Ended the Julia script at:
     date
@@ -1062,7 +1068,7 @@ def Esse(path_in, tree_file,tip_states_file,paleo_clim_file, out_states_file, ou
 
     '''.format(processors = options['cores'], memory = options['memory'], tree_file = tree_file, tip_states_file = tip_states_file, paleo_clim_file = paleo_clim_file,
                 out_states_file = out_states_file, out_file = out_file, hidden_states = hidden_states, script_dir = script_dir, path_in = path_in,
-                done_dir = done_dir, done = done, save_file = save_file)
+                done_dir = done_dir, done = done, save_file = save_file, output_folder = output_folder, path_out = path_out)
 
 
     return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
@@ -1073,11 +1079,14 @@ def Esse(path_in, tree_file,tip_states_file,paleo_clim_file, out_states_file, ou
 ################################################################################################################################################################################
 ################################################################################################################################################################################
 
-# Setting up some global variables with relative paths 
+# Setting up some global variables with relative paths
 script_dir = os.path.dirname(getsourcefile(download_data)) + "/"
 data_dir = os.path.normpath(os.path.join(script_dir, "../data/")) +"/"
 workflow_dir = os.path.normpath(os.path.join(script_dir, "../workflow/")) +"/"
 done_dir = os.path.normpath(os.path.join(script_dir, "../done/")) +"/"
+conda_executable_path = os.popen('which conda').read().strip()
+conda_bin_dir = os.path.dirname(conda_executable_path)
+conda_sh_path = os.path.normpath(os.path.join(conda_bin_dir, "../etc/profile.d/conda.sh"))
 
 #########################################################################################################################
 #############################################---- Downloading Data ----##################################################
@@ -1370,7 +1379,9 @@ for i in range(len(orders)):
                                     done_dir = done_dir,
                                     out_states_file = "Esse_states_"+orders[i]+"_"+percentages[j], 
                                     hidden_states = 2,
-                                    out_file = "Esse_output_"+orders[i]+"_hidden_states_"+percentages[j]
+                                    out_file = "Esse_output_"+orders[i]+"_hidden_states_"+percentages[j],
+                                    output_folder = workflow_dir+"04_results/Esse_output/",
+                                    path_out = workflow_dir+"04_results/"
                                  ))
 
 

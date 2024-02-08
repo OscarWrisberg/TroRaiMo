@@ -30,6 +30,7 @@ out_states_file = ARGS[5]
 out_file = ARGS[6]
 save_file = ARGS[7]
 hidden_states = parse(Int, ARGS[8])
+output_folder = ARGS[9]
 
 # The first argument is the number of processors available to the Tapestree
 # Load Tapestree and Distributed
@@ -46,11 +47,11 @@ states = joinpath(tip_states_file)
 paleo_data = joinpath(paleo_clim_file)
 
 # Setting the out directory for states
-out_states = joinpath(out_states_file)
+out_states = joinpath(output_folder,out_states_file)
 
 # Setting the outdir for the MCMC data
-out_file = joinpath(out_file)
-out_states = joinpath(out_states_file)
+out_file = joinpath(output_folder, out_file)
+out_states = joinpath(output_folder, out_states_file)
 
 
 # Running the ESSE model
