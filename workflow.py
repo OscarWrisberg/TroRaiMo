@@ -1380,7 +1380,7 @@ orders = ["Alismatales", "Amborellales","Apiales", "Aquifoliales", "Arecales", "
 ]
 
 # Orders that need a to be run with a modified prior
-orders_new_prior = ["Apiales","Arecales","Asparagales","Asterales","Brassicales","Caryophyllales","Ericales","Fabales","Gentiales", "Lamiales","Laurales","Malpighiales",
+orders_new_prior = ["Apiales","Arecales","Asparagales","Asterales","Brassicales","Caryophyllales","Ericales","Fabales","Gentianales", "Lamiales","Laurales","Malpighiales",
                     "Malvales","Myrtales","Poales","Ranunculales","Rosales","Sapindales","Saxifragales","Solanales","Zingiberales"]
 
 orders_not_in_orders_new_prior = ["Alismatales", "Amborellales", "Aquifoliales", "Berberidopsidales", "Boraginales", "Bruniales", "Buxales",
