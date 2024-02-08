@@ -1004,7 +1004,7 @@ def Calculating_priors( done_file, path_in, output_file,script_dir, done_dir, in
     echo Starting the R script at:
     date
 
-    Rscript --vanilla {script_dir}sampling_frequency.r {input_folder} {output_file}
+    Rscript --vanilla {script_dir}prior_calculator.r {input_folder} {output_file}
 
     echo Ended the R script at:
     date
