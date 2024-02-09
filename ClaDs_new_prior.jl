@@ -69,8 +69,8 @@ sampling_freq_array = sampling_freq_joined[!, :frequency]
 
 # Load the extinction prior
 extinction_prior = readdlm(extinction_prior_file, ',', header=true)
-extinction_mean = parse(Float64, data[2][1])
-extinction_sd = parse(Float64, data[2][2])
+extinction_mean = parse(Float64, extinction_prior[2][1])
+extinction_sd = parse(Float64, extinction_prior[2][2])
 
 
 # Measure the time to run infer_ClaDS
