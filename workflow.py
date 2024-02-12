@@ -1025,7 +1025,7 @@ def Clads_priors(tree, done_file, path_in, output_file,wcvp_input, order, apg, s
     outputs = [done_dir+done_file, path_in+output_file]
     options = {
         'cores': 1,
-        'memory': '600g',
+        'memory': '1200g',
         'account':"Trf_models",
         'walltime': "120:00:00"
     }
