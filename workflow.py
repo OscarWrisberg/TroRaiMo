@@ -3,10 +3,8 @@
 This is gonna be my workflow for the estimation of speciation, extinction and migration of all vascular plant orders
 species using the occurence records of Herbarium specimens combined with the phylogenetic tree of Smith & Brown 2018.
 
-Lastly this script will fit the ESSE models from Tapestree to the data and estimate the parameters for each order.
-
 The Idea is that if you download the repository then you can run the entire analysis using GWF on a cluster using slurm.
-Ideally it should run the entire analysis as a pipeline where the output of the frist function is the input to the next
+Ideally it should run the entire analysis as a pipeline where the output of the first function is the input to the next
 one and result in all the final data output.
 
 Download the repository from Github into a folder for the project.
@@ -1107,7 +1105,8 @@ def Esse(path_in, tree_file,tip_states_file,paleo_clim_file, out_states_file, ou
         'cores': 10,
         'memory': '30g',
         'account':"Trf_models",
-        'walltime': "120:00:00"
+        'walltime': "120:00:00",
+
     }
 
     spec = '''
@@ -1122,6 +1121,11 @@ def Esse(path_in, tree_file,tip_states_file,paleo_clim_file, out_states_file, ou
     [ -d {output_folder} ] && echo "{output_folder} exist." || {{ echo "{output_folder} does not exist."; mkdir {output_folder}; }}
 
     cd {path_in}
+
+    #Setting Julia up to be unbuffered
+    echo Setting Julia up to be unbuffered
+    date
+    julia -e 'using Base; stdout = stderr = Base.unbuffered_streams'
 
     echo Starting the Julia script at:
     date
