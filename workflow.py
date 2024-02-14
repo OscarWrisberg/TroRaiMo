@@ -1106,7 +1106,7 @@ def Esse(path_in, tree_file,tip_states_file,paleo_clim_file, out_states_file, ou
         'memory': '30g',
         'account':"Trf_models",
         'walltime': "120:00:00",
-        '-u'
+        '-u': "TRUE"
 
     }
 
