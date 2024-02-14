@@ -1105,8 +1105,7 @@ def Esse(path_in, tree_file,tip_states_file,paleo_clim_file, out_states_file, ou
         'cores': 10,
         'memory': '30g',
         'account':"Trf_models",
-        'walltime': "120:00:00",
-        '-u': "TRUE"
+        'walltime': "120:00:00"
 
     }
 
@@ -1127,7 +1126,7 @@ def Esse(path_in, tree_file,tip_states_file,paleo_clim_file, out_states_file, ou
     date
     echo using {processors} processors, {memory} gb-RAM and {hidden_states} hidden states.
 
-    julia {script_dir}Esse.jl {processors} {tree_file} {tip_states_file} {paleo_clim_file} {out_states_file} {out_file} {save_file} {hidden_states} {output_folder}
+    srun --unbuffered julia {script_dir}Esse.jl {processors} {tree_file} {tip_states_file} {paleo_clim_file} {out_states_file} {out_file} {save_file} {hidden_states} {output_folder}
 
     echo Ended the Julia script at:
     date
