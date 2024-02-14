@@ -1123,11 +1123,6 @@ def Esse(path_in, tree_file,tip_states_file,paleo_clim_file, out_states_file, ou
 
     cd {path_in}
 
-    #Setting Julia up to be unbuffered
-    echo Setting Julia up to be unbuffered
-    date
-    julia -e 'using Base; stdout = stderr = Base.unbuffered_streams'
-
     echo Starting the Julia script at:
     date
     echo using {processors} processors, {memory} gb-RAM and {hidden_states} hidden states.
