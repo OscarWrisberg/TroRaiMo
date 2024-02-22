@@ -958,7 +958,7 @@ def Clads(tree, done_file, path_in, output_file,wcvp_input, order, apg, script_d
     echo Starting the Julia script at:
     date
 
-    julia {script_dir}ClaDs.jl {path_in}{tree} {sampling_frequency} {output_file}
+    srun --unbuffered julia {script_dir}ClaDs.jl {path_in}{tree} {sampling_frequency} {output_file}
 
     echo Ended the Clads script at:
     date
@@ -1038,7 +1038,7 @@ def Clads_priors(tree, done_file, path_in, output_file,wcvp_input, order, apg, s
     echo Starting the Julia script at:
     date
 
-    julia {script_dir}ClaDs_new_prior.jl {path_in}{tree} {sampling_frequency} {output_file} {prior_file}
+    srun --unbuffered julia {script_dir}ClaDs_new_prior.jl {path_in}{tree} {sampling_frequency} {output_file} {prior_file}
 
     echo Ended the Clads script at:
     date
@@ -1103,6 +1103,7 @@ def Esse(path_in, tree_file,tip_states_file,paleo_clim_file, out_states_file, ou
     outputs = [save_file]
     options = {
         'cores': 10,
+        'threads': 1,
         'memory': '100g',
         'account':"Trf_models",
         'walltime': "168:00:00"
