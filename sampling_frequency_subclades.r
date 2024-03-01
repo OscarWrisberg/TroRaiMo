@@ -12,6 +12,7 @@ path_to_tree <- commandArgs(trailingOnly = TRUE)[1]
 wcvp <- commandArgs(trailingOnly = TRUE)[2]
 path_apg <- commandArgs(trailingOnly = TRUE)[3]
 path_out <- commandArgs(trailingOnly = TRUE)[4]
+name <- commandArgs(trailingOnly = TRUE)[5]
 
 # Rcode needed to run to get the sampling frequency
 # Setting Cran mirror
@@ -139,4 +140,4 @@ merged_data <- merge(tree_species, genera_sampling_freq, by = "genus", all.x = F
 # Now I can select the species name and the sampling fraction columns and then I have the sampling fraction for each species in the tree
 sampling_fraction <- merged_data[, c("species", "sampling_freq")]
 
-write.table(sampling_fraction, file = paste0(path_out, "sampling_fraction.txt"), sep = "\t", row.names = FALSE)
+write.table(sampling_fraction, file = paste0(path_out, name,"_sampling_fraction.txt"), sep = "\t", row.names = FALSE)

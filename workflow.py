@@ -983,7 +983,7 @@ def sampling_frequency(input_file_tree, wcvp_file,path_out, output_file, path_in
 #########---- Finding the sampling frequency for Subclades  ----############
 ############################################################################
 
-def sampling_frequency_subclades(input_file_tree, wcvp_file, path_out, output_file, path_in, script_dir, apg, done_dir, done):
+def sampling_frequency_subclades(input_file_tree, wcvp_file, path_out, output_file, path_in, script_dir, apg, done_dir, done, name):
     """This function calculates the number of species sampled per genus in each subtree.
     This is then used by the ClaDs model to get a better result on speciation"""
     inputs = [done_dir + "Finding_monophyletic_orders"]
@@ -1010,7 +1010,7 @@ def sampling_frequency_subclades(input_file_tree, wcvp_file, path_out, output_fi
     date
 
     # Running the R script
-    Rscript --vanilla {script_dir}sampling_frequency_subclades.r {input_file_tree} {wcvp_file} {apg} {path_out}
+    Rscript --vanilla {script_dir}sampling_frequency_subclades.r {input_file_tree} {wcvp_file} {apg} {path_out} {name}
 
 
     echo Ended the script to find sampling frequency for the tips in the wcvp
@@ -1020,7 +1020,7 @@ def sampling_frequency_subclades(input_file_tree, wcvp_file, path_out, output_fi
 
     '''.format(path_out=path_out, output_file=output_file, wcvp_file=wcvp_file,
                input_file_tree=input_file_tree, path_in=path_in, script_dir=script_dir, apg=apg,
-               done_dir=done_dir, done=done)
+               done_dir=done_dir, done=done, name = name)
 
     return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
 
@@ -1496,7 +1496,7 @@ orders_split_for_clads = ["Zingiberales", "Laurales","Poales","Ranunculales","Ro
 			"Ericales", "Apiales","Asterales","Asparagales","Caryophyllales","Arecales","Brassicales"]
 
 # This is the list of Clades resulting from my personal splitting of the orders.
-Clads_clades = ["Zingiberaceae", "Marantaceae_Cannaceae", "Costaceae", "Heliconiaceae_Lowiaceae_Strelitziaceae","Lauraceae","Monimiaceae""Poaceae","Cyperaceae","Bromeliaceae",
+Clads_clades = ["Zingiberaceae", "Marantaceae_Cannaceae", "Costaceae", "Heliconiaceae_Lowiaceae_Strelitziaceae","Lauraceae","Monimiaceae","Poaceae","Cyperaceae","Bromeliaceae",
                 "Restionaceae","Xyridaceae_Eriocaulaceae","Juncaceae","Typhaceae","Menispermaceae","Berberidaceae","Ranunculaceae","Papaveraceae","Rosaceae","Urticaceae",
                 "Rhamnaceae_Barbeyaceae_Dirachmaceae_Elaeagnaceae","Moraceae","Ulmaceae","Cannabaceae","Anacardiaceae_Burseraceae_Kirkiaceae", "Sapindaceae","Rutaceae","Meliaceae","Simaroubaceae",
                 "Crassulaceae_Aphanopetalaceae_Halograceae_Penthoraceae_Tetracarpaeaceae", "Saxifragaceae_Iteaceae_Grossulariaceae", "Cercidiphyllaceae_Hamamelidaceae_Daphniphyllaceae_Altingiaceae_Paeoniaceae",
@@ -1655,7 +1655,8 @@ for i in range(len(Clads_clades)):
                                           script_dir = script_dir,
                                           apg = script_dir + "apgweb_parsed.csv",
                                           done_dir = done_dir,
-                                          done = Clads_clades[i] + "_Sampling_fraction"
+                                          done = Clads_clades[i] + "_Sampling_fraction",
+                                          name = Clads_clades[i]
                                       ))
 
     gwf.target_from_template(name = Clads_clades[i]+"_ClaDs",
