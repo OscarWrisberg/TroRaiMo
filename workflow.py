@@ -840,6 +840,49 @@ def Forcing_orders(input_file_tree, output_file, path_in,path_out, script_dir, w
 
 
     return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
+
+##############################################################
+##"##-- Slicing problematic orders into smaller clades --#####
+##############################################################
+def Creating_subclades(path_out, script_dir, done_dir, done, path_in, wcvp_file):
+    """This Function cuts the problematic orders into smaller clades which ClaDs and Esse Should be able to handle"""
+    inputs = [done_dir+"Finding_monophyletic_orders"]
+    outputs = [done_dir+done]
+    options = {
+        'cores': 2,
+        'memory': '5g',
+        'account':"Trf_models",
+        'walltime': "00:00:50"
+    }
+
+    spec = '''
+
+    #Checking if output dir exists
+    [ -d {path_out} ] && echo "{path_out} exist." || {{ echo "{path_out} does not exist."; mkdir {path_out}; }}
+
+    source /home/owrisberg/miniconda3/etc/profile.d/conda.sh
+    conda activate R_env
+
+    # Going to input folder
+    cd {path_in}
+
+    echo Starting the Creating subclades script
+    date
+
+    # Running the R script
+    Rscript --vanilla {script_dir}Finding_monophylo_smaller_clades.r {path_in} {wcvp_file} {path_out}
+
+
+    echo Ended the Creating subclades script
+    date
+
+    touch {done_dir}{done}
+    
+    '''.format(path_out = path_out, script_dir = script_dir, path_in = path_in, wcvp_file = wcvp_file, done_dir = done_dir, done = done)
+
+
+    return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
+
 #########################################################################################################################################################################################
 ##########################################################################################################################################################################################
 ##################################################################---- Splitting the analysis into subtrees ----##########################################################################
@@ -1103,7 +1146,6 @@ def Esse(path_in, tree_file,tip_states_file,paleo_clim_file, out_states_file, ou
     outputs = [save_file]
     options = {
         'cores': 10,
-        'threads': 1,
         'memory': '100g',
         'account':"Trf_models",
         'walltime': "168:00:00"
@@ -1353,6 +1395,17 @@ gwf.target_from_template(name = "Finding_monophyletic_orders",
                             done_dir= done_dir,
                             done = "Finding_monophyletic_orders"
                             ))
+
+gwf.target_from_template(name = "Subdividing_problematic_orders",
+                        template=Creating_subclades(
+                            path_in = workflow_dir+"02_adding_orders/pruning/orders/", 
+                            path_out = workflow_dir+"02_adding_orders/pruning/subset_of_orders", 
+                            script_dir = script_dir, 
+                            wcvp_file = data_dir+"wcvp_names.csv",
+                            done_dir= done_dir,
+                            done = "Subdividing_problematic_orders"
+                            ))
+
 
 # I find the list of trees again, or somehow change the scripts so they print all the good trees into a single folder where I can just run the script on all of them.
 order_trees=["pruned_tree_order_Alismatales_GBMB.tre", "pruned_tree_order_Crossosomatales_GBMB.tre", "pruned_tree_order_Gunnerales_GBMB.tre", "pruned_tree_order_Poales_GBMB.tre",

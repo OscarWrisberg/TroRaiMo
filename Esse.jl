@@ -69,7 +69,7 @@ Tapestree.esse(tree, out_file, hidden_states,
  	envdata_file = paleo_data, 
 	states_file = states,
 	out_states = out_states,
-	cov_mod = ("s",),
+	cov_mod = ("s",), # s specifies that only speciation is affected by the covariate 
 	parallel = true,
 	mc = "mh",
 	ncch= 3

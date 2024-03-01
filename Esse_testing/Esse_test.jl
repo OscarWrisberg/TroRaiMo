@@ -103,7 +103,7 @@ println("Out states file: $out_states")
 
 
 # Running the ESSE model
-Tapestree.esse(tree, out_file, hidden_states
+Tapestree.esse(tree, out_file, hidden_states,
  	envdata_file = paleo_data, 
 	states_file = states,
 	out_states = out_states,

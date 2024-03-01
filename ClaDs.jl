@@ -30,6 +30,11 @@ println("Time to load DelimitedFiles: $time_load_delimitedfiles seconds")
 # Prepare some paths test script locally
 path_to_tree = "/home/au543206/GenomeDK/Trf_models/workflow/02_adding_orders/pruning/orders/pruned_tree_order_Zingiberales_GBMB.tre"
 sampling_freq_file = "/home/au543206/GenomeDK/Trf_models/workflow/03_distribution_data/Zingiberales_sampling_fraction.txt"
+
+path_to_tree = "/home/owrisberg/Trf_models/workflow/02_adding_orders/pruning/subset_of_orders/family_phylo_Lauraceae.tre"
+sampling_freq_file = "/home/owrisberg/Trf_models/workflow/03_distribution_data/Laurales_sampling_fraction.txt"
+
+
 output_name = "test_output.jld2"
 
 
