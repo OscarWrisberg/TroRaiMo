@@ -977,6 +977,53 @@ def sampling_frequency(input_file_tree, wcvp_file,path_out, output_file, path_in
 
     return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
 
+
+
+############################################################################
+#########---- Finding the sampling frequency for Subclades  ----############
+############################################################################
+
+def sampling_frequency_subclades(input_file_tree, wcvp_file, path_out, output_file, path_in, script_dir, apg, done_dir, done):
+    """This function calculates the number of species sampled per genus in each subtree.
+    This is then used by the ClaDs model to get a better result on speciation"""
+    inputs = [done_dir + "Finding_monophyletic_orders"]
+    outputs = [path_out + output_file, done_dir + done]
+    options = {
+        'cores': 2,
+        'memory': '10g',
+        'account': "Trf_models",
+        'walltime': "00:10:00"
+    }
+
+    spec = '''
+
+    # Checking if output dir exists
+    [ -d {path_out} ] && echo "{path_out} exist." || {{ echo "{path_out} does not exist."; mkdir {path_out}; }}
+
+    source /home/owrisberg/miniconda3/etc/profile.d/conda.sh
+    conda activate R_env
+
+    # Going to input folder
+    cd {path_in}
+
+    echo Starting the script to find the sampling frequency for the tips in the wcvp 
+    date
+
+    # Running the R script
+    Rscript --vanilla {script_dir}sampling_frequency_subclades.r {input_file_tree} {wcvp_file} {apg} {path_out}
+
+
+    echo Ended the script to find sampling frequency for the tips in the wcvp
+    date
+
+    touch {done_dir}{done}
+
+    '''.format(path_out=path_out, output_file=output_file, wcvp_file=wcvp_file,
+               input_file_tree=input_file_tree, path_in=path_in, script_dir=script_dir, apg=apg,
+               done_dir=done_dir, done=done)
+
+    return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
+
 ##############################################################
 ###########---- Runnning simple ClaDs models  ----############
 ##############################################################
@@ -1443,6 +1490,26 @@ orders_not_in_orders_new_prior = ["Aquifoliales", "Berberidopsidales", "Boragina
                                 "Cupressales", "Dilleniales", "Dioscoreales", "Escalloniales", "Fagales", "Gunnerales", "Huerteales", "Icacinales",
                                 "Liliales", "Magnoliales", "Metteniusales", "Nymphaeales", "Oxalidales", "Pandanales", "Paracryphiales",
                                 "Pinales", "Piperales", "Proteales", "Santalales", "Vitales", "Zygophyllales"]
+ 
+ # Here is the list of orders that I have had to split into smaller clades to be able to run the ClaDs on them.
+orders_split_for_clads = ["Zingiberales", "Laurales","Poales","Ranunculales","Rosales","Sapindales","Saxifragales","Myrtales","Malvales","Malpighiales","Lamiales","Gentianales","Fabales",
+			"Ericales", "Apiales","Asterales","Asparagales","Caryophyllales","Arecales","Brassicales"]
+
+# This is the list of Clades resulting from my personal splitting of the orders.
+Clads_clades = ["Zingiberaceae", "Marantaceae_Cannaceae", "Costaceae", "Heliconiaceae_Lowiaceae_Strelitziaceae","Lauraceae","Monimiaceae""Poaceae","Cyperaceae","Bromeliaceae",
+                "Restionaceae","Xyridaceae_Eriocaulaceae","Juncaceae","Typhaceae","Menispermaceae","Berberidaceae","Ranunculaceae","Papaveraceae","Rosaceae","Urticaceae",
+                "Rhamnaceae_Barbeyaceae_Dirachmaceae_Elaeagnaceae","Moraceae","Ulmaceae","Cannabaceae","Anacardiaceae_Burseraceae_Kirkiaceae", "Sapindaceae","Rutaceae","Meliaceae","Simaroubaceae",
+                "Crassulaceae_Aphanopetalaceae_Halograceae_Penthoraceae_Tetracarpaeaceae", "Saxifragaceae_Iteaceae_Grossulariaceae", "Cercidiphyllaceae_Hamamelidaceae_Daphniphyllaceae_Altingiaceae_Paeoniaceae",
+                "Melastomataceae","Myrtaceae","Lythraceae_Onagraceae","Alzateaceae_Crypteroniaceae_Penaeaceae","Combretaceae","Malvaceae","Thymelaeaceae","Dipterocarpaceae_Bixaceae_Cistaceae_Sarcoleanaceae_Muntingiaceae_Sphaerosepalaceae",
+                "Salicaceae_Lacistemataceae","Euphorbiaceae","Chrysobalanaceae_Malpighiaceae_Caryocaraceae_Balanopaceae_Elatinaceae_Centroplacaceae_Dichapetalaceae_Putranjivaceae_Euphroniaceae_Lophopyxidaceae_Trigoniaceae",
+                "Phyllanthaceae_Picodendraceae_Linaceae_Ixonanthaceae","Ochnaceae_Clusiaceae_Erythroxylaceae_Podostemaceae_Bonnetiaceae_Rhizophoraceae_Calophyllaceae_Hypericaceae_Ctenolophonaceae_Irvingiaceae_Pandaceae",
+                "Passifloraceae","Violaceae_Goupiaceae","Verbenaceae_Schlegeliaceae_Lentibulariaceae_Thomandersiaceae","Lamiaceae","Acanthaceae_Martyniaceae_Pedaliaceae","Gesneriaceae_Calceolariaceae","Bignoniaceae",
+                "Orobanchaceae_Phrymaceae_Mazaceae_Paulowniaceae","Scrophulariaceae","Plantaginaceae","Rubiaceae","Apocynaceae","Loganiaceae_Gelsemiaceae","Gentianaceae","Fabaceae","Polygalaceae_Surianaceae",
+                "Sapotaceae","Polemoniaceae_Lecythidaceae_Fouquieriaceae","Ericaceae_Clethraceae_Cyrillaceae","Pentaphylacaceae_Sladeniaceae","Primulaceae","Styracaceae_Diapensiaceae_Symplocaceae","Theaceae","Ebenaceae",
+                "Balsaminaceae_Marcgraviaceae_Tetrameristaceae","Apiaceae","Araliaceae","Pittosporaceae","Asteraceae","Calyceraceae","Campanulaceae_Rousseaceae","Goodeniaceae","Menyanthaceae","Asphodelaceae",
+                "Orchidaceae","Amaryllidaceae","Iridaceae","Asparagaceae","Cactaceae_Molluginaceae_Didiereaceae_Anacompserotaceae_Basellaceae_Montiaceae_Halophytaceae_Portulacaceae_Talinaceae",
+                "Plumbaginaceae_Polygonaceae_Frankeniaceae_Tamaricaceae","Caryophyllaceae_Achatocarpaceae_Amaranthaceae", "Aizoaceae_Phytolaccaceae_Barbeuiaceae_Lophiocarpaceae_Gisekiaceae_Sarcobataceae",
+                "Droseraceae_Ancistrocladaceae_Drosophyllaceae_Nepenthaceae_Dioncophyllaceae","Arecaceae","Brassicaceae","Resedaceae","Capparaceae","Cleomaceae"]
 
 
 # Orders that are removed as they are too small: Alismatales, Amborellales, Petrosaviales, Trochodendrales, Vahliales
@@ -1577,4 +1644,32 @@ for i in range(len(orders_new_prior)):
                                 prior_file = workflow_dir+"02_adding_orders/pruning/orders/priors.txt"
                              ))
 
+for i in range(len(Clads_clades)):
+    gwf.target_from_template(name = Clads_clades[i]+"_samplingfraction",
+                                      template = sampling_frequency(
+                                          input_file_tree = "family_phylo_" + Clads_clades[i] + ".tre",
+                                          path_in = workflow_dir + "02_adding_orders/pruning/subset_of_orders/",
+                                          path_out = workflow_dir + "03_distribution_data/",
+                                          output_file = Clads_clades[i] + "_sampling_fraction.txt",
+                                          wcvp_file = workflow_dir + "02_adding_orders/wcvp_names_apg_aligned.rds",
+                                          order = Clads_clades[i],
+                                          script_dir = script_dir,
+                                          apg = script_dir + "apgweb_parsed.csv",
+                                          done_dir = done_dir,
+                                          done = Clads_clades[i] + "_samplingfraction"
+                                      ))
 
+    gwf.target_from_template(name = Clads_clades[i]+"_ClaDs",
+                                template= Clads_priors(
+                                tree= "family_phylo_"+Clads_clades[i]+".tre",
+                                wcvp_input = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds",
+                                order = Clads_clades[i],
+                                apg = script_dir+"apgweb_parsed.csv",
+                                done_file = Clads_clades[i]+"_ClaDs",
+                                path_in = workflow_dir+"02_adding_orders/pruning/subset_of_orders/",
+                                output_file = "Clads_output_"+Clads_clades[i]+".jld2",
+                                script_dir=script_dir,
+                                done_dir = done_dir,
+                                sampling_frequency= workflow_dir+"03_distribution_data/"+Clads_clades[i]+"_sampling_fraction.txt",
+                                prior_file = workflow_dir+"02_adding_orders/pruning/orders/priors.txt"
+                             ))
