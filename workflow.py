@@ -1646,13 +1646,12 @@ for i in range(len(orders_new_prior)):
 
 for i in range(len(Clads_clades)):
     gwf.target_from_template(name = Clads_clades[i]+"_samplingfraction",
-                                      template = sampling_frequency(
+                                      template = sampling_frequency_subclades(
                                           input_file_tree = "family_phylo_" + Clads_clades[i] + ".tre",
                                           path_in = workflow_dir + "02_adding_orders/pruning/subset_of_orders/",
                                           path_out = workflow_dir + "03_distribution_data/",
                                           output_file = Clads_clades[i] + "_sampling_fraction.txt",
                                           wcvp_file = workflow_dir + "02_adding_orders/wcvp_names_apg_aligned.rds",
-                                          order = Clads_clades[i],
                                           script_dir = script_dir,
                                           apg = script_dir + "apgweb_parsed.csv",
                                           done_dir = done_dir,
