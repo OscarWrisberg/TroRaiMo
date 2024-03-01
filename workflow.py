@@ -1399,7 +1399,7 @@ gwf.target_from_template(name = "Finding_monophyletic_orders",
 gwf.target_from_template(name = "Subdividing_problematic_orders",
                         template=Creating_subclades(
                             path_in = workflow_dir+"02_adding_orders/pruning/orders/", 
-                            path_out = workflow_dir+"02_adding_orders/pruning/subset_of_orders", 
+                            path_out = workflow_dir+"02_adding_orders/pruning/subset_of_orders/", 
                             script_dir = script_dir, 
                             wcvp_file = data_dir+"wcvp_names.csv",
                             done_dir= done_dir,
@@ -1433,8 +1433,10 @@ orders = ["Alismatales", "Amborellales","Apiales", "Aquifoliales", "Arecales", "
 ]
 
 # Orders that need a to be run with a modified prior
-orders_new_prior = ["Apiales","Arecales","Asparagales","Asterales","Brassicales","Caryophyllales","Ericales","Fabales","Gentianales", "Lamiales","Laurales","Malpighiales",
-                    "Malvales","Myrtales","Poales","Ranunculales","Rosales","Sapindales","Saxifragales","Solanales","Zingiberales"]
+# orders_new_prior = ["Apiales","Arecales","Asparagales","Asterales","Brassicales","Caryophyllales","Ericales","Fabales","Gentianales", "Lamiales","Laurales","Malpighiales",
+#                     "Malvales","Myrtales","Poales","Ranunculales","Rosales","Sapindales","Saxifragales","Solanales","Zingiberales"]
+
+orders_new_prior = ["Solanales"]
 
 orders_not_in_orders_new_prior = ["Alismatales", "Amborellales", "Aquifoliales", "Berberidopsidales", "Boraginales", "Bruniales", "Buxales",
                                 "Canellales", "Celastrales", "Chloranthales", "Commelinales", "Cornales", "Crossosomatales", "Cucurbitales",
@@ -1571,4 +1573,5 @@ for i in range(len(orders_new_prior)):
                                 sampling_frequency= workflow_dir+"03_distribution_data/"+orders_new_prior[i]+"_sampling_fraction.txt",
                                 prior_file = workflow_dir+"02_adding_orders/pruning/orders/priors.txt"
                              ))
+
 
