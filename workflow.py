@@ -986,7 +986,7 @@ def sampling_frequency(input_file_tree, wcvp_file,path_out, output_file, path_in
 def sampling_frequency_subclades(input_file_tree, wcvp_file, path_out, output_file, path_in, script_dir, apg, done_dir, done, name):
     """This function calculates the number of species sampled per genus in each subtree.
     This is then used by the ClaDs model to get a better result on speciation"""
-    inputs = [done_dir + "Finding_monophyletic_orders"]
+    inputs = [path_in + input_file_tree]
     outputs = [path_out + output_file, done_dir + done]
     options = {
         'cores': 2,
