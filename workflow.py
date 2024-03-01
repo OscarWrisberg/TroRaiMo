@@ -1655,7 +1655,7 @@ for i in range(len(Clads_clades)):
                                           script_dir = script_dir,
                                           apg = script_dir + "apgweb_parsed.csv",
                                           done_dir = done_dir,
-                                          done = Clads_clades[i] + "_samplingfraction"
+                                          done = Clads_clades[i] + "_Sampling_fraction"
                                       ))
 
     gwf.target_from_template(name = Clads_clades[i]+"_ClaDs",
