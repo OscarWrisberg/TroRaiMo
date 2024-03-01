@@ -1425,14 +1425,12 @@ order_trees=["pruned_tree_order_Alismatales_GBMB.tre", "pruned_tree_order_Crosso
 
 
 # Fixed it so it should now contain all orders.
-orders = ["Apiales", "Aquifoliales", "Arecales", "Asparagales", "Asterales", "Berberidopsidales", "Boraginales", "Brassicales", "Bruniales", "Buxales", "Canellales", "Caryophyllales",
+orders = ["Alismatales", "Amborellales","Apiales", "Aquifoliales", "Arecales", "Asparagales", "Asterales", "Berberidopsidales", "Boraginales", "Brassicales", "Bruniales", "Buxales", "Canellales", "Caryophyllales",
 "Celastrales", "Chloranthales", "Commelinales", "Cornales", "Crossosomatales", "Cucurbitales", "Cupressales", "Dilleniales", "Dioscoreales", "Ericales", "Escalloniales", "Fabales", "Fagales",
 "Gentianales", "Geraniales", "Gnetales", "Gunnerales", "Huerteales", "Icacinales", "Lamiales", "Laurales", "Liliales", "Magnoliales", "Malpighiales", "Malvales", "Metteniusales",
-"Myrtales", "Nymphaeales", "Oxalidales", "Pandanales", "Paracryphiales", "Pinales", "Piperales", "Poales", "Proteales", "Ranunculales", "Rosales", "Santalales", "Sapindales",
-"Saxifragales", "Solanales", "Vitales", "Zingiberales", "Zygophyllales"
+"Myrtales", "Nymphaeales", "Oxalidales", "Pandanales", "Paracryphiales", "Petrosaviales", "Pinales", "Piperales", "Poales", "Proteales", "Ranunculales", "Rosales", "Santalales", "Sapindales",
+"Saxifragales", "Solanales", "Trochodendrales", "Vahliales", "Vitales", "Zingiberales", "Zygophyllales"
 ]
-
-# Orders that are removed as they are too small: Alismatales, Amborellales, Petrosaviales, Trochodendrales, Vahliales
 
 # Orders that need a to be run with a modified prior
 # orders_new_prior = ["Apiales","Arecales","Asparagales","Asterales","Brassicales","Caryophyllales","Ericales","Fabales","Gentianales", "Lamiales","Laurales","Malpighiales",
@@ -1440,11 +1438,14 @@ orders = ["Apiales", "Aquifoliales", "Arecales", "Asparagales", "Asterales", "Be
 
 orders_new_prior = ["Solanales"]
 
-orders_not_in_orders_new_prior = ["Alismatales", "Amborellales", "Aquifoliales", "Berberidopsidales", "Boraginales", "Bruniales", "Buxales",
+orders_not_in_orders_new_prior = ["Aquifoliales", "Berberidopsidales", "Boraginales", "Bruniales", "Buxales",
                                 "Canellales", "Celastrales", "Chloranthales", "Commelinales", "Cornales", "Crossosomatales", "Cucurbitales",
                                 "Cupressales", "Dilleniales", "Dioscoreales", "Escalloniales", "Fagales", "Gunnerales", "Huerteales", "Icacinales",
-                                "Liliales", "Magnoliales", "Metteniusales", "Nymphaeales", "Oxalidales", "Pandanales", "Paracryphiales", "Petrosaviales",
-                                "Pinales", "Piperales", "Proteales", "Santalales", "Trochodendrales", "Vahliales", "Vitales", "Zygophyllales"]
+                                "Liliales", "Magnoliales", "Metteniusales", "Nymphaeales", "Oxalidales", "Pandanales", "Paracryphiales",
+                                "Pinales", "Piperales", "Proteales", "Santalales", "Vitales", "Zygophyllales"]
+
+
+# Orders that are removed as they are too small: Alismatales, Amborellales, Petrosaviales, Trochodendrales, Vahliales
 
 percentages =["0.1"]
 
