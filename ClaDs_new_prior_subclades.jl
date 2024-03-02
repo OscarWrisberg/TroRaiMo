@@ -78,10 +78,11 @@ println("Extinction sd: $extinction_sd")
 # Measure the time to run infer_ClaDS
 time_infer = @elapsed output = infer_ClaDS(tree,
  					  print_state = 100,
-					  f = sampling_freq_array,
-					  prior_ε = "lognormal",
-					  logε0 = extinction_mean,
-					  sdε =	extinction_sd)
+					  f = sampling_freq_array)
+
+#					  prior_ε = "lognormal",
+#					  logε0 = extinction_mean,
+#					  sdε =	extinction_sd
 
 println("Time to run infer_ClaDS: $time_infer seconds")
 

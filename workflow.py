@@ -1141,6 +1141,44 @@ def Clads_priors(tree, done_file, path_in, output_file,wcvp_input, order, apg, s
 
     return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
 
+
+##############################################################
+#######---- Runnning ClaDs on subclades  ----#######
+##############################################################
+def Clads_subclades(tree, done_file, path_in, output_file,wcvp_input, order, apg, script_dir, done_dir, sampling_frequency, prior_file):
+    """ """
+    inputs = [path_in+tree,wcvp_input,apg,done_dir+"Finding_monophyletic_orders",done_dir+order+"_Sampling_fraction", prior_file]
+    outputs = [done_dir+done_file, path_in+output_file]
+    options = {
+        'cores': 1,
+        'memory': '300g',
+        'account':"Trf_models",
+        'walltime': "24:00:00"
+    }
+
+    spec = '''
+
+    source /home/owrisberg/miniconda3/etc/profile.d/conda.sh
+    conda activate Julia_env
+
+    cd {path_in}
+
+    echo Starting the Julia script at:
+    date
+
+    srun --unbuffered julia {script_dir}ClaDs_new_prior_subclades.jl {path_in}{tree} {sampling_frequency} {output_file} {prior_file}
+
+    echo Ended the Clads script at:
+    date
+
+    touch {done_dir}{done_file}
+
+    '''.format(tree = tree, done_file = done_file, path_in = path_in, output_file = output_file, wcvp_input = wcvp_input, order = order,
+                apg = apg, script_dir = script_dir, done_dir = done_dir, sampling_frequency = sampling_frequency, prior_file = prior_file)
+
+
+    return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
+
 ##############################################################
 ######---- Calculating states files for Esse Model  ----######
 ##############################################################
@@ -1660,7 +1698,7 @@ for i in range(len(Clads_clades)):
                                       ))
 
     gwf.target_from_template(name = Clads_clades[i]+"_ClaDs",
-                                template= Clads_priors(
+                                template= Clads_subclades(
                                 tree= "family_phylo_"+Clads_clades[i]+".tre",
                                 wcvp_input = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds",
                                 order = Clads_clades[i],
