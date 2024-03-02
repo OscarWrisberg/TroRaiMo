@@ -72,6 +72,8 @@ extinction_prior = readdlm(extinction_prior_file, ',', header=true)
 extinction_mean = parse(Float64, string(extinction_prior[1][1]))
 extinction_sd = parse(Float64, string(extinction_prior[1][2]))
 
+println("Extinction mean: $extinction_mean")
+println("Extinction sd: $extinction_sd")
 
 # Measure the time to run infer_ClaDS
 time_infer = @elapsed output = infer_ClaDS(tree,
@@ -91,3 +93,4 @@ r_output = replace(output_name, r"\.jld2" => ".Rdata")
 
 # Also save the output to an R file
 save_ClaDS_in_R(output,  r_output)
+
