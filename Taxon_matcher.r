@@ -8,10 +8,10 @@
 ###################################################################################
 
 ###setting the wd
-setwd("/home/au543206/GenomeDK/Trf_models/workflow/01_distribution_data/04_common_format")
-input_file <- "gbif_common_format.rds"
-wcvp_input_file <- "wcvp_names_apg_aligned.rds"
-output_file <- "gbif_taxon_matched.rds"
+#setwd("/home/au543206/GenomeDK/Trf_models/workflow/01_distribution_data/04_common_format")
+# input_file <- "gbif_common_format.rds"
+# wcvp_input_file <- "wcvp_names_apg_aligned.rds"
+# output_file <- "gbif_taxon_matched.rds"
 
 ###################################################################################
 ###################################################################################
