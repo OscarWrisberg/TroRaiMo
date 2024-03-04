@@ -1,6 +1,8 @@
-# path_to_tree <- "/home/au543206/GenomeDK/Trf_models/workflow/02_adding_orders/pruning/subset_of_orders/family_phylo_Ebenaceae.tre"
-# wcvp <- "/home/au543206/GenomeDK/Trf_models/workflow/02_adding_orders/wcvp_names_apg_aligned.rds"
-
+path_to_tree <- "/home/au543206/GenomeDK/Trf_models/workflow/02_adding_orders/pruning/subset_of_orders/family_phylo_Resedaceae.tre"
+wcvp <- "/home/au543206/GenomeDK/Trf_models/workflow/02_adding_orders/wcvp_names_apg_aligned.rds"
+path_out <- "/home/au543206/GenomeDK/Trf_models/workflow/02_adding_orders/pruning/subset_of_orders/"
+name <- "Resedaceae"
+path_apg <- "/home/au543206/GenomeDK/Trf_models/TroRaiMo/apgweb_parsed.csv"
 
 # Fetching arguments
 # Command line arguments
@@ -40,7 +42,7 @@ input_file_wcvp <- file.path(wcvp)
 # Load the wcvp dataset
 wcvp <- readRDS(input_file_wcvp)
 
-# Load the tree
+# Load the 
 tree <- read.tree(path_to_tree)
 
 # Filter the wcvp dataset to include only rows where taxon_status == "Accepted"
@@ -85,12 +87,22 @@ number_species_sampled_in_genus <- character(0)
 for (genus in unique(tree_species$genus)) {
   number_species_sampled_in_genus <- c(number_species_sampled_in_genus, length(tree_species[which(tree_species$genus == genus), "species"]))
 }
+number_species_sampled_in_genus
 
 # Find out how many species we have in the genera in the wcvp dataset
-number_species_in_genus <- tapply(wcvp_accepted_species_tree$genus, wcvp_accepted_species_tree$genus, length)
+number_species_in_genus <- character(0)
+for (i in seq_along(unique(tree_species$genus))) {
+  test <- unique(tree_species$genus)[i]
+  print(test)
+  #print(wcvp_accepted_species_tree[which(wcvp_accepted_species_tree$genus == genus), "species"][[1]])
+  count <- length(wcvp_accepted_species_tree[which(wcvp_accepted_species_tree$genus == test),"species"][[1]])
+  number_species_in_genus <- c(number_species_in_genus, count)
+}
+number_species_in_genus
 
 # Create a data frame with genera, number of species sampled, and number of species in the wcvp dataset
 genera_sampling_freq <- data.frame(genus = unique(tree_species$genus), number_species_sampled = number_species_sampled_in_genus, number_species_in_wcvp = number_species_in_genus)
+genera_sampling_freq
 
 # Calculate the sampling frequency for each genus
 genera_sampling_freq$sampling_freq <- as.numeric(genera_sampling_freq$number_species_sampled) / as.numeric(genera_sampling_freq$number_species_in_wcvp)
@@ -104,5 +116,7 @@ merged_data <- merge(tree_species, genera_sampling_freq, by = "genus", all.x = T
 
 # Now I can select the species name and the sampling fraction columns and then I have the sampling fraction for each species in the tree
 sampling_fraction <- merged_data[, c("species", "sampling_freq")]
+
+print(sampling_fraction)
 
 write.table(sampling_fraction, file = paste0(path_out, name,"_sampling_fraction.txt"), sep = "\t", row.names = FALSE)
