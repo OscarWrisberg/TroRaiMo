@@ -1188,7 +1188,7 @@ def states_converter(path_in,tip_states_file, out_states_file, script_dir, done_
     outputs = [done_dir+done, out_states_file]
     options = {
         'cores': 1,
-        'memory': '1g',
+        'memory': '3g',
         'account':"Trf_models",
         'walltime': "00:00:600"
     }
@@ -1510,12 +1510,15 @@ order_trees=["pruned_tree_order_Alismatales_GBMB.tre", "pruned_tree_order_Crosso
 
 
 # Fixed it so it should now contain all orders.
-orders = ["Alismatales", "Amborellales","Apiales", "Aquifoliales", "Arecales", "Asparagales", "Asterales", "Berberidopsidales", "Boraginales", "Brassicales", "Bruniales", "Buxales", "Canellales", "Caryophyllales",
+orders = ["Alismatales", "Apiales", "Aquifoliales", "Arecales", "Asparagales", "Asterales", "Boraginales", "Brassicales", "Bruniales", "Buxales", "Canellales", "Caryophyllales",
 "Celastrales", "Chloranthales", "Commelinales", "Cornales", "Crossosomatales", "Cucurbitales", "Cupressales", "Dilleniales", "Dioscoreales", "Ericales", "Escalloniales", "Fabales", "Fagales",
 "Gentianales", "Geraniales", "Gnetales", "Gunnerales", "Huerteales", "Icacinales", "Lamiales", "Laurales", "Liliales", "Magnoliales", "Malpighiales", "Malvales", "Metteniusales",
-"Myrtales", "Nymphaeales", "Oxalidales", "Pandanales", "Paracryphiales", "Petrosaviales", "Pinales", "Piperales", "Poales", "Proteales", "Ranunculales", "Rosales", "Santalales", "Sapindales",
-"Saxifragales", "Solanales", "Trochodendrales", "Vahliales", "Vitales", "Zingiberales", "Zygophyllales"
+"Myrtales", "Nymphaeales", "Oxalidales", "Pandanales", "Pinales", "Piperales", "Poales", "Proteales", "Ranunculales", "Rosales", "Santalales", "Sapindales",
+"Saxifragales", "Solanales", "Vahliales", "Vitales", "Zingiberales", "Zygophyllales"
 ]
+
+# Remove impossible orders
+# impossible_orders =["Amborellales","Berberidopsidales","Paracryphiales", "Petrosaviales","Trochodendrales"]
 
 # Orders that need a to be run with a modified prior
 # orders_new_prior = ["Apiales","Arecales","Asparagales","Asterales","Brassicales","Caryophyllales","Ericales","Fabales","Gentianales", "Lamiales","Laurales","Malpighiales",
