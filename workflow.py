@@ -1174,7 +1174,7 @@ def Clads_subclades(tree, done_file, path_in, output_file,wcvp_input, order, scr
     touch {done_dir}{done_file}
 
     '''.format(tree = tree, done_file = done_file, path_in = path_in, output_file = output_file, wcvp_input = wcvp_input, order = order,
-                apg = apg, script_dir = script_dir, done_dir = done_dir, sampling_frequency = sampling_frequency, prior_file = prior_file)
+                 script_dir = script_dir, done_dir = done_dir, sampling_frequency = sampling_frequency, prior_file = prior_file)
 
 
     return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
@@ -1702,7 +1702,6 @@ for i in range(len(Clads_clades)):
                                 tree= "family_phylo_"+Clads_clades[i]+".tre",
                                 wcvp_input = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds",
                                 order = Clads_clades[i],
-                                apg = script_dir+"apgweb_parsed.csv",
                                 done_file = Clads_clades[i]+"_ClaDs",
                                 path_in = workflow_dir+"02_adding_orders/pruning/subset_of_orders/",
                                 output_file = "Clads_output_"+Clads_clades[i]+".jld2",

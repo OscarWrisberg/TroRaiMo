@@ -73,9 +73,9 @@ sampling_freq_array = sampling_freq_joined[!, :frequency]
 
 # Measure the time to run infer_ClaDS
 time_infer = @elapsed output = infer_ClaDS(tree,
- print_state = 100,
-f = sampling_freq_array,)
-println("Time to run infer_ClaDS: $time_infer seconds")
+	print_state = 100,
+	f = sampling_freq_array,)
+	println("Time to run infer_ClaDS: $time_infer seconds")
 
 # Measure the time to save the output
 time_save_output = @elapsed @save output_name output

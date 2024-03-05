@@ -28,8 +28,8 @@ println("Time to load DelimitedFiles: $time_load_delimitedfiles seconds")
 
 
 # Prepare some paths test script locally
-path_to_tree = "/home/au543206/GenomeDK/Trf_models/workflow/02_adding_orders/pruning/orders/pruned_tree_order_Zingiberales_GBMB.tre"
-sampling_freq_file = "/home/au543206/GenomeDK/Trf_models/workflow/03_distribution_data/Zingiberales_sampling_fraction.txt"
+path_to_tree = "/home/au543206/GenomeDK/Trf_models/workflow/02_adding_orders/pruning/subset_of_orders/family_phylo_Resedaceae.tre"
+sampling_freq_file = "/home/au543206/GenomeDK/Trf_models/workflow/03_distribution_data/Resedaceae_sampling_fraction.txt"
 output_name = "test_output.jld2"
 
 
@@ -78,11 +78,12 @@ println("Extinction sd: $extinction_sd")
 # Measure the time to run infer_ClaDS
 time_infer = @elapsed output = infer_ClaDS(tree,
  					  print_state = 100,
-					  f = sampling_freq_array)
+					  f = sampling_freq_array,
+					  prior_ε = "lognormal",
+					  logε0 = extinction_mean,
+    				  sdε =	extinction_sd)
 
-#					  prior_ε = "lognormal",
-#					  logε0 = extinction_mean,
-#					  sdε =	extinction_sd
+
 
 println("Time to run infer_ClaDS: $time_infer seconds")
 

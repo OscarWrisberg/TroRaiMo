@@ -14,12 +14,16 @@ using PANDA
 
 # Srun file locations
 # processors = 2
-# tree_file = "/home/au543206/GenomeDK/Trf_models/workflow/02_adding_orders/pruning/orders/pruned_tree_order_Arecales_GBMB.tre"
+# tree_file = "/home/au543206/GenomeDK/Trf_models/workflow/02_adding_orders/pruning/subset_of_orders/family_phylo_Resedaceae.tre"
 # tip_states_file = "/home/au543206/GenomeDK/Trf_models/workflow/03_distribution_data/Arecales_states_0.2.txt"
 # paleo_clim_file = "/home/au543206/GenomeDK/Trf_models/TroRaiMo/paleoclim_area.txt"
-# out_states_file = "Esse_states_Arecales_0.4.txt"
-# out_file = "Esse_output_"+orders[i]+".jld2"
+# out_states_file = "Esse_states_Resedaceae_0.4.txt"
+# out_file = "Esse_output_Resedaceae.jld2"
 # hidden_states = 2
+
+path_to_tree = "/home/au543206/GenomeDK/Trf_models/workflow/02_adding_orders/pruning/subset_of_orders/family_phylo_Resedaceae.tre"
+sampling_freq_file = "/home/au543206/GenomeDK/Trf_models/workflow/03_distribution_data/Resedaceae_sampling_fraction.txt"
+
 
 # Take command line arguments
 processors = parse(Int, ARGS[1])

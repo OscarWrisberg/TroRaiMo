@@ -92,37 +92,37 @@ non_mono_family <- character(0)
 ####################  Finding the order for each family  ###########################
 ####################################################################################
 
-# Find order function
-find_order <- function(fams, apg) {
-  fam_list <- character(0)
-  orders <- character(0)
+# # Find order function
+# find_order <- function(fams, apg) {
+#   fam_list <- character(0)
+#   orders <- character(0)
 
-  for (family in unique(fams)) {
-    order <- apg[which(apg$Syn_Fam == family), "Clade"] # Finding the order of that family in APG file
-    order <- as.character(order[1]) # Selecting the order of the family
-    cat("family ", family, "Order", order, "\n") # Printing the family and order
-    fam_list <- c(fam_list, family)
-    orders <- c(orders, order)
-  }
+#   for (family in unique(fams)) {
+#     order <- apg[which(apg$Syn_Fam == family), "Clade"] # Finding the order of that family in APG file
+#     order <- as.character(order[1]) # Selecting the order of the family
+#     cat("family ", family, "Order", order, "\n") # Printing the family and order
+#     fam_list <- c(fam_list, family)
+#     orders <- c(orders, order)
+#   }
 
-  df_orders <- data.frame(family = fam_list, order = orders)
-  return(df_orders)
-}
+#   df_orders <- data.frame(family = fam_list, order = orders)
+#   return(df_orders)
+# }
 
-# Running the function
-cat("Finding the order for each of the families \n")
-family_orders <- find_order(unique_families, apg)
-length(family_orders$order)
+# # Running the function
+# cat("Finding the order for each of the families \n")
+# family_orders <- find_order(unique_families, apg)
+# length(family_orders$order)
 
-# Merging the wcvp and family_orders data frames
-cat("Merging the wcvp and family_orders data frames \n")
-wcvp_accepted_species_orders <- merge(wcvp_accepted_species, family_orders, by.x = "family", by.y = "family")
+# # Merging the wcvp and family_orders data frames
+# cat("Merging the wcvp and family_orders data frames \n")
+# wcvp_accepted_species_orders <- merge(wcvp_accepted_species, family_orders, by.x = "family", by.y = "family")
 
-# Creating a subset of wcvp where we only have the accepted species in the order
-cat("Creating a subset of wcvp where we only have the accepted species in the order \n")
-wcvp_accepted_species_orders_subset <- wcvp_accepted_species_orders[which(wcvp_accepted_species_orders$order %in% order_in_question),]
+# # Creating a subset of wcvp where we only have the accepted species in the order
+# cat("Creating a subset of wcvp where we only have the accepted species in the order \n")
+# wcvp_accepted_species_orders_subset <- wcvp_accepted_species_orders[which(wcvp_accepted_species_orders$order %in% order_in_question),]
 
-print(wcvp_accepted_species_orders_subset)
+#print(wcvp_accepted_species_orders_subset)
 
 ################################################################################################################################################
 #############################################-- Finding Environmental data GBIF --##############################################################
