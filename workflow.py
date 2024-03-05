@@ -1143,12 +1143,12 @@ def Clads_priors(tree, done_file, path_in, output_file,wcvp_input, order, apg, s
 
 
 ##############################################################
-#######---- Runnning ClaDs on subclades  ----#######
+############---- Runnning ClaDs on subclades  ----############
 ##############################################################
-def Clads_subclades(tree, done_file, path_in, output_file,wcvp_input, order, apg, script_dir, done_dir, sampling_frequency, prior_file):
+def Clads_subclades(tree, done_file, path_in, output_file,wcvp_input, order, script_dir, done_dir, sampling_frequency, prior_file):
     """ """
-    inputs = [path_in+tree,wcvp_input,apg,done_dir+"Finding_monophyletic_orders",done_dir+order+"_Sampling_fraction", prior_file]
-    outputs = [done_dir+done_file, path_in+output_file]
+    inputs = [path_in+tree,done_dir+"Finding_monophyletic_orders",done_dir+order+"_Sampling_fraction", prior_file]
+    outputs = [done_dir+done_file, path_in+"Clads_output_"+order".Rdata"]
     options = {
         'cores': 1,
         'memory': '300g',
