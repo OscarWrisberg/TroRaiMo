@@ -1717,14 +1717,65 @@ for i in range(len(Clads_clades)):
 
     gwf.target_from_template(name = Clads_clades[i]+"_ClaDs",
                                 template= Clads_subclades(
-                                tree= "family_phylo_"+Clads_clades[i]+".tre",
-                                wcvp_input = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds",
+                                    tree= "family_phylo_"+Clads_clades[i]+".tre",
+                                    wcvp_input = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds",
+                                    order = Clads_clades[i],
+                                    done_file = Clads_clades[i]+"_ClaDs",
+                                    path_in = workflow_dir+"02_adding_orders/pruning/subset_of_orders/",
+                                    output_file = "Clads_output_"+Clads_clades[i]+".jld2",
+                                    script_dir=script_dir,
+                                    done_dir = done_dir,
+                                    sampling_frequency= workflow_dir+"03_distribution_data/"+Clads_clades[i]+"_sampling_fraction.txt",
+                                    prior_file = workflow_dir+"02_adding_orders/pruning/orders/priors.txt"
+                             )) 
+
+#####################################################################################################################################################################
+############################################################--- ESSE on Order subclades ---#########################################################################
+#####################################################################################################################################################################
+    #Running the script to find the environmental data for the tips in the sub trees
+    gwf.target_from_template(name = orders[i]+"_distribution_data.",
+                                template=Finding_areas_in_wcvp(
+                                input_file_tree= "family_phylo_"+orders[i]+".tre", # 
+                                path_in =  workflow_dir+"02_adding_orders/pruning/orders/",
+                                path_out = workflow_dir+"03_distribution_data/",
+                                output_file = Clads_clades[i]+"_distribution_data.txt",
+                                wcvp_file = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds",
                                 order = Clads_clades[i],
-                                done_file = Clads_clades[i]+"_ClaDs",
-                                path_in = workflow_dir+"02_adding_orders/pruning/subset_of_orders/",
-                                output_file = "Clads_output_"+Clads_clades[i]+".jld2",
-                                script_dir=script_dir,
-                                done_dir = done_dir,
-                                sampling_frequency= workflow_dir+"03_distribution_data/"+Clads_clades[i]+"_sampling_fraction.txt",
-                                prior_file = workflow_dir+"02_adding_orders/pruning/orders/priors.txt"
-                             ))
+                                script_dir= script_dir,
+                                apg = script_dir+"apgweb_parsed.csv",
+                                done_dir= done_dir,
+                                done= Clads_clades[i]+"_distribution_data",
+                                renamed_occurrences = workflow_dir+"01_distribution_data/06_Renamed/gbif_renamed.rds", 
+                                koppen_biome = script_dir+"koppen_geiger_0p01.tif"
+                                ))
+    
+    
+    for j in range(len(percentages)):
+        gwf.target_from_template(name = Clads_clades[i]+"_states_converter_"+percentages[j],
+                                template=states_converter(
+                                path_in= workflow_dir+"03_distribution_data/",
+                                tip_states_file= workflow_dir+"03_distribution_data/"+Clads_clades[i]+"_distribution_data.txt",
+                                out_states_file= workflow_dir+"03_distribution_data/"+Clads_clades[i]+"_states_"+percentages[j]+".txt",
+                                script_dir= script_dir,
+                                done_dir= done_dir,
+                                done= "States_converter_"+Clads_clades[i]+"_"+percentages[j]+"",
+                                percentage_for_present= percentages[j]
+                                ))
+
+        
+        # gwf.target_from_template(name = orders[i]+"_Esse_Hidden_States_"+percentages[j],
+        #                             template = Esse(
+        #                             tree_file = "family_phylo_"+orders[i]+"_GBMB.tre", # Input tree
+        #                             tip_states_file = workflow_dir+"03_distribution_data/"+orders[i]+"_states_"+percentages[j]+".txt", 
+        #                             paleo_clim_file = data_dir+"paleoclim_area.txt", # File with paleoclimatic variables
+        #                             done = orders[i]+"_Esse",
+        #                             path_in = workflow_dir+"02_adding_orders/pruning/subset_of_orders/",
+        #                             save_file = "Esse_output_"+orders[i]+"_"+percentages[j]+".jld2",
+        #                             script_dir=script_dir,
+        #                             done_dir = done_dir,
+        #                             out_states_file = "Esse_states_"+orders[i]+"_"+percentages[j], 
+        #                             hidden_states = 2,
+        #                             out_file = "Esse_output_"+orders[i]+"_hidden_states_"+percentages[j],
+        #                             output_folder = workflow_dir+"04_results/Esse_output/",
+        #                             path_out = workflow_dir+"04_results/"
+        #                          ))
