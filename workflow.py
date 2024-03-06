@@ -1151,9 +1151,9 @@ def Clads_subclades(tree, done_file, path_in, output_file,wcvp_input, order, scr
     outputs = [done_dir+done_file, path_in+"Clads_output_"+order+".Rdata"]
     options = {
         'cores': 1,
-        'memory': '300g',
+        'memory': '1000g',
         'account':"Trf_models",
-        'walltime': "24:00:00"
+        'walltime': "120:00:00"
     }
 
     spec = '''
@@ -1566,6 +1566,10 @@ percentages =["0.1"]
 # Ceratophyllales
 # Ginkgoales is removed
 
+#####################################################################################################################################################################
+##################################################################--- Esse on Orders  ---############################################################################
+#####################################################################################################################################################################
+
 
 for i in range(len(orders)):
 #Running the script to find the environmental data for the tips in the trees
@@ -1642,7 +1646,10 @@ for i in range(len(orders)):
                                     done_dir= done_dir,
                                     done= orders[i]+"_Sampling_fraction"
     ))
-                             
+
+#####################################################################################################################################################################
+########################################################--- ClaDs on Orders with uniform prior  ---##################################################################
+#####################################################################################################################################################################          
 
 for i in range(len(orders_not_in_orders_new_prior)):
     gwf.target_from_template(name = orders_not_in_orders_new_prior[i]+"_ClaDs",
@@ -1658,6 +1665,10 @@ for i in range(len(orders_not_in_orders_new_prior)):
                                 done_dir = done_dir,
                                 sampling_frequency= workflow_dir+"03_distribution_data/"+orders_not_in_orders_new_prior[i]+"_sampling_fraction.txt"
                              ))
+    
+#####################################################################################################################################################################
+########################################################--- ClaDs on Orders with calculate Prior ---#################################################################
+#####################################################################################################################################################################
     
 gwf.target_from_template(name = "Calculating_priors",
                             template=Calculating_priors(
@@ -1684,6 +1695,10 @@ for i in range(len(orders_new_prior)):
                                 sampling_frequency= workflow_dir+"03_distribution_data/"+orders_new_prior[i]+"_sampling_fraction.txt",
                                 prior_file = workflow_dir+"02_adding_orders/pruning/orders/priors.txt"
                              ))
+    
+#####################################################################################################################################################################
+############################################################--- ClaDs on Order subclades ---#########################################################################
+#####################################################################################################################################################################
 
 for i in range(len(Clads_clades)):
     gwf.target_from_template(name = Clads_clades[i]+"_samplingfraction",
