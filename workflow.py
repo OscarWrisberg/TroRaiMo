@@ -1231,7 +1231,7 @@ def Esse(path_in, tree_file,tip_states_file,paleo_clim_file, out_states_file, ou
     outputs = [save_file]
     options = {
         'cores': 10,
-        'memory': '100g',
+        'memory': '250g',
         'account':"Trf_models",
         'walltime': "168:00:00"
 
@@ -1615,22 +1615,22 @@ for i in range(len(orders)):
         #                             hidden_states = 0, 
         #                          ))
         
-        # gwf.target_from_template(name = orders[i]+"_Esse_Hidden_States_"+percentages[j],
-        #                             template = Esse(
-        #                             tree_file = "pruned_tree_order_"+orders[i]+"_GBMB.tre", # Input tree
-        #                             tip_states_file = workflow_dir+"03_distribution_data/"+orders[i]+"_states_"+percentages[j]+".txt", 
-        #                             paleo_clim_file = data_dir+"paleoclim_area.txt", # File with paleoclimatic variables
-        #                             done = orders[i]+"_Esse",
-        #                             path_in = workflow_dir+"02_adding_orders/pruning/orders/",
-        #                             save_file = "Esse_output_"+orders[i]+"_"+percentages[j]+".jld2",
-        #                             script_dir=script_dir,
-        #                             done_dir = done_dir,
-        #                             out_states_file = "Esse_states_"+orders[i]+"_"+percentages[j], 
-        #                             hidden_states = 2,
-        #                             out_file = "Esse_output_"+orders[i]+"_hidden_states_"+percentages[j],
-        #                             output_folder = workflow_dir+"04_results/Esse_output/",
-        #                             path_out = workflow_dir+"04_results/"
-        #                          ))
+        gwf.target_from_template(name = orders[i]+"_Esse_Hidden_States_"+percentages[j],
+                                    template = Esse(
+                                    tree_file = "pruned_tree_order_"+orders[i]+"_GBMB.tre", # Input tree
+                                    tip_states_file = workflow_dir+"03_distribution_data/"+orders[i]+"_states_"+percentages[j]+".txt", 
+                                    paleo_clim_file = data_dir+"paleoclim_area.txt", # File with paleoclimatic variables
+                                    done = orders[i]+"_Esse",
+                                    path_in = workflow_dir+"02_adding_orders/pruning/orders/",
+                                    save_file = "Esse_output_"+orders[i]+"_"+percentages[j]+".jld2",
+                                    script_dir=script_dir,
+                                    done_dir = done_dir,
+                                    out_states_file = "Esse_states_"+orders[i]+"_"+percentages[j], 
+                                    hidden_states = 2,
+                                    out_file = "Esse_output_"+orders[i]+"_hidden_states_"+percentages[j],
+                                    output_folder = workflow_dir+"04_results/Esse_output/",
+                                    path_out = workflow_dir+"04_results/"
+                                 ))
 
 
     gwf.target_from_template(name = orders[i]+"_Sampling_fraction",
@@ -1736,7 +1736,7 @@ for i in range(len(Clads_clades)):
     gwf.target_from_template(name = Clads_clades[i]+"_distribution_data.",
                                 template=Finding_areas_in_wcvp(
                                 input_file_tree= "family_phylo_"+Clads_clades[i]+".tre", # 
-                                path_in =  workflow_dir+"02_adding_orders/pruning/orders/",
+                                path_in =  workflow_dir+"02_adding_orders/pruning/subset_of_orders/",
                                 path_out = workflow_dir+"03_distribution_data/",
                                 output_file = Clads_clades[i]+"_distribution_data.txt",
                                 wcvp_file = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds",
