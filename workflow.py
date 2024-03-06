@@ -1733,7 +1733,7 @@ for i in range(len(Clads_clades)):
 ############################################################--- ESSE on Order subclades ---#########################################################################
 #####################################################################################################################################################################
     #Running the script to find the environmental data for the tips in the sub trees
-    gwf.target_from_template(name = orders[i]+"_distribution_data.",
+    gwf.target_from_template(name = Clads_clades[i]+"_distribution_data.",
                                 template=Finding_areas_in_wcvp(
                                 input_file_tree= "family_phylo_"+orders[i]+".tre", # 
                                 path_in =  workflow_dir+"02_adding_orders/pruning/orders/",
