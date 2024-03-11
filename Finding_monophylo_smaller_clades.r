@@ -122,3 +122,83 @@ for (k in seq_along(Tree_list)) {
 	}
 }
 
+
+# Creating subphylogenies of some of the really big families.
+
+# Asteraceae
+sp_pairs_for_mrca_asteraceae <- c(c("Duhaldeae rubricaulis","Centaurea amblensis"),
+								c("Abrotanella forsteroides","Grindelia oxylepis"),
+								c("Crepis setosa","Platycarphella carlinoides"),
+								c("Centaurea olympica","Macledium zeyheri"),
+								c("Cyclolepis genistoides","Chaptalia tomentosa"),
+								c("Dasyphyllum brevispinum","Doniophyton weddellii"),
+								c("Pertya robusta","Ainsliaea pingbianensis")
+								) # were losing 1 species
+
+sp_pairs_for_mrca_orchidaceae <- c(c("Codonorchis lessonii","Orthoceras strictum"),
+								   c("Notylia buchtienii","Thecopus maingayi"),
+								   c("Phalaenopsis marriottiana","Bromheadia finlaysoniana"),
+								   c("Masdevallia pinocchio", "Wullschlaegelia aphylla"),
+								   c("Bulbophyllum clandestinum","Liparis rheedei"),
+								   c("Eriodes barbata","Ancistrochilus rothschildianus"),
+								   c("Callostylis rigida","Phreatia tahitensis"),
+								   c("Coelogyne mayeriana","Arundina graminifolia"),
+								   c("Sobralia ecuadorana","Nervilia cumberlegii"),
+								   c("Epipactis helleborine","Neottia smallii"),
+								   c("Phragmipedium warszewiczianum","Selenipedium aequinoctiale")
+								   ) # Were losing 15 species
+
+sp_pairs_for_mrca_fabaceae <- c(c("Trifolium macraei","Lennea viridifolia"),
+								c("Psoralea asarina","Phylloxylon perrieri"),
+								c("Crotalaria lebrunii","Dalbergia sericea"),
+								c("Acacia crassa","Ceratonia siliqua"),
+								c("Bauhinia grevei","Duparquetia orchidacea"),
+								c("Bikinia aciculifera","Barnebydendron riedelii")
+								) # were losing 72 species
+
+sp_pairs_for_mrca_caryophyllaceae <- c(c("Schiedea jacobii","Telephium imperati"),
+										c("Aphanisma blitoides","Phaulothamnus spinescens")
+										) # were losing 0 species 
+
+
+sp_pairs_for_mrca_lamiaceae <- c(c("Clinopodium betulifolium","Salvia rosmarinus"),
+								c("Eriope foetida","Perillula reptans"),
+								c("Teucrium odontites","Congeo tomentosa")
+								) # were losing 0 species
+
+sp_pairs_for_mrca_rubiaceae <- c(c("Galium hirtum","Luculia grandifolia"),
+								 c("Tarenna seemanniana","Sipaneopsis rupicola")
+								 ) # were losing 0 species
+
+sp_pairs_for_mrca_poaceae <- c(c("Cynodon transvaalensis","Sartidia jucunda"),
+								c("Festuca rupicola", "Streptogyna americana")) # were losing 10 species
+
+Sp_pairs_for_mrca_apiaceae <- c(c("Rhodosciadium pringlei","Arcuatopterus thalictrioideus"),
+								c("Ferula dissecta","Conioselinum chinense"),
+								c("Lilaeopsis carolinensis","Perideridia kelloggii"),
+								c("Bupleurum gracilipes","Pleurospermopsis sikkimensis"),
+								c("Eryngium smithii","Steganotaenia araliacea"),
+								c("Azorella valentini","Klotzschia glaziovii")
+								) # Were losing 149 species.
+
+sp_pairs_for_mrca_euphorbiaceae <- c(c("Neoscortechinia kingii","Argythamnia candicans"),
+									 c("Cladogelonium madagascariense","Suregada boiviniana"),
+									 c("Nealchornea yapurensis","Maprounea africana"))
+
+
+sp_pairs_for_mrca_ericaceae <- c(c("Erica interrupta","Cassiope selaginoides"),
+								c("Disterigma codonanthum", "Prionotes cerinthoides"),
+								c("Pyrola calliantha","Monotropsis odorata")
+								) # were losing 27 tips
+
+
+sp_pairs_for_mrca_apocynaceae <- c(c("Ditassa taxifolia","Periploca laevigata"),
+								   c("Mandevilla sellowii","Rhabdadenia biflora"),
+								   c("Tabernaemontana contorta","Dyera costulata")
+								   ) # Were losing 0 species
+
+# sp_pairs_for_mrca_melastomataceae <- c(c("Macrocentrum cristatum","Miconia roseopetala"),
+# 										c("Rhynchanthera bracteata","Salpinga margaritacea")) were losing 60 sp
+
+
+
