@@ -1573,32 +1573,25 @@ orders_new_prior = ["Solanales"]
 # 			"Ericales", "Apiales","Asterales","Asparagales","Caryophyllales","Arecales","Brassicales"]
 
 # This is the list of Clades resulting from my personal splitting of the orders.
-Clads_clades = ["Acanthaceae_Martyniaceae_Pedaliaceae","Alzateaceae_Crypteroniaceae_Penaeaceae","Amaryllidaceae","Aizoaceae_Phytolaccaceae_Barbeuiaceae_Lophiocarpaceae_Gisekiaceae_Sarcobataceae",
-                "Anacardiaceae_Burseraceae_Kirkiaceae","Anacompserotaceae_Basellaceae_Montiaceae_Halophytaceae_Portulacaceae_Talinaceae","Araliaceae","Berberidaceae","Bignoniaceae","Bromeliaceae",
-                "Brassicaceae","Calyceraceae","Cannabaceae","Capparaceae","Caryophyllaceae_Achatocarpaceae_Amaranthaceae",
-                "Chrysobalanaceae_Malpighiaceae_Caryocaraceae_Balanopaceae_Elatinaceae_Centroplacaceae_Dichapetalaceae_Putranjivaceae_Euphroniaceae_Lophopyxidaceae_Trigoniaceae",
-                "Cleomaceae","Combretaceae","Costaceae","Crassulaceae_Aphanopetalaceae_Halograceae_Penthoraceae_Tetracarpaeaceae","Cyperaceae","Didiereaceae","Dioncophyllaceae",
-                "Droseraceae_Ancistrocladaceae_Drosophyllaceae_Nepenthaceae_Dioncophyllaceae","Ebenaceae","Ericaceae_Clethraceae_Cyrillaceae","Frankeniaceae","Fouquieriaceae","Gentianaceae",
-                "Geraniaceae","Gesneriaceae_Calceolariaceae","Goodeniaceae","Goupiaceae","Haloragaceae","Heliconiaceae_Lowiaceae_Strelitziaceae","Iridaceae","Juncaceae","Lauraceae","Lecythidaceae",
-                "Lentibulariaceae","Loranthaceae","Lythraceae_Onagraceae","Mazaceae","Melastomataceae","Menispermaceae","Menyanthaceae","Meliaceae","Molluginaceae","Monimiaceae","Moraceae","Myrtaceae","Nepenthaceae",
+Clads_clades = ["Acanthaceae_Martyniaceae_Pedaliaceae","Aizoaceae_Phytolaccaceae_Barbeuiaceae_Lophiocarpaceae_Gisekiaceae_Sarcobataceae", "Alzateaceae_Crypteroniaceae_Penaeaceae","Amaryllidaceae",
+                "Anacardiaceae_Burseraceae_Kirkiaceae", "Araliaceae","Arecaceae","Asparagaceae","Asphodelaceae","Balsaminaceae_Marcgraviaceae_Tetrameristaceae","Berberidaceae",
+                "Bignoniaceae","Brassicaceae","Bromeliaceae","Cactaceae_Molluginaceae_Didiereaceae_Anacompserotaceae_Basellaceae_Montiaceae_Halophytaceae_Portulacaceae_Talinaceae", "Calyceraceae",
+                "Campanulaceae_Rousseaceae","Cannabaceae","Capparaceae","Caryophyllaceae_Achatocarpaceae_Amaranthaceae","Cercidiphyllaceae_Hamamelidaceae_Daphniphyllaceae_Altingiaceae_Paeoniaceae",
+                "Chrysobalanaceae_Malpighiaceae_Caryocaraceae_Balanopaceae_Elatinaceae_Centroplacaceae_Dichapetalaceae_Putranjivaceae_Euphroniaceae_Lophopyxidaceae_Trigoniaceae""Cleomaceae",
+                "Combretaceae","Costaceae","Crassulaceae_Aphanopetalaceae_Halograceae_Penthoraceae_Tetracarpaeaceae","Cyperaceae","Dipterocarpaceae_Bixaceae_Cistaceae_Sarcoleanaceae_Muntingiaceae_Sphaerosepalaceae",
+                "Droseraceae_Ancistrocladaceae_Drosophyllaceae_Nepenthaceae_Dioncophyllaceae","Ebenaceae","Ericaceae_Clethraceae_Cyrillaceae","Gentianaceae","Gesneriaceae_Calceolariaceae",
+                "Goodeniaceae","Heliconiaceae_Lowiaceae_Strelitziaceae","Iridaceae","Juncaceae","Lauraceae","Loganiaceae_Gelsemiaceae","Lythraceae_Onagraceae","Malvaceae","Marantaceae_Cannaceae",
+                "Melastomataceae","Meliaceae","Menispermaceae","Menyanthaceae","Monimiaceae","Moraceae","Myrtaceae",
                 "Ochnaceae_Clusiaceae_Erythroxylaceae_Podostemaceae_Bonnetiaceae_Rhizophoraceae_Calophyllaceae_Hypericaceae_Ctenolophonaceae_Irvingiaceae_Pandaceae",
-                "Orobanchaceae_Phrymaceae_Mazaceae_Paulowniaceae","Papaveraceae","Passifloraceae","Pedaliaceae","Penaeaceae","Pentaphylacaceae_Sladeniaceae","Pittosporaceae","Plantaginaceae",
-                "Plumbaginaceae_Polygonaceae_Frankeniaceae_Tamaricaceae","Polemoniaceae","Polygalaceae_Surianaceae","Portulacaceae","Primulaceae","Resedaceae","Rhamnaceae_Barbeyaceae_Dirachmaceae_Elaeagnaceae",
-                "Ranunculaceae","Restionaceae","Rutaceae","Salicaceae_Lacistemataceae","Sapotaceae","Saxifragaceae_Iteaceae_Grossulariaceae","Schlegeliaceae","Scrophulariaceae","Simaroubaceae",
-                "Styracaceae_Diapensiaceae_Symplocaceae","Surianaceae","Talinaceae","Tamaricaceae","Theaceae","Thymelaeaceae","Tiliaceae","Typhaceae","Ulmaceae","Urticaceae","Verbenaceae","Violaceae",
-                "Xyridaceae_Eriocaulaceae","Zingiberaceae"] 
+                "Orobanchaceae_Phrymaceae_Mazaceae_Paulowniaceae","Papaveraceae","Passifloraceae","Pentaphylacaceae_Sladeniaceae","Phyllanthaceae_Picodendraceae_Linaceae_Ixonanthaceae",
+                "Pittosporaceae","Plantaginaceae","Plumbaginaceae_Polygonaceae_Frankeniaceae_Tamaricaceae","Polemoniaceae_Lecythidaceae_Fouquieriaceae","Polygalaceae_Surianaceae",
+                "Primulaceae","Ranunculaceae","Resedaceae","Restionaceae","Rhamnaceae_Barbeyaceae_Dirachmaceae_Elaeagnaceae","Rosaceae","Rutaceae","Salicaceae_Lacistemataceae","Sapindaceae",
+                "Sapotaceae","Saxifragaceae_Iteaceae_Grossulariaceae","Scrophulariaceae","Simaroubaceae","Styracaceae_Diapensiaceae_Symplocaceae","Theaceae","Thymelaeaceae","Typhaceae","Ulmaceae","Urticaceae",
+                "Verbenaceae_Schlegeliaceae_Lentibulariaceae_Thomandersiaceae","Violaceae_Goupiaceae","Xyridaceae_Eriocaulaceae","Zingiberaceae"]
 
 
 # Families which have been divided further and therefore need to be removed from the Clads_clades list.
-# Apiaceae
-# Apocynaceae
-# Asteraceae
-# Euphorbiaceae
-# Fabaceae
-# Lamiaceae
-# Orchidaceae
-# Poaceae
-# Rubiaceae
+# Apiaceae # Apocynaceae # Asteraceae # Euphorbiaceae # Fabaceae # Lamiaceae # Orchidaceae # Poaceae # Rubiaceae
 
 sub_family_clades = ["sub_phylo_Apiaceae_1.tre","sub_phylo_Apiaceae_2.tre","sub_phylo_Apiaceae_3.tre","sub_phylo_Apiaceae_4.tre", "sub_phylo_Apiaceae_5.tre","sub_phylo_Apiaceae_6.tre", "sub_phylo_Apocynaceae_1.tre","sub_phylo_Apocynaceae_2.tre",
 "sub_phylo_Apocynaceae_3.tre","sub_phylo_Asteraceae_1.tre", "sub_phylo_Asteraceae_2.tre","sub_phylo_Asteraceae_3.tre", "sub_phylo_Asteraceae_4.tre","sub_phylo_Asteraceae_5.tre", "sub_phylo_Asteraceae_6.tre","sub_phylo_Asteraceae_7.tre","sub_phylo_Euphorbiaceae_1.tre","sub_phylo_Euphorbiaceae_2.tre",

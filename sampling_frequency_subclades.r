@@ -1,8 +1,8 @@
-path_to_tree <- "/home/au543206/GenomeDK/Trf_models/workflow/02_adding_orders/pruning/subset_of_orders/family_phylo_Resedaceae.tre"
-wcvp <- "/home/au543206/GenomeDK/Trf_models/workflow/02_adding_orders/wcvp_names_apg_aligned.rds"
-path_out <- "/home/au543206/GenomeDK/Trf_models/workflow/02_adding_orders/pruning/subset_of_orders/"
-name <- "Resedaceae"
-path_apg <- "/home/au543206/GenomeDK/Trf_models/TroRaiMo/apgweb_parsed.csv"
+# path_to_tree <- "/home/au543206/GenomeDK/Trf_models/workflow/02_adding_orders/pruning/subset_of_orders/family_phylo_Resedaceae.tre"
+# wcvp <- "/home/au543206/GenomeDK/Trf_models/workflow/02_adding_orders/wcvp_names_apg_aligned.rds"
+# path_out <- "/home/au543206/GenomeDK/Trf_models/workflow/02_adding_orders/pruning/subset_of_orders/"
+# name <- "Resedaceae"
+# path_apg <- "/home/au543206/GenomeDK/Trf_models/TroRaiMo/apgweb_parsed.csv"
 
 # Fetching arguments
 # Command line arguments
