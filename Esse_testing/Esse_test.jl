@@ -6,30 +6,71 @@
 
 #julia
 
+
+using Pkg
+# Check if Tapestree and Distributed are installed
+if !haskey(Pkg.installed(), "Tapestree") || !haskey(Pkg.installed(), "Distributed") || !haskey(Pkg.installed(), "DataFrames") || !haskey(Pkg.installed(), "DelimitedFiles")
+	# Install Tapestree and Distributed
+	Pkg.add(["Tapestree", "Distributed", "DataFrames", "DelimitedFiles"])
+end
+
+# Load Tapestree and Distributed
+using Tapestree
+using Distributed
+using DataFrames
+using DelimitedFiles
+using PANDA
+
 #########################################################################################
 # Testing ESSE using the built in data
-# Loading Tapestree
-using Tapestree
 
 #Loading the tree
-tree_file = joinpath(dirname(pathof(Tapestree)), "..", "data", "tree_50.tre")
+tree_file = joinpath("/home/au543206/esse_data/tree_50.tre")
 println(tree_file)
 
 # Loading the states
-states_file = joinpath(dirname(pathof(Tapestree)), "..", "data", "st2_data.txt")
+states_file = joinpath("/home/au543206/esse_data/st2_data.txt")
 println(states_file)
 
 # Loading the co-variate data
-envdata_file = joinpath(dirname(pathof(Tapestree)), "..", "data", "env_data_2.txt")
+envdata_file = joinpath("/home/au543206/esse_data/env_data_2.txt")
 println(envdata_file)
 
 # Specifying out folder
-out_file = *(homedir(),"/Trf_models/Esse_test/file_out_gwf.txt")
-out_states = *(homedir(),"/Trf_models/Esse_test/states_out_gwf.txt")
+out_file = joinpath("/home/au543206/esse_data/file_out_gwf.txt")
+out_states = joinpath("/home/au543206/esse_data/states_out_gwf.txt")
 
-esse(tree_file, out_file, 2, envdata_file = envdata_file, 
-  states_file = states_file, out_states = out_states, cov_mod = ("s",))
+addprocs(2)
+@everywhere using Tapestree
 
+
+time_infer = @elapsed Tapestree.esse(tree_file,
+	out_file,
+	2,
+	envdata_file = envdata_file, 
+    states_file = states_file,
+    out_states = out_states,
+    cov_mod = ("s",),
+	parallel = true,
+	mc = "mh", # Metropolis-Hastings
+	ncch = 4, # number of chains
+	niter = 5_000, # Number of iterations
+	nthin = 100, # Frequency at which to record the state
+	dt = 0.8, # Temperature for the annealing of the chains
+	nburn = 1_000)
+
+println("Time to run Esse: $time_infer seconds")
+
+time_infer = @elapsed Tapestree.esse(tree_file,
+	out_file,
+	2,
+	envdata_file = envdata_file, 
+    states_file = states_file,
+    out_states = out_states,
+    cov_mod = ("s",)
+	)
+
+println("Time to run Esse: $time_infer seconds")
 
 
 #########################################################################################

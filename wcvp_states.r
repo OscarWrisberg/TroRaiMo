@@ -138,6 +138,8 @@ cat("Removing occurences with NA in decimalLatitude or decimalLongitude \n\n")
 renamed_occurence_subset <- renamed_occurence_subset[which(!is.na(renamed_occurence_subset$decimalLatitude) & !is.na(renamed_occurence_subset$decimalLongitude)),]
 dim(renamed_occurence_subset) # 76483
 
+# There is an option to add additional cleaning of the data here, but for now we will continue with the data as it is.
+
 # How many of the species in the tree are found in the renamed_occurence_subset
 cat("Out of ",length(tree$tip.label),"tips in the tree there are ",length(tree$tip.label[which(tree$tip.label %in% renamed_occurence_subset$wcvp_taxon_name)]),"of the species in the tree are found in the renamed_occurence_subset \n\n")
 

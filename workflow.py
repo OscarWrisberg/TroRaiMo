@@ -883,6 +883,49 @@ def Creating_subclades(path_out, script_dir, done_dir, done, path_in, wcvp_file)
 
     return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
 
+
+##############################################################
+####-- Slicing problematic families into smaller clades --####
+##############################################################
+def Creating_family_subclades(path_out, script_dir, done_dir, done, path_in):
+    """This Function cuts the problematic orders into smaller clades which ClaDs and Esse Should be able to handle"""
+    inputs = [done_dir+"Subdividing_problematic_orders"]
+    outputs = [done_dir+done]
+    options = {
+        'cores': 2,
+        'memory': '5g',
+        'account':"Trf_models",
+        'walltime': "00:00:50"
+    }
+
+    spec = '''
+
+    #Checking if output dir exists
+    [ -d {path_out} ] && echo "{path_out} exist." || {{ echo "{path_out} does not exist."; mkdir {path_out}; }}
+
+    source /home/owrisberg/miniconda3/etc/profile.d/conda.sh
+    conda activate R_env
+
+    # Going to input folder
+    cd {path_in}
+
+    echo Starting the Creating subclades script
+    date
+
+    # Running the R script
+    Rscript --vanilla {script_dir}Creating_sub_phylogenies_for_big_families.r {path_in} {path_out}
+
+
+    echo Ended the Creating subclades script
+    date
+
+    touch {done_dir}{done}
+    
+    '''.format(path_out = path_out, script_dir = script_dir, path_in = path_in, done_dir = done_dir, done = done)
+
+
+    return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
+
 #########################################################################################################################################################################################
 ##########################################################################################################################################################################################
 ##################################################################---- Splitting the analysis into subtrees ----##########################################################################
@@ -1491,25 +1534,20 @@ gwf.target_from_template(name = "Subdividing_problematic_orders",
                             done = "Subdividing_problematic_orders"
                             ))
 
-
-# I find the list of trees again, or somehow change the scripts so they print all the good trees into a single folder where I can just run the script on all of them.
-order_trees=["pruned_tree_order_Alismatales_GBMB.tre", "pruned_tree_order_Crossosomatales_GBMB.tre", "pruned_tree_order_Gunnerales_GBMB.tre", "pruned_tree_order_Poales_GBMB.tre",
-"pruned_tree_order_Amborellales_GBMB.tre", "pruned_tree_order_Cucurbitales_GBMB.tre", "pruned_tree_order_Huerteales_GBMB.tre",
-"pruned_tree_order_Aquifoliales_GBMB.tre", "pruned_tree_order_Cupressales_GBMB.tre", "pruned_tree_order_Magnoliales_GBMB.tre", "pruned_tree_order_Ranunculales_GBMB.tre",
-"pruned_tree_order_Arecales_GBMB.tre", "pruned_tree_order_Cycadales_GBMB.tre", "pruned_tree_order_Malpighiales_GBMB.tre", "pruned_tree_order_Rosales_GBMB.tre",
-"pruned_tree_order_Austrobaileyales_GBMB.tre", "pruned_tree_order_Dilleniales_GBMB.tre", "pruned_tree_order_Malvales_GBMB.tre", "pruned_tree_order_Santalales_GBMB.tre",
-"pruned_tree_order_Berberidopsidales_GBMB.tre", "pruned_tree_order_Dioscoreales_GBMB.tre", "pruned_tree_order_Myrtales_GBMB.tre", "pruned_tree_order_Sapindales_GBMB.tre",
-"pruned_tree_order_Bruniales_GBMB.tre", "pruned_tree_order_Dipsacales_GBMB.tre", "pruned_tree_order_Nymphaeales_GBMB.tre", "pruned_tree_order_Solanales_GBMB.tre",
-"pruned_tree_order_Buxales_GBMB.tre", "pruned_tree_order_Ericales_GBMB.tre", "pruned_tree_order_Pandanales_GBMB.tre", "pruned_tree_order_Trochodendrales_GBMB.tre",
-"pruned_tree_order_Canellales_GBMB.tre", "pruned_tree_order_Escalloniales_GBMB.tre", "pruned_tree_order_Paracryphiales_GBMB.tre", "pruned_tree_order_Vahliales_GBMB.tre",
-"pruned_tree_order_Celastrales_GBMB.tre", "pruned_tree_order_Fabales_GBMB.tre", "pruned_tree_order_Petrosaviales_GBMB.tre", "pruned_tree_order_Vitales_GBMB.tre",
-"pruned_tree_order_Ceratophyllales_GBMB.tre", "pruned_tree_order_Garryales_GBMB.tre", "pruned_tree_order_Picramniales_GBMB.tre", "pruned_tree_order_Zingiberales_GBMB.tre",
-"pruned_tree_order_Chloranthales_GBMB.tre", "pruned_tree_order_Ginkgoales_GBMB.tre", "pruned_tree_order_Pinales_GBMB.tre", "pruned_tree_order_Zygophyllales_GBMB.tre",
-"pruned_tree_order_Commelinales_GBMB.tre", "pruned_tree_order_Gnetales_GBMB.tre", "pruned_tree_order_Piperales_GBMB.tre"
-]
+gwf.target_from_template(name = "Subdividing_problematic_families",
+                        template=Creating_family_subclades(
+                            path_in = workflow_dir+"02_adding_orders/pruning/subset_of_orders/", 
+                            path_out = workflow_dir+"02_adding_orders/pruning/subset_of_orders/", 
+                            script_dir = script_dir, 
+                            done_dir= done_dir,
+                            done = "Subdividing_problematic_families"
+                            ))
 
 
-# Fixed it so it should now contain all orders.
+# Remove impossible orders
+# impossible_orders =["Amborellales","Berberidopsidales","Paracryphiales", "Petrosaviales","Trochodendrales"]
+
+# All orders
 orders = ["Alismatales", "Apiales", "Aquifoliales", "Arecales", "Asparagales", "Asterales", "Boraginales", "Brassicales", "Bruniales", "Buxales", "Canellales", "Caryophyllales",
 "Celastrales", "Chloranthales", "Commelinales", "Cornales", "Crossosomatales", "Cucurbitales", "Cupressales", "Dilleniales", "Dioscoreales", "Ericales", "Escalloniales", "Fabales", "Fagales",
 "Gentianales", "Geraniales", "Gnetales", "Gunnerales", "Huerteales", "Icacinales", "Lamiales", "Laurales", "Liliales", "Magnoliales", "Malpighiales", "Malvales", "Metteniusales",
@@ -1517,40 +1555,57 @@ orders = ["Alismatales", "Apiales", "Aquifoliales", "Arecales", "Asparagales", "
 "Saxifragales", "Solanales", "Vahliales", "Vitales", "Zingiberales", "Zygophyllales"
 ]
 
-# Remove impossible orders
-# impossible_orders =["Amborellales","Berberidopsidales","Paracryphiales", "Petrosaviales","Trochodendrales"]
-
-# Orders that need a to be run with a modified prior
-# orders_new_prior = ["Apiales","Arecales","Asparagales","Asterales","Brassicales","Caryophyllales","Ericales","Fabales","Gentianales", "Lamiales","Laurales","Malpighiales",
-#                     "Malvales","Myrtales","Poales","Ranunculales","Rosales","Sapindales","Saxifragales","Solanales","Zingiberales"]
-
-orders_new_prior = ["Solanales"]
-
+# Orders that ran with the uniform prior 
 orders_not_in_orders_new_prior = ["Aquifoliales", "Berberidopsidales", "Boraginales", "Bruniales", "Buxales",
                                 "Canellales", "Celastrales", "Chloranthales", "Commelinales", "Cornales", "Crossosomatales", "Cucurbitales",
                                 "Cupressales", "Dilleniales", "Dioscoreales", "Escalloniales", "Fagales", "Gunnerales", "Huerteales", "Icacinales",
                                 "Liliales", "Magnoliales", "Metteniusales", "Nymphaeales", "Oxalidales", "Pandanales", "Paracryphiales",
                                 "Pinales", "Piperales", "Proteales", "Santalales", "Vitales", "Zygophyllales"]
+
+
+# Orders that need a to be run with a modified prior
+orders_new_prior = ["Solanales"]
+
+
  
  # Here is the list of orders that I have had to split into smaller clades to be able to run the ClaDs on them.
-orders_split_for_clads = ["Zingiberales", "Laurales","Poales","Ranunculales","Rosales","Sapindales","Saxifragales","Myrtales","Malvales","Malpighiales","Lamiales","Gentianales","Fabales",
-			"Ericales", "Apiales","Asterales","Asparagales","Caryophyllales","Arecales","Brassicales"]
+# orders_split_for_clads = ["Zingiberales", "Laurales","Poales","Ranunculales","Rosales","Sapindales","Saxifragales","Myrtales","Malvales","Malpighiales","Lamiales","Gentianales","Fabales",
+# 			"Ericales", "Apiales","Asterales","Asparagales","Caryophyllales","Arecales","Brassicales"]
 
 # This is the list of Clades resulting from my personal splitting of the orders.
-Clads_clades = ["Zingiberaceae", "Marantaceae_Cannaceae", "Costaceae", "Heliconiaceae_Lowiaceae_Strelitziaceae","Lauraceae","Monimiaceae","Poaceae","Cyperaceae","Bromeliaceae",
-                "Restionaceae","Xyridaceae_Eriocaulaceae","Juncaceae","Typhaceae","Menispermaceae","Berberidaceae","Ranunculaceae","Papaveraceae","Rosaceae","Urticaceae",
-                "Rhamnaceae_Barbeyaceae_Dirachmaceae_Elaeagnaceae","Moraceae","Ulmaceae","Cannabaceae","Anacardiaceae_Burseraceae_Kirkiaceae", "Sapindaceae","Rutaceae","Meliaceae","Simaroubaceae",
-                "Crassulaceae_Aphanopetalaceae_Halograceae_Penthoraceae_Tetracarpaeaceae", "Saxifragaceae_Iteaceae_Grossulariaceae", "Cercidiphyllaceae_Hamamelidaceae_Daphniphyllaceae_Altingiaceae_Paeoniaceae",
-                "Melastomataceae","Myrtaceae","Lythraceae_Onagraceae","Alzateaceae_Crypteroniaceae_Penaeaceae","Combretaceae","Malvaceae","Thymelaeaceae","Dipterocarpaceae_Bixaceae_Cistaceae_Sarcoleanaceae_Muntingiaceae_Sphaerosepalaceae",
-                "Salicaceae_Lacistemataceae","Euphorbiaceae","Chrysobalanaceae_Malpighiaceae_Caryocaraceae_Balanopaceae_Elatinaceae_Centroplacaceae_Dichapetalaceae_Putranjivaceae_Euphroniaceae_Lophopyxidaceae_Trigoniaceae",
-                "Phyllanthaceae_Picodendraceae_Linaceae_Ixonanthaceae","Ochnaceae_Clusiaceae_Erythroxylaceae_Podostemaceae_Bonnetiaceae_Rhizophoraceae_Calophyllaceae_Hypericaceae_Ctenolophonaceae_Irvingiaceae_Pandaceae",
-                "Passifloraceae","Violaceae_Goupiaceae","Verbenaceae_Schlegeliaceae_Lentibulariaceae_Thomandersiaceae","Lamiaceae","Acanthaceae_Martyniaceae_Pedaliaceae","Gesneriaceae_Calceolariaceae","Bignoniaceae",
-                "Orobanchaceae_Phrymaceae_Mazaceae_Paulowniaceae","Scrophulariaceae","Plantaginaceae","Rubiaceae","Apocynaceae","Loganiaceae_Gelsemiaceae","Gentianaceae","Fabaceae","Polygalaceae_Surianaceae",
-                "Sapotaceae","Polemoniaceae_Lecythidaceae_Fouquieriaceae","Ericaceae_Clethraceae_Cyrillaceae","Pentaphylacaceae_Sladeniaceae","Primulaceae","Styracaceae_Diapensiaceae_Symplocaceae","Theaceae","Ebenaceae",
-                "Balsaminaceae_Marcgraviaceae_Tetrameristaceae","Apiaceae","Araliaceae","Pittosporaceae","Asteraceae","Calyceraceae","Campanulaceae_Rousseaceae","Goodeniaceae","Menyanthaceae","Asphodelaceae",
-                "Orchidaceae","Amaryllidaceae","Iridaceae","Asparagaceae","Cactaceae_Molluginaceae_Didiereaceae_Anacompserotaceae_Basellaceae_Montiaceae_Halophytaceae_Portulacaceae_Talinaceae",
-                "Plumbaginaceae_Polygonaceae_Frankeniaceae_Tamaricaceae","Caryophyllaceae_Achatocarpaceae_Amaranthaceae", "Aizoaceae_Phytolaccaceae_Barbeuiaceae_Lophiocarpaceae_Gisekiaceae_Sarcobataceae",
-                "Droseraceae_Ancistrocladaceae_Drosophyllaceae_Nepenthaceae_Dioncophyllaceae","Arecaceae","Brassicaceae","Resedaceae","Capparaceae","Cleomaceae"]
+Clads_clades = ["Acanthaceae_Martyniaceae_Pedaliaceae","Alzateaceae_Crypteroniaceae_Penaeaceae","Amaryllidaceae","Aizoaceae_Phytolaccaceae_Barbeuiaceae_Lophiocarpaceae_Gisekiaceae_Sarcobataceae",
+                "Anacardiaceae_Burseraceae_Kirkiaceae","Anacompserotaceae_Basellaceae_Montiaceae_Halophytaceae_Portulacaceae_Talinaceae","Araliaceae","Berberidaceae","Bignoniaceae","Bromeliaceae",
+                "Brassicaceae","Calyceraceae","Cannabaceae","Capparaceae","Caryophyllaceae_Achatocarpaceae_Amaranthaceae",
+                "Chrysobalanaceae_Malpighiaceae_Caryocaraceae_Balanopaceae_Elatinaceae_Centroplacaceae_Dichapetalaceae_Putranjivaceae_Euphroniaceae_Lophopyxidaceae_Trigoniaceae",
+                "Cleomaceae","Combretaceae","Costaceae","Crassulaceae_Aphanopetalaceae_Halograceae_Penthoraceae_Tetracarpaeaceae","Cyperaceae","Didiereaceae","Dioncophyllaceae",
+                "Droseraceae_Ancistrocladaceae_Drosophyllaceae_Nepenthaceae_Dioncophyllaceae","Ebenaceae","Ericaceae_Clethraceae_Cyrillaceae","Frankeniaceae","Fouquieriaceae","Gentianaceae",
+                "Geraniaceae","Gesneriaceae_Calceolariaceae","Goodeniaceae","Goupiaceae","Haloragaceae","Heliconiaceae_Lowiaceae_Strelitziaceae","Iridaceae","Juncaceae","Lauraceae","Lecythidaceae",
+                "Lentibulariaceae","Loranthaceae","Lythraceae_Onagraceae","Mazaceae","Melastomataceae","Menispermaceae","Menyanthaceae","Meliaceae","Molluginaceae","Monimiaceae","Moraceae","Myrtaceae","Nepenthaceae",
+                "Ochnaceae_Clusiaceae_Erythroxylaceae_Podostemaceae_Bonnetiaceae_Rhizophoraceae_Calophyllaceae_Hypericaceae_Ctenolophonaceae_Irvingiaceae_Pandaceae",
+                "Orobanchaceae_Phrymaceae_Mazaceae_Paulowniaceae","Papaveraceae","Passifloraceae","Pedaliaceae","Penaeaceae","Pentaphylacaceae_Sladeniaceae","Pittosporaceae","Plantaginaceae",
+                "Plumbaginaceae_Polygonaceae_Frankeniaceae_Tamaricaceae","Polemoniaceae","Polygalaceae_Surianaceae","Portulacaceae","Primulaceae","Resedaceae","Rhamnaceae_Barbeyaceae_Dirachmaceae_Elaeagnaceae",
+                "Ranunculaceae","Restionaceae","Rutaceae","Salicaceae_Lacistemataceae","Sapotaceae","Saxifragaceae_Iteaceae_Grossulariaceae","Schlegeliaceae","Scrophulariaceae","Simaroubaceae",
+                "Styracaceae_Diapensiaceae_Symplocaceae","Surianaceae","Talinaceae","Tamaricaceae","Theaceae","Thymelaeaceae","Tiliaceae","Typhaceae","Ulmaceae","Urticaceae","Verbenaceae","Violaceae",
+                "Xyridaceae_Eriocaulaceae","Zingiberaceae"] 
+
+
+# Families which have been divided further and therefore need to be removed from the Clads_clades list.
+# Apiaceae
+# Apocynaceae
+# Asteraceae
+# Euphorbiaceae
+# Fabaceae
+# Lamiaceae
+# Orchidaceae
+# Poaceae
+# Rubiaceae
+
+sub_family_clades = ["sub_phylo_Apiaceae_1.tre","sub_phylo_Apiaceae_2.tre","sub_phylo_Apiaceae_3.tre","sub_phylo_Apiaceae_4.tre", "sub_phylo_Apiaceae_5.tre","sub_phylo_Apiaceae_6.tre", "sub_phylo_Apocynaceae_1.tre","sub_phylo_Apocynaceae_2.tre",
+"sub_phylo_Apocynaceae_3.tre","sub_phylo_Asteraceae_1.tre", "sub_phylo_Asteraceae_2.tre","sub_phylo_Asteraceae_3.tre", "sub_phylo_Asteraceae_4.tre","sub_phylo_Asteraceae_5.tre", "sub_phylo_Asteraceae_6.tre","sub_phylo_Asteraceae_7.tre","sub_phylo_Euphorbiaceae_1.tre","sub_phylo_Euphorbiaceae_2.tre",
+"sub_phylo_Euphorbiaceae_3.tre","sub_phylo_Fabaceae_1.tre","sub_phylo_Fabaceae_2.tre","sub_phylo_Fabaceae_4.tre","sub_phylo_Fabaceae_5.tre","sub_phylo_Fabaceae_6.tre","sub_phylo_Lamiaceae_1.tre","sub_phylo_Lamiaceae_2.tre",
+"sub_phylo_Lamiaceae_3.tre","sub_phylo_Orchidaceae_1.tre","sub_phylo_Orchidaceae_10.tre","sub_phylo_Orchidaceae_11.tre","sub_phylo_Orchidaceae_2.tre","sub_phylo_Orchidaceae_3.tre","sub_phylo_Orchidaceae_4.tre","sub_phylo_Orchidaceae_5.tre",
+"sub_phylo_Orchidaceae_6.tre","sub_phylo_Orchidaceae_7.tre","sub_phylo_Orchidaceae_8.tre","sub_phylo_Orchidaceae_9.tre","sub_phylo_Poaceae_1.tre","sub_phylo_Poaceae_2.tre","sub_phylo_Rubiaceae_1.tre","sub_phylo_Rubiaceae_2.tre"
+]
 
 
 # Orders that are removed as they are too small: Alismatales, Amborellales, Petrosaviales, Trochodendrales, Vahliales
@@ -1729,6 +1784,40 @@ for i in range(len(Clads_clades)):
                                     prior_file = workflow_dir+"02_adding_orders/pruning/orders/priors.txt"
                              )) 
 
+
+#####################################################################################################################################################################
+############################################################--- ClaDs on family  subclades ---#########################################################################
+#####################################################################################################################################################################
+
+for i in range(len(sub_family_clades)):
+    gwf.target_from_template(name = sub_family_clades[i]+"_samplingfraction",
+                                      template = sampling_frequency_subclades(
+                                          input_file_tree = "family_phylo_" + sub_family_clades[i] + ".tre",
+                                          path_in = workflow_dir + "02_adding_orders/pruning/subset_of_orders/",
+                                          path_out = workflow_dir + "03_distribution_data/",
+                                          output_file = sub_family_clades[i] + "_sampling_fraction.txt",
+                                          wcvp_file = workflow_dir + "02_adding_orders/wcvp_names_apg_aligned.rds",
+                                          script_dir = script_dir,
+                                          apg = script_dir + "apgweb_parsed.csv",
+                                          done_dir = done_dir,
+                                          done = sub_family_clades[i] + "_Sampling_fraction",
+                                          name = sub_family_clades[i]
+                                      ))
+
+    gwf.target_from_template(name = sub_family_clades[i]+"_ClaDs",
+                                template= Clads_subclades(
+                                    tree= "family_phylo_"+sub_family_clades[i]+".tre",
+                                    wcvp_input = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds",
+                                    order = sub_family_clades[i],
+                                    done_file = sub_family_clades[i]+"_ClaDs",
+                                    path_in = workflow_dir+"02_adding_orders/pruning/subset_of_orders/",
+                                    output_file = "Clads_output_"+sub_family_clades[i]+".jld2",
+                                    script_dir=script_dir,
+                                    done_dir = done_dir,
+                                    sampling_frequency= workflow_dir+"03_distribution_data/"+sub_family_clades[i]+"_sampling_fraction.txt",
+                                    prior_file = workflow_dir+"02_adding_orders/pruning/orders/priors.txt"
+                             )) 
+
 #####################################################################################################################################################################
 ############################################################--- ESSE on Order subclades ---#########################################################################
 #####################################################################################################################################################################
@@ -1779,3 +1868,37 @@ for i in range(len(Clads_clades)):
         #                             output_folder = workflow_dir+"04_results/Esse_output/",
         #                             path_out = workflow_dir+"04_results/"
         #                          ))
+
+
+
+
+
+
+
+
+
+# Random old parts of the code that I am saving for one reason or another.
+
+# I find the list of trees again, or somehow change the scripts so they print all the good trees into a single folder where I can just run the script on all of them.
+# order_trees=["pruned_tree_order_Alismatales_GBMB.tre", "pruned_tree_order_Crossosomatales_GBMB.tre", "pruned_tree_order_Gunnerales_GBMB.tre", "pruned_tree_order_Poales_GBMB.tre",
+# "pruned_tree_order_Amborellales_GBMB.tre", "pruned_tree_order_Cucurbitales_GBMB.tre", "pruned_tree_order_Huerteales_GBMB.tre",
+# "pruned_tree_order_Aquifoliales_GBMB.tre", "pruned_tree_order_Cupressales_GBMB.tre", "pruned_tree_order_Magnoliales_GBMB.tre", "pruned_tree_order_Ranunculales_GBMB.tre",
+# "pruned_tree_order_Arecales_GBMB.tre", "pruned_tree_order_Cycadales_GBMB.tre", "pruned_tree_order_Malpighiales_GBMB.tre", "pruned_tree_order_Rosales_GBMB.tre",
+# "pruned_tree_order_Austrobaileyales_GBMB.tre", "pruned_tree_order_Dilleniales_GBMB.tre", "pruned_tree_order_Malvales_GBMB.tre", "pruned_tree_order_Santalales_GBMB.tre",
+# "pruned_tree_order_Berberidopsidales_GBMB.tre", "pruned_tree_order_Dioscoreales_GBMB.tre", "pruned_tree_order_Myrtales_GBMB.tre", "pruned_tree_order_Sapindales_GBMB.tre",
+# "pruned_tree_order_Bruniales_GBMB.tre", "pruned_tree_order_Dipsacales_GBMB.tre", "pruned_tree_order_Nymphaeales_GBMB.tre", "pruned_tree_order_Solanales_GBMB.tre",
+# "pruned_tree_order_Buxales_GBMB.tre", "pruned_tree_order_Ericales_GBMB.tre", "pruned_tree_order_Pandanales_GBMB.tre", "pruned_tree_order_Trochodendrales_GBMB.tre",
+# "pruned_tree_order_Canellales_GBMB.tre", "pruned_tree_order_Escalloniales_GBMB.tre", "pruned_tree_order_Paracryphiales_GBMB.tre", "pruned_tree_order_Vahliales_GBMB.tre",
+# "pruned_tree_order_Celastrales_GBMB.tre", "pruned_tree_order_Fabales_GBMB.tre", "pruned_tree_order_Petrosaviales_GBMB.tre", "pruned_tree_order_Vitales_GBMB.tre",
+# "pruned_tree_order_Ceratophyllales_GBMB.tre", "pruned_tree_order_Garryales_GBMB.tre", "pruned_tree_order_Picramniales_GBMB.tre", "pruned_tree_order_Zingiberales_GBMB.tre",
+# "pruned_tree_order_Chloranthales_GBMB.tre", "pruned_tree_order_Ginkgoales_GBMB.tre", "pruned_tree_order_Pinales_GBMB.tre", "pruned_tree_order_Zygophyllales_GBMB.tre",
+# "pruned_tree_order_Commelinales_GBMB.tre", "pruned_tree_order_Gnetales_GBMB.tre", "pruned_tree_order_Piperales_GBMB.tre"
+        
+
+
+# Orders that ran with the uniform prior 
+# orders_not_in_orders_new_prior = ["Aquifoliales", "Berberidopsidales", "Boraginales", "Bruniales", "Buxales",
+#                                 "Canellales", "Celastrales", "Chloranthales", "Commelinales", "Cornales", "Crossosomatales", "Cucurbitales",
+#                                 "Cupressales", "Dilleniales", "Dioscoreales", "Escalloniales", "Fagales", "Gunnerales", "Huerteales", "Icacinales",
+#                                 "Liliales", "Magnoliales", "Metteniusales", "Nymphaeales", "Oxalidales", "Pandanales", "Paracryphiales",
+#                                 "Pinales", "Piperales", "Proteales", "Santalales", "Vitales", "Zygophyllales"]

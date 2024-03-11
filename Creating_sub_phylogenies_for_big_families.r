@@ -1,10 +1,17 @@
+# Setting Cran mirror
+chooseCRANmirror(ind = 30)
 
+#Packages
+packages <- c("ape","phytools","data.table")
 
+# Install packages not yet installed
+installed_packages <- packages %in% rownames(installed.packages())
+if (any(installed_packages == FALSE)) {
+  install.packages(packages[!installed_packages])
+}
 
-# Load Packages
-library(ape)
-library(phytools)
-library(data.table)
+# Packages loading
+invisible(lapply(packages, library, character.only = TRUE))
 
 # Loading the command line arguments
 args <- commandArgs(trailingOnly = TRUE)
@@ -99,10 +106,6 @@ sp_pairs <- list(sp_pairs_for_mrca_asteraceae, sp_pairs_for_mrca_orchidaceae, sp
 
 # Asteraceae
 fam_list <- list("Asteraceae","Orchidaceae","Fabaceae","Caryophyllaceae","Lamiaceae","Rubiaceae","Poaceae","Apiaceae","Euphorbiaceae","Ericaceae","Apocynaceae")
-
-
-# Set the working directory
-setwd("/home/au543206/GenomeDK/Trf_models/workflow/02_adding_orders/pruning/subset_of_orders")
 
 # Now loop through all the sp_pairs and make sub phylogenies for each of them.
 for (k in seq_along(sp_pairs)){
