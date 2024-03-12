@@ -1777,41 +1777,6 @@ for i in range(len(Clads_clades)):
                                     prior_file = workflow_dir+"02_adding_orders/pruning/orders/priors.txt"
                              )) 
 
-
-#####################################################################################################################################################################
-############################################################--- ClaDs on family  subclades ---#########################################################################
-#####################################################################################################################################################################
-
-for i in range(len(sub_family_clades)):
-    gwf.target_from_template(name = sub_family_clades[i]+"_samplingfraction",
-                                      template = sampling_frequency_subclades(
-                                          input_file_tree = sub_family_clades[i],
-                                          path_in = workflow_dir + "02_adding_orders/pruning/subset_of_orders/",
-                                          path_out = workflow_dir + "03_distribution_data/",
-                                          output_file = sub_family_clades[i] + "_sampling_fraction.txt",
-                                          wcvp_file = workflow_dir + "02_adding_orders/wcvp_names_apg_aligned.rds",
-                                          script_dir = script_dir,
-                                          apg = script_dir + "apgweb_parsed.csv",
-                                          done_dir = done_dir,
-                                          done = sub_family_clades[i] + "_Sampling_fraction",
-                                          name = sub_family_clades[i]
-                                      ))
-    
-
-    gwf.target_from_template(name = sub_family_clades[i]+"_ClaDs",
-                                template= Clads_subclades(
-                                    tree=sub_family_clades[i],
-                                    wcvp_input = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds",
-                                    order = sub_family_clades[i],
-                                    done_file = sub_family_clades[i]+"_ClaDs",
-                                    path_in = workflow_dir+"02_adding_orders/pruning/subset_of_orders/",
-                                    output_file = "Clads_output_"+sub_family_clades[i]+".jld2",
-                                    script_dir=script_dir,
-                                    done_dir = done_dir,
-                                    sampling_frequency= workflow_dir+"03_distribution_data/"+sub_family_clades[i]+"_sampling_fraction.txt",
-                                    prior_file = workflow_dir+"02_adding_orders/pruning/orders/priors.txt"
-                             )) 
-
 #####################################################################################################################################################################
 ############################################################--- ESSE on Order subclades ---#########################################################################
 #####################################################################################################################################################################
@@ -1863,7 +1828,39 @@ for i in range(len(sub_family_clades)):
         #                             path_out = workflow_dir+"04_results/"
         #                          ))
 
+#####################################################################################################################################################################
+############################################################--- ClaDs on family  subclades ---#########################################################################
+#####################################################################################################################################################################
 
+for k in range(len(sub_family_clades)):
+    gwf.target_from_template(name = sub_family_clades[k]+"_samplingfraction",
+                                      template = sampling_frequency_subclades(
+                                          input_file_tree = sub_family_clades[k],
+                                          path_in = workflow_dir + "02_adding_orders/pruning/subset_of_orders/",
+                                          path_out = workflow_dir + "03_distribution_data/",
+                                          output_file = sub_family_clades[k] + "_sampling_fraction.txt",
+                                          wcvp_file = workflow_dir + "02_adding_orders/wcvp_names_apg_aligned.rds",
+                                          script_dir = script_dir,
+                                          apg = script_dir + "apgweb_parsed.csv",
+                                          done_dir = done_dir,
+                                          done = sub_family_clades[k] + "_Sampling_fraction",
+                                          name = sub_family_clades[k]
+                                      ))
+    
+
+    gwf.target_from_template(name = sub_family_clades[k]+"_ClaDs",
+                                template= Clads_subclades(
+                                    tree=sub_family_clades[k],
+                                    wcvp_input = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds",
+                                    order = sub_family_clades[k],
+                                    done_file = sub_family_clades[k]+"_ClaDs",
+                                    path_in = workflow_dir+"02_adding_orders/pruning/subset_of_orders/",
+                                    output_file = "Clads_output_"+sub_family_clades[k]+".jld2",
+                                    script_dir=script_dir,
+                                    done_dir = done_dir,
+                                    sampling_frequency= workflow_dir+"03_distribution_data/"+sub_family_clades[k]+"_sampling_fraction.txt",
+                                    prior_file = workflow_dir+"02_adding_orders/pruning/orders/priors.txt"
+                             )) 
 
 
 
