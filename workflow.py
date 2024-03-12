@@ -1785,7 +1785,7 @@ for i in range(len(Clads_clades)):
 for i in range(len(sub_family_clades)):
     gwf.target_from_template(name = sub_family_clades[i]+"_samplingfraction",
                                       template = sampling_frequency_subclades(
-                                          input_file_tree = "family_phylo_" + sub_family_clades[i],
+                                          input_file_tree = sub_family_clades[i],
                                           path_in = workflow_dir + "02_adding_orders/pruning/subset_of_orders/",
                                           path_out = workflow_dir + "03_distribution_data/",
                                           output_file = sub_family_clades[i] + "_sampling_fraction.txt",
@@ -1796,6 +1796,7 @@ for i in range(len(sub_family_clades)):
                                           done = sub_family_clades[i] + "_Sampling_fraction",
                                           name = sub_family_clades[i]
                                       ))
+    
 
     gwf.target_from_template(name = sub_family_clades[i]+"_ClaDs",
                                 template= Clads_subclades(
