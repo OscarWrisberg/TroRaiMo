@@ -2,7 +2,7 @@ using Pkg
 # Check if Tapestree and Distributed are installed
 if !haskey(Pkg.installed(), "Tapestree") || !haskey(Pkg.installed(), "Distributed") || !haskey(Pkg.installed(), "DataFrames") || !haskey(Pkg.installed(), "DelimitedFiles")
 	# Install Tapestree and Distributed
-	Pkg.add(["Tapestree", "Distributed", "DataFrames", "DelimitedFiles"])
+	Pkg.add(["Tapestree", "Distributed", "DataFrames", "DelimitedFiles","JLD2"])
 end
 
 # Load Tapestree and Distributed
@@ -11,6 +11,7 @@ using Distributed
 using DataFrames
 using DelimitedFiles
 using PANDA
+using JLD2
 
 # Srun file locations
 processors = 3

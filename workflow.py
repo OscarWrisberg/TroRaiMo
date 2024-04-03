@@ -1076,7 +1076,7 @@ def Clads(tree, done_file, path_in, output_file,wcvp_input, order, apg, script_d
     outputs = [done_dir+done_file, path_in+output_file]
     options = {
         'cores': 1,
-        'memory': '800g',
+        'memory': '1200g',
         'account':"Trf_models",
         'walltime': "120:00:00"
     }
@@ -1156,7 +1156,7 @@ def Clads_priors(tree, done_file, path_in, output_file,wcvp_input, order, apg, s
     outputs = [done_dir+done_file, path_in+output_file]
     options = {
         'cores': 1,
-        'memory': '300g',
+        'memory': '1000g',
         'account':"Trf_models",
         'walltime': "24:00:00"
     }
@@ -1194,9 +1194,9 @@ def Clads_subclades(tree, done_file, path_in, output_file,wcvp_input, order, scr
     outputs = [done_dir+done_file, path_in+"Clads_output_"+order+".Rdata"]
     options = {
         'cores': 1,
-        'memory': '1000g',
+        'memory': '1200g',
         'account':"Trf_models",
-        'walltime': "120:00:00"
+        'walltime': "168:00:00"
     }
 
     spec = '''
@@ -1273,7 +1273,7 @@ def Esse(path_in, tree_file,tip_states_file,paleo_clim_file, out_states_file, ou
     inputs = [path_in+tree_file,tip_states_file,paleo_clim_file]
     outputs = [save_file]
     options = {
-        'cores': 10,
+        'cores': 200,
         'memory': '250g',
         'account':"Trf_models",
         'walltime': "168:00:00"
