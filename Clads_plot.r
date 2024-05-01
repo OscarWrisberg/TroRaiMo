@@ -400,6 +400,3 @@ total_species_clads
 
 sum(total_species_clads$species) #54301
 
-
-
-# pattern family_phylo_*_.tre

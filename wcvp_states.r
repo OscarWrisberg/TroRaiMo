@@ -170,6 +170,9 @@ if (all(tree$tip.label %in% renamed_occurence_subset$wcvp_taxon_name)) { # If al
   result_summary$proportion_in_tropical_rainforest <- result_summary$x[,1]/(result_summary$x[,1] + result_summary$x[,2])
   result_summary$proportion_outside_tropical_rainforest <- result_summary$x[,2]/(result_summary$x[,1] + result_summary$x[,2])
 
+  # Changing the column names
+  result_summary <- setNames(result_summary, c("wcvp_taxon_name", "occurrences_trf", "occurrences_non_trf"))
+
 ##################################################################################################################################################################
 ##################################################################################################################################################################
 
