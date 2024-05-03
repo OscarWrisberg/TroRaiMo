@@ -96,7 +96,7 @@ sp_pairs_for_mrca_poaceae <- list(list("Cynodon transvaalensis","Monachather par
 								list("Festuca rupicola", "Bromus benekenii"),
 								list("Austrostipa hemipogon", "Ampelodesmos mauritanicus"),
 								list("Dendrocalamus sinicus", "Shibataea chinensis"),
-								list("Oryza glaberrima", "Streptogyna americana"),
+								list("Oryza glaberrima", "Streptogyna americana")
 								) # were losing 60 species
 
 Sp_pairs_for_mrca_apiaceae <- list(list("Rhodosciadium pringlei","Arcuatopterus thalictrioideus"),
@@ -109,7 +109,8 @@ Sp_pairs_for_mrca_apiaceae <- list(list("Rhodosciadium pringlei","Arcuatopterus 
 
 sp_pairs_for_mrca_euphorbiaceae <- list(list("Neoscortechinia kingii","Argythamnia candicans"),
 									 list("Cladogelonium madagascariense","Suregada boiviniana"),
-									 list("Nealchornea yapurensis","Maprounea africana"))
+									 list("Nealchornea yapurensis","Maprounea africana")
+									 )
 
 
 sp_pairs_for_mrca_ericaceae <- list(list("Erica interrupta","Cassiope selaginoides"),
