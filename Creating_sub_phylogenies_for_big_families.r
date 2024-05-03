@@ -193,8 +193,7 @@ sp_pairs_for_mrca_anacardiaceae_burseraceae_kirkiaceae <- list(list("Campnosperm
 																) # were losing 2 species
 
 sp_pairs_for_mrca_caryophyllaceae_achatocarpaceae_amaranthaceae <- list(list("Schiedea jacobii","Telephium imperati"),
-																list("Aphanisma blitoides", "Phaulothamnus spinescens"),
-																list("Pentabrachion reticulatum","Croizatia brevipetiolata")
+																list("Aphanisma blitoides", "Phaulothamnus spinescens")
 																) # were losing 0 species
 
 sp_pairs_for_mrca_gesneriaceae_calceolariaceae <- list(list("Primulina pengii","Epithema tenue"),
@@ -202,7 +201,8 @@ sp_pairs_for_mrca_gesneriaceae_calceolariaceae <- list(list("Primulina pengii","
 														) # were losing 31 species
 
 sp_pairs_for_mrca_phyllanthaceae_picodendraceae_linaceae_ixonanthaceae <- list(list("Cyrillopsis paraensis","Roucheria monsalveae"),
-																				list("Notoleptopus decaisnei","Glochidion eucleoides")
+																				list("Notoleptopus decaisnei","Glochidion eucleoides"),
+																				list("Pentabrachion reticulatum","Croizatia brevipetiolata")
 																				) # were losing 42 species
 
 
