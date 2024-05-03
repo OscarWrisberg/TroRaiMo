@@ -47,7 +47,7 @@ sp_pairs_for_mrca_orchidaceae <- list(list("Codonorchis lessonii","Pterygodium m
 								   list("Masdevallia pinocchio", "Neocogniauxia hexaptera"),
 								   list("Encyclia candollei", "Arpophyllum giganteum"),
 								   list("Bulbophyllum clandestinum","Dendrobium mariae"),
-								   list("Liparis_anopheles","Liparis rheedei"),
+								   list("Liparis anopheles","Liparis rheedei"),
 								   list("Eriodes barbata","Ancistrochilus rothschildianus"),
 								   list("Callostylis rigida","Phreatia tahitensis"),
 								   list("Coelogyne mayeriana","Arundina graminifolia"),
@@ -60,7 +60,7 @@ sp_pairs_for_mrca_fabaceae <- list(list("Trifolium macraei","Parochetus communis
 								list("Astragalus lilacinus","Chesneya ferganensis"),
 								list("Lotus dumetorum", "Lennea viridiflora"),
 								list("Psoralea asarina","Platycyamus regnellii"),
-								list("Derris glabra","Disynstemon_paullinioides"),
+								list("Derris glabra","Disynstemon paullinioides"),
 								list("Indigofera humbertiana","Phylloxylon perrieri"),
 								list("Crotalaria lebrunii","Dalbergia sericea"),
 								list("Acacia crassa","Senegalia catechu"),
@@ -158,7 +158,7 @@ sp_pairs_for_mrca_lauraceae <- list(list("Caryodaphnopsis laotica", "Persea barb
 									) # were losing 0 species
 
 sp_pairs_for_mrca_melastomataceae <- list(list("Macrocentrum cristatum", "Miconia roseopetala"),
-										list("Rhynchanthera bracteata","Salpinga_margaritacea")
+										list("Rhynchanthera bracteata","Salpinga margaritacea")
 										)	# were losing 59 species
 
 sp_pairs_for_mrca_myrtaceae <- list(list("Austromyrtus dulcis","Syzygium bullatum"),
@@ -168,7 +168,7 @@ sp_pairs_for_mrca_myrtaceae <- list(list("Austromyrtus dulcis","Syzygium bullatu
 
 sp_pairs_for_mrca_plantaginaceae <- list(list("Veronica oltensis","Lafuentea rotundifolia"),
 										list("Penstemon mensarum","Russelia verticillata"),
-										list("Gratiola_floridana","Ourisia_microphylla")
+										list("Gratiola floridana","Ourisia microphylla")
 										) # were losing 9 species
 
 sp_pairs_for_mrca_ranunculaceae <- list(list("Asteropyrum cavaleriei","Hamadryas magellanica"),
@@ -183,8 +183,8 @@ sp_pairs_for_mrca_rosaceae <- list(list("Potentilla argaea","Potaninia mongolica
 									list("Eriolobus trilobatus","Lyonothamnus floribundus")
 									) # were losing 40 species
 
-sp_pairs_for_mrca_acanthaceae_martyniaceae_pedaliaceae <- list(list("Ruellia beyrichiana","Neuracanthus_umbraticus"),
-																list("Pachystachys killipii","Spathacanthus_parviflorus"),
+sp_pairs_for_mrca_acanthaceae_martyniaceae_pedaliaceae <- list(list("Ruellia beyrichiana","Neuracanthus umbraticus"),
+																list("Pachystachys killipii","Spathacanthus parviflorus"),
 																list("Sesamum indicum","Holubia saccata")
 																) # were losing 17 species
 
