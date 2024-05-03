@@ -38,7 +38,7 @@ sp_pairs_for_mrca_asteraceae <- list(list("Doniophyton weddellii","Dasyphyllum b
 								list("Polymnia laevigata","Liatris provincialis")
 								) # were losing 1 species
 
-sp_pairs_for_mrca_orchidaceae <- list(list("Codonorchis lessonii","Pterygodium magnum")
+sp_pairs_for_mrca_orchidaceae <- list(list("Codonorchis lessonii","Pterygodium magnum"),
 								   list("Chloraea cylindrostachya","Orthoceras strictum"),
 								   list("Notylia buchtienii","Psychopsis sanderae"),
 								   list("Maxillaria huancabambae","Cryptarrhena guatemalensis"),
@@ -58,7 +58,7 @@ sp_pairs_for_mrca_orchidaceae <- list(list("Codonorchis lessonii","Pterygodium m
 
 sp_pairs_for_mrca_fabaceae <- list(list("Trifolium macraei","Parochetus communis"),
 								list("Astragalus lilacinus","Chesneya ferganensis"),
-								list("Lotus dumetorum", "Lennea viridiflora")
+								list("Lotus dumetorum", "Lennea viridiflora"),
 								list("Psoralea asarina","Platycyamus regnellii"),
 								list("Derris glabra","Disynstemon_paullinioides"),
 								list("Indigofera humbertiana","Phylloxylon perrieri"),
@@ -76,7 +76,7 @@ sp_pairs_for_mrca_caryophyllaceae <- list(list("Schiedea jacobii","Telephium imp
 										) # were losing 0 species 
 
 
-sp_pairs_for_mrca_lamiaceae <- list(list("Clinopodium betulifolium","Lepechinia ganderi")
+sp_pairs_for_mrca_lamiaceae <- list(list("Clinopodium betulifolium","Lepechinia ganderi"),
 								list("Salvia purpurea","Salvia rosmarinus"),
 								list("Eriope foetida","Hanceola exserta"),
 								list("Syncolostemon macranthus","Isodon serra"),
@@ -86,7 +86,7 @@ sp_pairs_for_mrca_lamiaceae <- list(list("Clinopodium betulifolium","Lepechinia 
 								) # were losing 42 species
 
 sp_pairs_for_mrca_rubiaceae <- list(list("Galium hirtum","Luculia grandifolia"),
-								 list("Tarenna seemanniana","Hekistocarpa minutiflora")
+								 list("Tarenna seemanniana","Hekistocarpa minutiflora"),
 								 list("Uncaria hirsuta","Sipaneopsis rupicola")
 								 ) # were losing 0 species
 
@@ -119,7 +119,7 @@ sp_pairs_for_mrca_ericaceae <- list(list("Erica interrupta","Cassiope selaginoid
 
 
 sp_pairs_for_mrca_apocynaceae <- list(list("Ditassa taxifolia","Eustegia minuta"),
-									list("Huernia aspera","Rhyssolobium dumosum")
+									list("Huernia aspera","Rhyssolobium dumosum"),
 								   list("Mandevilla sellowii","Rhabdadenia biflora"),
 								   list("Tabernaemontana contorta","Dyera costulata")
 								   ) # Were losing 36 species
