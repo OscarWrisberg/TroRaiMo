@@ -1593,12 +1593,25 @@ Clads_clades = ["Acanthaceae_Martyniaceae_Pedaliaceae","Aizoaceae_Phytolaccaceae
 # Families which have been divided further and therefore need to be removed from the Clads_clades list.
 # Apiaceae # Apocynaceae # Asteraceae # Euphorbiaceae # Fabaceae # Lamiaceae # Orchidaceae # Poaceae # Rubiaceae
 
-sub_family_clades = ["sub_phylo_Apiaceae_1.tre","sub_phylo_Apiaceae_2.tre","sub_phylo_Apiaceae_3.tre","sub_phylo_Apiaceae_4.tre", "sub_phylo_Apiaceae_5.tre","sub_phylo_Apiaceae_6.tre", "sub_phylo_Apocynaceae_1.tre","sub_phylo_Apocynaceae_2.tre",
-"sub_phylo_Apocynaceae_3.tre","sub_phylo_Asteraceae_1.tre", "sub_phylo_Asteraceae_2.tre","sub_phylo_Asteraceae_3.tre", "sub_phylo_Asteraceae_4.tre","sub_phylo_Asteraceae_5.tre", "sub_phylo_Asteraceae_6.tre","sub_phylo_Asteraceae_7.tre","sub_phylo_Euphorbiaceae_1.tre","sub_phylo_Euphorbiaceae_2.tre",
-"sub_phylo_Euphorbiaceae_3.tre","sub_phylo_Fabaceae_1.tre","sub_phylo_Fabaceae_2.tre","sub_phylo_Fabaceae_4.tre","sub_phylo_Fabaceae_5.tre","sub_phylo_Fabaceae_6.tre","sub_phylo_Lamiaceae_1.tre","sub_phylo_Lamiaceae_2.tre",
-"sub_phylo_Lamiaceae_3.tre","sub_phylo_Orchidaceae_1.tre","sub_phylo_Orchidaceae_10.tre","sub_phylo_Orchidaceae_11.tre","sub_phylo_Orchidaceae_2.tre","sub_phylo_Orchidaceae_3.tre","sub_phylo_Orchidaceae_4.tre","sub_phylo_Orchidaceae_5.tre",
-"sub_phylo_Orchidaceae_6.tre","sub_phylo_Orchidaceae_7.tre","sub_phylo_Orchidaceae_8.tre","sub_phylo_Orchidaceae_9.tre","sub_phylo_Poaceae_1.tre","sub_phylo_Poaceae_2.tre","sub_phylo_Rubiaceae_1.tre","sub_phylo_Rubiaceae_2.tre"
-]
+sub_family_clades = ["sub_phylo_Acanthaceae_Martyniaceae_Pedaliaceae_1.tre","sub_phylo_Acanthaceae_Martyniaceae_Pedaliaceae_2.tre","sub_phylo_Acanthaceae_Martyniaceae_Pedaliaceae_3.tre",
+                     "sub_phylo_Amaryllidaceae_1.tre","sub_phylo_Amaryllidaceae_2.tre","sub_phylo_Anacardiaceae_Burseraceae_Kirkiaceae_1.tre","sub_phylo_Anacardiaceae_Burseraceae_Kirkiaceae_2.tre",
+                     "sub_phylo_Apiaceae_1.tre","sub_phylo_Apiaceae_2.tre","sub_phylo_Apiaceae_3.tre","sub_phylo_Apiaceae_4.tre","sub_phylo_Apiaceae_5.tre","sub_phylo_Apiaceae_6.tre",
+                     "sub_phylo_Apocynaceae_1.tre","sub_phylo_Apocynaceae_2.tre","sub_phylo_Apocynaceae_3.tre","sub_phylo_Apocynaceae_4.tre","sub_phylo_Asparagaceae_1.tre","sub_phylo_Asparagaceae_2.tre",
+                     "sub_phylo_Asparagaceae_3.tre","sub_phylo_Asteraceae_10.tre","sub_phylo_Asteraceae_11.tre","sub_phylo_Asteraceae_12.tre","sub_phylo_Asteraceae_13.tre","sub_phylo_Asteraceae_1.tre",
+                     "sub_phylo_Asteraceae_2.tre","sub_phylo_Asteraceae_3.tre","sub_phylo_Asteraceae_4.tre","sub_phylo_Asteraceae_5.tre","sub_phylo_Asteraceae_6.tre","sub_phylo_Asteraceae_7.tre","sub_phylo_Asteraceae_8.tre",
+                     "sub_phylo_Asteraceae_9.tre","sub_phylo_Brassicaceae_1.tre","sub_phylo_Brassicaceae_2.tre","sub_phylo_Brassicaceae_3.tre","sub_phylo_Brassicaceae_4.tre","sub_phylo_Bromeliaceae_1.tre","sub_phylo_Bromeliaceae_2.tre",
+                     "sub_phylo_Caryophyllaceae_Achatocarpaceae_Amaranthaceae_1.tre","sub_phylo_Caryophyllaceae_Achatocarpaceae_Amaranthaceae_2.tre","sub_phylo_Cyperaceae_1.tre","sub_phylo_Cyperaceae_2.tre","sub_phylo_Cyperaceae_3.tre",
+                     "sub_phylo_Euphorbiaceae_1.tre","sub_phylo_Euphorbiaceae_2.tre","sub_phylo_Euphorbiaceae_3.tre","sub_phylo_Fabaceae_10.tre","sub_phylo_Fabaceae_11.tre","sub_phylo_Fabaceae_12.tre","sub_phylo_Fabaceae_13.tre","sub_phylo_Fabaceae_1.tre",
+                     "sub_phylo_Fabaceae_2.tre","sub_phylo_Fabaceae_3.tre","sub_phylo_Fabaceae_4.tre","sub_phylo_Fabaceae_5.tre","sub_phylo_Fabaceae_6.tre","sub_phylo_Fabaceae_7.tre","sub_phylo_Fabaceae_8.tre","sub_phylo_Fabaceae_9.tre",
+                     "sub_phylo_Gesneriaceae_Calceolariaceae_1.tre","sub_phylo_Gesneriaceae_Calceolariaceae_2.tre","sub_phylo_Iridaceae_1.tre","sub_phylo_Iridaceae_2.tre","sub_phylo_Lamiaceae_1.tre","sub_phylo_Lamiaceae_2.tre","sub_phylo_Lamiaceae_3.tre",
+                     "sub_phylo_Lamiaceae_4.tre","sub_phylo_Lamiaceae_5.tre","sub_phylo_Lamiaceae_6.tre","sub_phylo_Lamiaceae_7.tre","sub_phylo_Lauraceae_1.tre","sub_phylo_Lauraceae_2.tre","sub_phylo_Melastomataceae_1.tre",
+                     "sub_phylo_Melastomataceae_2.tre","sub_phylo_Myrtaceae_1.tre","sub_phylo_Myrtaceae_2.tre","sub_phylo_Myrtaceae_3.tre","sub_phylo_Orchidaceae_10.tre","sub_phylo_Orchidaceae_11.tre","sub_phylo_Orchidaceae_12.tre",
+                     "sub_phylo_Orchidaceae_13.tre","sub_phylo_Orchidaceae_14.tre","sub_phylo_Orchidaceae_15.tre","sub_phylo_Orchidaceae_16.tre","sub_phylo_Orchidaceae_1.tre","sub_phylo_Orchidaceae_2.tre","sub_phylo_Orchidaceae_3.tre",
+                     "sub_phylo_Orchidaceae_4.tre","sub_phylo_Orchidaceae_5.tre","sub_phylo_Orchidaceae_6.tre","sub_phylo_Orchidaceae_7.tre","sub_phylo_Orchidaceae_8.tre","sub_phylo_Orchidaceae_9.tre",
+                     "sub_phylo_Phyllanthaceae_Picodendraceae_Linaceae_Ixonanthaceae_1.tre","sub_phylo_Phyllanthaceae_Picodendraceae_Linaceae_Ixonanthaceae_2.tre","sub_phylo_Phyllanthaceae_Picodendraceae_Linaceae_Ixonanthaceae_3.tre",
+                     "sub_phylo_Plantaginaceae_1.tre","sub_phylo_Plantaginaceae_2.tre","sub_phylo_Plantaginaceae_3.tre","sub_phylo_Poaceae_1.tre","sub_phylo_Poaceae_2.tre","sub_phylo_Poaceae_3.tre","sub_phylo_Poaceae_4.tre",
+                     "sub_phylo_Poaceae_5.tre","sub_phylo_Poaceae_6.tre","sub_phylo_Poaceae_7.tre","sub_phylo_Ranunculaceae_1.tre","sub_phylo_Ranunculaceae_2.tre","sub_phylo_Ranunculaceae_3.tre","sub_phylo_Rosaceae_1.tre","sub_phylo_Rosaceae_2.tre",
+                     "sub_phylo_Rosaceae_3.tre","sub_phylo_Rosaceae_4.tre","sub_phylo_Rosaceae_5.tre","sub_phylo_Rubiaceae_1.tre","sub_phylo_Rubiaceae_2.tre","sub_phylo_Rubiaceae_3.tre",]
 
 
 # Orders that are removed as they are too small: Alismatales, Amborellales, Petrosaviales, Trochodendrales, Vahliales
