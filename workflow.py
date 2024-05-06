@@ -1193,8 +1193,8 @@ def Clads_subclades(tree, done_file, path_in, output_file,wcvp_input, order, scr
     inputs = [path_in+tree,done_dir+"Finding_monophyletic_orders",done_dir+order+"_Sampling_fraction", prior_file]
     outputs = [done_dir+done_file, path_in+"Clads_output_"+order+".Rdata"]
     options = {
-        'cores': 1,
-        'memory': '1200g',
+        'cores': 10,
+        'memory': '1000g',
         'account':"Trf_models",
         'walltime': "168:00:00"
     }
