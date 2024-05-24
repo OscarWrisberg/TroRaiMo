@@ -72,7 +72,7 @@ println("Out states file: $out_states")
 time_infer = @elapsed Tapestree.esse(tree, # Full path to the tree
 	out_file, # Full path to write the MCMC output
 	hidden_states, # Number of hidden states
- 	envdata_file = paleo_data, # Data from koppen biomes
+ 	envdata_file = paleo_data, # Data from koppen biomes through time
 	states_file = states, # Data for the tip states of the species in the tree
 	out_states = out_states, # The out states file where the states are saved
 	cov_mod = ("s",), # s specifies that only speciation is affected by the covariate 
