@@ -1273,7 +1273,7 @@ def Esse(path_in, tree_file,tip_states_file,paleo_clim_file, out_states_file, ou
     inputs = [path_in+tree_file,tip_states_file,paleo_clim_file]
     outputs = [save_file]
     options = {
-        'cores': 200,
+        'cores': 10,
         'memory': '250g',
         'account':"Trf_models",
         'walltime': "168:00:00"
