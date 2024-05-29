@@ -1545,13 +1545,13 @@ gwf.target_from_template(name = "Subdividing_problematic_families",
 
 
 # Remove impossible orders
-# impossible_orders =["Amborellales","Berberidopsidales","Paracryphiales", "Petrosaviales","Trochodendrales"]
+impossible_orders = ["Acorales","Amborellales","Austrobaileyales","Cardiopteridales","Ceratophyllales","Cycadales","Desfontainiales","Dipsacales","Garryales","Ginkgoales","Oncothecales","Petrosaviales","Picramniales","Trochodendrales"]
 
-# All orders
-orders = ["Alismatales", "Apiales", "Aquifoliales", "Arecales", "Asparagales", "Asterales", "Boraginales", "Brassicales", "Bruniales", "Buxales", "Canellales", "Caryophyllales",
+# Possible orders
+orders = ["Alismatales", "Apiales", "Aquifoliales", "Arecales", "Asparagales", "Asterales","Berberidopsidales", "Boraginales", "Brassicales", "Bruniales", "Buxales", "Canellales", "Caryophyllales",
 "Celastrales", "Chloranthales", "Commelinales", "Cornales", "Crossosomatales", "Cucurbitales", "Cupressales", "Dilleniales", "Dioscoreales", "Ericales", "Escalloniales", "Fabales", "Fagales",
 "Gentianales", "Geraniales", "Gnetales", "Gunnerales", "Huerteales", "Icacinales", "Lamiales", "Laurales", "Liliales", "Magnoliales", "Malpighiales", "Malvales", "Metteniusales",
-"Myrtales", "Nymphaeales", "Oxalidales", "Pandanales", "Pinales", "Piperales", "Poales", "Proteales", "Ranunculales", "Rosales", "Santalales", "Sapindales",
+"Myrtales", "Nymphaeales", "Oxalidales", "Pandanales", "Paracryphiales", "Pinales", "Piperales", "Poales", "Proteales", "Ranunculales", "Rosales", "Santalales", "Sapindales",
 "Saxifragales", "Solanales", "Vahliales", "Vitales", "Zingiberales", "Zygophyllales"
 ]
 
@@ -1732,7 +1732,7 @@ for i in range(len(orders_not_in_orders_new_prior)):
                              ))
     
 #####################################################################################################################################################################
-########################################################--- ClaDs on Orders with calculate Prior ---#################################################################
+########################################################--- ClaDs on Orders with calculated Prior ---#################################################################
 #####################################################################################################################################################################
     
 gwf.target_from_template(name = "Calculating_priors",
@@ -1792,11 +1792,8 @@ for i in range(len(Clads_clades)):
                                     done_dir = done_dir,
                                     sampling_frequency= workflow_dir+"03_distribution_data/"+Clads_clades[i]+"_sampling_fraction.txt",
                                     prior_file = workflow_dir+"02_adding_orders/pruning/orders/priors.txt"
-                             )) 
+                             ))
 
-#####################################################################################################################################################################
-############################################################--- ESSE on Order subclades ---#########################################################################
-#####################################################################################################################################################################
     #Running the script to find the environmental data for the tips in the sub trees
     gwf.target_from_template(name = Clads_clades[i]+"_distribution_data.",
                                 template=Finding_areas_in_wcvp(
@@ -1826,6 +1823,11 @@ for i in range(len(Clads_clades)):
                                 done= "States_converter_"+Clads_clades[i]+"_"+percentages[j]+"",
                                 percentage_for_present= percentages[j]
                                 ))
+
+#####################################################################################################################################################################
+############################################################--- ESSE on Order subclades ---#########################################################################
+#####################################################################################################################################################################
+
 
         
         # gwf.target_from_template(name = orders[i]+"_Esse_Hidden_States_"+percentages[j],
@@ -1879,6 +1881,35 @@ for k in range(len(sub_family_clades)):
                                     prior_file = workflow_dir+"02_adding_orders/pruning/orders/priors.txt"
                              )) 
 
+ #Running the script to find the environmental data for the tips in the sub trees
+    gwf.target_from_template(name = sub_family_clades[k]+"_distribution_data.",
+                                template=Finding_areas_in_wcvp(
+                                input_file_tree= "family_phylo_"+sub_family_clades[k]+".tre", # 
+                                path_in =  workflow_dir+"02_adding_orders/pruning/subset_of_orders/",
+                                path_out = workflow_dir+"03_distribution_data/",
+                                output_file = sub_family_clades[k]+"_distribution_data.txt",
+                                wcvp_file = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds",
+                                order = sub_family_clades[k],
+                                script_dir= script_dir,
+                                apg = script_dir+"apgweb_parsed.csv",
+                                done_dir= done_dir,
+                                done= sub_family_clades[k]+"_distribution_data",
+                                renamed_occurrences = workflow_dir+"01_distribution_data/06_Renamed/gbif_renamed.rds", 
+                                koppen_biome = script_dir+"koppen_geiger_0p01.tif"
+                                ))
+    
+    
+    for j in range(len(percentages)):
+        gwf.target_from_template(name = sub_family_clades[k]+"_states_converter_"+percentages[j],
+                                template=states_converter(
+                                path_in= workflow_dir+"03_distribution_data/",
+                                tip_states_file= workflow_dir+"03_distribution_data/"+sub_family_clades[k]+"_distribution_data.txt",
+                                out_states_file= workflow_dir+"03_distribution_data/"+sub_family_clades[k]+"_states_"+percentages[j]+".txt",
+                                script_dir= script_dir,
+                                done_dir= done_dir,
+                                done= "States_converter_"+sub_family_clades[k]+"_"+percentages[j]+"",
+                                percentage_for_present= percentages[j]
+                                ))
 
 
 
@@ -1904,9 +1935,3 @@ for k in range(len(sub_family_clades)):
         
 
 
-# Orders that ran with the uniform prior 
-# orders_not_in_orders_new_prior = ["Aquifoliales", "Berberidopsidales", "Boraginales", "Bruniales", "Buxales",
-#                                 "Canellales", "Celastrales", "Chloranthales", "Commelinales", "Cornales", "Crossosomatales", "Cucurbitales",
-#                                 "Cupressales", "Dilleniales", "Dioscoreales", "Escalloniales", "Fagales", "Gunnerales", "Huerteales", "Icacinales",
-#                                 "Liliales", "Magnoliales", "Metteniusales", "Nymphaeales", "Oxalidales", "Pandanales", "Paracryphiales",
-#                                 "Pinales", "Piperales", "Proteales", "Santalales", "Vitales", "Zygophyllales"]

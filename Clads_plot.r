@@ -6,7 +6,7 @@
 chooseCRANmirror(ind = 30)
 
 #Packages
-packages <- c("data.table", "ape", "phytools", "geiger", "castor", "dplyr", "ggplot2", "viridis","hrbrthemes", "cowplot", "MetBrewer")
+packages <- c("data.table", "ape", "phytools", "geiger", "dplyr", "ggplot2", "viridis","hrbrthemes", "cowplot", "MetBrewer") #
 
 # Install packages not yet installed
 installed_packages <- packages %in% rownames(installed.packages())
@@ -123,6 +123,11 @@ folder_path <- "/home/au543206/GenomeDK/Trf_models/workflow/03_distribution_data
 # Get a list of all distribution files in the folder
 distribution_files <- list.files(folder_path, pattern = ".*_distribution_data\\.txt", full.names = TRUE)
 
+# Remove Typhaceae_distribution_data.txt
+distribution_files <- distribution_files[!distribution_files == "/home/au543206/GenomeDK/Trf_models/workflow/03_distribution_data//Typhaceae_distribution_data.txt"]
+
+# Remove /home/au543206/GenomeDK/Trf_models/workflow/03_distribution_data//Xyridaceae_Eriocaulaceae_distribution_data.txt"
+distribution_files <- distribution_files[!distribution_files == "/home/au543206/GenomeDK/Trf_models/workflow/03_distribution_data//Xyridaceae_Eriocaulaceae_distribution_data.txt"]
 
 distribution_data <- data.frame()
 
@@ -372,7 +377,24 @@ orders_for_count <- c("Aquifoliales", "Berberidopsidales", "Boraginales", "Bruni
 
 orders_for_count_folder <- "/home/au543206/GenomeDK/Trf_models/workflow/02_adding_orders/pruning/orders/"
 
-orders_subset_for_count <- c("Zingiberaceae", "Marantaceae_Cannaceae", "Costaceae", "Heliconiaceae_Lowiaceae_Strelitziaceae","Lauraceae","Monimiaceae","Poaceae","Cyperaceae","Bromeliaceae","Restionaceae","Xyridaceae_Eriocaulaceae","Juncaceae","Typhaceae","Menispermaceae","Berberidaceae","Ranunculaceae","Papaveraceae","Rosaceae","Urticaceae","Rhamnaceae_Barbeyaceae_Dirachmaceae_Elaeagnaceae","Moraceae","Ulmaceae","Cannabaceae","Anacardiaceae_Burseraceae_Kirkiaceae", "Sapindaceae","Rutaceae","Meliaceae","Simaroubaceae","Crassulaceae_Aphanopetalaceae_Halograceae_Penthoraceae_Tetracarpaeaceae", "Saxifragaceae_Iteaceae_Grossulariaceae", "Cercidiphyllaceae_Hamamelidaceae_Daphniphyllaceae_Altingiaceae_Paeoniaceae","Melastomataceae","Myrtaceae","Lythraceae_Onagraceae","Alzateaceae_Crypteroniaceae_Penaeaceae","Combretaceae","Malvaceae","Thymelaeaceae","Dipterocarpaceae_Bixaceae_Cistaceae_Sarcoleanaceae_Muntingiaceae_Sphaerosepalaceae","Salicaceae_Lacistemataceae","Euphorbiaceae","Chrysobalanaceae_Malpighiaceae_Caryocaraceae_Balanopaceae_Elatinaceae_Centroplacaceae_Dichapetalaceae_Putranjivaceae_Euphroniaceae_Lophopyxidaceae_Trigoniaceae","Phyllanthaceae_Picodendraceae_Linaceae_Ixonanthaceae","Ochnaceae_Clusiaceae_Erythroxylaceae_Podostemaceae_Bonnetiaceae_Rhizophoraceae_Calophyllaceae_Hypericaceae_Ctenolophonaceae_Irvingiaceae_Pandaceae","Passifloraceae","Violaceae_Goupiaceae","Verbenaceae_Schlegeliaceae_Lentibulariaceae_Thomandersiaceae","Lamiaceae","Acanthaceae_Martyniaceae_Pedaliaceae","Gesneriaceae_Calceolariaceae","Bignoniaceae","Orobanchaceae_Phrymaceae_Mazaceae_Paulowniaceae","Scrophulariaceae","Plantaginaceae","Rubiaceae","Apocynaceae","Loganiaceae_Gelsemiaceae","Gentianaceae","Fabaceae","Polygalaceae_Surianaceae","Sapotaceae","Polemoniaceae_Lecythidaceae_Fouquieriaceae","Ericaceae_Clethraceae_Cyrillaceae","Pentaphylacaceae_Sladeniaceae","Primulaceae","Styracaceae_Diapensiaceae_Symplocaceae","Theaceae","Ebenaceae","Balsaminaceae_Marcgraviaceae_Tetrameristaceae","Apiaceae","Araliaceae","Pittosporaceae","Asteraceae","Calyceraceae","Campanulaceae_Rousseaceae","Goodeniaceae","Menyanthaceae","Asphodelaceae","Orchidaceae","Amaryllidaceae","Iridaceae","Asparagaceae","Cactaceae_Molluginaceae_Didiereaceae_Anacompserotaceae_Basellaceae_Montiaceae_Halophytaceae_Portulacaceae_Talinaceae","Plumbaginaceae_Polygonaceae_Frankeniaceae_Tamaricaceae","Caryophyllaceae_Achatocarpaceae_Amaranthaceae", "Aizoaceae_Phytolaccaceae_Barbeuiaceae_Lophiocarpaceae_Gisekiaceae_Sarcobataceae","Droseraceae_Ancistrocladaceae_Drosophyllaceae_Nepenthaceae_Dioncophyllaceae","Arecaceae","Brassicaceae","Resedaceae","Capparaceae","Cleomaceae")
+orders_subset_for_count <- c("Zingiberaceae", "Marantaceae_Cannaceae", "Costaceae", "Heliconiaceae_Lowiaceae_Strelitziaceae","Lauraceae","Monimiaceae","Poaceae",
+"Cyperaceae","Bromeliaceae","Restionaceae","Xyridaceae_Eriocaulaceae","Juncaceae","Typhaceae","Menispermaceae","Berberidaceae","Ranunculaceae","Papaveraceae","Rosaceae",
+"Urticaceae","Rhamnaceae_Barbeyaceae_Dirachmaceae_Elaeagnaceae","Moraceae","Ulmaceae","Cannabaceae","Anacardiaceae_Burseraceae_Kirkiaceae", "Sapindaceae","Rutaceae","Meliaceae",
+"Simaroubaceae","Crassulaceae_Aphanopetalaceae_Halograceae_Penthoraceae_Tetracarpaeaceae", "Saxifragaceae_Iteaceae_Grossulariaceae", "Cercidiphyllaceae_Hamamelidaceae_Daphniphyllaceae_Altingiaceae_Paeoniaceae",
+"Melastomataceae","Myrtaceae","Lythraceae_Onagraceae","Alzateaceae_Crypteroniaceae_Penaeaceae","Combretaceae","Malvaceae",
+"Thymelaeaceae","Dipterocarpaceae_Bixaceae_Cistaceae_Sarcoleanaceae_Muntingiaceae_Sphaerosepalaceae","Salicaceae_Lacistemataceae","Euphorbiaceae",
+"Chrysobalanaceae_Malpighiaceae_Caryocaraceae_Balanopaceae_Elatinaceae_Centroplacaceae_Dichapetalaceae_Putranjivaceae_Euphroniaceae_Lophopyxidaceae_Trigoniaceae",
+"Phyllanthaceae_Picodendraceae_Linaceae_Ixonanthaceae",
+"Ochnaceae_Clusiaceae_Erythroxylaceae_Podostemaceae_Bonnetiaceae_Rhizophoraceae_Calophyllaceae_Hypericaceae_Ctenolophonaceae_Irvingiaceae_Pandaceae",
+"Passifloraceae","Violaceae_Goupiaceae","Verbenaceae_Schlegeliaceae_Lentibulariaceae_Thomandersiaceae","Lamiaceae","Acanthaceae_Martyniaceae_Pedaliaceae",
+"Gesneriaceae_Calceolariaceae","Bignoniaceae","Orobanchaceae_Phrymaceae_Mazaceae_Paulowniaceae","Scrophulariaceae","Plantaginaceae","Rubiaceae","Apocynaceae",
+"Loganiaceae_Gelsemiaceae","Gentianaceae","Fabaceae","Polygalaceae_Surianaceae","Sapotaceae","Polemoniaceae_Lecythidaceae_Fouquieriaceae","Ericaceae_Clethraceae_Cyrillaceae",
+"Pentaphylacaceae_Sladeniaceae","Primulaceae","Styracaceae_Diapensiaceae_Symplocaceae","Theaceae","Ebenaceae","Balsaminaceae_Marcgraviaceae_Tetrameristaceae","Apiaceae",
+"Araliaceae","Pittosporaceae","Asteraceae","Calyceraceae","Campanulaceae_Rousseaceae","Goodeniaceae","Menyanthaceae","Asphodelaceae","Orchidaceae","Amaryllidaceae","Iridaceae",
+"Asparagaceae","Cactaceae_Molluginaceae_Didiereaceae_Anacompserotaceae_Basellaceae_Montiaceae_Halophytaceae_Portulacaceae_Talinaceae",
+"Plumbaginaceae_Polygonaceae_Frankeniaceae_Tamaricaceae","Caryophyllaceae_Achatocarpaceae_Amaranthaceae",
+ "Aizoaceae_Phytolaccaceae_Barbeuiaceae_Lophiocarpaceae_Gisekiaceae_Sarcobataceae","Droseraceae_Ancistrocladaceae_Drosophyllaceae_Nepenthaceae_Dioncophyllaceae",
+ "Arecaceae","Brassicaceae","Resedaceae","Capparaceae","Cleomaceae")
 
 orders_subset_for_count_folder <- "/home/au543206/GenomeDK/Trf_models/workflow/02_adding_orders/pruning/subset_of_orders/"
 
@@ -398,5 +420,10 @@ for (i in seq_along(orders_subset_for_count)) {
 
 total_species_clads
 
-sum(total_species_clads$species) #54301
+sum(total_species_clads$species) #54301 species 
+
+37483/54301 # 69% of the species are in the orders that we have run ClaDs on
+
+
+folder_path <- "/home/au543206/GenomeDK/Trf_models/workflow/02_adding_orders/pruning/orders/"
 

@@ -73,16 +73,16 @@ time_infer = @elapsed Tapestree.esse(tree, # Full path to the tree
 	out_file, # Full path to write the MCMC output
 	hidden_states, # Number of hidden states
  	envdata_file = paleo_data, # Data from koppen biomes through time
-	states_file = states, # Data for the tip states of the species in the tree
+	states_file = states, # Data for the tip states of the species in the tree 
 	out_states = out_states, # The out states file where the states are saved
 	cov_mod = ("s",), # s specifies that only speciation is affected by the covariate 
 	parallel = true,
 	mc = "mh", # Metropolis-Hastings
 	ncch = processors, # number of chains
-	niter = 10_000, # Number of iterations
+	niter = 400_000, # Number of iterations
 	nthin = 100, # Frequency at which to record the state
 	dt = 0.8, # Temperature for the annealing of the chains
-	nburn = 1_000, # Number of iterations to use in the burn in
+	nburn = 20_000, # Number of iterations to use in the burn in
 	)
 
 # Print time to infer in hours
