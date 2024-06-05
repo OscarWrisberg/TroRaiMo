@@ -932,6 +932,10 @@ def Creating_family_subclades(path_out, script_dir, done_dir, done, path_in):
 ##########################################################################################################################################################################################
 ##########################################################################################################################################################################################
 
+##############################################################
+#####---- Finding the area of species using the wcvp  ----####
+##############################################################
+
 def Finding_areas_in_wcvp(input_file_tree, wcvp_file,path_out, output_file, path_in, order, script_dir, apg, done_dir, done, renamed_occurrences, koppen_biome):
     """This Function creates a states file for the tips in WCVP based on the climate column."""
     inputs = [done_dir+"Finding_monophyletic_orders", renamed_occurrences]
@@ -1021,6 +1025,47 @@ def sampling_frequency(input_file_tree, wcvp_file,path_out, output_file, path_in
     return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
 
 
+#########################################################################################
+##########---- Removing tips from trees which have no distribution data  ----############
+#########################################################################################
+
+
+def rem_tips(input_file_tree, output_file, path_in, order, script_dir, done_dir, done, distribution_file):
+    """This function finds tips in a tree which is not in the climate data and removes them from the tree."""
+    inputs = [done_dir+order+"_Sampling_fraction"]
+    outputs = [path_in+output_file, done_dir+done]
+    options = {
+        'cores': 1,
+        'memory': '10g',
+        'account':"Trf_models",
+        'walltime': "00:10:00"
+    }
+
+    spec = '''
+
+    # Loading Conda source folder
+    source /home/owrisberg/miniconda3/etc/profile.d/conda.sh
+    conda activate R_env
+
+    # Going to input folder
+    cd {path_in}
+
+    echo Starting the script to remove tips from the tree which have no distribution data 
+    date
+
+    # Running the R script
+    Rscript --vanilla {script_dir}tip_remover.r {input_file_tree} {distribution_file} {output_file}
+
+    echo Ended the script
+    date
+
+    touch {done_dir}{done}
+
+    '''.format(output_file = output_file, order = order, distribution_file = distribution_file,
+     input_file_tree = input_file_tree, path_in = path_in, script_dir = script_dir, done_dir = done_dir, done = done)
+
+
+    return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
 
 ############################################################################
 #########---- Finding the sampling frequency for Subclades  ----############
@@ -1666,23 +1711,35 @@ for i in range(len(orders)):
                                 percentage_for_present= percentages[j]
                                 ))
         
-        # gwf.target_from_template(name = orders[i]+"_Esse_"+percentages[j],
-        #                             template = Esse(
-        #                             tree_file = "pruned_tree_order_"+orders[i]+"_GBMB.tre", # Input tree
-        #                             tip_states_file = workflow_dir+"03_distribution_data/"+orders[i]+"_states_"+percentages[j]+".txt", 
-        #                             paleo_clim_file = data_dir+"paleoclim_area.csv", # File with paleoclimatic variables
-        #                             done = orders[i]+"_Esse",
-        #                             path_in = workflow_dir+"02_adding_orders/pruning/orders/",
-        #                             out_file = "Esse_output_"+orders[i]+".jld2",
-        #                             script_dir=script_dir,
-        #                             done_dir = done_dir,
-        #                             out_states_file = "Esse_states_"+orders[i]+"_"+percentages[j]+".csv",
-        #                             hidden_states = 0, 
-        #                          ))
+        gwf.target_from_template(name = orders[i]+"_Sampling_fraction",
+                             template = sampling_frequency(
+                                    input_file_tree= "pruned_tree_order_"+orders[i]+"_GBMB.tre",
+                                    path_in =  workflow_dir+"02_adding_orders/pruning/orders/",
+                                    path_out = workflow_dir+"03_distribution_data/",
+                                    output_file = orders[i]+"_sampling_fraction.txt",
+                                    wcvp_file = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds",
+                                    order = orders[i],
+                                    script_dir= script_dir,
+                                    apg = script_dir+"apgweb_parsed.csv",
+                                    done_dir= done_dir,
+                                    done= orders[i]+"_Sampling_fraction"
+                             ))
+        
+
+        gwf.target_from_template(name = orders[i]+"_Tip_removal",
+                                    template = rem_tips(
+                                    input_file_tree = "pruned_tree_order_"+orders[i]+"_GBMB.tre",
+                                    output_file = orders[i]+"_Esse_tree.tre",
+                                    path_in = workflow_dir+"02_adding_orders/pruning/orders/",
+                                    order = orders[i],
+                                    script_dir= script_dir,
+                                    done_dir= done_dir,
+                                    done= "Tip_removal"+orders[i]
+                                    ))
         
         gwf.target_from_template(name = orders[i]+"_Esse_Hidden_States_"+percentages[j],
                                     template = Esse(
-                                    tree_file = "pruned_tree_order_"+orders[i]+"_GBMB.tre", # Input tree
+                                    tree_file = orders[i]+"_Esse_tree.tre", # Input tree
                                     tip_states_file = workflow_dir+"03_distribution_data/"+orders[i]+"_states_"+percentages[j]+".txt", 
                                     paleo_clim_file = data_dir+"paleoclim_area.txt", # File with paleoclimatic variables
                                     done = orders[i]+"_Esse",
@@ -1696,21 +1753,8 @@ for i in range(len(orders)):
                                     output_folder = workflow_dir+"04_results/Esse_output/",
                                     path_out = workflow_dir+"04_results/"
                                  ))
-
-
-    gwf.target_from_template(name = orders[i]+"_Sampling_fraction",
-                             template = sampling_frequency(
-                                    input_file_tree= "pruned_tree_order_"+orders[i]+"_GBMB.tre",
-                                    path_in =  workflow_dir+"02_adding_orders/pruning/orders/",
-                                    path_out = workflow_dir+"03_distribution_data/",
-                                    output_file = orders[i]+"_sampling_fraction.txt",
-                                    wcvp_file = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds",
-                                    order = orders[i],
-                                    script_dir= script_dir,
-                                    apg = script_dir+"apgweb_parsed.csv",
-                                    done_dir= done_dir,
-                                    done= orders[i]+"_Sampling_fraction"
-    ))
+        
+    
 
 #####################################################################################################################################################################
 ########################################################--- ClaDs on Orders with uniform prior  ---##################################################################

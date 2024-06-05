@@ -404,19 +404,20 @@ total_species_clads <- data.frame()
 
 for (i in seq_along(orders_for_count)) {
 	order <- orders_for_count[i]
-	file <- paste0(orders_for_count_folder, "pruned_tree_", order, "_GBMB.tre")
-	tree <- read.tree(file)
-	cat("The number of species in ", order, " is ", length(tree$tip.label), "\n")
-	total_species_clads <- rbind(total_species_clads, data.frame(order = order, species = length(tree$tip.label)))
+	file <- paste0(orders_for_count_folder, "Clads_output_", order, ".Rdata")
+	data <- load(file)
+	cat("The number of species in ", order, " is ", length(CladsOutput$lambdatip_map), "\n")
+	total_species_clads <- rbind(total_species_clads, data.frame(order = order, species = length(CladsOutput$lambdatip_map)))
 }
 
 for (i in seq_along(orders_subset_for_count)) {
 	order <- orders_subset_for_count[i]
-	file <- paste0(orders_subset_for_count_folder, "family_phylo_", order, ".tre")
-	tree <- read.tree(file)
-	cat("The number of species in ", order, " is ", length(tree$tip.label), "\n")
-	total_species_clads <- rbind(total_species_clads, data.frame(order = order, species = length(tree$tip.label)))
+	file <- paste0(orders_for_count_folder, "Clads_output_", order, ".Rdata")
+	data <- load(file)
+	cat("The number of species in ", order, " is ", length(CladsOutput$lambdatip_map), "\n")
+	total_species_clads <- rbind(total_species_clads, data.frame(order = order, species = length(CladsOutput$lambdatip_map)))
 }
+
 
 total_species_clads
 
@@ -427,3 +428,9 @@ sum(total_species_clads$species) #54301 species
 
 folder_path <- "/home/au543206/GenomeDK/Trf_models/workflow/02_adding_orders/pruning/orders/"
 
+	# Append the tip names and tip rate speciation to the dataframe
+	clads_tip_lambda <- rbind(clads_tip_lambda, data.frame(order = order_name,
+														   tip_label = tree$tip.label,
+														   lambda = CladsOutput$lambdatip_map,
+														   extinction = CladsOutput$eps_map
+														   ))

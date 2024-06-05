@@ -79,7 +79,7 @@ time_infer = @elapsed Tapestree.esse(tree, # Full path to the tree
 	parallel = true,
 	mc = "mh", # Metropolis-Hastings
 	ncch = processors, # number of chains
-	niter = 400_000, # Number of iterations
+	niter = 100_000, # Number of iterations
 	nthin = 100, # Frequency at which to record the state
 	dt = 0.8, # Temperature for the annealing of the chains
 	nburn = 20_000, # Number of iterations to use in the burn in
@@ -90,10 +90,10 @@ println("Time to infer: $time_infer seconds")
 
 
 # Measure the time to save the output
-time_save_output = @elapsed @save output_name output
+time_save_output = @elapsed @save save_file out_file
 println("Time to save output: $time_save_output seconds")
 
 
-# Save the output in a JLD2 file
-@save save_file out_file
+# # Save the output in a JLD2 file
+# @save save_file out_file
 
