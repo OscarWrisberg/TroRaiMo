@@ -1729,6 +1729,7 @@ for i in range(len(orders)):
         gwf.target_from_template(name = orders[i]+"_Tip_removal",
                                     template = rem_tips(
                                     input_file_tree = "pruned_tree_order_"+orders[i]+"_GBMB.tre",
+                                    distribution_file= workflow_dir+"03_distribution_data/"+orders[i]+"_states_"+percentages[j]+".txt",
                                     output_file = orders[i]+"_Esse_tree.tre",
                                     path_in = workflow_dir+"02_adding_orders/pruning/orders/",
                                     order = orders[i],
