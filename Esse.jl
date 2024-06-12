@@ -83,6 +83,7 @@ time_infer = @elapsed Tapestree.esse(tree, # Full path to the tree
 	nthin = 100, # Frequency at which to record the state
 	dt = 0.8, # Temperature for the annealing of the chains
 	nburn = 20_000, # Number of iterations to use in the burn in
+	ρ = {}
 	)
 
 # Print time to infer in hours

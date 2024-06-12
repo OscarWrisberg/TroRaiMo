@@ -1,15 +1,12 @@
 using Pkg
 # Check if Tapestree and Distributed are installed
-if !haskey(Pkg.installed(), "PANDA") || !haskey(Pkg.installed(), "JLD2") || !haskey(Pkg.installed(), "DataFrames") || !haskey(Pkg.installed(), "DelimitedFiles")
+if !haskey(Pkg.installed(), "JLD2") || !haskey(Pkg.installed(), "DataFrames") || !haskey(Pkg.installed(), "DelimitedFiles")
 	# Install Tapestree and Distributed
-	Pkg.add(["PANDA", "JLD2", "DataFrames", "DelimitedFiles"])
+	Pkg.add(["JLD2", "DataFrames", "DelimitedFiles"])
 end
 
 # Measure the time to load Pkg
 #time_load_pkg = @elapsed using Pkg
-
-# Measure the time to load PANDA
-time_load_panda = @elapsed using PANDA
 
 # Measure the time to load JLD2
 time_load_jld2 = @elapsed using JLD2
@@ -20,6 +17,11 @@ time_load_dataframes = @elapsed using DataFrames
 # Measure the time to load DelimitedFiles
 time_load_delimitedfiles = @elapsed using DelimitedFiles
 
+# Loading Modified version of PANDA.jl
+Pkg.activate("/home/owrisberg/Trf_models/PANDA.jl")
+Pkg.instantiate()
+using PANDA
+
 # Print the time to load the packages
 println("Time to load PANDA: $time_load_panda seconds")
 println("Time to load JLD2: $time_load_jld2 seconds")
@@ -28,9 +30,9 @@ println("Time to load DelimitedFiles: $time_load_delimitedfiles seconds")
 
 
 # Prepare some paths test script locally
-path_to_tree = "/home/au543206/GenomeDK/Trf_models/workflow/02_adding_orders/pruning/subset_of_orders/family_phylo_Resedaceae.tre"
-sampling_freq_file = "/home/au543206/GenomeDK/Trf_models/workflow/03_distribution_data/Resedaceae_sampling_fraction.txt"
-output_name = "test_output.jld2"
+# path_to_tree = "/home/au543206/GenomeDK/Trf_models/workflow/02_adding_orders/pruning/subset_of_orders/family_phylo_Resedaceae.tre"
+# sampling_freq_file = "/home/au543206/GenomeDK/Trf_models/workflow/03_distribution_data/Resedaceae_sampling_fraction.txt"
+# output_name = "test_output.jld2"
 
 
 # Fetching arguments
@@ -81,7 +83,8 @@ time_infer = @elapsed output = infer_ClaDS(tree,
 					  f = sampling_freq_array,
 					  prior_ε = "lognormal",
 					  logε0 = extinction_mean,
-    				  sdε =	extinction_sd)
+    				  sdε =	extinction_sd,
+					  end_tme = 9600) # 9600 minutes = 6.67 days
 
 
 

@@ -1,15 +1,19 @@
 using Pkg
 # Check if Tapestree and Distributed are installed
-if !haskey(Pkg.installed(), "PANDA") || !haskey(Pkg.installed(), "JLD2") || !haskey(Pkg.installed(), "DataFrames") || !haskey(Pkg.installed(), "DelimitedFiles")
+if !haskey(Pkg.installed(), "JLD2") || !haskey(Pkg.installed(), "DataFrames") || !haskey(Pkg.installed(), "DelimitedFiles")
 	# Install Tapestree and Distributed
-	Pkg.add(["PANDA", "JLD2", "DataFrames", "DelimitedFiles"])
+	Pkg.add(["JLD2", "DataFrames", "DelimitedFiles"])
 end
+
+
 
 # Measure the time to load Pkg
 #time_load_pkg = @elapsed using Pkg
 
-# Measure the time to load PANDA
-time_load_panda = @elapsed using PANDA
+# Loading Modified version of PANDA.jl
+Pkg.activate("/home/owrisberg/Trf_models/PANDA.jl")
+Pkg.instantiate()
+using PANDA
 
 # Measure the time to load JLD2
 time_load_jld2 = @elapsed using JLD2
@@ -74,7 +78,8 @@ sampling_freq_array = sampling_freq_joined[!, :frequency]
 # Measure the time to run infer_ClaDS
 time_infer = @elapsed output = infer_ClaDS(tree,
 	print_state = 100,
-	f = sampling_freq_array,)
+	f = sampling_freq_array,
+	end_tme = 9600) # 9600 minutes = 6.67 days
 	println("Time to run infer_ClaDS: $time_infer seconds")
 
 # Measure the time to save the output

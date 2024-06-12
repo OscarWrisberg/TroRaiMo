@@ -6,7 +6,7 @@
 chooseCRANmirror(ind = 30)
 
 #Packages
-packages <- c("data.table", "ape", "phytools", "geiger", "dplyr", "ggplot2", "viridis","hrbrthemes", "cowplot", "MetBrewer","tidyverse", "coda") #
+packages <- c("data.table", "ape", "phytools", "geiger", "dplyr", "ggplot2", "viridis","hrbrthemes", "cowplot", "MetBrewer","tidyverse", "posterior") #
 
 # Install packages not yet installed
 installed_packages <- packages %in% rownames(installed.packages())
@@ -73,9 +73,33 @@ for (i in 1:length(file_list)) {
 
 head(Esse_dataframe)
 
+file <- "/home/au543206/GenomeDK/Trf_models/workflow/04_results/Esse_output/Esse_output_Canellales_hidden_states_0.1.log"
+file <- "/home/au543206/GenomeDK/Trf_models/workflow/04_results/Esse_output/Esse_output_Buxales_hidden_states_0.1_10_flush.log"
+
 esse_raw <- fread(file)
 esse_raw
 esse_raw_mcmc <- coda::as.mcmc(esse_raw)
+
+lambda_A_0 <- coda::as.mcmc(esse_raw$lambda_A_0)
+lambda_B_0 <- coda::as.mcmc(esse_raw$lambda_B_0)
+lambda_W_0 <- coda::as.mcmc(esse_raw$lambda_W_0)
+lambda_A_1 <- coda::as.mcmc(esse_raw$lambda_A_1)
+lambda_B_1 <- coda::as.mcmc(esse_raw$lambda_B_1)
+lambda_W_1 <- coda::as.mcmc(esse_raw$lambda_W_1)
+
+head(esse_raw_mcmc)
+
+# Plot all the lambda values in a single plot
+plot1 <- traceplot(lambda_A_0)
+plot2 <- traceplot(lambda_B_0)
+plot3 <- traceplot(lambda_W_0)
+plot4 <- traceplot(lambda_A_1)
+plot5 <- traceplot(lambda_B_1)
+plot6 <- traceplot(lambda_W_1)
+
+# Combine the plots
+plot_grid(plot1, plot2, plot3, plot4, plot5, plot6)
+
 ess <- effectiveSize(esse_raw_mcmc)
 ess
 #########################################################################################################################
