@@ -23,7 +23,6 @@ Pkg.instantiate()
 using PANDA
 
 # Print the time to load the packages
-println("Time to load PANDA: $time_load_panda seconds")
 println("Time to load JLD2: $time_load_jld2 seconds")
 println("Time to load DataFrames: $time_load_dataframes seconds")
 println("Time to load DelimitedFiles: $time_load_delimitedfiles seconds")
