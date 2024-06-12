@@ -1620,9 +1620,9 @@ orders_new_prior = ["Solanales"]
 
 
 # This is the list of Clades resulting from my personal splitting of the orders.
-Clads_clades = ["Aizoaceae_Phytolaccaceae_Barbeuiaceae_Lophiocarpaceae_Gisekiaceae_Sarcobataceae", "Alzateaceae_Crypteroniaceae_Penaeaceae","Amaryllidaceae",
-                "Anacardiaceae_Burseraceae_Kirkiaceae", "Araliaceae","Arecaceae","Asparagaceae","Asphodelaceae","Balsaminaceae_Marcgraviaceae_Tetrameristaceae","Berberidaceae",
-                "Bignoniaceae","Brassicaceae","Cactaceae_Molluginaceae_Didiereaceae_Anacompserotaceae_Basellaceae_Montiaceae_Halophytaceae_Portulacaceae_Talinaceae", "Calyceraceae",
+Clads_clades = ["Aizoaceae_Phytolaccaceae_Barbeuiaceae_Lophiocarpaceae_Gisekiaceae_Sarcobataceae", "Alzateaceae_Crypteroniaceae_Penaeaceae",
+                "Araliaceae","Arecaceae","Asphodelaceae","Balsaminaceae_Marcgraviaceae_Tetrameristaceae","Berberidaceae",
+                "Bignoniaceae","Cactaceae_Molluginaceae_Didiereaceae_Anacompserotaceae_Basellaceae_Montiaceae_Halophytaceae_Portulacaceae_Talinaceae", "Calyceraceae",
                 "Campanulaceae_Rousseaceae","Cannabaceae","Capparaceae","Cercidiphyllaceae_Hamamelidaceae_Daphniphyllaceae_Altingiaceae_Paeoniaceae",
                 "Chrysobalanaceae_Malpighiaceae_Caryocaraceae_Balanopaceae_Elatinaceae_Centroplacaceae_Dichapetalaceae_Putranjivaceae_Euphroniaceae_Lophopyxidaceae_Trigoniaceae","Cleomaceae",
                 "Combretaceae","Costaceae","Crassulaceae_Aphanopetalaceae_Halograceae_Penthoraceae_Tetracarpaeaceae","Dipterocarpaceae_Bixaceae_Cistaceae_Sarcoleanaceae_Muntingiaceae_Sphaerosepalaceae",
@@ -1637,10 +1637,11 @@ Clads_clades = ["Aizoaceae_Phytolaccaceae_Barbeuiaceae_Lophiocarpaceae_Gisekiace
                 "Verbenaceae_Schlegeliaceae_Lentibulariaceae_Thomandersiaceae","Violaceae_Goupiaceae","Xyridaceae_Eriocaulaceae","Zingiberaceae"]
 
 
+
 # Families which have been divided further and therefore need to be removed from the Clads_clades list.
-# Apiaceae # Apocynaceae # Asteraceae # Euphorbiaceae # Fabaceae # Lamiaceae # Orchidaceae # Poaceae # Rubiaceae
-# Rosaceae, Ranunculaceae, Plantaginaceae Phyllanthaceae_Picodendraceae_Linaceae_Ixonanthaceae "Myrtaceae" "Myrtaceae", "Lauraceae", "Iridaceae", "Gesneriaceae_Calceolariaceae", "Cyperaceae",
-# "Caryophyllaceae_Achatocarpaceae_Amaranthaceae", ,"Bromeliaceae", "Acanthaceae_Martyniaceae_Pedaliaceae",
+# Amaryllidaceae, Anacardiaceae_Burseraceae_Kirkiaceae, Apiaceae, Apocynaceae, Asparagaceae, Asteraceae,Brassicaceae, Euphorbiaceae, Fabaceae, Lamiaceae, Orchidaceae, Poaceae, Rubiaceae
+# Rosaceae, Ranunculaceae, Plantaginaceae, Phyllanthaceae_Picodendraceae_Linaceae_Ixonanthaceae,Myrtaceae, Lauraceae, Iridaceae, Gesneriaceae_Calceolariaceae, Cyperaceae,
+# Caryophyllaceae_Achatocarpaceae_Amaranthaceae, ,Bromeliaceae, Acanthaceae_Martyniaceae_Pedaliaceae, Melastomataceae,
 
 sub_family_clades = ["sub_phylo_Acanthaceae_Martyniaceae_Pedaliaceae_1.tre","sub_phylo_Acanthaceae_Martyniaceae_Pedaliaceae_2.tre","sub_phylo_Acanthaceae_Martyniaceae_Pedaliaceae_3.tre",
                      "sub_phylo_Amaryllidaceae_1.tre","sub_phylo_Amaryllidaceae_2.tre","sub_phylo_Anacardiaceae_Burseraceae_Kirkiaceae_1.tre","sub_phylo_Anacardiaceae_Burseraceae_Kirkiaceae_2.tre",
