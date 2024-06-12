@@ -83,7 +83,7 @@ time_infer = @elapsed output = infer_ClaDS(tree,
 					  prior_ε = "lognormal",
 					  logε0 = extinction_mean,
     				  sdε =	extinction_sd,
-					  end_tme = 3) # 9600 minutes = 6.67 days
+					  end_tme = 8640) # 8640 minutes = 6 days
 
 
 

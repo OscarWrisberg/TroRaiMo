@@ -25,7 +25,6 @@ time_load_dataframes = @elapsed using DataFrames
 time_load_delimitedfiles = @elapsed using DelimitedFiles
 
 # Print the time to load the packages
-println("Time to load PANDA: $time_load_panda seconds")
 println("Time to load JLD2: $time_load_jld2 seconds")
 println("Time to load DataFrames: $time_load_dataframes seconds")
 println("Time to load DelimitedFiles: $time_load_delimitedfiles seconds")
@@ -79,7 +78,7 @@ sampling_freq_array = sampling_freq_joined[!, :frequency]
 time_infer = @elapsed output = infer_ClaDS(tree,
 	print_state = 100,
 	f = sampling_freq_array,
-	end_tme = 9600) # 9600 minutes = 6.67 days
+	end_tme = 8640) # 9600 minutes = 6.67 days
 	println("Time to run infer_ClaDS: $time_infer seconds")
 
 # Measure the time to save the output
