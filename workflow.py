@@ -2190,7 +2190,7 @@ for i in range(len(esse_clades)):
                                                 tip_states_file = workflow_dir+"03_distribution_data/"+esse_clades[i]+"_states_"+percentages[j]+".txt", 
                                                 paleo_clim_file = data_dir+"paleoclim_area.txt", # File with paleoclimatic variables
                                                 done = esse_clades[i]+"_Esse",
-                                                path_in = workflow_dir+"02_adding_orders/pruning/orders/",
+                                                path_in = workflow_dir+"02_adding_orders/pruning/families/",
                                                 save_file = "Esse_output_"+esse_clades[i]+"_"+percentages[j]+".jld2",
                                                 script_dir=script_dir,
                                                 done_dir = done_dir,
