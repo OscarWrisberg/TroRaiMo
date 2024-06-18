@@ -1888,7 +1888,7 @@ for k in range(len(sub_family_clades)):
 
     gwf.target_from_template(name = sub_family_clades[k]+"_ClaDs",
                                 template= Clads_subclades(
-                                    tree=sub_family_clades[k],
+                                    tree="sub_phylo_"+sub_family_clades[k]+".tre",
                                     wcvp_input = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds",
                                     order = sub_family_clades[k],
                                     done_file = sub_family_clades[k]+"_ClaDs",
