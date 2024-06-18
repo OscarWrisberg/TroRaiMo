@@ -1710,7 +1710,7 @@ for i in range(len(orders_not_in_orders_new_prior)):
     
     # Running the script to find the biome of the tips in the tree
     for j in range(len(percentages)):
-        gwf.target_from_template(name = orders_not_in_orders_new_prior[i]+"_states_converter_"+percentages[j],
+        gwf.target_from_template(name = orders_not_in_orders_new_prior[i]+"_states_converter_ClaDs"+percentages[j],
                                 template=states_converter(
                                 path_in= workflow_dir+"03_distribution_data/",
                                 tip_states_file= workflow_dir+"03_distribution_data/"+orders_not_in_orders_new_prior[i]+"_distribution_data.txt",
@@ -1972,7 +1972,7 @@ for i in range(len(orders_not_in_orders_new_prior)):
             
             for j in range(len(percentages)):
 
-                gwf.target_from_template(name = orders_not_in_orders_new_prior[i]+"_states_converter_"+percentages[j],
+                gwf.target_from_template(name = orders_not_in_orders_new_prior[i]+"_states_converter_Esse_"+percentages[j],
                                         template=states_converter(
                                         path_in= workflow_dir+"03_distribution_data/",
                                         tip_states_file= workflow_dir+"03_distribution_data/"+orders_not_in_orders_new_prior[i]+"_distribution_data.txt",
