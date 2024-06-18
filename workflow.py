@@ -1039,7 +1039,7 @@ def sampling_frequency_per_biome(input_file_tree, wcvp_file,path_out,renamed_occ
         'cores': 10,
         'memory': '100g',
         'account':"Trf_models",
-        'walltime': "00:1:00"
+        'walltime': "00:100:00"
     }
 
     spec = '''
@@ -1051,7 +1051,9 @@ def sampling_frequency_per_biome(input_file_tree, wcvp_file,path_out,renamed_occ
     conda activate R_env
 
     # Going to input folder
+    echo goint to the input folder: {path_in}
     cd {path_in}
+    
 
     echo Starting the script to find the sampling frequency per biome 
     date
@@ -1694,8 +1696,8 @@ for i in range(len(orders_not_in_orders_new_prior)):
     #Running the script to find the environmental data for the tips in the trees
     gwf.target_from_template(name = orders_not_in_orders_new_prior[i]+"_distribution_data_ClaDs.",
                                 template=Finding_areas_in_wcvp(
-                                input_file_tree= "family_phylo_"+orders_not_in_orders_new_prior[i]+".tre", # 
-                                path_in =  workflow_dir+"02_adding_orders/pruning/subset_of_orders/",
+                                input_file_tree= "pruned_tree_order_"+orders_not_in_orders_new_prior[i]+"_GBMB.tre", # 
+                                path_in =  workflow_dir+"02_adding_orders/pruning/orders/",
                                 path_out = workflow_dir+"03_distribution_data/",
                                 output_file = orders_not_in_orders_new_prior[i]+"_distribution_data_ClaDs.txt",
                                 wcvp_file = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds",
@@ -1903,7 +1905,7 @@ for k in range(len(sub_family_clades)):
  #Running the script to find the environmental data for the tips in the sub trees
     gwf.target_from_template(name = sub_family_clades[k]+"_distribution_data.",
                                 template=Finding_areas_in_wcvp(
-                                input_file_tree= sub_family_clades[k], 
+                                input_file_tree= "sub_phylo_"+sub_family_clades[k]+".tre",  
                                 path_in =  workflow_dir+"02_adding_orders/pruning/subset_of_orders/",
                                 path_out = workflow_dir+"03_distribution_data/",
                                 output_file = sub_family_clades[k]+"_distribution_data.txt",
@@ -2169,8 +2171,8 @@ for i in range(len(esse_clades)):
                     
                     gwf.target_from_template(name = esse_clades[i]+"_Biome_sampling_fraction.",
                                                 template=sampling_frequency_per_biome(
-                                                input_file_tree= "pruned_tree_family_"+esse_clades[i]+"_GBMB.tre",
-                                                path_in =  workflow_dir+"02_adding_orders/pruning/families/",
+                                                input_file_tree= "family_phylo_"+esse_clades[i]+".tre",
+                                                path_in =  workflow_dir+"02_adding_orders/pruning/subset_of_orders/",
                                                 path_out = workflow_dir+"03_distribution_data/",
                                                 output_file = esse_clades[i]+"_biome_sampling_fraction.txt",
                                                 wcvp_file = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds",

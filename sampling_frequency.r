@@ -43,10 +43,12 @@ apg <- file.path(path_apg)
 ################################################################################################################################################
 
 # Load the wcvp dataset
+cat("Opening ", input_file_wcvp, "\n")
 wcvp <- readRDS(input_file_wcvp)
 
 # Load the tree
-tree <- read.tree(path_to_tree)
+cat("Opening ", input_file_tree, "\n")
+tree <- read.tree(input_file_tree)
 
 # Load apg
 apg <- fread(apg)

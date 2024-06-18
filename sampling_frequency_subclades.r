@@ -99,11 +99,10 @@ for (i in seq_along(unique(tree_species$genus))) {
 }
 number_species_in_genus
 
-cat("The total number of species accounted for in this phylogeny is ", (sum(number_species_in_genus$count))
+cat("The total number of species accounted for in this phylogeny is ", (sum(number_species_in_genus$count)))
 
-# Create a data frame with genera, number of species sampled, and number of species in the wcvp dataset
+#Create a data frame with genera, number of species sampled, and number of species in the wcvp dataset
 genera_sampling_freq <- data.frame(genus = unique(tree_species$genus), number_species_sampled = number_species_sampled_in_genus, number_species_in_wcvp = number_species_in_genus)
-genera_sampling_freq
 
 # Calculate the sampling frequency for each genus
 genera_sampling_freq$sampling_freq <- as.numeric(genera_sampling_freq$number_species_sampled) / as.numeric(genera_sampling_freq$number_species_in_wcvp)
