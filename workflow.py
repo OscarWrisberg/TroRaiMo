@@ -1732,6 +1732,9 @@ Clads_clades = ["Aizoaceae_Phytolaccaceae_Barbeuiaceae_Lophiocarpaceae_Gisekiace
                 "Sapotaceae","Saxifragaceae_Iteaceae_Grossulariaceae","Scrophulariaceae","Simaroubaceae","Styracaceae_Diapensiaceae_Symplocaceae","Theaceae","Thymelaeaceae","Typhaceae","Ulmaceae","Urticaceae",
                 "Verbenaceae_Schlegeliaceae_Lentibulariaceae_Thomandersiaceae","Violaceae_Goupiaceae","Xyridaceae_Eriocaulaceae","Zingiberaceae"]
 
+# Percentage of occurences required to be present in a biome.
+percentages = ["0.33"]
+
 for i in range(len(Clads_clades)):
     gwf.target_from_template(name = Clads_clades[i]+"_samplingfraction",
                                       template = sampling_frequency_subclades(
@@ -1897,8 +1900,6 @@ orders = ["Alismatales", "Apiales", "Aquifoliales", "Arecales", "Asparagales", "
 ###############################################################################################################################################################
 #################################################################--- Esse  Runs ---############################################################################
 ###############################################################################################################################################################
-
-percentages =["0.3"]
 
 ###############################################################################################################################################################
 #############################################---  Running ESSE on the orders which can finish in a week ---####################################################
