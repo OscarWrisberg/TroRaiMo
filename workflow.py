@@ -1692,7 +1692,7 @@ for i in range(len(orders_not_in_orders_new_prior)):
                              ))
     
     #Running the script to find the environmental data for the tips in the trees
-    gwf.target_from_template(name = orders_not_in_orders_new_prior[i]+"_distribution_data.",
+    gwf.target_from_template(name = orders_not_in_orders_new_prior[i]+"_distribution_data_ClaDs.",
                                 template=Finding_areas_in_wcvp(
                                 input_file_tree= "family_phylo_"+orders_not_in_orders_new_prior[i]+".tre", # 
                                 path_in =  workflow_dir+"02_adding_orders/pruning/subset_of_orders/",
@@ -1954,7 +1954,7 @@ orders_not_in_orders_new_prior = ["Arecales","Buxales","Canellales","Celastrales
                                 "Pinales", "Piperales", "Proteales", "Zygophyllales"]
 
 for i in range(len(orders_not_in_orders_new_prior)):
-            gwf.target_from_template(name = orders_not_in_orders_new_prior[i]+"_distribution_data.",
+            gwf.target_from_template(name = orders_not_in_orders_new_prior[i]+"_distribution_data_Esse.",
                                 template=Finding_areas_in_wcvp(
                                 input_file_tree= "pruned_tree_order_"+orders_not_in_orders_new_prior[i]+"_GBMB.tre",
                                 path_in =  workflow_dir+"02_adding_orders/pruning/orders/",
