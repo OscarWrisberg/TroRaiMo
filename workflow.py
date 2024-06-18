@@ -1670,10 +1670,10 @@ for i in range(len(orders_not_in_orders_new_prior)):
                                           output_file = orders_not_in_orders_new_prior[i] + "_sampling_fraction._ClaDs.txt",
                                           wcvp_file = workflow_dir + "02_adding_orders/wcvp_names_apg_aligned.rds",
                                           script_dir = script_dir,
+                                          order = orders_not_in_orders_new_prior[i],
                                           apg = script_dir + "apgweb_parsed.csv",
                                           done_dir = done_dir,
                                           done = orders_not_in_orders_new_prior[i] + "_Sampling_fraction_ClaDs",
-                                          name = orders_not_in_orders_new_prior[i]
                                       ))
 
     # Running ClaDs model
