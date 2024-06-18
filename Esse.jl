@@ -37,8 +37,15 @@ out_file = ARGS[6]
 save_file = ARGS[7]
 hidden_states = parse(Int, ARGS[8])
 output_folder = ARGS[9]
+biome_sampling = ARGS[10]
 
+# Open file with biome sampling sample_fractions
+sampling_freq = readdlm(biome_sampling)
 
+# convert txt file to array with Float64
+sampling_freq = Float64.(sampling_freq)
+
+# Add processors
 addprocs(processors)
 @everywhere using Tapestree
 
@@ -76,14 +83,14 @@ time_infer = @elapsed Tapestree.esse(tree, # Full path to the tree
 	states_file = states, # Data for the tip states of the species in the tree 
 	out_states = out_states, # The out states file where the states are saved
 	cov_mod = ("s",), # s specifies that only speciation is affected by the covariate 
-	parallel = true,
+	parallel = true, # run MCMC-mh3 in parallel
 	mc = "mh", # Metropolis-Hastings
-	ncch = processors, # number of chains
-	niter = 100_000, # Number of iterations
+	ncch = processors, # number of cores for the parallel run
+	niter = 250_000, # Number of iterations
 	nthin = 100, # Frequency at which to record the state
 	dt = 0.8, # Temperature for the annealing of the chains
-	nburn = 20_000, # Number of iterations to use in the burn in
-	ρ = {}
+	nburn = 5_000, # Number of iterations to use in the burn in
+	ρ = sampling_freq # Sampling fractions for the biomes
 	)
 
 # Print time to infer in hours

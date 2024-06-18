@@ -78,7 +78,7 @@ sampling_freq_array = sampling_freq_joined[!, :frequency]
 time_infer = @elapsed output = infer_ClaDS(tree,
 	print_state = 100,
 	f = sampling_freq_array,
-	end_tme = 8640) # 9600 minutes = 6.67 days
+	end_tme = 8640) # 8640 minutes = 6 days
 	println("Time to run infer_ClaDS: $time_infer seconds")
 
 # Measure the time to save the output

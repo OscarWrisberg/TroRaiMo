@@ -22,7 +22,7 @@ invisible(lapply(packages, library, character.only = TRUE))
 #########################################################################################################################
 
 # Loading data path
-folder_path <- "/home/au543206/GenomeDK/Trf_models/workflow/04_results/Esse_output"
+folder_path <- "/home/au543206/GenomeDK/Trf_models/workflow/04_results/Esse_output/Esse_done_results/"
 
 # Get a list of all Rdata files in the folder
 file_list <- list.files(folder_path, pattern = "Esse_output_.*\\_hidden_states_0.1.log", full.names = TRUE)
@@ -73,12 +73,22 @@ for (i in 1:length(file_list)) {
 
 head(Esse_dataframe)
 
-file <- "/home/au543206/GenomeDK/Trf_models/workflow/04_results/Esse_output/Esse_output_Canellales_hidden_states_0.1.log"
-file <- "/home/au543206/GenomeDK/Trf_models/workflow/04_results/Esse_output/Esse_output_Buxales_hidden_states_0.1_10_flush.log"
+file_Nymphaeales <- "/home/au543206/GenomeDK/Trf_models/workflow/04_results/Esse_output/Esse_output_Nymphaeales_hidden_states_0.1.log"
+file_Pandanales <- "/home/au543206/GenomeDK/Trf_models/workflow/04_results/Esse_output/Esse_output_Pandanales_hidden_states_0.1.log"
+file_Piperales <- "/home/au543206/GenomeDK/Trf_models/workflow/04_results/Esse_output/Esse_output_Piperales_hidden_states_0.1.log"
+file_Arecales <- "/home/au543206/GenomeDK/Trf_models/workflow/04_results/Esse_output/Esse_output_Arecales_hidden_states_0.1_10_flush.log"
+file_Zingiberales <- "/home/au543206/GenomeDK/Trf_models/workflow/04_results/Esse_output/Esse_output_Zingiberales_hidden_states_0.1.log"
 
-esse_raw <- fread(file)
-esse_raw
-esse_raw_mcmc <- coda::as.mcmc(esse_raw)
+
+
+esse_raw <- fread(file_Zingiberales)
+
+esse_raw_mcmc <- as_draws(esse_raw)
+summarise_draws(esse_raw)
+
+esse_test_mcmc <- coda::as.mcmc(esse_raw)
+as.shinystan(esse_test_mcmc)
+
 
 lambda_A_0 <- coda::as.mcmc(esse_raw$lambda_A_0)
 lambda_B_0 <- coda::as.mcmc(esse_raw$lambda_B_0)
@@ -139,3 +149,114 @@ ggplot(lambda_values, aes(x = value, fill = State)) +
 	theme_ipsum() +
 	labs(title = "Mu") +
 	scale_x_log10()
+
+
+#################################################################
+# Load necessary libraries
+library(ggplot2)
+library(dplyr)
+
+# Sample data based on your description
+data <- data.frame(
+  order = c(rep("Alismatales", 6), rep("Poales", 6)),
+  Var = rep("lambda", 12),
+  State = rep(c("A", "B", "W"), 4),
+  Hiddenstate = rep(c(0, 0, 0, 1, 1, 1), 2),
+  value = c(0.364247, 0.246137, 0.009381, 0.389014, 0.533666, 0.000066,
+            0.274837, 0.346137, 0.013481, 0.289014, 0.433666, 0.000086)
+)
+
+# Plot using ggplot2
+ggplot(Esse_dataframe, aes(x = value, y = State, fill = factor(Hiddenstate))) +
+  geom_violin(trim = FALSE) +
+#  geom_boxplot(width = 0.1, position = position_dodge(0.9)) +
+  labs(title = "Violin plot of Lambda values",
+       x = "Lambda Variables",
+       y = "Estimated Value",
+       fill = "Hiddenstate") +
+	   xlim(0, 20) +
+  theme_minimal()
+
+Esse_nymp_low_test <- Esse_dataframe[which(Esse_dataframe$order == "Nymphaeales"),]
+# removing the values that are over 50
+Esse_nymp_low_test <- Esse_nymp_low_test[which(Esse_nymp_low_test$value < 5),]
+
+
+sorted_vector <- sort(Esse_dataframe[which(Esse_dataframe$order == "Nymphaeales"),"value"])
+sorted_vector
+
+
+# Plot using ggplot2
+ggplot(Esse_dataframe, aes(x = value, y = State, fill = factor(Hiddenstate))) +
+  geom_violin(trim = TRUE) +
+  #geom_boxplot(width = 0.1, position = position_dodge(0.9)) +
+  labs(title = "Violin plot of Lambda values",
+       x = "Lambda Variables",
+       y = "Estimated Value",
+       fill = "Hiddenstate") +
+	xlim(0, 5) +
+  theme_minimal()
+
+install.packages("ggridges")
+library(ggridges)
+
+ggplot(Esse_dataframe, aes(x = value, y = State, fill = State)) +
+  geom_density_ridges(alpha = 0.8, scale = 1) +
+  labs(title = "Density Ridge plot of Lambda values",
+       x = "Lambda Variables",
+       y = "Proportion",
+       fill = "State") +
+  xlim(0, 20) +
+  theme_minimal()
+
+
+
+ggplot(Esse_dataframe, aes(x = value, fill = State)) +
+  geom_density(alpha = 0.5) +
+  labs(title = "Density plot of Lambda values",
+       x = "Lambda Variables",
+       y = "Density",
+       fill = "State") +
+  xlim(0, 20) +
+  theme_minimal()
+
+Esse_dataframe_0 <- Esse_dataframe[which(Esse_dataframe$Hiddenstate == 0),]
+Esse_dataframe_1 <- Esse_dataframe[which(Esse_dataframe$Hiddenstate == 1),]
+
+
+################################
+
+# Plot using ggplot2
+ggplot() +
+	# Top density plot
+	geom_density(data = Esse_dataframe_0, aes(x = value, fill = State), alpha = 0.5) +
+	# Bottom density plot (mirrored)
+	geom_density(data = Esse_dataframe_1, aes(x = value, y = ..density.. * -1, fill = State), alpha = 0.5) +
+	labs(title = "Mirrored Density plot of Lambda values",
+			 x = "Lambda Variables",
+			 y = "") +
+	xlim(0, 20) +
+	theme_minimal()
+
+
+ggplot() +
+  # Top density plot
+  geom_density(data = Esse_dataframe_0, aes(x = value, fill = State), alpha = 0.4) +
+  # Bottom density plot (mirrored)
+  geom_density(data = Esse_dataframe_1, aes(x = value, y = -..density.., fill = State), alpha = 0.4) +
+  scale_y_continuous(
+    name = "Density",
+    sec.axis = sec_axis(~., name = "Density")
+  ) +
+  labs(title = "Mirrored Density plot of Lambda values",
+       x = "Lambda Variables",
+       y = "Density",
+       fill = "State") +
+  xlim(0,100) +
+  theme_minimal() +
+  theme(
+    axis.title.y.left = element_blank(),
+    axis.text.y.left = element_blank(),) +
+  geom_hline(yintercept = 0, color = "black", linetype = "solid")
+
+# I want to so

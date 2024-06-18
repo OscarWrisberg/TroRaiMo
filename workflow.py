@@ -1025,6 +1025,53 @@ def sampling_frequency(input_file_tree, wcvp_file,path_out, output_file, path_in
     return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
 
 
+
+##############################################################
+#########---- Finding the sampling frequency per biome ----############
+##############################################################
+
+
+def sampling_frequency_per_biome(input_file_tree, wcvp_file,path_out,renamed_occurrences,koppen_biome, output_file, path_in, order, script_dir, apg, done_dir, done, percentage):
+    """This function calculates the number of missing speciers missing from the tree per biome"""
+    inputs = [done_dir+"Finding_monophyletic_orders", renamed_occurrences, koppen_biome]
+    outputs = [path_out+output_file, done_dir+done]
+    options = {
+        'cores': 10,
+        'memory': '100g',
+        'account':"Trf_models",
+        'walltime': "00:1:00"
+    }
+
+    spec = '''
+
+    #Checking if output dir exists
+    [ -d {path_out} ] && echo "{path_out} exist." || {{ echo "{path_out} does not exist."; mkdir {path_out}; }}
+
+    source /home/owrisberg/miniconda3/etc/profile.d/conda.sh
+    conda activate R_env
+
+    # Going to input folder
+    cd {path_in}
+
+    echo Starting the script to find the sampling frequency per biome 
+    date
+
+    # Running the R script
+    Rscript --vanilla {script_dir}wcvp_states_esse.r {input_file_tree} {output_file} {wcvp_file} {path_out} {order} {apg} {renamed_occurrences} {koppen_biome} {percentage}
+
+
+    echo Ended the script to find sampling frequency per biome
+    date
+
+    touch {done_dir}{done}
+
+    '''.format(path_out = path_out, output_file = output_file, wcvp_file = wcvp_file, order = order, renamed_occurrences = renamed_occurrences, koppen_biome = koppen_biome,
+     input_file_tree = input_file_tree, path_in = path_in, script_dir = script_dir, apg = apg, done_dir = done_dir, done = done, percentage = percentage)
+
+
+    return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
+
+
 #########################################################################################
 ##########---- Removing tips from trees which have no distribution data  ----############
 #########################################################################################
@@ -1123,7 +1170,7 @@ def Clads(tree, done_file, path_in, output_file,wcvp_input, order, apg, script_d
         'cores': 1,
         'memory': '1200g',
         'account':"Trf_models",
-        'walltime': "120:00:00"
+        'walltime': "168:00:00"
     }
 
     spec = '''
@@ -1203,7 +1250,7 @@ def Clads_priors(tree, done_file, path_in, output_file,wcvp_input, order, apg, s
         'cores': 1,
         'memory': '1000g',
         'account':"Trf_models",
-        'walltime': "24:00:00"
+        'walltime': "168:00:00"
     }
 
     spec = '''
@@ -1319,7 +1366,7 @@ def Esse(path_in, tree_file,tip_states_file,paleo_clim_file, out_states_file, ou
     outputs = [output_folder+out_file+".log", done_dir+done]
     options = {
         'cores': 10,
-        'memory': '250g',
+        'memory': '10g',
         'account':"Trf_models",
         'walltime': "168:00:00"
 
@@ -1592,7 +1639,7 @@ gwf.target_from_template(name = "Subdividing_problematic_families",
 # Remove impossible orders
 impossible_orders = ["Acorales","Amborellales","Austrobaileyales","Cardiopteridales","Ceratophyllales","Cycadales","Desfontainiales","Dipsacales","Garryales","Ginkgoales","Oncothecales","Petrosaviales","Picramniales","Trochodendrales"]
 
-# Possible orders
+# All Possible orders
 orders = ["Alismatales", "Apiales", "Aquifoliales", "Arecales", "Asparagales", "Asterales","Berberidopsidales", "Boraginales", "Brassicales", "Bruniales", "Buxales", "Canellales", "Caryophyllales",
 "Celastrales", "Chloranthales", "Commelinales", "Cornales", "Crossosomatales", "Cucurbitales", "Cupressales", "Dilleniales", "Dioscoreales", "Ericales", "Escalloniales", "Fabales", "Fagales",
 "Gentianales", "Geraniales", "Gnetales", "Gunnerales", "Huerteales", "Icacinales", "Lamiales", "Laurales", "Liliales", "Magnoliales", "Malpighiales", "Malvales", "Metteniusales",
@@ -1600,167 +1647,17 @@ orders = ["Alismatales", "Apiales", "Aquifoliales", "Arecales", "Asparagales", "
 "Saxifragales", "Solanales", "Vahliales", "Vitales", "Zingiberales", "Zygophyllales"
 ]
 
+
+#####################################################################################################################################################################
+########################################################--- ClaDs on Orders with uniform prior  ---##################################################################
+#####################################################################################################################################################################
+
 # Orders that ran with the uniform prior 
 orders_not_in_orders_new_prior = ["Aquifoliales", "Berberidopsidales", "Boraginales", "Bruniales", "Buxales",
                                 "Canellales", "Celastrales", "Chloranthales", "Commelinales", "Cornales", "Crossosomatales", "Cucurbitales",
                                 "Cupressales", "Dilleniales", "Dioscoreales", "Escalloniales", "Fagales", "Gunnerales", "Huerteales", "Icacinales",
                                 "Liliales", "Magnoliales", "Metteniusales", "Nymphaeales", "Oxalidales", "Pandanales", "Paracryphiales",
-                                "Pinales", "Piperales", "Proteales", "Santalales", "Vitales", "Zygophyllales"]
-
-
-# Orders that need a to be run with a modified prior
-orders_new_prior = ["Solanales"]
-
-
- 
- # Here is the list of orders that I have had to split into smaller clades to be able to run the ClaDs on them.
-# orders_split_for_clads = ["Zingiberales", "Laurales","Poales","Ranunculales","Rosales","Sapindales","Saxifragales","Myrtales","Malvales","Malpighiales","Lamiales","Gentianales","Fabales",
-# "Ericales", "Apiales","Asterales","Asparagales","Caryophyllales","Arecales","Brassicales"]
-
-
-
-# This is the list of Clades resulting from my personal splitting of the orders.
-Clads_clades = ["Aizoaceae_Phytolaccaceae_Barbeuiaceae_Lophiocarpaceae_Gisekiaceae_Sarcobataceae", "Alzateaceae_Crypteroniaceae_Penaeaceae",
-                "Araliaceae","Arecaceae","Asphodelaceae","Balsaminaceae_Marcgraviaceae_Tetrameristaceae","Berberidaceae",
-                "Bignoniaceae","Cactaceae_Molluginaceae_Didiereaceae_Anacompserotaceae_Basellaceae_Montiaceae_Halophytaceae_Portulacaceae_Talinaceae", "Calyceraceae",
-                "Campanulaceae_Rousseaceae","Cannabaceae","Capparaceae","Cercidiphyllaceae_Hamamelidaceae_Daphniphyllaceae_Altingiaceae_Paeoniaceae",
-                "Chrysobalanaceae_Malpighiaceae_Caryocaraceae_Balanopaceae_Elatinaceae_Centroplacaceae_Dichapetalaceae_Putranjivaceae_Euphroniaceae_Lophopyxidaceae_Trigoniaceae","Cleomaceae",
-                "Combretaceae","Costaceae","Crassulaceae_Aphanopetalaceae_Halograceae_Penthoraceae_Tetracarpaeaceae","Dipterocarpaceae_Bixaceae_Cistaceae_Sarcoleanaceae_Muntingiaceae_Sphaerosepalaceae",
-                "Droseraceae_Ancistrocladaceae_Drosophyllaceae_Nepenthaceae_Dioncophyllaceae","Ebenaceae","Ericaceae_Clethraceae_Cyrillaceae","Gentianaceae",
-                "Goodeniaceae","Heliconiaceae_Lowiaceae_Strelitziaceae","Juncaceae","Loganiaceae_Gelsemiaceae","Lythraceae_Onagraceae","Malvaceae","Marantaceae_Cannaceae",
-                "Meliaceae","Menispermaceae","Menyanthaceae","Monimiaceae","Moraceae",
-                "Ochnaceae_Clusiaceae_Erythroxylaceae_Podostemaceae_Bonnetiaceae_Rhizophoraceae_Calophyllaceae_Hypericaceae_Ctenolophonaceae_Irvingiaceae_Pandaceae",
-                "Orobanchaceae_Phrymaceae_Mazaceae_Paulowniaceae","Papaveraceae","Passifloraceae","Pentaphylacaceae_Sladeniaceae",
-                "Pittosporaceae","Plumbaginaceae_Polygonaceae_Frankeniaceae_Tamaricaceae","Polemoniaceae_Lecythidaceae_Fouquieriaceae","Polygalaceae_Surianaceae",
-                "Primulaceae","Resedaceae","Restionaceae","Rhamnaceae_Barbeyaceae_Dirachmaceae_Elaeagnaceae","Rutaceae","Salicaceae_Lacistemataceae","Sapindaceae",
-                "Sapotaceae","Saxifragaceae_Iteaceae_Grossulariaceae","Scrophulariaceae","Simaroubaceae","Styracaceae_Diapensiaceae_Symplocaceae","Theaceae","Thymelaeaceae","Typhaceae","Ulmaceae","Urticaceae",
-                "Verbenaceae_Schlegeliaceae_Lentibulariaceae_Thomandersiaceae","Violaceae_Goupiaceae","Xyridaceae_Eriocaulaceae","Zingiberaceae"]
-
-
-
-# Families which have been divided further and therefore need to be removed from the Clads_clades list.
-# Amaryllidaceae, Anacardiaceae_Burseraceae_Kirkiaceae, Apiaceae, Apocynaceae, Asparagaceae, Asteraceae,Brassicaceae, Euphorbiaceae, Fabaceae, Lamiaceae, Orchidaceae, Poaceae, Rubiaceae
-# Rosaceae, Ranunculaceae, Plantaginaceae, Phyllanthaceae_Picodendraceae_Linaceae_Ixonanthaceae,Myrtaceae, Lauraceae, Iridaceae, Gesneriaceae_Calceolariaceae, Cyperaceae,
-# Caryophyllaceae_Achatocarpaceae_Amaranthaceae, ,Bromeliaceae, Acanthaceae_Martyniaceae_Pedaliaceae, Melastomataceae,
-
-sub_family_clades = ["sub_phylo_Acanthaceae_Martyniaceae_Pedaliaceae_1.tre","sub_phylo_Acanthaceae_Martyniaceae_Pedaliaceae_2.tre","sub_phylo_Acanthaceae_Martyniaceae_Pedaliaceae_3.tre",
-                     "sub_phylo_Amaryllidaceae_1.tre","sub_phylo_Amaryllidaceae_2.tre","sub_phylo_Anacardiaceae_Burseraceae_Kirkiaceae_1.tre","sub_phylo_Anacardiaceae_Burseraceae_Kirkiaceae_2.tre",
-                     "sub_phylo_Apiaceae_1.tre","sub_phylo_Apiaceae_2.tre","sub_phylo_Apiaceae_3.tre","sub_phylo_Apiaceae_4.tre","sub_phylo_Apiaceae_5.tre","sub_phylo_Apiaceae_6.tre",
-                     "sub_phylo_Apocynaceae_1.tre","sub_phylo_Apocynaceae_2.tre","sub_phylo_Apocynaceae_3.tre","sub_phylo_Apocynaceae_4.tre","sub_phylo_Asparagaceae_1.tre","sub_phylo_Asparagaceae_2.tre",
-                     "sub_phylo_Asparagaceae_3.tre","sub_phylo_Asteraceae_10.tre","sub_phylo_Asteraceae_11.tre","sub_phylo_Asteraceae_12.tre","sub_phylo_Asteraceae_13.tre","sub_phylo_Asteraceae_1.tre",
-                     "sub_phylo_Asteraceae_2.tre","sub_phylo_Asteraceae_3.tre","sub_phylo_Asteraceae_4.tre","sub_phylo_Asteraceae_5.tre","sub_phylo_Asteraceae_6.tre","sub_phylo_Asteraceae_7.tre","sub_phylo_Asteraceae_8.tre",
-                     "sub_phylo_Asteraceae_9.tre","sub_phylo_Brassicaceae_1.tre","sub_phylo_Brassicaceae_2.tre","sub_phylo_Brassicaceae_3.tre","sub_phylo_Brassicaceae_4.tre","sub_phylo_Bromeliaceae_1.tre","sub_phylo_Bromeliaceae_2.tre",
-                     "sub_phylo_Caryophyllaceae_Achatocarpaceae_Amaranthaceae_1.tre","sub_phylo_Caryophyllaceae_Achatocarpaceae_Amaranthaceae_2.tre","sub_phylo_Cyperaceae_1.tre","sub_phylo_Cyperaceae_2.tre","sub_phylo_Cyperaceae_3.tre",
-                     "sub_phylo_Euphorbiaceae_1.tre","sub_phylo_Euphorbiaceae_2.tre","sub_phylo_Euphorbiaceae_3.tre","sub_phylo_Fabaceae_10.tre","sub_phylo_Fabaceae_11.tre","sub_phylo_Fabaceae_12.tre","sub_phylo_Fabaceae_13.tre","sub_phylo_Fabaceae_1.tre",
-                     "sub_phylo_Fabaceae_2.tre","sub_phylo_Fabaceae_3.tre","sub_phylo_Fabaceae_4.tre","sub_phylo_Fabaceae_5.tre","sub_phylo_Fabaceae_6.tre","sub_phylo_Fabaceae_7.tre","sub_phylo_Fabaceae_8.tre","sub_phylo_Fabaceae_9.tre",
-                     "sub_phylo_Gesneriaceae_Calceolariaceae_1.tre","sub_phylo_Gesneriaceae_Calceolariaceae_2.tre","sub_phylo_Iridaceae_1.tre","sub_phylo_Iridaceae_2.tre","sub_phylo_Lamiaceae_1.tre","sub_phylo_Lamiaceae_2.tre","sub_phylo_Lamiaceae_3.tre",
-                     "sub_phylo_Lamiaceae_4.tre","sub_phylo_Lamiaceae_5.tre","sub_phylo_Lamiaceae_6.tre","sub_phylo_Lamiaceae_7.tre","sub_phylo_Lauraceae_1.tre","sub_phylo_Lauraceae_2.tre","sub_phylo_Melastomataceae_1.tre",
-                     "sub_phylo_Melastomataceae_2.tre","sub_phylo_Myrtaceae_1.tre","sub_phylo_Myrtaceae_2.tre","sub_phylo_Myrtaceae_3.tre","sub_phylo_Orchidaceae_10.tre","sub_phylo_Orchidaceae_11.tre","sub_phylo_Orchidaceae_12.tre",
-                     "sub_phylo_Orchidaceae_13.tre","sub_phylo_Orchidaceae_14.tre","sub_phylo_Orchidaceae_15.tre","sub_phylo_Orchidaceae_16.tre","sub_phylo_Orchidaceae_1.tre","sub_phylo_Orchidaceae_2.tre","sub_phylo_Orchidaceae_3.tre",
-                     "sub_phylo_Orchidaceae_4.tre","sub_phylo_Orchidaceae_5.tre","sub_phylo_Orchidaceae_6.tre","sub_phylo_Orchidaceae_7.tre","sub_phylo_Orchidaceae_8.tre","sub_phylo_Orchidaceae_9.tre",
-                     "sub_phylo_Phyllanthaceae_Picodendraceae_Linaceae_Ixonanthaceae_1.tre","sub_phylo_Phyllanthaceae_Picodendraceae_Linaceae_Ixonanthaceae_2.tre","sub_phylo_Phyllanthaceae_Picodendraceae_Linaceae_Ixonanthaceae_3.tre",
-                     "sub_phylo_Plantaginaceae_1.tre","sub_phylo_Plantaginaceae_2.tre","sub_phylo_Plantaginaceae_3.tre","sub_phylo_Poaceae_1.tre","sub_phylo_Poaceae_2.tre","sub_phylo_Poaceae_3.tre","sub_phylo_Poaceae_4.tre",
-                     "sub_phylo_Poaceae_5.tre","sub_phylo_Poaceae_6.tre","sub_phylo_Poaceae_7.tre","sub_phylo_Ranunculaceae_1.tre","sub_phylo_Ranunculaceae_2.tre","sub_phylo_Ranunculaceae_3.tre","sub_phylo_Rosaceae_1.tre","sub_phylo_Rosaceae_2.tre",
-                     "sub_phylo_Rosaceae_3.tre","sub_phylo_Rosaceae_4.tre","sub_phylo_Rosaceae_5.tre","sub_phylo_Rubiaceae_1.tre","sub_phylo_Rubiaceae_2.tre","sub_phylo_Rubiaceae_3.tre",]
-
-
-# Orders that are removed as they are too small: Alismatales, Amborellales, Petrosaviales, Trochodendrales, Vahliales
-
-percentages =["0.1"]
-
-
-# Orders that I need to remove or join with their sister order because they are too small in my tree. 
-# Amborellales
-# Trochodendrales
-# Vahliales # Could maybe join with Saxifragales
-# Petrosaviales # Could maybe join with Liliales
-# Ceratophyllales
-# Ginkgoales is removed
-
-#####################################################################################################################################################################
-##################################################################--- Esse on Orders  ---############################################################################
-#####################################################################################################################################################################
-
-
-for i in range(len(orders)):
-#Running the script to find the environmental data for the tips in the trees
-    gwf.target_from_template(name = orders[i]+"_distribution_data.",
-                                template=Finding_areas_in_wcvp(
-                                input_file_tree= "pruned_tree_order_"+orders[i]+"_GBMB.tre",
-                                path_in =  workflow_dir+"02_adding_orders/pruning/orders/",
-                                path_out = workflow_dir+"03_distribution_data/",
-                                output_file = orders[i]+"_distribution_data.txt",
-                                wcvp_file = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds",
-                                order = orders[i],
-                                script_dir= script_dir,
-                                apg = script_dir+"apgweb_parsed.csv",
-                                done_dir= done_dir,
-                                done= orders[i]+"_distribution_data",
-                                renamed_occurrences = workflow_dir+"01_distribution_data/06_Renamed/gbif_renamed.rds", 
-                                koppen_biome = script_dir+"koppen_geiger_0p01.tif"
-                                ))
-    
-    for j in range(len(percentages)):
-        gwf.target_from_template(name = orders[i]+"_states_converter_"+percentages[j],
-                                template=states_converter(
-                                path_in= workflow_dir+"03_distribution_data/",
-                                tip_states_file= workflow_dir+"03_distribution_data/"+orders[i]+"_distribution_data.txt",
-                                out_states_file= workflow_dir+"03_distribution_data/"+orders[i]+"_states_"+percentages[j]+".txt",
-                                script_dir= script_dir,
-                                done_dir= done_dir,
-                                done= "States_converter_"+orders[i]+"_"+percentages[j]+"",
-                                percentage_for_present= percentages[j]
-                                ))
-        
-        gwf.target_from_template(name = orders[i]+"_Sampling_fraction",
-                             template = sampling_frequency(
-                                    input_file_tree= "pruned_tree_order_"+orders[i]+"_GBMB.tre",
-                                    path_in =  workflow_dir+"02_adding_orders/pruning/orders/",
-                                    path_out = workflow_dir+"03_distribution_data/",
-                                    output_file = orders[i]+"_sampling_fraction.txt",
-                                    wcvp_file = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds",
-                                    order = orders[i],
-                                    script_dir= script_dir,
-                                    apg = script_dir+"apgweb_parsed.csv",
-                                    done_dir= done_dir,
-                                    done= orders[i]+"_Sampling_fraction"
-                             ))
-        
-
-        gwf.target_from_template(name = orders[i]+"_Tip_removal",
-                                    template = rem_tips(
-                                    input_file_tree = "pruned_tree_order_"+orders[i]+"_GBMB.tre",
-                                    distribution_file= workflow_dir+"03_distribution_data/"+orders[i]+"_states_"+percentages[j]+".txt",
-                                    output_file = orders[i]+"_Esse_tree.tre",
-                                    path_in = workflow_dir+"02_adding_orders/pruning/orders/",
-                                    order = orders[i],
-                                    script_dir= script_dir,
-                                    done_dir= done_dir,
-                                    done= "Tip_removal"+orders[i]
-                                    ))
-        
-        gwf.target_from_template(name = orders[i]+"_Esse_Hidden_States_"+percentages[j],
-                                    template = Esse(
-                                    tree_file = orders[i]+"_Esse_tree.tre", # Input tree
-                                    tip_states_file = workflow_dir+"03_distribution_data/"+orders[i]+"_states_"+percentages[j]+".txt", 
-                                    paleo_clim_file = data_dir+"paleoclim_area.txt", # File with paleoclimatic variables
-                                    done = orders[i]+"_Esse",
-                                    path_in = workflow_dir+"02_adding_orders/pruning/orders/",
-                                    save_file = "Esse_output_"+orders[i]+"_"+percentages[j]+".jld2",
-                                    script_dir=script_dir,
-                                    done_dir = done_dir,
-                                    out_states_file = "Esse_states_"+orders[i]+"_"+percentages[j], 
-                                    hidden_states = 2,
-                                    out_file = "Esse_output_"+orders[i]+"_hidden_states_"+percentages[j],
-                                    output_folder = workflow_dir+"04_results/Esse_output/",
-                                    path_out = workflow_dir+"04_results/"
-                                 ))
-        
-    
-
-#####################################################################################################################################################################
-########################################################--- ClaDs on Orders with uniform prior  ---##################################################################
-#####################################################################################################################################################################          
+                                "Pinales", "Piperales", "Proteales", "Santalales", "Vitales", "Zygophyllales"]         
 
 for i in range(len(orders_not_in_orders_new_prior)):
     gwf.target_from_template(name = orders_not_in_orders_new_prior[i]+"_ClaDs",
@@ -1780,6 +1677,9 @@ for i in range(len(orders_not_in_orders_new_prior)):
 #####################################################################################################################################################################
 ########################################################--- ClaDs on Orders with calculated Prior ---#################################################################
 #####################################################################################################################################################################
+
+# Orders that need a to be run with a modified prior
+orders_new_prior = ["Solanales"]
     
 gwf.target_from_template(name = "Calculating_priors",
                             template=Calculating_priors(
@@ -1810,6 +1710,27 @@ for i in range(len(orders_new_prior)):
 #####################################################################################################################################################################
 ############################################################--- ClaDs on Order subclades ---#########################################################################
 #####################################################################################################################################################################
+
+# Here is the list of orders that I have had to split into smaller clades to be able to run the ClaDs on them.
+# orders_split_for_clads = ["Zingiberales", "Laurales","Poales","Ranunculales","Rosales","Sapindales","Saxifragales","Myrtales","Malvales","Malpighiales","Lamiales","Gentianales","Fabales",
+# "Ericales", "Apiales","Asterales","Asparagales","Caryophyllales","Arecales","Brassicales"]
+
+# This is the list of Clades resulting from my personal splitting of the orders.
+Clads_clades = ["Aizoaceae_Phytolaccaceae_Barbeuiaceae_Lophiocarpaceae_Gisekiaceae_Sarcobataceae", "Alzateaceae_Crypteroniaceae_Penaeaceae",
+                "Araliaceae","Arecaceae","Asphodelaceae","Balsaminaceae_Marcgraviaceae_Tetrameristaceae","Berberidaceae",
+                "Bignoniaceae","Cactaceae_Molluginaceae_Didiereaceae_Anacompserotaceae_Basellaceae_Montiaceae_Halophytaceae_Portulacaceae_Talinaceae", "Calyceraceae",
+                "Campanulaceae_Rousseaceae","Cannabaceae","Capparaceae","Cercidiphyllaceae_Hamamelidaceae_Daphniphyllaceae_Altingiaceae_Paeoniaceae",
+                "Chrysobalanaceae_Malpighiaceae_Caryocaraceae_Balanopaceae_Elatinaceae_Centroplacaceae_Dichapetalaceae_Putranjivaceae_Euphroniaceae_Lophopyxidaceae_Trigoniaceae","Cleomaceae",
+                "Combretaceae","Costaceae","Crassulaceae_Aphanopetalaceae_Halograceae_Penthoraceae_Tetracarpaeaceae","Dipterocarpaceae_Bixaceae_Cistaceae_Sarcoleanaceae_Muntingiaceae_Sphaerosepalaceae",
+                "Droseraceae_Ancistrocladaceae_Drosophyllaceae_Nepenthaceae_Dioncophyllaceae","Ebenaceae","Ericaceae_Clethraceae_Cyrillaceae","Gentianaceae",
+                "Goodeniaceae","Heliconiaceae_Lowiaceae_Strelitziaceae","Juncaceae","Loganiaceae_Gelsemiaceae","Lythraceae_Onagraceae","Malvaceae","Marantaceae_Cannaceae",
+                "Meliaceae","Menispermaceae","Menyanthaceae","Monimiaceae","Moraceae",
+                "Ochnaceae_Clusiaceae_Erythroxylaceae_Podostemaceae_Bonnetiaceae_Rhizophoraceae_Calophyllaceae_Hypericaceae_Ctenolophonaceae_Irvingiaceae_Pandaceae",
+                "Orobanchaceae_Phrymaceae_Mazaceae_Paulowniaceae","Papaveraceae","Passifloraceae","Pentaphylacaceae_Sladeniaceae",
+                "Pittosporaceae","Plumbaginaceae_Polygonaceae_Frankeniaceae_Tamaricaceae","Polemoniaceae_Lecythidaceae_Fouquieriaceae","Polygalaceae_Surianaceae",
+                "Primulaceae","Resedaceae","Restionaceae","Rhamnaceae_Barbeyaceae_Dirachmaceae_Elaeagnaceae","Rutaceae","Salicaceae_Lacistemataceae","Sapindaceae",
+                "Sapotaceae","Saxifragaceae_Iteaceae_Grossulariaceae","Scrophulariaceae","Simaroubaceae","Styracaceae_Diapensiaceae_Symplocaceae","Theaceae","Thymelaeaceae","Typhaceae","Ulmaceae","Urticaceae",
+                "Verbenaceae_Schlegeliaceae_Lentibulariaceae_Thomandersiaceae","Violaceae_Goupiaceae","Xyridaceae_Eriocaulaceae","Zingiberaceae"]
 
 for i in range(len(Clads_clades)):
     gwf.target_from_template(name = Clads_clades[i]+"_samplingfraction",
@@ -1871,31 +1792,36 @@ for i in range(len(Clads_clades)):
                                 ))
 
 #####################################################################################################################################################################
-############################################################--- ESSE on Order subclades ---#########################################################################
-#####################################################################################################################################################################
-
-
-        
-        # gwf.target_from_template(name = orders[i]+"_Esse_Hidden_States_"+percentages[j],
-        #                             template = Esse(
-        #                             tree_file = "family_phylo_"+orders[i]+"_GBMB.tre", # Input tree
-        #                             tip_states_file = workflow_dir+"03_distribution_data/"+orders[i]+"_states_"+percentages[j]+".txt", 
-        #                             paleo_clim_file = data_dir+"paleoclim_area.txt", # File with paleoclimatic variables
-        #                             done = orders[i]+"_Esse",
-        #                             path_in = workflow_dir+"02_adding_orders/pruning/subset_of_orders/",
-        #                             save_file = "Esse_output_"+orders[i]+"_"+percentages[j]+".jld2",
-        #                             script_dir=script_dir,
-        #                             done_dir = done_dir,
-        #                             out_states_file = "Esse_states_"+orders[i]+"_"+percentages[j], 
-        #                             hidden_states = 2,
-        #                             out_file = "Esse_output_"+orders[i]+"_hidden_states_"+percentages[j],
-        #                             output_folder = workflow_dir+"04_results/Esse_output/",
-        #                             path_out = workflow_dir+"04_results/"
-        #                          ))
-
-#####################################################################################################################################################################
 ############################################################--- ClaDs on family  subclades ---#########################################################################
 #####################################################################################################################################################################
+
+# Families which have been divided further and therefore need to be removed from the Clads_clades list.
+# Amaryllidaceae, Anacardiaceae_Burseraceae_Kirkiaceae, Apiaceae, Apocynaceae, Asparagaceae, Asteraceae,Brassicaceae, Euphorbiaceae, Fabaceae, Lamiaceae, Orchidaceae, Poaceae, Rubiaceae
+# Rosaceae, Ranunculaceae, Plantaginaceae, Phyllanthaceae_Picodendraceae_Linaceae_Ixonanthaceae,Myrtaceae, Lauraceae, Iridaceae, Gesneriaceae_Calceolariaceae, Cyperaceae,
+# Caryophyllaceae_Achatocarpaceae_Amaranthaceae, ,Bromeliaceae, Acanthaceae_Martyniaceae_Pedaliaceae, Melastomataceae,
+
+sub_family_clades = ["sub_phylo_Acanthaceae_Martyniaceae_Pedaliaceae_1.tre","sub_phylo_Acanthaceae_Martyniaceae_Pedaliaceae_2.tre","sub_phylo_Acanthaceae_Martyniaceae_Pedaliaceae_3.tre",
+                     "sub_phylo_Amaryllidaceae_1.tre","sub_phylo_Amaryllidaceae_2.tre","sub_phylo_Anacardiaceae_Burseraceae_Kirkiaceae_1.tre","sub_phylo_Anacardiaceae_Burseraceae_Kirkiaceae_2.tre",
+                     "sub_phylo_Apiaceae_1.tre","sub_phylo_Apiaceae_2.tre","sub_phylo_Apiaceae_3.tre","sub_phylo_Apiaceae_4.tre","sub_phylo_Apiaceae_5.tre","sub_phylo_Apiaceae_6.tre",
+                     "sub_phylo_Apocynaceae_1.tre","sub_phylo_Apocynaceae_2.tre","sub_phylo_Apocynaceae_3.tre","sub_phylo_Apocynaceae_4.tre","sub_phylo_Asparagaceae_1.tre","sub_phylo_Asparagaceae_2.tre",
+                     "sub_phylo_Asparagaceae_3.tre","sub_phylo_Asteraceae_10.tre","sub_phylo_Asteraceae_11.tre","sub_phylo_Asteraceae_12.tre","sub_phylo_Asteraceae_13.tre","sub_phylo_Asteraceae_1.tre",
+                     "sub_phylo_Asteraceae_2.tre","sub_phylo_Asteraceae_3.tre","sub_phylo_Asteraceae_4.tre","sub_phylo_Asteraceae_5.tre","sub_phylo_Asteraceae_6.tre","sub_phylo_Asteraceae_7.tre","sub_phylo_Asteraceae_8.tre",
+                     "sub_phylo_Asteraceae_9.tre","sub_phylo_Brassicaceae_1.tre","sub_phylo_Brassicaceae_2.tre","sub_phylo_Brassicaceae_3.tre","sub_phylo_Brassicaceae_4.tre","sub_phylo_Bromeliaceae_1.tre","sub_phylo_Bromeliaceae_2.tre",
+                     "sub_phylo_Caryophyllaceae_Achatocarpaceae_Amaranthaceae_1.tre","sub_phylo_Caryophyllaceae_Achatocarpaceae_Amaranthaceae_2.tre","sub_phylo_Cyperaceae_1.tre","sub_phylo_Cyperaceae_2.tre","sub_phylo_Cyperaceae_3.tre",
+                     "sub_phylo_Euphorbiaceae_1.tre","sub_phylo_Euphorbiaceae_2.tre","sub_phylo_Euphorbiaceae_3.tre","sub_phylo_Fabaceae_10.tre","sub_phylo_Fabaceae_11.tre","sub_phylo_Fabaceae_12.tre","sub_phylo_Fabaceae_13.tre","sub_phylo_Fabaceae_1.tre",
+                     "sub_phylo_Fabaceae_2.tre","sub_phylo_Fabaceae_3.tre","sub_phylo_Fabaceae_4.tre","sub_phylo_Fabaceae_5.tre","sub_phylo_Fabaceae_6.tre","sub_phylo_Fabaceae_7.tre","sub_phylo_Fabaceae_8.tre","sub_phylo_Fabaceae_9.tre",
+                     "sub_phylo_Gesneriaceae_Calceolariaceae_1.tre","sub_phylo_Gesneriaceae_Calceolariaceae_2.tre","sub_phylo_Iridaceae_1.tre","sub_phylo_Iridaceae_2.tre","sub_phylo_Lamiaceae_1.tre","sub_phylo_Lamiaceae_2.tre","sub_phylo_Lamiaceae_3.tre",
+                     "sub_phylo_Lamiaceae_4.tre","sub_phylo_Lamiaceae_5.tre","sub_phylo_Lamiaceae_6.tre","sub_phylo_Lamiaceae_7.tre","sub_phylo_Lauraceae_1.tre","sub_phylo_Lauraceae_2.tre","sub_phylo_Melastomataceae_1.tre",
+                     "sub_phylo_Melastomataceae_2.tre","sub_phylo_Myrtaceae_1.tre","sub_phylo_Myrtaceae_2.tre","sub_phylo_Myrtaceae_3.tre","sub_phylo_Orchidaceae_10.tre","sub_phylo_Orchidaceae_11.tre","sub_phylo_Orchidaceae_12.tre",
+                     "sub_phylo_Orchidaceae_13.tre","sub_phylo_Orchidaceae_14.tre","sub_phylo_Orchidaceae_15.tre","sub_phylo_Orchidaceae_16.tre","sub_phylo_Orchidaceae_1.tre","sub_phylo_Orchidaceae_2.tre","sub_phylo_Orchidaceae_3.tre",
+                     "sub_phylo_Orchidaceae_4.tre","sub_phylo_Orchidaceae_5.tre","sub_phylo_Orchidaceae_6.tre","sub_phylo_Orchidaceae_7.tre","sub_phylo_Orchidaceae_8.tre","sub_phylo_Orchidaceae_9.tre",
+                     "sub_phylo_Phyllanthaceae_Picodendraceae_Linaceae_Ixonanthaceae_1.tre","sub_phylo_Phyllanthaceae_Picodendraceae_Linaceae_Ixonanthaceae_2.tre","sub_phylo_Phyllanthaceae_Picodendraceae_Linaceae_Ixonanthaceae_3.tre",
+                     "sub_phylo_Plantaginaceae_1.tre","sub_phylo_Plantaginaceae_2.tre","sub_phylo_Plantaginaceae_3.tre","sub_phylo_Poaceae_1.tre","sub_phylo_Poaceae_2.tre","sub_phylo_Poaceae_3.tre","sub_phylo_Poaceae_4.tre",
+                     "sub_phylo_Poaceae_5.tre","sub_phylo_Poaceae_6.tre","sub_phylo_Poaceae_7.tre","sub_phylo_Ranunculaceae_1.tre","sub_phylo_Ranunculaceae_2.tre","sub_phylo_Ranunculaceae_3.tre","sub_phylo_Rosaceae_1.tre","sub_phylo_Rosaceae_2.tre",
+                     "sub_phylo_Rosaceae_3.tre","sub_phylo_Rosaceae_4.tre","sub_phylo_Rosaceae_5.tre","sub_phylo_Rubiaceae_1.tre","sub_phylo_Rubiaceae_2.tre","sub_phylo_Rubiaceae_3.tre",]
+
+
+# Orders that are removed as they are too small: Alismatales, Amborellales, Petrosaviales, Trochodendrales, Vahliales
 
 for k in range(len(sub_family_clades)):
     gwf.target_from_template(name = sub_family_clades[k]+"_samplingfraction",
@@ -1957,14 +1883,505 @@ for k in range(len(sub_family_clades)):
                                 percentage_for_present= percentages[j]
                                 ))
 
+#####################################################################################################################################################################
+############################################################--- ESSE on family  subclades ---########################################################################
+#####################################################################################################################################################################
+# All Possible orders
+orders = ["Alismatales", "Apiales", "Aquifoliales", "Arecales", "Asparagales", "Asterales","Berberidopsidales", "Boraginales", "Brassicales", "Bruniales", "Buxales", "Canellales", "Caryophyllales",
+"Celastrales", "Chloranthales", "Commelinales", "Cornales", "Crossosomatales", "Cucurbitales", "Cupressales", "Dilleniales", "Dioscoreales", "Ericales", "Escalloniales", "Fabales", "Fagales",
+"Gentianales", "Geraniales", "Gnetales", "Gunnerales", "Huerteales", "Icacinales", "Lamiales", "Laurales", "Liliales", "Magnoliales", "Malpighiales", "Malvales", "Metteniusales",
+"Myrtales", "Nymphaeales", "Oxalidales", "Pandanales", "Paracryphiales", "Pinales", "Piperales", "Poales", "Proteales", "Ranunculales", "Rosales", "Santalales", "Sapindales",
+"Saxifragales", "Solanales", "Vahliales", "Vitales", "Zingiberales", "Zygophyllales"
+]
+
+###############################################################################################################################################################
+#################################################################--- Esse  Runs ---############################################################################
+###############################################################################################################################################################
+
+percentages =["0.3"]
+
+###############################################################################################################################################################
+#############################################---  Running ESSE on the orders which can finish in a week ---####################################################
+###############################################################################################################################################################
+# Orders that ran with the uniform prior 
+orders_not_in_orders_new_prior = ["Arecales","Buxales","Canellales","Celastrales","Commelinales", "Cornales", "Crossosomatales",
+                                "Cupressales", "Escalloniales", "Fagales","Geraniales","Gnetales","Huerteales","Icacinales","Malvales","Metteniusales", "Nymphaeales","Oxalidales", "Pandanales",
+                                "Pinales", "Piperales", "Proteales", "Zygophyllales"]
+
+for i in range(len(orders_not_in_orders_new_prior)):
+            gwf.target_from_template(name = orders_not_in_orders_new_prior[i]+"_distribution_data.",
+                                template=Finding_areas_in_wcvp(
+                                input_file_tree= "pruned_tree_order_"+orders_not_in_orders_new_prior[i]+"_GBMB.tre",
+                                path_in =  workflow_dir+"02_adding_orders/pruning/orders/",
+                                path_out = workflow_dir+"03_distribution_data/",
+                                output_file = orders_not_in_orders_new_prior[i]+"_distribution_data.txt",
+                                wcvp_file = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds",
+                                order = orders_not_in_orders_new_prior[i],
+                                script_dir= script_dir,
+                                apg = script_dir+"apgweb_parsed.csv",
+                                done_dir= done_dir,
+                                done= orders_not_in_orders_new_prior[i]+"_distribution_data",
+                                renamed_occurrences = workflow_dir+"01_distribution_data/06_Renamed/gbif_renamed.rds", 
+                                koppen_biome = script_dir+"koppen_geiger_0p01.tif"
+                                ))
+            
+            for j in range(len(percentages)):
+
+                gwf.target_from_template(name = orders_not_in_orders_new_prior[i]+"_states_converter_"+percentages[j],
+                                        template=states_converter(
+                                        path_in= workflow_dir+"03_distribution_data/",
+                                        tip_states_file= workflow_dir+"03_distribution_data/"+orders_not_in_orders_new_prior[i]+"_distribution_data.txt",
+                                        out_states_file= workflow_dir+"03_distribution_data/"+orders_not_in_orders_new_prior[i]+"_states_"+percentages[j]+".txt",
+                                        script_dir= script_dir,
+                                        done_dir= done_dir,
+                                        done= "States_converter_"+orders_not_in_orders_new_prior[i]+"_"+percentages[j]+"",
+                                        percentage_for_present= percentages[j]
+                                        ))
+        
+                gwf.target_from_template(name = orders_not_in_orders_new_prior[i]+"_Sampling_fraction",
+                                     template = sampling_frequency(
+                                            input_file_tree= "pruned_tree_order_"+orders_not_in_orders_new_prior[i]+"_GBMB.tre",
+                                            path_in =  workflow_dir+"02_adding_orders/pruning/orders/",
+                                            path_out = workflow_dir+"03_distribution_data/",
+                                            output_file = orders_not_in_orders_new_prior[i]+"_sampling_fraction.txt",
+                                            wcvp_file = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds",
+                                            order = orders_not_in_orders_new_prior[i],
+                                            script_dir= script_dir,
+                                            apg = script_dir+"apgweb_parsed.csv",
+                                            done_dir= done_dir,
+                                            done= orders_not_in_orders_new_prior[i]+"_Sampling_fraction"
+                                     ))
+        
+                gwf.target_from_template(name = orders_not_in_orders_new_prior[i]+"_Tip_removal",
+                                            template = rem_tips(
+                                            input_file_tree = "pruned_tree_order_"+orders_not_in_orders_new_prior[i]+"_GBMB.tre",
+                                            distribution_file= workflow_dir+"03_distribution_data/"+orders_not_in_orders_new_prior[i]+"_states_"+percentages[j]+".txt",
+                                            output_file = orders_not_in_orders_new_prior[i]+"_Esse_tree.tre",
+                                            path_in = workflow_dir+"02_adding_orders/pruning/orders/",
+                                            order = orders_not_in_orders_new_prior[i],
+                                            script_dir= script_dir,
+                                            done_dir= done_dir,
+                                            done= "Tip_removal"+orders_not_in_orders_new_prior[i]
+                                            ))
+                
+                gwf.target_from_template(name = orders[i]+"_Biome_sampling_fraction.",
+                                            template=sampling_frequency_per_biome(
+                                            input_file_tree= "pruned_tree_order_"+orders[i]+"_GBMB.tre",
+                                            path_in =  workflow_dir+"02_adding_orders/pruning/orders/",
+                                            path_out = workflow_dir+"03_distribution_data/",
+                                            output_file = orders[i]+"_biome_sampling_fraction.txt",
+                                            wcvp_file = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds",
+                                            order = orders[i],
+                                            script_dir= script_dir,
+                                            apg = script_dir+"apgweb_parsed.csv",
+                                            done_dir= done_dir,
+                                            done= orders[i]+"_biome_sampling_fraction",
+                                            renamed_occurrences = workflow_dir+"01_distribution_data/06_Renamed/gbif_renamed.rds", 
+                                            koppen_biome = script_dir+"koppen_geiger_0p01.tif",
+                                            percentage= percentages[j]
+                                            ))
+
+                gwf.target_from_template(name = orders_not_in_orders_new_prior[i]+"_Esse",
+                                            template = Esse(
+                                            tree_file = orders_not_in_orders_new_prior[i]+"_Esse_tree.tre", # Input tree
+                                            tip_states_file = workflow_dir+"03_distribution_data/"+orders_not_in_orders_new_prior[i]+"_states_"+percentages[j]+".txt", 
+                                            paleo_clim_file = data_dir+"paleoclim_area.txt", # File with paleoclimatic variables
+                                            done = orders_not_in_orders_new_prior[i]+"_Esse",
+                                            path_in = workflow_dir+"02_adding_orders/pruning/orders/",
+                                            save_file = "Esse_output_"+orders_not_in_orders_new_prior[i]+"_"+percentages[j]+".jld2",
+                                            script_dir=script_dir,
+                                            done_dir = done_dir,
+                                            out_states_file = "Esse_states_"+orders_not_in_orders_new_prior[i]+"_"+percentages[j], 
+                                            hidden_states = 0,
+                                            out_file = "Esse_output_"+orders_not_in_orders_new_prior[i]+"_hidden_states_"+percentages[j],
+                                            output_folder = workflow_dir+"04_results/Esse_output/",
+                                            path_out = workflow_dir+"04_results/"
+                                         ))
+        
+###############################################################################################################################################################
+#######################################################---  Running ESSE on the esse_clades ---################################################################
+###############################################################################################################################################################
+
+# This is the list of Clades resulting from my personal splitting of the orders. ( Here I need to remove)
+esse_clades = ["Aizoaceae_Phytolaccaceae_Barbeuiaceae_Lophiocarpaceae_Gisekiaceae_Sarcobataceae", # Caryophyllales
+                "Alzateaceae_Crypteroniaceae_Penaeaceae", # Myrtales
+                "Araliaceae", # Apiales
+                "Asphodelaceae", # Asparagales
+                "Balsaminaceae_Marcgraviaceae_Tetrameristaceae", # Ericales
+                "Berberidaceae", # Ranunculales
+                "Bignoniaceae", # Lamiales
+                "Cactaceae_Molluginaceae_Didiereaceae_Anacompserotaceae_Basellaceae_Montiaceae_Halophytaceae_Portulacaceae_Talinaceae", # Caryophyllales
+                "Calyceraceae",  # Asterales
+                "Campanulaceae_Rousseaceae", # Asterales
+                "Cannabaceae", # Rosales
+                "Capparaceae", # Brassicales
+                "Cercidiphyllaceae_Hamamelidaceae_Daphniphyllaceae_Altingiaceae_Paeoniaceae", # Saxifragales
+                "Chrysobalanaceae_Malpighiaceae_Caryocaraceae_Balanopaceae_Elatinaceae_Centroplacaceae_Dichapetalaceae_Putranjivaceae_Euphroniaceae_Lophopyxidaceae_Trigoniaceae", # Malpighiales
+                "Cleomaceae", # Brassicales
+                "Combretaceae", # Myrtales
+                "Crassulaceae_Aphanopetalaceae_Halograceae_Penthoraceae_Tetracarpaeaceae", # Saxifragales
+                "Dipterocarpaceae_Bixaceae_Cistaceae_Sarcoleanaceae_Muntingiaceae_Sphaerosepalaceae", # Malvales
+                "Droseraceae_Ancistrocladaceae_Drosophyllaceae_Nepenthaceae_Dioncophyllaceae", # Caryophyllales
+                "Ebenaceae", # Ericales
+                "Ericaceae_Clethraceae_Cyrillaceae", # Ericales
+                "Gentianaceae", # Gentianales
+                "Goodeniaceae", # Asterales
+                "Juncaceae", # Poales
+                "Loganiaceae_Gelsemiaceae", # Gentianales
+                "Lythraceae_Onagraceae", # Myrtales
+                "Malvaceae", # Malvales
+                "Meliaceae", # Sapindales
+                "Menispermaceae", # Ranunculales
+                "Menyanthaceae", # Asterales
+                "Monimiaceae", # Laurales
+                "Moraceae", # Rosales
+                "Ochnaceae_Clusiaceae_Erythroxylaceae_Podostemaceae_Bonnetiaceae_Rhizophoraceae_Calophyllaceae_Hypericaceae_Ctenolophonaceae_Irvingiaceae_Pandaceae", # Malpighiales
+                "Orobanchaceae_Phrymaceae_Mazaceae_Paulowniaceae", # Lamiales
+                "Papaveraceae", # Ranunculales
+                "Passifloraceae", # Malpighiales
+                "Pentaphylacaceae_Sladeniaceae", # Ericales
+                "Pittosporaceae", # Apiales
+                "Plumbaginaceae_Polygonaceae_Frankeniaceae_Tamaricaceae", # Caryophyllales
+                "Polemoniaceae_Lecythidaceae_Fouquieriaceae", # Ericales
+                "Polygalaceae_Surianaceae", # Fabales
+                "Primulaceae", # Ericales
+                "Resedaceae", # Brassicales
+                "Restionaceae", # Poales
+                "Rhamnaceae_Barbeyaceae_Dirachmaceae_Elaeagnaceae", # Rosales
+                "Rutaceae", # Sapindales
+                "Salicaceae_Lacistemataceae", # Malpighiales
+                "Sapindaceae", # Sapindales
+                "Sapotaceae", # Ericales
+                "Saxifragaceae_Iteaceae_Grossulariaceae", # Saxifragales
+                "Scrophulariaceae", # Lamiales
+                "Simaroubaceae", # Sapindales
+                "Styracaceae_Diapensiaceae_Symplocaceae", # Ericales
+                "Theaceae", # Ericales
+                "Thymelaeaceae", # Malvales
+                "Typhaceae", # Poales
+                "Ulmaceae", # Rosales
+                "Urticaceae", # Rosales
+                "Verbenaceae_Schlegeliaceae_Lentibulariaceae_Thomandersiaceae", # Lamiales
+                "Violaceae_Goupiaceae", # Malpighiales
+                "Xyridaceae_Eriocaulaceae", # Poales
+                ]
+
+for i in range(len(esse_clades)):
+                gwf.target_from_template(name = esse_clades[i]+"_distribution_data.",
+                                            template=Finding_areas_in_wcvp(
+                                            input_file_tree= "pruned_tree_family_"+esse_clades[i]+"_GBMB.tre",
+                                            path_in =  workflow_dir+"02_adding_orders/pruning/families/",
+                                            path_out = workflow_dir+"03_distribution_data/",
+                                            output_file = esse_clades[i]+"_distribution_data.txt",
+                                            wcvp_file = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds",
+                                            order = esse_clades[i],
+                                            script_dir= script_dir,
+                                            apg = script_dir+"apgweb_parsed.csv",
+                                            done_dir= done_dir,
+                                            done= esse_clades[i]+"_distribution_data",
+                                            renamed_occurrences = workflow_dir+"01_distribution_data/06_Renamed/gbif_renamed.rds", 
+                                            koppen_biome = script_dir+"koppen_geiger_0p01.tif"
+                                            ))
+
+                for j in range(len(percentages)):
+                    gwf.target_from_template(name = esse_clades[i]+"_states_converter_"+percentages[j],
+                                            template=states_converter(
+                                            path_in= workflow_dir+"03_distribution_data/",
+                                            tip_states_file= workflow_dir+"03_distribution_data/"+esse_clades[i]+"_distribution_data.txt",
+                                            out_states_file= workflow_dir+"03_distribution_data/"+esse_clades[i]+"_states_"+percentages[j]+".txt",
+                                            script_dir= script_dir,
+                                            done_dir= done_dir,
+                                            done= "States_converter_"+esse_clades[i]+"_"+percentages[j]+"",
+                                            percentage_for_present= percentages[j]
+                                            ))
+
+                    gwf.target_from_template(name = esse_clades[i]+"_Sampling_fraction",
+                                         template = sampling_frequency(
+                                                input_file_tree= "pruned_tree_family_"+esse_clades[i]+"_GBMB.tre",
+                                                path_in =  workflow_dir+"02_adding_orders/pruning/families/",
+                                                path_out = workflow_dir+"03_distribution_data/",
+                                                output_file = esse_clades[i]+"_sampling_fraction.txt",
+                                                wcvp_file = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds",
+                                                order = esse_clades[i],
+                                                script_dir= script_dir,
+                                                apg = script_dir+"apgweb_parsed.csv",
+                                                done_dir= done_dir,
+                                                done= esse_clades[i]+"_Sampling_fraction"
+                                         ))
 
 
+                    gwf.target_from_template(name = esse_clades[i]+"_Tip_removal",
+                                                template = rem_tips(
+                                                input_file_tree = "pruned_tree_family_"+esse_clades[i]+"_GBMB.tre",
+                                                distribution_file= workflow_dir+"03_distribution_data/"+esse_clades[i]+"_states_"+percentages[j]+".txt",
+                                                output_file = esse_clades[i]+"_Esse_tree.tre",
+                                                path_in = workflow_dir+"02_adding_orders/pruning/families/",
+                                                order = esse_clades[i],
+                                                script_dir= script_dir,
+                                                done_dir= done_dir,
+                                                done= "Tip_removal"+esse_clades[i]
+                                                ))
+                    
+                    gwf.target_from_template(name = esse_clades[i]+"_Biome_sampling_fraction.",
+                                                template=sampling_frequency_per_biome(
+                                                input_file_tree= "pruned_tree_family_"+esse_clades[i]+"_GBMB.tre",
+                                                path_in =  workflow_dir+"02_adding_orders/pruning/families/",
+                                                path_out = workflow_dir+"03_distribution_data/",
+                                                output_file = esse_clades[i]+"_biome_sampling_fraction.txt",
+                                                wcvp_file = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds",
+                                                order = esse_clades[i],
+                                                script_dir= script_dir,
+                                                apg = script_dir+"apgweb_parsed.csv",
+                                                done_dir= done_dir,
+                                                done= esse_clades[i]+"_biome_sampling_fraction",
+                                                renamed_occurrences = workflow_dir+"01_distribution_data/06_Renamed/gbif_renamed.rds", 
+                                                koppen_biome = script_dir+"koppen_geiger_0p01.tif",
+                                                percentage= percentages[j]
+                                                ))
+
+                    gwf.target_from_template(name = esse_clades[i]+"_Esse",
+                                                template = Esse(
+                                                tree_file = esse_clades[i]+"_Esse_tree.tre", # Input tree
+                                                tip_states_file = workflow_dir+"03_distribution_data/"+esse_clades[i]+"_states_"+percentages[j]+".txt", 
+                                                paleo_clim_file = data_dir+"paleoclim_area.txt", # File with paleoclimatic variables
+                                                done = esse_clades[i]+"_Esse",
+                                                path_in = workflow_dir+"02_adding_orders/pruning/orders/",
+                                                save_file = "Esse_output_"+esse_clades[i]+"_"+percentages[j]+".jld2",
+                                                script_dir=script_dir,
+                                                done_dir = done_dir,
+                                                out_states_file = "Esse_states_"+esse_clades[i]+"_"+percentages[j], 
+                                                hidden_states = 0,
+                                                out_file = "Esse_output_"+esse_clades[i]+"_hidden_states_"+percentages[j],
+                                                output_folder = workflow_dir+"04_results/Esse_output/",
+                                                path_out = workflow_dir+"04_results/"
+                                             ))
 
 
+###############################################################################################################################################################
+###################################################---  Running ESSE on the sub_family_clades ---##############################################################
+###############################################################################################################################################################
 
-# Random old parts of the code that I am saving for one reason or another.
+# Families which have been divided further and therefore need to be removed from the Clads_clades list.
+# Amaryllidaceae, Anacardiaceae_Burseraceae_Kirkiaceae, Apiaceae, Apocynaceae, Asparagaceae, Asteraceae,Brassicaceae, Euphorbiaceae, Fabaceae, Lamiaceae, Orchidaceae, Poaceae, Rubiaceae
+# Rosaceae, Ranunculaceae, Plantaginaceae, Phyllanthaceae_Picodendraceae_Linaceae_Ixonanthaceae,Myrtaceae, Lauraceae, Iridaceae, Gesneriaceae_Calceolariaceae, Cyperaceae,
+# Caryophyllaceae_Achatocarpaceae_Amaranthaceae, ,Bromeliaceae, Acanthaceae_Martyniaceae_Pedaliaceae, Melastomataceae,
 
-# I find the list of trees again, or somehow change the scripts so they print all the good trees into a single folder where I can just run the script on all of them.
+sub_family_clades = ["Acanthaceae_Martyniaceae_Pedaliaceae_1",
+                     "Acanthaceae_Martyniaceae_Pedaliaceae_2",
+                     "Acanthaceae_Martyniaceae_Pedaliaceae_3",
+                     "Amaryllidaceae_1",
+                     "Amaryllidaceae_2",
+                     "Anacardiaceae_Burseraceae_Kirkiaceae_1",
+                     "Anacardiaceae_Burseraceae_Kirkiaceae_2",
+                     "Apiaceae_1","Apiaceae_2",
+                     "Apiaceae_3",
+                     "Apiaceae_4",
+                     "Apiaceae_5",
+                     "Apiaceae_6",
+                     "Apocynaceae_1",
+                     "Apocynaceae_2",
+                     "Apocynaceae_3",
+                     "Apocynaceae_4",
+                     "Asparagaceae_1",
+                     "Asparagaceae_2",
+                     "Asparagaceae_3",
+                     "Asteraceae_10",
+                     "Asteraceae_11",
+                     "Asteraceae_12",
+                     "Asteraceae_13",
+                     "Asteraceae_1",
+                     "Asteraceae_2",
+                     "Asteraceae_3",
+                     "Asteraceae_4",
+                     "Asteraceae_5",
+                     "Asteraceae_6",
+                     "Asteraceae_7",
+                     "Asteraceae_8",
+                     "Asteraceae_9",
+                     "Brassicaceae_1",
+                     "Brassicaceae_2",
+                     "Brassicaceae_3",
+                     "Brassicaceae_4",
+                     "Bromeliaceae_1",
+                     "Bromeliaceae_2",
+                     "Caryophyllaceae_Achatocarpaceae_Amaranthaceae_1",
+                     "Caryophyllaceae_Achatocarpaceae_Amaranthaceae_2",
+                     "Cyperaceae_1",
+                     "Cyperaceae_2",
+                     "Cyperaceae_3",
+                     "Euphorbiaceae_1",
+                     "Euphorbiaceae_2",
+                     "Euphorbiaceae_3",
+                     "Fabaceae_10",
+                     "Fabaceae_11",
+                     "Fabaceae_12",
+                     "Fabaceae_13",
+                     "Fabaceae_1",
+                     "Fabaceae_2",
+                     "Fabaceae_3",
+                     "Fabaceae_4",
+                     "Fabaceae_5",
+                     "Fabaceae_6",
+                     "Fabaceae_7",
+                     "Fabaceae_8",
+                     "Fabaceae_9",
+                     "Gesneriaceae_Calceolariaceae_1",
+                     "Gesneriaceae_Calceolariaceae_2",
+                     "Iridaceae_1",
+                     "Iridaceae_2",
+                     "Lamiaceae_1",
+                     "Lamiaceae_2",
+                     "Lamiaceae_3",
+                     "Lamiaceae_4",
+                     "Lamiaceae_5",
+                     "Lamiaceae_6",
+                     "Lamiaceae_7",
+                     "Lauraceae_1",
+                     "Lauraceae_2",
+                     "Melastomataceae_1",
+                     "Melastomataceae_2",
+                     "Myrtaceae_1",
+                     "Myrtaceae_2",
+                     "Myrtaceae_3",
+                     "Orchidaceae_10",
+                     "Orchidaceae_11",
+                     "Orchidaceae_12",
+                     "Orchidaceae_13",
+                     "Orchidaceae_14",
+                     "Orchidaceae_15",
+                     "Orchidaceae_16",
+                     "Orchidaceae_1",
+                     "Orchidaceae_2",
+                     "Orchidaceae_3",
+                     "Orchidaceae_4",
+                     "Orchidaceae_5",
+                     "Orchidaceae_6",
+                     "Orchidaceae_7",
+                     "Orchidaceae_8",
+                     "Orchidaceae_9",
+                     "Phyllanthaceae_Picodendraceae_Linaceae_Ixonanthaceae_1",
+                     "Phyllanthaceae_Picodendraceae_Linaceae_Ixonanthaceae_2",
+                     "Phyllanthaceae_Picodendraceae_Linaceae_Ixonanthaceae_3",
+                     "Plantaginaceae_1",
+                     "Plantaginaceae_2",
+                     "Plantaginaceae_3",
+                     "Poaceae_1",
+                     "Poaceae_2",
+                     "Poaceae_3",
+                     "Poaceae_4",
+                     "Poaceae_5",
+                     "Poaceae_6",
+                     "Poaceae_7",
+                     "Ranunculaceae_1",
+                     "Ranunculaceae_2",
+                     "Ranunculaceae_3",
+                     "Rosaceae_1",
+                     "Rosaceae_2",
+                     "Rosaceae_3",
+                     "Rosaceae_4",
+                     "Rosaceae_5",
+                     "Rubiaceae_1",
+                     "Rubiaceae_2",
+                     "Rubiaceae_3",
+                     ]
+
+for i in range(len(sub_family_clades)):
+            gwf.target_from_template(name = sub_family_clades[i]+"_distribution_data.",
+                                template=Finding_areas_in_wcvp(
+                                input_file_tree= "sub_phylo_"+sub_family_clades[i]+".tre",
+                                path_in =  workflow_dir+"02_adding_orders/pruning/subset_of_orders/",
+                                path_out = workflow_dir+"03_distribution_data/",
+                                output_file = sub_family_clades[i]+"_distribution_data.txt",
+                                wcvp_file = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds",
+                                order = sub_family_clades[i],
+                                script_dir= script_dir,
+                                apg = script_dir+"apgweb_parsed.csv",
+                                done_dir= done_dir,
+                                done= sub_family_clades[i]+"_distribution_data",
+                                renamed_occurrences = workflow_dir+"01_distribution_data/06_Renamed/gbif_renamed.rds", 
+                                koppen_biome = script_dir+"koppen_geiger_0p01.tif"
+                                ))
+                        
+            for j in range(len(percentages)):
+                    gwf.target_from_template(name = sub_family_clades[i]+"_states_converter_"+percentages[j],
+                                            template=states_converter(
+                                            path_in= workflow_dir+"03_distribution_data/",
+                                            tip_states_file= workflow_dir+"03_distribution_data/"+sub_family_clades[i]+"_distribution_data.txt",
+                                            out_states_file= workflow_dir+"03_distribution_data/"+sub_family_clades[i]+"_states_"+percentages[j]+".txt",
+                                            script_dir= script_dir,
+                                            done_dir= done_dir,
+                                            done= "States_converter_"+sub_family_clades[i]+"_"+percentages[j]+"",
+                                            percentage_for_present= percentages[j]
+                                            ))
+                    
+                    gwf.target_from_template(name = sub_family_clades[i]+"_Sampling_fraction",
+                                         template = sampling_frequency(
+                                                input_file_tree= "sub_phylo_"+sub_family_clades[i]+".tre",
+                                                path_in =  workflow_dir+"02_adding_orders/pruning/subset_of_orders/",
+                                                path_out = workflow_dir+"03_distribution_data/",
+                                                output_file = sub_family_clades[i]+"_sampling_fraction.txt",
+                                                wcvp_file = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds",
+                                                order = sub_family_clades[i],
+                                                script_dir= script_dir,
+                                                apg = script_dir+"apgweb_parsed.csv",
+                                                done_dir= done_dir,
+                                                done= sub_family_clades[i]+"_Sampling_fraction"
+                                         ))
+                    
+            
+                    gwf.target_from_template(name = sub_family_clades[i]+"_Tip_removal",
+                                                template = rem_tips(
+                                                input_file_tree = "sub_phylo_"+sub_family_clades[i]+".tre",
+                                                distribution_file= workflow_dir+"03_distribution_data/"+sub_family_clades[i]+"_states_"+percentages[j]+".txt",
+                                                output_file = sub_family_clades[i]+"_Esse_tree.tre",
+                                                path_in = workflow_dir+"02_adding_orders/pruning/subset_of_orders/",
+                                                order = sub_family_clades[i],
+                                                script_dir= script_dir,
+                                                done_dir= done_dir,
+                                                done= "Tip_removal"+sub_family_clades[i]
+                                                ))
+                    
+                    gwf.target_from_template(name = sub_family_clades[i]+"_Biome_sampling_fraction.",
+                                                template=sampling_frequency_per_biome(
+                                                input_file_tree= "sub_phylo_"+sub_family_clades[i]+".tre",
+                                                path_in =  workflow_dir+"02_adding_orders/pruning/subset_of_orders/",
+                                                path_out = workflow_dir+"03_distribution_data/",
+                                                output_file = sub_family_clades[i]+"_biome_sampling_fraction.txt",
+                                                wcvp_file = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds",
+                                                order = sub_family_clades[i],
+                                                script_dir= script_dir,
+                                                apg = script_dir+"apgweb_parsed.csv",
+                                                done_dir= done_dir,
+                                                done= sub_family_clades[i]+"_biome_sampling_fraction",
+                                                renamed_occurrences = workflow_dir+"01_distribution_data/06_Renamed/gbif_renamed.rds", 
+                                                koppen_biome = script_dir+"koppen_geiger_0p01.tif",
+                                                percentage= percentages[j]
+                                                ))
+                        
+                    gwf.target_from_template(name = sub_family_clades[i]+"_Esse",
+                                                template = Esse(
+                                                tree_file = sub_family_clades[i]+"_Esse_tree.tre", # Input tree
+                                                tip_states_file = workflow_dir+"03_distribution_data/"+sub_family_clades[i]+"_states_"+percentages[j]+".txt", 
+                                                paleo_clim_file = data_dir+"paleoclim_area.txt", # File with paleoclimatic variables
+                                                done = sub_family_clades[i]+"_Esse",
+                                                path_in = workflow_dir+"02_adding_orders/pruning/orders/",
+                                                save_file = "Esse_output_"+sub_family_clades[i]+"_"+percentages[j]+".jld2",
+                                                script_dir=script_dir,
+                                                done_dir = done_dir,
+                                                out_states_file = "Esse_states_"+sub_family_clades[i]+"_"+percentages[j], 
+                                                hidden_states = 0,
+                                                out_file = "Esse_output_"+sub_family_clades[i]+"_hidden_states_"+percentages[j],
+                                                output_folder = workflow_dir+"04_results/Esse_output/",
+                                                path_out = workflow_dir+"04_results/"
+                                             ))
+            
+            
+#####################################################################################################################################################################
+############################################ Random old parts of the code that I am saving for one reason or another. ################################################
+#####################################################################################################################################################################
+
+
+# If I need to find the list of trees again, or somehow change the scripts so they print all the good trees into a single folder where I can just run the script on all of them.
 # order_trees=["pruned_tree_order_Alismatales_GBMB.tre", "pruned_tree_order_Crossosomatales_GBMB.tre", "pruned_tree_order_Gunnerales_GBMB.tre", "pruned_tree_order_Poales_GBMB.tre",
 # "pruned_tree_order_Amborellales_GBMB.tre", "pruned_tree_order_Cucurbitales_GBMB.tre", "pruned_tree_order_Huerteales_GBMB.tre",
 # "pruned_tree_order_Aquifoliales_GBMB.tre", "pruned_tree_order_Cupressales_GBMB.tre", "pruned_tree_order_Magnoliales_GBMB.tre", "pruned_tree_order_Ranunculales_GBMB.tre",
