@@ -1717,7 +1717,7 @@ for i in range(len(orders_not_in_orders_new_prior)):
                                 out_states_file= workflow_dir+"03_distribution_data/"+orders_not_in_orders_new_prior[i]+"_states_"+percentages[j]+".txt",
                                 script_dir= script_dir,
                                 done_dir= done_dir,
-                                done= "States_converter_"+orders_not_in_orders_new_prior[i]+"_"+percentages[j]+"",
+                                done= "States_converter_"+orders_not_in_orders_new_prior[i]+"_"+percentages[j]+"_ClaDs",
                                 percentage_for_present= percentages[j]
                                 ))
     
@@ -1979,7 +1979,7 @@ for i in range(len(orders_not_in_orders_new_prior)):
                                         out_states_file= workflow_dir+"03_distribution_data/"+orders_not_in_orders_new_prior[i]+"_states_"+percentages[j]+".txt",
                                         script_dir= script_dir,
                                         done_dir= done_dir,
-                                        done= "States_converter_"+orders_not_in_orders_new_prior[i]+"_"+percentages[j]+"",
+                                        done= "States_converter_"+orders_not_in_orders_new_prior[i]+"_"+percentages[j]+"_Esse",
                                         percentage_for_present= percentages[j]
                                         ))
         
