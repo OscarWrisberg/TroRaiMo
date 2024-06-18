@@ -1782,17 +1782,17 @@ for i in range(len(Clads_clades)):
     #                             ))
     
     
-    for j in range(len(percentages)):
-        gwf.target_from_template(name = Clads_clades[i]+"_states_converter_"+percentages[j],
-                                template=states_converter(
-                                path_in= workflow_dir+"03_distribution_data/",
-                                tip_states_file= workflow_dir+"03_distribution_data/"+Clads_clades[i]+"_distribution_data.txt",
-                                out_states_file= workflow_dir+"03_distribution_data/"+Clads_clades[i]+"_states_"+percentages[j]+".txt",
-                                script_dir= script_dir,
-                                done_dir= done_dir,
-                                done= "States_converter_"+Clads_clades[i]+"_"+percentages[j]+"",
-                                percentage_for_present= percentages[j]
-                                ))
+    # for j in range(len(percentages)):
+    #     gwf.target_from_template(name = Clads_clades[i]+"_states_converter_"+percentages[j],
+    #                             template=states_converter(
+    #                             path_in= workflow_dir+"03_distribution_data/",
+    #                             tip_states_file= workflow_dir+"03_distribution_data/"+Clads_clades[i]+"_distribution_data.txt",
+    #                             out_states_file= workflow_dir+"03_distribution_data/"+Clads_clades[i]+"_states_"+percentages[j]+".txt",
+    #                             script_dir= script_dir,
+    #                             done_dir= done_dir,
+    #                             done= "States_converter_"+Clads_clades[i]+"_"+percentages[j]+"",
+    #                             percentage_for_present= percentages[j]
+    #                             ))
 
 #####################################################################################################################################################################
 ############################################################--- ClaDs on family  subclades ---#########################################################################
@@ -1874,17 +1874,17 @@ for k in range(len(sub_family_clades)):
 #                                 ))
     
     
-    for j in range(len(percentages)):
-        gwf.target_from_template(name = sub_family_clades[k]+"_states_converter_"+percentages[j],
-                                template=states_converter(
-                                path_in= workflow_dir+"03_distribution_data/",
-                                tip_states_file= workflow_dir+"03_distribution_data/"+sub_family_clades[k]+"_distribution_data.txt",
-                                out_states_file= workflow_dir+"03_distribution_data/"+sub_family_clades[k]+"_states_"+percentages[j]+".txt",
-                                script_dir= script_dir,
-                                done_dir= done_dir,
-                                done= "States_converter_"+sub_family_clades[k]+"_"+percentages[j]+"",
-                                percentage_for_present= percentages[j]
-                                ))
+    # for j in range(len(percentages)):
+    #     gwf.target_from_template(name = sub_family_clades[k]+"_states_converter_"+percentages[j],
+    #                             template=states_converter(
+    #                             path_in= workflow_dir+"03_distribution_data/",
+    #                             tip_states_file= workflow_dir+"03_distribution_data/"+sub_family_clades[k]+"_distribution_data.txt",
+    #                             out_states_file= workflow_dir+"03_distribution_data/"+sub_family_clades[k]+"_states_"+percentages[j]+".txt",
+    #                             script_dir= script_dir,
+    #                             done_dir= done_dir,
+    #                             done= "States_converter_"+sub_family_clades[k]+"_"+percentages[j]+"",
+    #                             percentage_for_present= percentages[j]
+    #                             ))
 
 #####################################################################################################################################################################
 ############################################################--- ESSE on family  subclades ---########################################################################
