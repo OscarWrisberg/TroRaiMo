@@ -1663,11 +1663,11 @@ for i in range(len(orders_not_in_orders_new_prior)):
 
     # Calculating the sampling fraction
     gwf.target_from_template(name = orders_not_in_orders_new_prior[i]+"_samplingfraction",
-                                      template = sampling_frequency_subclades(
+                                      template = sampling_frequency(
                                           input_file_tree = orders_not_in_orders_new_prior[i],
-                                          path_in = workflow_dir + "02_adding_orders/pruning/subset_of_orders/",
+                                          path_in = workflow_dir + "02_adding_orders/pruning/orders/",
                                           path_out = workflow_dir + "03_distribution_data/",
-                                          output_file = orders_not_in_orders_new_prior[i] + "_sampling_fraction._ClaDstxt",
+                                          output_file = orders_not_in_orders_new_prior[i] + "_sampling_fraction._ClaDs.txt",
                                           wcvp_file = workflow_dir + "02_adding_orders/wcvp_names_apg_aligned.rds",
                                           script_dir = script_dir,
                                           apg = script_dir + "apgweb_parsed.csv",
