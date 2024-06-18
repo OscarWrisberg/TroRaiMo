@@ -2029,7 +2029,7 @@ for i in range(len(orders_not_in_orders_new_prior)):
                 gwf.target_from_template(name = orders_not_in_orders_new_prior[i]+"_Esse",
                                             template = Esse(
                                             tree_file = orders_not_in_orders_new_prior[i]+"_Esse_tree.tre", # Input tree
-                                            tip_states_file = workflow_dir+"03_distribution_data/"+orders_not_in_orders_new_prior[i]+"_states_"+percentages[j]+".txt", 
+                                            tip_states_file = workflow_dir+"03_distribution_data/"+orders_not_in_orders_new_prior[i]+"_states_"+percentages[j]+"_Esse.txt", 
                                             paleo_clim_file = data_dir+"paleoclim_area.txt", # File with paleoclimatic variables
                                             done = orders_not_in_orders_new_prior[i]+"_Esse",
                                             path_in = workflow_dir+"02_adding_orders/pruning/orders/",
