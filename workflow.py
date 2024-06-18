@@ -1856,7 +1856,7 @@ for k in range(len(sub_family_clades)):
  #Running the script to find the environmental data for the tips in the sub trees
     gwf.target_from_template(name = sub_family_clades[k]+"_distribution_data.",
                                 template=Finding_areas_in_wcvp(
-                                input_file_tree= "family_phylo_"+sub_family_clades[k]+".tre", # 
+                                input_file_tree= sub_family_clades[k], 
                                 path_in =  workflow_dir+"02_adding_orders/pruning/subset_of_orders/",
                                 path_out = workflow_dir+"03_distribution_data/",
                                 output_file = sub_family_clades[k]+"_distribution_data.txt",
