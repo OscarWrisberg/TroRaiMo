@@ -16,20 +16,22 @@ if (any(installed_packages == FALSE)) {
 # Packages loading
 invisible(lapply(packages, library, character.only = TRUE))
 
+
+
 ################################################################################################################################################
 #######################################################-- Local testing --######################################################################
 ################################################################################################################################################
 #setwd("/home/au543206/GenomeDK/Trf_models/workflow/02_adding_orders/pruning/orders") # local
-setwd("/home/owrisberg/Trf_models/workflow/02_adding_orders/pruning/orders") # srun
-input_file_tree <- "pruned_tree_order_Arecales_GBMB.tre"
-output <- "Test_arecales.txt"
-input_file_wcvp <- "/home/owrisberg/Trf_models/workflow/02_adding_orders/wcvp_names_apg_aligned.rds" #srun
-path_out <- "/home/owrisberg/Trf_models//workflow/03_distribution_data/" #srun
-order_in_question <- as.character("Arecales")
-apg  <- "../../../../TroRaiMo/apgweb_parsed.csv"
-renamed_occurence_file <- "/home/owrisberg/Trf_models//workflow/01_distribution_data/06_Renamed/gbif_renamed.rds" #srun
-koppen_biome_file <- "../../../../TroRaiMo/koppen_geiger_0p01.tif" #srun
-percentages_for_present <- 0.33
+# setwd("/home/owrisberg/Trf_models/workflow/02_adding_orders/pruning/orders") # srun
+# input_file_tree <- "pruned_tree_order_Arecales_GBMB.tre"
+# output <- "Test_arecales.txt"
+# input_file_wcvp <- "/home/owrisberg/Trf_models/workflow/02_adding_orders/wcvp_names_apg_aligned.rds" #srun
+# path_out <- "/home/owrisberg/Trf_models//workflow/03_distribution_data/" #srun
+# order_in_question <- as.character("Arecales")
+# apg  <- "../../../../TroRaiMo/apgweb_parsed.csv"
+# renamed_occurence_file <- "/home/owrisberg/Trf_models//workflow/01_distribution_data/06_Renamed/gbif_renamed.rds" #srun
+# koppen_biome_file <- "../../../../TroRaiMo/koppen_geiger_0p01.tif" #srun
+# percentages_for_present <- 0.33
 
 ################################################################################################################################################
 ##############################################-- Handling Command Line arguments --#############################################################
@@ -52,7 +54,7 @@ cat("The output file is ", output, "\n")
 cat("The input file for the wcvp dataset is ", input_file_wcvp, "\n")
 cat("The path to the output file is ", path_out, "\n")
 cat("The order of the tree is ", order_in_question, "\n")
-
+cat("The current working directory is ", getwd(), "\n")
 
 ################################################################################################################################################
 ######################################################-- Loading files --#######################################################################

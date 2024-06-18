@@ -2159,7 +2159,7 @@ for i in range(len(esse_clades)):
 
                     gwf.target_from_template(name = esse_clades[i]+"_Tip_removal",
                                                 template = rem_tips(
-                                                input_file_tree = "pruned_tree_family_"+esse_clades[i]+"_GBMB.tre",
+                                                input_file_tree = "family_phylo_"+esse_clades[i]+".tre",
                                                 distribution_file= workflow_dir+"03_distribution_data/"+esse_clades[i]+"_states_"+percentages[j]+".txt",
                                                 output_file = esse_clades[i]+"_Esse_tree.tre",
                                                 path_in = workflow_dir+"02_adding_orders/pruning/families/",
