@@ -1764,22 +1764,22 @@ for i in range(len(Clads_clades)):
                                     prior_file = workflow_dir+"02_adding_orders/pruning/orders/priors.txt"
                              ))
 
-    #Running the script to find the environmental data for the tips in the sub trees
-    gwf.target_from_template(name = Clads_clades[i]+"_distribution_data.",
-                                template=Finding_areas_in_wcvp(
-                                input_file_tree= "family_phylo_"+Clads_clades[i]+".tre", # 
-                                path_in =  workflow_dir+"02_adding_orders/pruning/subset_of_orders/",
-                                path_out = workflow_dir+"03_distribution_data/",
-                                output_file = Clads_clades[i]+"_distribution_data.txt",
-                                wcvp_file = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds",
-                                order = Clads_clades[i],
-                                script_dir= script_dir,
-                                apg = script_dir+"apgweb_parsed.csv",
-                                done_dir= done_dir,
-                                done= Clads_clades[i]+"_distribution_data",
-                                renamed_occurrences = workflow_dir+"01_distribution_data/06_Renamed/gbif_renamed.rds", 
-                                koppen_biome = script_dir+"koppen_geiger_0p01.tif"
-                                ))
+    # #Running the script to find the environmental data for the tips in the sub trees
+    # gwf.target_from_template(name = Clads_clades[i]+"_distribution_data.",
+    #                             template=Finding_areas_in_wcvp(
+    #                             input_file_tree= "family_phylo_"+Clads_clades[i]+".tre", # 
+    #                             path_in =  workflow_dir+"02_adding_orders/pruning/subset_of_orders/",
+    #                             path_out = workflow_dir+"03_distribution_data/",
+    #                             output_file = Clads_clades[i]+"_distribution_data.txt",
+    #                             wcvp_file = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds",
+    #                             order = Clads_clades[i],
+    #                             script_dir= script_dir,
+    #                             apg = script_dir+"apgweb_parsed.csv",
+    #                             done_dir= done_dir,
+    #                             done= Clads_clades[i]+"_distribution_data",
+    #                             renamed_occurrences = workflow_dir+"01_distribution_data/06_Renamed/gbif_renamed.rds", 
+    #                             koppen_biome = script_dir+"koppen_geiger_0p01.tif"
+    #                             ))
     
     
     for j in range(len(percentages)):
@@ -1856,22 +1856,22 @@ for k in range(len(sub_family_clades)):
                                     prior_file = workflow_dir+"02_adding_orders/pruning/orders/priors.txt"
                              )) 
 
- #Running the script to find the environmental data for the tips in the sub trees
-    gwf.target_from_template(name = sub_family_clades[k]+"_distribution_data.",
-                                template=Finding_areas_in_wcvp(
-                                input_file_tree= sub_family_clades[k], 
-                                path_in =  workflow_dir+"02_adding_orders/pruning/subset_of_orders/",
-                                path_out = workflow_dir+"03_distribution_data/",
-                                output_file = sub_family_clades[k]+"_distribution_data.txt",
-                                wcvp_file = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds",
-                                order = sub_family_clades[k],
-                                script_dir= script_dir,
-                                apg = script_dir+"apgweb_parsed.csv",
-                                done_dir= done_dir,
-                                done= sub_family_clades[k]+"_distribution_data",
-                                renamed_occurrences = workflow_dir+"01_distribution_data/06_Renamed/gbif_renamed.rds", 
-                                koppen_biome = script_dir+"koppen_geiger_0p01.tif"
-                                ))
+#  #Running the script to find the environmental data for the tips in the sub trees
+#     gwf.target_from_template(name = sub_family_clades[k]+"_distribution_data.",
+#                                 template=Finding_areas_in_wcvp(
+#                                 input_file_tree= sub_family_clades[k], 
+#                                 path_in =  workflow_dir+"02_adding_orders/pruning/subset_of_orders/",
+#                                 path_out = workflow_dir+"03_distribution_data/",
+#                                 output_file = sub_family_clades[k]+"_distribution_data.txt",
+#                                 wcvp_file = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds",
+#                                 order = sub_family_clades[k],
+#                                 script_dir= script_dir,
+#                                 apg = script_dir+"apgweb_parsed.csv",
+#                                 done_dir= done_dir,
+#                                 done= sub_family_clades[k]+"_distribution_data",
+#                                 renamed_occurrences = workflow_dir+"01_distribution_data/06_Renamed/gbif_renamed.rds", 
+#                                 koppen_biome = script_dir+"koppen_geiger_0p01.tif"
+#                                 ))
     
     
     for j in range(len(percentages)):
