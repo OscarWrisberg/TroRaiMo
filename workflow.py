@@ -1667,12 +1667,12 @@ for i in range(len(orders_not_in_orders_new_prior)):
                                           input_file_tree = orders_not_in_orders_new_prior[i],
                                           path_in = workflow_dir + "02_adding_orders/pruning/subset_of_orders/",
                                           path_out = workflow_dir + "03_distribution_data/",
-                                          output_file = orders_not_in_orders_new_prior[i] + "_sampling_fraction.txt",
+                                          output_file = orders_not_in_orders_new_prior[i] + "_sampling_fraction._ClaDstxt",
                                           wcvp_file = workflow_dir + "02_adding_orders/wcvp_names_apg_aligned.rds",
                                           script_dir = script_dir,
                                           apg = script_dir + "apgweb_parsed.csv",
                                           done_dir = done_dir,
-                                          done = orders_not_in_orders_new_prior[i] + "_Sampling_fraction",
+                                          done = orders_not_in_orders_new_prior[i] + "_Sampling_fraction_ClaDs",
                                           name = orders_not_in_orders_new_prior[i]
                                       ))
 
@@ -1983,18 +1983,18 @@ for i in range(len(orders_not_in_orders_new_prior)):
                                         percentage_for_present= percentages[j]
                                         ))
         
-                gwf.target_from_template(name = orders_not_in_orders_new_prior[i]+"_Samplingfraction",
+                gwf.target_from_template(name = orders_not_in_orders_new_prior[i]+"_samplingfraction_Esse",
                                      template = sampling_frequency(
                                             input_file_tree= "pruned_tree_order_"+orders_not_in_orders_new_prior[i]+"_GBMB.tre",
                                             path_in =  workflow_dir+"02_adding_orders/pruning/orders/",
                                             path_out = workflow_dir+"03_distribution_data/",
-                                            output_file = orders_not_in_orders_new_prior[i]+"_sampling_fraction.txt",
+                                            output_file = orders_not_in_orders_new_prior[i]+"_sampling_fraction_Esse.txt",
                                             wcvp_file = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds",
                                             order = orders_not_in_orders_new_prior[i],
                                             script_dir= script_dir,
                                             apg = script_dir+"apgweb_parsed.csv",
                                             done_dir= done_dir,
-                                            done= orders_not_in_orders_new_prior[i]+"_Sampling_fraction"
+                                            done= orders_not_in_orders_new_prior[i]+"_Sampling_fraction_Esse"
                                     ))
         
                 gwf.target_from_template(name = orders_not_in_orders_new_prior[i]+"_Tip_removal",
