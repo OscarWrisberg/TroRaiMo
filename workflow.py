@@ -1976,7 +1976,7 @@ for i in range(len(orders_not_in_orders_new_prior)):
                                         template=states_converter(
                                         path_in= workflow_dir+"03_distribution_data/",
                                         tip_states_file= workflow_dir+"03_distribution_data/"+orders_not_in_orders_new_prior[i]+"_distribution_data_Esse.txt",
-                                        out_states_file= workflow_dir+"03_distribution_data/"+orders_not_in_orders_new_prior[i]+"_states_"+percentages[j]+"_Esse_.txt",
+                                        out_states_file= workflow_dir+"03_distribution_data/"+orders_not_in_orders_new_prior[i]+"_states_"+percentages[j]+"_Esse.txt",
                                         script_dir= script_dir,
                                         done_dir= done_dir,
                                         done= "States_converter_"+orders_not_in_orders_new_prior[i]+"_"+percentages[j]+"_Esse",
