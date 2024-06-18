@@ -1660,18 +1660,18 @@ orders_not_in_orders_new_prior = ["Aquifoliales", "Berberidopsidales", "Boragina
 for i in range(len(orders_not_in_orders_new_prior)):
 
     # Calculating the sampling fraction
-    gwf.target_from_template(name = sub_family_clades[k]+"_samplingfraction",
+    gwf.target_from_template(name = orders_not_in_new_prior[i]+"_samplingfraction",
                                       template = sampling_frequency_subclades(
-                                          input_file_tree = sub_family_clades[k],
+                                          input_file_tree = orders_not_in_new_prior[i],
                                           path_in = workflow_dir + "02_adding_orders/pruning/subset_of_orders/",
                                           path_out = workflow_dir + "03_distribution_data/",
-                                          output_file = sub_family_clades[k] + "_sampling_fraction.txt",
+                                          output_file = orders_not_in_new_prior[i] + "_sampling_fraction.txt",
                                           wcvp_file = workflow_dir + "02_adding_orders/wcvp_names_apg_aligned.rds",
                                           script_dir = script_dir,
                                           apg = script_dir + "apgweb_parsed.csv",
                                           done_dir = done_dir,
-                                          done = sub_family_clades[k] + "_Sampling_fraction",
-                                          name = sub_family_clades[k]
+                                          done = orders_not_in_new_prior[i] + "_Sampling_fraction",
+                                          name = orders_not_in_new_prior[i]
                                       ))
 
     # Running ClaDs model
@@ -1690,32 +1690,32 @@ for i in range(len(orders_not_in_orders_new_prior)):
                              ))
     
     #Running the script to find the environmental data for the tips in the trees
-    gwf.target_from_template(name = Clads_clades[i]+"_distribution_data.",
+    gwf.target_from_template(name = orders_not_in_new_prior[i]+"_distribution_data.",
                                 template=Finding_areas_in_wcvp(
-                                input_file_tree= "family_phylo_"+Clads_clades[i]+".tre", # 
+                                input_file_tree= "family_phylo_"+orders_not_in_new_prior[i]+".tre", # 
                                 path_in =  workflow_dir+"02_adding_orders/pruning/subset_of_orders/",
                                 path_out = workflow_dir+"03_distribution_data/",
-                                output_file = Clads_clades[i]+"_distribution_data.txt",
+                                output_file = orders_not_in_new_prior[i]+"_distribution_data.txt",
                                 wcvp_file = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds",
-                                order = Clads_clades[i],
+                                order = orders_not_in_new_prior[i],
                                 script_dir= script_dir,
                                 apg = script_dir+"apgweb_parsed.csv",
                                 done_dir= done_dir,
-                                done= Clads_clades[i]+"_distribution_data",
+                                done= orders_not_in_new_prior[i]+"_distribution_data",
                                 renamed_occurrences = workflow_dir+"01_distribution_data/06_Renamed/gbif_renamed.rds", 
                                 koppen_biome = script_dir+"koppen_geiger_0p01.tif"
                                 ))
     
     # Running the script to find the biome of the tips in the tree
     for j in range(len(percentages)):
-        gwf.target_from_template(name = Clads_clades[i]+"_states_converter_"+percentages[j],
+        gwf.target_from_template(name = orders_not_in_new_prior[i]+"_states_converter_"+percentages[j],
                                 template=states_converter(
                                 path_in= workflow_dir+"03_distribution_data/",
-                                tip_states_file= workflow_dir+"03_distribution_data/"+Clads_clades[i]+"_distribution_data.txt",
-                                out_states_file= workflow_dir+"03_distribution_data/"+Clads_clades[i]+"_states_"+percentages[j]+".txt",
+                                tip_states_file= workflow_dir+"03_distribution_data/"+orders_not_in_new_prior[i]+"_distribution_data.txt",
+                                out_states_file= workflow_dir+"03_distribution_data/"+orders_not_in_new_prior[i]+"_states_"+percentages[j]+".txt",
                                 script_dir= script_dir,
                                 done_dir= done_dir,
-                                done= "States_converter_"+Clads_clades[i]+"_"+percentages[j]+"",
+                                done= "States_converter_"+orders_not_in_new_prior[i]+"_"+percentages[j]+"",
                                 percentage_for_present= percentages[j]
                                 ))
     
