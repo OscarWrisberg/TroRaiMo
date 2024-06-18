@@ -1645,6 +1645,8 @@ orders = ["Alismatales", "Apiales", "Aquifoliales", "Arecales", "Asparagales", "
 "Saxifragales", "Solanales", "Vahliales", "Vitales", "Zingiberales", "Zygophyllales"
 ]
 
+# Percentage of occurences required to be present in a biome.
+percentages = ["0.33"]
 
 #####################################################################################################################################################################
 ########################################################--- ClaDs on Orders with uniform prior  ---##################################################################
@@ -1776,9 +1778,6 @@ Clads_clades = ["Aizoaceae_Phytolaccaceae_Barbeuiaceae_Lophiocarpaceae_Gisekiace
                 "Primulaceae","Resedaceae","Restionaceae","Rhamnaceae_Barbeyaceae_Dirachmaceae_Elaeagnaceae","Rutaceae","Salicaceae_Lacistemataceae","Sapindaceae",
                 "Sapotaceae","Saxifragaceae_Iteaceae_Grossulariaceae","Scrophulariaceae","Simaroubaceae","Styracaceae_Diapensiaceae_Symplocaceae","Theaceae","Thymelaeaceae","Typhaceae","Ulmaceae","Urticaceae",
                 "Verbenaceae_Schlegeliaceae_Lentibulariaceae_Thomandersiaceae","Violaceae_Goupiaceae","Xyridaceae_Eriocaulaceae","Zingiberaceae"]
-
-# Percentage of occurences required to be present in a biome.
-percentages = ["0.33"]
 
 for i in range(len(Clads_clades)):
     gwf.target_from_template(name = Clads_clades[i]+"_samplingfraction",
