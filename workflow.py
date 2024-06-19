@@ -2202,7 +2202,7 @@ for i in range(len(esse_clades)):
                                                 out_file = "Esse_output_"+esse_clades[i]+"_hidden_states_"+percentages[j],
                                                 output_folder = workflow_dir+"04_results/Esse_output/",
                                                 path_out = workflow_dir+"04_results/"
-                                                biome_sampling= workflow_dir+"03_distribution_data/"+esse_clades[i]+"_biome_sampling_fraction.txt"
+                                                biome_sampling = workflow_dir+"03_distribution_data/"+esse_clades[i]+"_biome_sampling_fraction.txt"
                                              ))
 
 
@@ -2422,7 +2422,7 @@ for i in range(len(sub_family_clades)):
                                                 out_file = "Esse_output_"+sub_family_clades[i]+"_hidden_states_"+percentages[j],
                                                 output_folder = workflow_dir+"04_results/Esse_output/",
                                                 path_out = workflow_dir+"04_results/"
-                                                biome_sampling= workflow_dir+"03_distribution_data/"+sub_family_clades[i]+"_biome_sampling_fraction.txt"
+                                                biome_sampling = workflow_dir+"03_distribution_data/"+sub_family_clades[i]+"_biome_sampling_fraction.txt"
                                              ))
             
 ###############################################################################################################################################################
