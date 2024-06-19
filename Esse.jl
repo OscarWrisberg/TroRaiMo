@@ -22,6 +22,7 @@ out_states_file = "Esse_states_Cornales_0.1.txt"
 out_file = "Esse_output_Cornales_0.1.jld2"
 hidden_states = 2
 output_folder = "/home/au543206/GenomeDK/Trf_models/workflow/04_results/Esse_output/"
+biome_sampling = "/home/au543206/GenomeDK/Trf_models/workflow/03_distribution_data/Arecales_biome_sampling_fraction.txt"
 
 # path_to_tree = "/home/au543206/GenomeDK/Trf_models/workflow/02_adding_orders/pruning/subset_of_orders/family_phylo_Resedaceae.tre"
 # sampling_freq_file = "/home/au543206/GenomeDK/Trf_models/workflow/03_distribution_data/Resedaceae_sampling_fraction.txt"
@@ -40,10 +41,10 @@ output_folder = ARGS[9]
 biome_sampling = ARGS[10]
 
 # Open file with biome sampling sample_fractions
-sampling_freq = readdlm(biome_sampling)
+sampling_freq = readdlm(biome_sampling, Float64, header = true)
 
-# convert txt file to array with Float64
-sampling_freq = Float64.(sampling_freq)
+# Removing the annoying x in the header
+sampling_freq = sampling_freq[1]
 
 # print the sampling fractions 
 println("Sampling fractions per biome (Trf, Non-trf and Widespread): $sampling_freq")
