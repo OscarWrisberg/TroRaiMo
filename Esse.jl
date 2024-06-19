@@ -46,6 +46,8 @@ sampling_freq = readdlm(biome_sampling, Float64, header = true)
 # Removing the annoying x in the header
 sampling_freq = sampling_freq[1]
 
+
+
 # print the sampling fractions 
 println("Sampling fractions per biome (Trf, Non-trf and Widespread): $sampling_freq")
 

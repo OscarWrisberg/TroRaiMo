@@ -21,6 +21,7 @@ invisible(lapply(packages, library, character.only = TRUE))
 ################################################################################################################################################
 #######################################################-- Local testing --######################################################################
 ################################################################################################################################################
+# srun --account Trf_models --mem 100g --pty bash
 #setwd("/home/au543206/GenomeDK/Trf_models/workflow/02_adding_orders/pruning/orders") # local
 # setwd("/home/owrisberg/Trf_models/workflow/02_adding_orders/pruning/orders") # srun
 # input_file_tree <- "pruned_tree_order_Arecales_GBMB.tre"
@@ -196,10 +197,48 @@ non_wet_tropical_non_trf <- length(which(result_summary$trf == 0 & result_summar
 non_wet_tropical_non_trf_percentage <- non_wet_tropical_non_trf/length(which(result_summary$climate_description != "wet tropical"))
 non_wet_tropical_non_trf_percentage
 
-
-
 #I therefore need find all the species which are not in the occurrences but are in wcvp
 wcvp_accepted_species_subset <- wcvp_accepted_species[which(wcvp_accepted_species$genus %in% unique_genera_in_tree),]
+
+##################################################################################################################################################################
+##############################################--- Find the number of species per biome for the clade ---##########################################################
+##################################################################################################################################################################
+
+# First we find the biome of all the species which are in occurrences.
+wcvp_clade <- wcvp_accepted_species_subset[which(wcvp_accepted_species_subset$genus %in% unique_genera_in_tree),] # getting all the accepted species from wcvp which are in the genera in the tree
+
+# The biome of all the species which are in occurrences
+result_summary_total_sp <- result_summary
+
+# Finding the species which are not in the occurrences
+Sp_not_not_in_occurrences <- setdiff(wcvp_accepted_species_subset$taxon_name, result_summary_total_sp$wcvp_taxon_name)
+
+# Then we find their biome using wcvp
+wcvp_clade_not_in_occurrences <- wcvp_accepted_species_subset[which(wcvp_accepted_species_subset$taxon_name %in% Sp_not_not_in_occurrences),]
+
+# Find the number of species which are wet tropical and non-wet tropical
+nr_wet_tropical <- length(which(wcvp_clade_not_in_occurrences$climate_description == "wet tropical"))
+nr_non_wet_tropical <- length(which(wcvp_clade_not_in_occurrences$climate_description != "wet tropical"))
+
+# We now multiply these numbers with our estimates on Trf, non_trf and widespread
+nr_wet_tropical_trf <- nr_wet_tropical * Wet_tropical_trf_percentage
+nr_wet_tropical_non_trf <- nr_wet_tropical * Wet_tropical_non_trf_percentage
+nr_wet_tropical_widespread <- nr_wet_tropical * Wet_tropical_widespread_percentage
+
+nr_non_wet_tropical_trf <- nr_non_wet_tropical * non_wet_tropical_trf_percentage
+nr_non_wet_tropical_non_trf <- nr_non_wet_tropical * non_wet_tropical_non_trf_percentage
+nr_non_wet_tropical_widespread <- nr_non_wet_tropical * non_wet_tropical_widespread_percentage
+
+# Find the number of Trf, non_trf and widespread species in result_summary_total_sp
+nr_trf <- length(which(result_summary_total_sp$trf == 1))
+nr_non_trf <- length(which(result_summary_total_sp$non_trf == 1))
+nr_widespread <- length(which(result_summary_total_sp$trf == 1 & result_summary_total_sp$non_trf == 1))
+
+# Adding these numbers together
+nr_trf <- nr_trf + nr_wet_tropical_trf + nr_non_wet_tropical_trf
+nr_non_trf <- nr_non_trf + nr_wet_tropical_non_trf + nr_non_wet_tropical_non_trf
+nr_widespread <- nr_widespread + nr_wet_tropical_widespread + nr_non_wet_tropical_widespread
+
 
 # So now we have the states for all the tips in the tree
 # Then we find the states for all the species not in the tree.
@@ -452,9 +491,10 @@ total_number_accepted_species <- length(wcvp_accepted_species$taxon_name[which(w
 total_number_accepted_species
 
 # Find the proportion of missing sp
-missing_sp_biomes[1] <- missing_sp_biomes[1]/total_number_accepted_species
-missing_sp_biomes[2] <- missing_sp_biomes[2]/total_number_accepted_species
-missing_sp_biomes[3] <- missing_sp_biomes[3]/total_number_accepted_species
+missing_sp_biomes[1] <- 1-(missing_sp_biomes[1]/nr_trf)
+missing_sp_biomes[2] <-1-(missing_sp_biomes[2]/nr_non_trf)
+missing_sp_biomes[3] <- 1-(missing_sp_biomes[3]/nr_widespread)
+
 
 cat("The proportion of missing species per biome are the following: \n")
 cat("Trf: ", missing_sp_biomes[1], "\n")
