@@ -45,6 +45,9 @@ sampling_freq = readdlm(biome_sampling)
 # convert txt file to array with Float64
 sampling_freq = Float64.(sampling_freq)
 
+# print the sampling fractions 
+println("Sampling fractions per biome (Trf, Non-trf and Widespread): $sampling_freq")
+
 # Add processors
 addprocs(processors)
 @everywhere using Tapestree

@@ -83,14 +83,14 @@ unique_families <- unique(wcvp_accepted_species_tree$family)
 unique_families <- as.character(unique_families)
 
 # Find out how many species we have sampled in the genera in the tree
-number_species_sampled_in_genus <- character(0)
+number_species_sampled_in_genus <- numeric(0)
 for (genus in unique(tree_species$genus)) {
   number_species_sampled_in_genus <- c(number_species_sampled_in_genus, length(tree_species[which(tree_species$genus == genus), "species"]))
 }
 number_species_sampled_in_genus
 
 # Find out how many species we have in the genera in the wcvp dataset
-number_species_in_genus <- character(0)
+number_species_in_genus <- numeric(0)
 for (i in seq_along(unique(tree_species$genus))) {
   test <- unique(tree_species$genus)[i]
   #print(wcvp_accepted_species_tree[which(wcvp_accepted_species_tree$genus == genus), "species"][[1]])
@@ -99,7 +99,7 @@ for (i in seq_along(unique(tree_species$genus))) {
 }
 number_species_in_genus
 
-cat("The total number of species accounted for in this phylogeny is ", (sum(number_species_in_genus$count)))
+cat("The total number of species accounted for in this phylogeny is ", (sum(number_species_in_genus)))
 
 #Create a data frame with genera, number of species sampled, and number of species in the wcvp dataset
 genera_sampling_freq <- data.frame(genus = unique(tree_species$genus), number_species_sampled = number_species_sampled_in_genus, number_species_in_wcvp = number_species_in_genus)

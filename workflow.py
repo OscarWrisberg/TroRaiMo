@@ -1360,9 +1360,9 @@ def states_converter(path_in,tip_states_file, out_states_file, script_dir, done_
 ##############################################################
 ################---- Runnning ESSE model  ----################
 ##############################################################
-def Esse(path_in, tree_file,tip_states_file,paleo_clim_file, out_states_file, out_file, hidden_states, script_dir, done_dir, done, save_file, output_folder, path_out):
+def Esse(path_in, tree_file,tip_states_file,paleo_clim_file, out_states_file, out_file, hidden_states, script_dir, done_dir, done, save_file, output_folder, path_out, biome_sampling):
     """ Function for running the ESSE model on the tree of each order. """
-    inputs = [path_in+tree_file,tip_states_file,paleo_clim_file]
+    inputs = [path_in+tree_file,tip_states_file,paleo_clim_file, biome_sampling]
     outputs = [output_folder+out_file+".log", done_dir+done]
     options = {
         'cores': 10,
@@ -1389,7 +1389,7 @@ def Esse(path_in, tree_file,tip_states_file,paleo_clim_file, out_states_file, ou
     date
     echo using {processors} processors, {memory} gb-RAM and {hidden_states} hidden states.
 
-    srun --unbuffered julia {script_dir}Esse.jl {processors} {tree_file} {tip_states_file} {paleo_clim_file} {out_states_file} {out_file} {save_file} {hidden_states} {output_folder}
+    srun --unbuffered julia {script_dir}Esse.jl {processors} {tree_file} {tip_states_file} {paleo_clim_file} {out_states_file} {out_file} {save_file} {hidden_states} {output_folder} {biome_sampling}
 
     echo Ended the Julia script at:
     date
@@ -1397,7 +1397,7 @@ def Esse(path_in, tree_file,tip_states_file,paleo_clim_file, out_states_file, ou
     touch {done_dir}{done}
 
     '''.format(processors = options['cores'], memory = options['memory'], tree_file = tree_file, tip_states_file = tip_states_file, paleo_clim_file = paleo_clim_file,
-                out_states_file = out_states_file, out_file = out_file, hidden_states = hidden_states, script_dir = script_dir, path_in = path_in,
+                out_states_file = out_states_file, out_file = out_file, hidden_states = hidden_states, script_dir = script_dir, path_in = path_in, biome_sampling = biome_sampling,
                 done_dir = done_dir, done = done, save_file = save_file, output_folder = output_folder, path_out = path_out)
 
 
@@ -1666,7 +1666,7 @@ for i in range(len(orders_not_in_orders_new_prior)):
     # Calculating the sampling fraction
     gwf.target_from_template(name = orders_not_in_orders_new_prior[i]+"_samplingfraction",
                                       template = sampling_frequency(
-                                          input_file_tree = orders_not_in_orders_new_prior[i],
+                                          input_file_tree = "pruned_tree_order_"+orders_not_in_orders_new_prior[i]+"_GBMB.tre",
                                           path_in = workflow_dir + "02_adding_orders/pruning/orders/",
                                           path_out = workflow_dir + "03_distribution_data/",
                                           output_file = orders_not_in_orders_new_prior[i] + "_sampling_fraction._ClaDs.txt",
@@ -2042,7 +2042,8 @@ for i in range(len(orders_not_in_orders_new_prior)):
                                             hidden_states = 0,
                                             out_file = "Esse_output_"+orders_not_in_orders_new_prior[i]+"_hidden_states_"+percentages[j],
                                             output_folder = workflow_dir+"04_results/Esse_output/",
-                                            path_out = workflow_dir+"04_results/"
+                                            path_out = workflow_dir+"04_results/",
+                                            biome_sampling= workflow_dir+"03_distribution_data/"+orders[i]+"_biome_sampling_fraction.txt"
                                          ))
         
 ###############################################################################################################################################################
@@ -2201,6 +2202,7 @@ for i in range(len(esse_clades)):
                                                 out_file = "Esse_output_"+esse_clades[i]+"_hidden_states_"+percentages[j],
                                                 output_folder = workflow_dir+"04_results/Esse_output/",
                                                 path_out = workflow_dir+"04_results/"
+                                                biome_sampling= workflow_dir+"03_distribution_data/"+esse_clades[i]+"_biome_sampling_fraction.txt"
                                              ))
 
 
@@ -2420,6 +2422,7 @@ for i in range(len(sub_family_clades)):
                                                 out_file = "Esse_output_"+sub_family_clades[i]+"_hidden_states_"+percentages[j],
                                                 output_folder = workflow_dir+"04_results/Esse_output/",
                                                 path_out = workflow_dir+"04_results/"
+                                                biome_sampling= workflow_dir+"03_distribution_data/"+sub_family_clades[i]+"_biome_sampling_fraction.txt"
                                              ))
             
 ###############################################################################################################################################################
