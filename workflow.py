@@ -1036,10 +1036,10 @@ def sampling_frequency_per_biome(input_file_tree, wcvp_file,path_out,renamed_occ
     inputs = [done_dir+"Finding_monophyletic_orders", renamed_occurrences, koppen_biome]
     outputs = [path_out+output_file, done_dir+done]
     options = {
-        'cores': 10,
-        'memory': '100g',
+        'cores': 1,
+        'memory': '70g',
         'account':"Trf_models",
-        'walltime': "00:100:00"
+        'walltime': "00:20:00"
     }
 
     spec = '''
@@ -2039,7 +2039,7 @@ for i in range(len(orders_not_in_orders_new_prior)):
                                             script_dir=script_dir,
                                             done_dir = done_dir,
                                             out_states_file = "Esse_states_"+orders_not_in_orders_new_prior[i]+"_"+percentages[j], 
-                                            hidden_states = 0,
+                                            hidden_states = 1,
                                             out_file = "Esse_output_"+orders_not_in_orders_new_prior[i]+"_hidden_states_"+percentages[j],
                                             output_folder = workflow_dir+"04_results/Esse_output/",
                                             path_out = workflow_dir+"04_results/",
@@ -2198,7 +2198,7 @@ for i in range(len(esse_clades)):
                                                 script_dir=script_dir,
                                                 done_dir = done_dir,
                                                 out_states_file = "Esse_states_"+esse_clades[i]+"_"+percentages[j], 
-                                                hidden_states = 0,
+                                                hidden_states = 1,
                                                 out_file = "Esse_output_"+esse_clades[i]+"_hidden_states_"+percentages[j],
                                                 output_folder = workflow_dir+"04_results/Esse_output/",
                                                 path_out = workflow_dir+"04_results/",
@@ -2418,7 +2418,7 @@ for i in range(len(sub_family_clades)):
                                                 script_dir=script_dir,
                                                 done_dir = done_dir,
                                                 out_states_file = "Esse_states_"+sub_family_clades[i]+"_"+percentages[j], 
-                                                hidden_states = 0,
+                                                hidden_states = 1,
                                                 out_file = "Esse_output_"+sub_family_clades[i]+"_hidden_states_"+percentages[j],
                                                 output_folder = workflow_dir+"04_results/Esse_output/",
                                                 path_out = workflow_dir+"04_results/",
