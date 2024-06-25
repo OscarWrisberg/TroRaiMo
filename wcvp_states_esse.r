@@ -22,17 +22,17 @@ invisible(lapply(packages, library, character.only = TRUE))
 #######################################################-- Local testing --######################################################################
 ################################################################################################################################################
 # srun --account Trf_models --mem 100g --pty bash
-#setwd("/home/au543206/GenomeDK/Trf_models/workflow/02_adding_orders/pruning/orders") # local
-# setwd("/home/owrisberg/Trf_models/workflow/02_adding_orders/pruning/orders") # srun
-# input_file_tree <- "pruned_tree_order_Arecales_GBMB.tre"
-# output <- "Test_arecales.txt"
-# input_file_wcvp <- "/home/owrisberg/Trf_models/workflow/02_adding_orders/wcvp_names_apg_aligned.rds" #srun
-# path_out <- "/home/owrisberg/Trf_models//workflow/03_distribution_data/" #srun
-# order_in_question <- as.character("Arecales")
-# apg  <- "../../../../TroRaiMo/apgweb_parsed.csv"
-# renamed_occurence_file <- "/home/owrisberg/Trf_models//workflow/01_distribution_data/06_Renamed/gbif_renamed.rds" #srun
-# koppen_biome_file <- "../../../../TroRaiMo/koppen_geiger_0p01.tif" #srun
-# percentages_for_present <- 0.33
+#setwd("/home/au543206/GenomeDK/Trf_models/workflow/02_adding_orders/pruning/orders") # local you need around 60 gigs of ram
+setwd("/home/owrisberg/Trf_models/workflow/02_adding_orders/pruning/subset_of_orders") # srun
+input_file_tree <- "sub_phylo_Apiaceae_2.tre"
+output <- "Test_Apiaceae_2.txt"
+input_file_wcvp <- "/home/owrisberg/Trf_models/workflow/02_adding_orders/wcvp_names_apg_aligned.rds" #srun
+path_out <- "/home/owrisberg/Trf_models//workflow/03_distribution_data/" #srun
+order_in_question <- as.character("Apiaceae_2")
+apg  <- "../../../../TroRaiMo/apgweb_parsed.csv"
+renamed_occurence_file <- "/home/owrisberg/Trf_models//workflow/01_distribution_data/06_Renamed/gbif_renamed.rds" #srun
+koppen_biome_file <- "../../../../TroRaiMo/koppen_geiger_0p01.tif" #srun
+percentages_for_present <- 0.33
 
 ################################################################################################################################################
 ##############################################-- Handling Command Line arguments --#############################################################
@@ -111,7 +111,7 @@ renamed_occurence_subset <- renamed_occurence[which(renamed_occurence$genus %in%
 cat("There are ",length(unique(renamed_occurence_subset$species)), " species in the renamed_occurence_subset \n\n") 
 
 #Remove occurences with NA in decimalLatitude or decimalLongitude
-cat("Removing occurences with NA in decimalLatitude or decimalLongitude \n\n")
+#cat("Removing occurences with NA in decimalLatitude or decimalLongitude \n\n")
 renamed_occurence_subset <- renamed_occurence_subset[which(!is.na(renamed_occurence_subset$decimalLatitude) & !is.na(renamed_occurence_subset$decimalLongitude)),]
 
 
@@ -170,32 +170,44 @@ result_summary$non_trf <- ifelse(result_summary$proportion_outside_tropical_rain
 # How many percent of the wet tropical species are Trf
 Wet_tropical_trf <- length(which(result_summary$trf == 1 & result_summary$climate_description == "wet tropical" & result_summary$non_trf == 0))
 Wet_tropical_trf_percentage <- Wet_tropical_trf/length(which(result_summary$climate_description == "wet tropical"))
-Wet_tropical_trf_percentage # 0.64
+if(is.nan(Wet_tropical_trf_percentage)){
+  Wet_tropical_trf_percentage <- 0
+}
 
 # How many percent of the wet tropical species are widespread
 Wet_tropical_widespread <- length(which(result_summary$trf == 1 & result_summary$climate_description == "wet tropical" & result_summary$non_trf == 1))
 Wet_tropical_widespread_percentage <- Wet_tropical_widespread/length(which(result_summary$climate_description == "wet tropical"))
-Wet_tropical_widespread_percentage
+if(is.nan(Wet_tropical_widespread_percentage)){
+  Wet_tropical_widespread_percentage <- 0
+}
 
 # How many percent of the wet tropical species are non-trf
 Wet_tropical_non_trf <- length(which(result_summary$trf == 0 & result_summary$climate_description == "wet tropical" & result_summary$non_trf == 1))
 Wet_tropical_non_trf_percentage <- Wet_tropical_non_trf/length(which(result_summary$climate_description == "wet tropical"))
-Wet_tropical_non_trf_percentage 
+if(is.nan(Wet_tropical_non_trf_percentage)){
+  Wet_tropical_non_trf_percentage <- 0
+}
 
 # How many percent of the non-wet tropical species are Trf
 non_wet_tropical_trf <- length(which(result_summary$trf == 1 & result_summary$climate_description != "wet tropical" & result_summary$non_trf == 0))
 non_wet_tropical_trf_percentage <- non_wet_tropical_trf/length(which(result_summary$climate_description != "wet tropical"))
-non_wet_tropical_trf_percentage
+if(is.nan(non_wet_tropical_trf_percentage)){
+  non_wet_tropical_trf_percentage <- 0
+}
 
 # How many percent of the non-wet tropical species are widespread
 non_wet_tropical_widespread <- length(which(result_summary$trf == 1 & result_summary$climate_description != "wet tropical" & result_summary$non_trf == 1))
 non_wet_tropical_widespread_percentage <- non_wet_tropical_widespread/length(which(result_summary$climate_description != "wet tropical"))
-non_wet_tropical_widespread_percentage
+if(is.nan(non_wet_tropical_widespread_percentage)){
+  non_wet_tropical_widespread_percentage <- 0
+}
 
 # How many percent of the non-wet tropical species are non-trf
 non_wet_tropical_non_trf <- length(which(result_summary$trf == 0 & result_summary$climate_description != "wet tropical" & result_summary$non_trf == 1))
 non_wet_tropical_non_trf_percentage <- non_wet_tropical_non_trf/length(which(result_summary$climate_description != "wet tropical"))
-non_wet_tropical_non_trf_percentage
+if(is.nan(non_wet_tropical_non_trf_percentage)){
+  non_wet_tropical_non_trf_percentage <- 0
+}
 
 #I therefore need find all the species which are not in the occurrences but are in wcvp
 wcvp_accepted_species_subset <- wcvp_accepted_species[which(wcvp_accepted_species$genus %in% unique_genera_in_tree),]
