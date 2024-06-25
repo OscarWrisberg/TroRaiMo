@@ -174,6 +174,7 @@ if(is.nan(Wet_tropical_trf_percentage)){
   Wet_tropical_trf_percentage <- 0
 }
 
+
 # How many percent of the wet tropical species are widespread
 Wet_tropical_widespread <- length(which(result_summary$trf == 1 & result_summary$climate_description == "wet tropical" & result_summary$non_trf == 1))
 Wet_tropical_widespread_percentage <- Wet_tropical_widespread/length(which(result_summary$climate_description == "wet tropical"))
