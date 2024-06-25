@@ -14,15 +14,15 @@ using PANDA
 using JLD2
 
 # Srun file locations
-processors = 3
-tree_file = "/home/au543206/GenomeDK/Trf_models/workflow/02_adding_orders/pruning/orders/pruned_tree_order_Cornales_GBMB.tre"
-tip_states_file = "/home/au543206/GenomeDK/Trf_models/workflow/03_distribution_data/Cornales_states_0.1.txt"
-paleo_clim_file = "/home/au543206/GenomeDK/Trf_models/TroRaiMo/paleoclim_area.txt"
-out_states_file = "Esse_states_Cornales_0.1.txt"
-out_file = "Esse_output_Cornales_0.1.jld2"
-hidden_states = 2
-output_folder = "/home/au543206/GenomeDK/Trf_models/workflow/04_results/Esse_output/"
-biome_sampling = "/home/au543206/GenomeDK/Trf_models/workflow/03_distribution_data/Arecales_biome_sampling_fraction.txt"
+# processors = 3
+# tree_file = "/home/au543206/GenomeDK/Trf_models/workflow/02_adding_orders/pruning/orders/pruned_tree_order_Cornales_GBMB.tre"
+# tip_states_file = "/home/au543206/GenomeDK/Trf_models/workflow/03_distribution_data/Cornales_states_0.1.txt"
+# paleo_clim_file = "/home/au543206/GenomeDK/Trf_models/TroRaiMo/paleoclim_area.txt"
+# out_states_file = "Esse_states_Cornales_0.1.txt"
+# out_file = "Esse_output_Cornales_0.1.jld2"
+# hidden_states = 1
+# output_folder = "/home/au543206/GenomeDK/Trf_models/workflow/04_results/Esse_output/"
+# biome_sampling = "/home/au543206/GenomeDK/Trf_models/workflow/03_distribution_data/Arecales_biome_sampling_fraction.txt"
 
 # path_to_tree = "/home/au543206/GenomeDK/Trf_models/workflow/02_adding_orders/pruning/subset_of_orders/family_phylo_Resedaceae.tre"
 # sampling_freq_file = "/home/au543206/GenomeDK/Trf_models/workflow/03_distribution_data/Resedaceae_sampling_fraction.txt"
@@ -48,7 +48,6 @@ sampling_freq = sampling_freq[1]
 
 #Converting to vector
 sampling_freq = vec(sampling_freq)
-
 
 # print the sampling fractions 
 println("Sampling fractions per biome (Trf, Non-trf and Widespread): $sampling_freq")
@@ -80,8 +79,6 @@ println("Hidden states: $hidden_states")
 println("Paleo data file: $paleo_data")
 println("Tip states file: $states")
 println("Out states file: $out_states")
-
-
 
 # Running the ESSE model in parallel 
 time_infer = @elapsed Tapestree.esse(tree, # Full path to the tree

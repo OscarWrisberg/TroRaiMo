@@ -2163,7 +2163,7 @@ for i in range(len(esse_clades)):
                                                 input_file_tree = "family_phylo_"+esse_clades[i]+".tre",
                                                 distribution_file= workflow_dir+"03_distribution_data/"+esse_clades[i]+"_states_"+percentages[j]+".txt",
                                                 output_file = esse_clades[i]+"_Esse_tree.tre",
-                                                path_in = workflow_dir+"02_adding_orders/pruning/families/",
+                                                path_in = workflow_dir+"02_adding_orders/pruning/subset_of_orders/",
                                                 order = esse_clades[i],
                                                 script_dir= script_dir,
                                                 done_dir= done_dir,
