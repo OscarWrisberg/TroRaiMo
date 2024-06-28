@@ -1,8 +1,8 @@
 # Test 
-install.packages("ggplot2")
-install.packages("dplyr")
-install.packages("maps")
-install.packages("gridExtra")
+# install.packages("ggplot2")
+# install.packages("dplyr")
+# install.packages("maps")
+# install.packages("gridExtra")
 
 # Load libraries
 library(ggplot2)
@@ -131,6 +131,10 @@ for (i in 1:length(file_list)) { # This loop takes atleast 2 hours to run ....
 
 head(clads_tip_lambda)
 
+saveRDS(clads_tip_lambda, "/home/owrisberg/Trf_models/workflow/01_distribution_data/06_Renamed/clads_tip_lambda.rds") # Saving the clads_tip_lambda dataframe when working on the server
+clads_tip_lambda <- readRDS("/home/au543206/GenomeDK/Trf_models/workflow/01_distribution_data/06_Renamed/clads_tip_lambda.rds") # loading it for working locally.
+clads_tip_lambda <- readRDS("/home/owrisberg/Trf_models/workflow/01_distribution_data/06_Renamed/clads_tip_lambda.rds")
+
 ###############################################################################################################################
 ############################################--- Biome affiliations ---#########################################################
 ###############################################################################################################################
@@ -140,6 +144,12 @@ unique_orders <- unique_orders[unique_orders != "Berberidopsidales"]
 unique_orders <- unique_orders[unique_orders != "Buxales"]
 unique_orders <- unique_orders[unique_orders != "Paracryphiales"]
 
+
+unique_orders
+
+# in unique_orders remove sub_phylo and .tre
+unique_orders <- gsub("sub_phylo_", "", unique_orders)
+unique_orders <- gsub(".tre", "", unique_orders)
 
 unique_orders
 
@@ -190,24 +200,20 @@ for (i in 1:length(distribution_files)) {
 	}
 }
 
-# Changing "_" to " " in the tip_label column
-clads_tip_lambda$tip_label <- gsub("_", " ", clads_tip_lambda$tip_label)
 
 dim(distribution_data)
 dim(clads_tip_lambda)
 
 # Finding out which tips have distr values but no distribution data
 clads_tip_lambda_no_distribution <- clads_tip_lambda[!clads_tip_lambda$tip_label %in% distribution_data$wcvp_taxon_name, ]
-dim(clads_tip_lambda_no_distribution) # is there really 14 k tips with no distribution data?
+dim(clads_tip_lambda_no_distribution) # 1206 tips with no distribution
 
 # Find orders of the tips missing distribution data
-unique(clads_tip_lambda_no_distribution$order
+unique(clads_tip_lambda_no_distribution$order)
 
 # Count how many species from each of these unqique orders are missing distribution data
 missing_per_order <- data.frame(table(clads_tip_lambda_no_distribution$order))
-
-# 
-
+missing_per_order
 
 head(distribution_data)
 head(clads_tip_lambda$tip_label)
@@ -218,6 +224,8 @@ dim(distribution_data_merged)
 
 head(clads_tip_lambda)
 head(distribution_data)
+
+dim(distribution_data_merged)
 
 # Sort the distribution_data_merged dataframe by lambda in descending order
 distribution_data_merged_sorted <- distribution_data_merged[order(-distribution_data_merged$lambda), ]
@@ -230,7 +238,12 @@ distribution_data_merged_sorted <- distribution_data_merged_sorted[!distribution
 
 distribution_data_merged <- distribution_data_merged_sorted
 
-# Plot
+
+
+# save this distribution_data_merged for later use
+saveRDS(distribution_data_merged, "/home/owrisberg/Trf_models/workflow/01_distribution_data/06_Renamed/distribution_data_merged.rds")
+distribution_data_merged <- readRDS("/home/au543206/GenomeDK/Trf_models/workflow/01_distribution_data/06_Renamed/distribution_data_merged.rds")
+
 # Add a column to the distribution data that indicates whether the proportion in tropical rainforest is greater than 70%
 distribution_data_merged$in_tropical_rainforest50 <- distribution_data_merged$proportion_in_tropical_rainforest > 0.50
 distribution_data_merged$in_tropical_rainforest60 <- distribution_data_merged$proportion_in_tropical_rainforest > 0.66
@@ -244,10 +257,88 @@ head(distribution_data_merged)
 ############################################--- Calculating latitudes for species ---#########################################################
 ###############################################################################################################################
 
-# loading the renamed occurrence dataset.
-occurrence_data <- readRDS("/home/au543206/GenomeDK/Trf_models/workflow/01_distribution_data/06_Renamed/gbif_renamed.rds") # this kills my pc
+# Loading the renamed occurrence dataset.
+occurrence_data <- readRDS("/home/owrisberg/Trf_models/workflow/01_distribution_data/06_Renamed/gbif_renamed.rds") # this kills my pc
+
+
+# Changing "_" to " " in the tip_label column
+clads_tip_lambda$tip_label <- gsub("_", " ", clads_tip_lambda$tip_label)
+
+# create subset which only includes tips that are in the clads_tip_lambda dataframe
+occurrence_data_subset <- occurrence_data[occurrence_data$wcvp_taxon_name %in% clads_tip_lambda$tip_label, ]
+dim(occurrence_data_subset)
+
+# Now we loop through the latitudinal bands and find out which species are present in each band
+# We then make dataframe for each of these latitudinal bands which includes the species and their lambda values, the latitude band and the biome affiliation.
+
+# Create a dataframe to store the data
+data_for_plot <- data.frame()
+
+# Loop through the latitudinal bands
+latitudinal_bands <- seq(-50, 70, by = 10)
+for (i in 1:(length(latitudinal_bands) - 1)) {
+	
+	# Keeping track of the progress
+	print(paste("Processing latitude band", i, "of", length(latitudinal_bands) - 1))
+
+	# Extract the lower and upper bounds of the latitude band
+	lower_bound <- latitudinal_bands[i]
+	print(lower_bound)
+	upper_bound <- latitudinal_bands[i + 1]
+	print(upper_bound)
+
+	# Extract the species in the latitude band
+	occurrence_data_subset_lat_band <- occurrence_data_subset[occurrence_data_subset$decimalLatitude >= lower_bound & occurrence_data_subset$decimalLatitude < upper_bound,]
+
+	# Keep only unique species from the latitude band
+	occurrence_data_subset_lat_band <- unique(occurrence_data_subset_lat_band$wcvp_taxon_name)
+
+	# subset the Clads data based on the occurrence data
+	occurrence_data_subset_lat_band_clads <- clads_tip_lambda[clads_tip_lambda$tip_label %in% occurrence_data_subset_lat_band,]
+
+	head(occurrence_data_subset_lat_band_clads)
+
+	# Append the data to the data_for_plot dataframe
+	data_for_plot <- rbind(data_for_plot, data.frame(lat_band = paste(lower_bound, upper_bound, sep = "_"),
+													  wcvp_taxon_name = occurrence_data_subset_lat_band_clads$tip_label,
+													  lambda = occurrence_data_subset_lat_band_clads$lambda,
+													  order = occurrence_data_subset_lat_band_clads$order))
+}
+
+
+saveRDS(data_for_plot, "/home/owrisberg/Trf_models/workflow/01_distribution_data/06_Renamed/data_for_plot.rds") # Saving the data_for_plot dataframe when working on the server
+data_for_plot <- readRDS("/home/au543206/GenomeDK/Trf_models/workflow/01_distribution_data/06_Renamed/data_for_plot.rds") # loading it for working locally.
+
+head(data_for_plot)
+head(distribution_data_merged)
+
+# Now I add the biome affiliation to the data_for_plot dataframe
+data_for_plot <- merge(data_for_plot, distribution_data_merged, by.x = "wcvp_taxon_name", by.y = "tip_label")
+
+head(data_for_plot)
 
 ##################################################################################################################################################
+
+data_for_plot_counts <- data.frame()
+
+# Calculate counts for each group and for each level of trf affiliation
+data_for_plot_counts_60 <- data_for_plot %>%
+	group_by(lat_band, in_tropical_rainforest60) %>%
+	summarize(count = n())
+
+data_for_plot_counts_70 <- data_for_plot %>%
+	group_by(lat_band, in_tropical_rainforest70) %>%
+	summarize(count = n())
+
+data_for_plot_counts_80 <- data_for_plot %>%
+	group_by(lat_band, in_tropical_rainforest80) %>%
+	summarize(count = n())
+
+data_for_plot_counts_90 <- data_for_plot %>%
+	group_by(lat_band, in_tropical_rainforest90) %>%
+	summarize(count = n())
+
+
 # Get world map data
 world_map <- map_data("world")
 
@@ -261,10 +352,19 @@ map_plot <- ggplot() +
 
 plot(map_plot)
 
+unique(data_for_plot$lat_band)
+
+# Define the desired order of lat_band levels
+desired_order <- c("-50_-40","-40_-30","-30_-20","-20_-10","-10_0","0_10","10_20","20_30","30_40","40_50","50_60","60_70")  # Replace with your actual levels
+
+# Convert lat_band to a factor with the specified levels
+data_for_plot$lat_band <- factor(data_for_plot$lat_band, levels = desired_order)
+
+
 # Create the violin plot
-violin_plot <- ggplot(data, aes(x = lambda_values, y = factor(latitudes), fill = biomes)) +
+violin_plot <- ggplot(data_for_plot, aes(x = log(lambda.x), y = lat_band, fill = in_tropical_rainforest90)) +
 	geom_violin(scale = "width", adjust = 1, alpha = 0.6) +
-	scale_fill_manual(values = c("Trf" = "chartreuse", "Non-Trf" = "deeppink")) +
+	scale_fill_manual(values = c("TRUE" = "chartreuse", "FALSE" = "deeppink")) +
 	theme_minimal() +
 	theme(
     panel.grid.major = element_blank(),  # Remove major grid lines
@@ -276,6 +376,63 @@ violin_plot <- ggplot(data, aes(x = lambda_values, y = factor(latitudes), fill =
 
 plot(violin_plot)
 
+
+# Create the boxplot
+boxplot <- ggplot(data_for_plot, aes(x = log(lambda.x), y = lat_band, fill = as.factor(in_tropical_rainforest90))) +
+  geom_boxplot(alpha = 0.6) +
+  scale_fill_manual(values = c("TRUE" = "chartreuse", "FALSE" = "deeppink"),
+  labels = c("TRUE" = "TRF", "FALSE" = "Non TRF")) +
+  theme_minimal() +
+  theme(
+    panel.grid.major = element_blank(),  # Remove major grid lines
+    panel.grid.minor = element_blank(),  # Remove minor grid lines
+    panel.background = element_blank()  # Remove panel background
+  ) +
+  labs(x = expression(lambda ~ "log((lineages/myr)")), y = "Latitude") +
+  theme(
+    panel.background = element_rect(fill = "transparent", color = NA),
+    axis.text.y = element_text(size = 10, color = "black")
+  )
+
+plot(boxplot)
+
+
+# Create the boxplot
+boxplot <- ggplot(data_for_plot, aes(x = log(lambda.x), y = lat_band, fill = as.factor(in_tropical_rainforest70))) +
+  geom_boxplot(alpha = 0.6) +
+  scale_fill_manual(values = c("TRUE" = "chartreuse", "FALSE" = "deeppink"),
+  					labels = c("TRUE" = "TRF", "FALSE" = "Non TRF")) +
+  theme_minimal() +
+  theme(
+    panel.grid.major = element_blank(),  # Remove major grid lines
+    panel.grid.minor = element_blank(),  # Remove minor grid lines
+    panel.background = element_blank()  # Remove panel background
+  ) +
+  labs(x = expression(lambda ~ "log((lineages/myr)"), y = "Latitude") +
+  #ggtitle("Tip rate speciation across latitudinal bands") +
+  theme(
+    legend.position = "bottom",
+    legend.title = element_blank(),
+    legend.text = element_text(size = 10),
+    legend.key = element_rect(fill = NA, color = NA),
+    legend.key.size = unit(1.5, "lines"),
+    panel.background = element_rect(fill = "transparent", color = NA),
+    axis.text.y = element_text(size = 10, color = "black")
+  ) +
+  geom_text(data = data_for_plot_counts_70, aes(label = count, x = 9, y = lat_band),
+            position = position_dodge(width = 0.75), vjust = -0.5, color = "black")
+
+plot(boxplot)
+
+
+
+# Find the species with a lambda.x value over 10
+dim(data_for_plot[data_for_plot$lambda.x > 10, ]) # 704 
+
+data_for_plot[data_for_plot$lambda.x < 10, ]$lambda.x
+
+
+
 # Combine the plots
 combined_plot <- ggplot() +
   # World map as background
@@ -285,3 +442,49 @@ combined_plot <- ggplot() +
 
 # Plot
 print(combined_plot)
+
+
+# Combine the plots
+combined_plot_box <- ggplot() +
+  # World map as background
+  annotation_custom(ggplotGrob(map_plot), xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf) +
+  # Overlay violin plot
+  annotation_custom(ggplotGrob(boxplot), xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf)
+
+# Plot
+print(combined_plot_box)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Can I find all the species which are deemed as tropical but which are located north and south of the tropics which would be north of 23.5 and south of -23.5
+tropical_species <- data_for_plot[data_for_plot$in_tropical_rainforest90 == TRUE, ]
+head(tropical_species)
+
+# Just find the species which dont have a lat_band = -20_-10, -10_0, 0_10, 10_20
+tropical_species_not_in_tropics <- tropical_species[!tropical_species$lat_band %in% c("-30_-20","-20_-10", "-10_0", "0_10", "10_20","20_30"), ]
+head(tropical_species_not_in_tropics)
+dim(tropical_species_not_in_tropics) # 117 species. 
+tropical_species_not_in_tropics$wcvp_taxon_name
+
+
+
+#######################################

@@ -24,11 +24,11 @@ invisible(lapply(packages, library, character.only = TRUE))
 # srun --account Trf_models --mem 100g --pty bash
 #setwd("/home/au543206/GenomeDK/Trf_models/workflow/02_adding_orders/pruning/orders") # local you need around 60 gigs of ram
 setwd("/home/owrisberg/Trf_models/workflow/02_adding_orders/pruning/subset_of_orders") # srun
-input_file_tree <- "sub_phylo_Apiaceae_2.tre"
-output <- "Test_Apiaceae_2.txt"
+input_file_tree <- "sub_phylo_Ranunculaceae_2.tre"
+output <- "Test_Ranunculaceae_2.txt"
 input_file_wcvp <- "/home/owrisberg/Trf_models/workflow/02_adding_orders/wcvp_names_apg_aligned.rds" #srun
 path_out <- "/home/owrisberg/Trf_models//workflow/03_distribution_data/" #srun
-order_in_question <- as.character("Apiaceae_2")
+order_in_question <- as.character("Ranunculaceae_2")
 apg  <- "../../../../TroRaiMo/apgweb_parsed.csv"
 renamed_occurence_file <- "/home/owrisberg/Trf_models//workflow/01_distribution_data/06_Renamed/gbif_renamed.rds" #srun
 koppen_biome_file <- "../../../../TroRaiMo/koppen_geiger_0p01.tif" #srun
@@ -39,15 +39,15 @@ percentages_for_present <- 0.33
 ################################################################################################################################################
 
 # Command line arguments
-input_file_tree <- commandArgs(trailingOnly = TRUE)[1]
-output <- commandArgs(trailingOnly = TRUE)[2]
-input_file_wcvp <- commandArgs(trailingOnly = TRUE)[3]
-path_out <- commandArgs(trailingOnly = TRUE)[4]
-order_in_question <- commandArgs(trailingOnly = TRUE)[5]
-apg <- commandArgs(trailingOnly = TRUE)[6]
-renamed_occurence_file <- commandArgs(trailingOnly = TRUE)[7]
-koppen_biome_file <- commandArgs(trailingOnly = TRUE)[8]
-percentages_for_present <- commandArgs(trailingOnly = TRUE)[9]
+# input_file_tree <- commandArgs(trailingOnly = TRUE)[1]
+# output <- commandArgs(trailingOnly = TRUE)[2]
+# input_file_wcvp <- commandArgs(trailingOnly = TRUE)[3]
+# path_out <- commandArgs(trailingOnly = TRUE)[4]
+# order_in_question <- commandArgs(trailingOnly = TRUE)[5]
+# apg <- commandArgs(trailingOnly = TRUE)[6]
+# renamed_occurence_file <- commandArgs(trailingOnly = TRUE)[7]
+# koppen_biome_file <- commandArgs(trailingOnly = TRUE)[8]
+# percentages_for_present <- commandArgs(trailingOnly = TRUE)[9]
 
 # Print the command line arguments
 cat("The input file for the tree is ", input_file_tree, "\n")
@@ -508,6 +508,16 @@ missing_sp_biomes[1] <- 1-(missing_sp_biomes[1]/nr_trf)
 missing_sp_biomes[2] <-1-(missing_sp_biomes[2]/nr_non_trf)
 missing_sp_biomes[3] <- 1-(missing_sp_biomes[3]/nr_widespread)
 
+# Fix NaN errors resulting by dividing by zero above.
+if(is.nan(missing_sp_biomes[1])){
+  missing_sp_biomes[1] <- 0
+}
+if(is.nan(missing_sp_biomes[2])){
+  missing_sp_biomes[2] <- 0
+}
+if(is.nan(missing_sp_biomes[3])){
+  missing_sp_biomes[3] <- 0
+}
 
 cat("The proportion of missing species per biome are the following: \n")
 cat("Trf: ", missing_sp_biomes[1], "\n")
