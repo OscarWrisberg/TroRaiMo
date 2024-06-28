@@ -1010,7 +1010,7 @@ def sampling_frequency(input_file_tree, wcvp_file,path_out, output_file, path_in
     date
 
     # Running the R script
-    Rscript --vanilla {script_dir}sampling_frequency.r {input_file_tree} {wcvp_file} {order} {apg} {path_out}
+    Rscript --vanilla {script_dir}sampling_frequency.r {input_file_tree} {wcvp_file} {order} {apg} {path_out} {output_file}
 
 
     echo Ended the script to find sampling frequency for the tips in the wcvp
