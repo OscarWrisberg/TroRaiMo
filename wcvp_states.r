@@ -20,15 +20,15 @@ invisible(lapply(packages, library, character.only = TRUE))
 #######################################################-- Local testing --######################################################################
 ################################################################################################################################################
 
-# setwd("/home/owrisberg/Trf_models/workflow/02_adding_orders/pruning/orders") # srun
-# input_file_tree <- "pruned_tree_order_Arecales_GBMB.tre"
-# output <- "Test_arecales.txt"
-# input_file_wcvp <- "/home/owrisberg/Trf_models/workflow/02_adding_orders/wcvp_names_apg_aligned.rds" #srun
-# path_out <- "/home/owrisberg/Trf_models/workflow/03_distribution_data/" #srun
-# order_in_question <- as.character("Arecales")
-# apg  <- "../../../../TroRaiMo/apgweb_parsed.csv"
-# renamed_occurence_file <- "/home/owrisberg/Trf_models/workflow/01_distribution_data/06_Renamed/gbif_renamed.rds" #srun
-# koppen_biome_file <- "../../../../TroRaiMo/koppen_geiger_0p01.tif" #srun
+setwd("/home/owrisberg/Trf_models/workflow/02_adding_orders/pruning/subset_of_orders/") # srun
+input_file_tree <- "sub_phylo_Asteraceae_1.tre"
+output <- "Test_Asteraceae_1.txt"
+input_file_wcvp <- "/home/owrisberg/Trf_models/workflow/02_adding_orders/wcvp_names_apg_aligned.rds" #srun
+path_out <- "/home/owrisberg/Trf_models/workflow/03_distribution_data/" #srun
+order_in_question <- as.character("Asteraceae_1")
+apg  <- "../../../../TroRaiMo/apgweb_parsed.csv"
+renamed_occurence_file <- "/home/owrisberg/Trf_models/workflow/01_distribution_data/06_Renamed/gbif_renamed.rds" #srun
+koppen_biome_file <- "../../../../TroRaiMo/koppen_geiger_0p01.tif" #srun
 
 ################################################################################################################################################
 ##############################################-- Handling Command Line arguments --#############################################################
@@ -178,8 +178,8 @@ if (all(tree$tip.label %in% renamed_occurence_subset$wcvp_taxon_name)) { # If al
 
 } else { # If all the species are not found in the occurrences, see if the species missing from the occurrences are found in the WCVP
   renamed_occurence_subset <- renamed_occurence[which(renamed_occurence$wcvp_taxon_name %in% tree$tip.label),]
-  cat("Not all the species in the tree are found in the renamed_occurence_subset \n\n")
-  cat("The following species are not found in the renamed_occurence_subset: \n")
+  cat("Not all the species in the tree are found in the renamed_occurence_subset \n")
+  cat("The following species are not found in the renamed_occurence_subset: \n\n")
   cat(setdiff(tree$tip.label, renamed_occurence_subset$wcvp_taxon_name), "\n\n")
   missing_sp <- setdiff(tree$tip.label, renamed_occurence_subset$wcvp_taxon_name)
 
@@ -189,7 +189,7 @@ if (all(tree$tip.label %in% renamed_occurence_subset$wcvp_taxon_name)) { # If al
 
   # Subsetting wcvp to only include accepted species and species with a climate description
   wcvp_subset <- wcvp_subset[which(wcvp_subset$taxon_status == "Accepted" & wcvp_subset$climate_description != "" & wcvp_subset$taxon_rank == "Species"),]
-  cat("Are all the missing sp found in WCVP and do they have a Climate description: ", all(missing_sp %in% wcvp_subset$taxon_name), "\n")
+  cat("Are all the missing sp found in WCVP and do they have a Climate description: ", all(missing_sp %in% wcvp_subset$taxon_name), "\n\n")
 
 ##################################################################################################################################################################
 
@@ -301,18 +301,20 @@ if (all(tree$tip.label %in% renamed_occurence_subset$wcvp_taxon_name)) { # If al
     # First I will find the species which are missing from the GBif dataset
     missing_sp <- setdiff(tree$tip.label, renamed_occurence_subset$wcvp_taxon_name)
 
-    # I will then find their climate description in the wcvp_subset
-    missing_sp_climate <- wcvp_subset[which(wcvp_subset$taxon_name %in% missing_sp),]
+    # Only do this below part if there are any missing species
+    if(length(missing_sp) >= 1) {
+      # I will then find their climate description in the wcvp_subset
+      missing_sp_climate <- wcvp_subset[which(wcvp_subset$taxon_name %in% missing_sp),]
 
-    # Now we convert the climate description from wcvp to an estimation of biome.
-    missing_sp_climate$koppen_biome <- ifelse(missing_sp_climate$climate_description == "wet tropical", 1, 0)
+      # Now we convert the climate description from wcvp to an estimation of biome.
+      missing_sp_climate$koppen_biome <- ifelse(missing_sp_climate$climate_description == "wet tropical", 1, 0)
 
-    # If missing_sp_climate$koppen_biome is == 1 then the proportion_in_tropical_rainforest is 1, otherwise it is 0
-    missing_sp_result_add <- data.frame(wcvp_taxon_name = missing_sp_climate$taxon_name, occurrences_trf = NA , occurrences_non_trf = NA, proportion_in_tropical_rainforest = ifelse(missing_sp_climate$koppen_biome == 1, 1, 0), proportion_outside_tropical_rainforest = ifelse(missing_sp_climate$koppen_biome == 1, 0, 1))
-    
-    # Now we can add the missing_sp_climate species to the result_summary
-    result_summary <- rbind(result_summary, missing_sp_result_add)
+      # If missing_sp_climate$koppen_biome is == 1 then the proportion_in_tropical_rainforest is 1, otherwise it is 0
+      missing_sp_result_add <- data.frame(wcvp_taxon_name = missing_sp_climate$taxon_name, occurrences_trf = NA , occurrences_non_trf = NA, proportion_in_tropical_rainforest = ifelse(missing_sp_climate$koppen_biome == 1, 1, 0), proportion_outside_tropical_rainforest = ifelse(missing_sp_climate$koppen_biome == 1, 0, 1))
 
+      # Now we can add the missing_sp_climate species to the result_summary
+      result_summary <- rbind(result_summary, missing_sp_result_add)
+    }
   }
 }
 
