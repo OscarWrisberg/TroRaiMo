@@ -1669,7 +1669,7 @@ for i in range(len(orders_not_in_orders_new_prior)):
                                           input_file_tree = "pruned_tree_order_"+orders_not_in_orders_new_prior[i]+"_GBMB.tre",
                                           path_in = workflow_dir + "02_adding_orders/pruning/orders/",
                                           path_out = workflow_dir + "03_distribution_data/",
-                                          output_file = orders_not_in_orders_new_prior[i] + "_sampling_fraction._ClaDs.txt",
+                                          output_file = orders_not_in_orders_new_prior[i] + "_sampling_fraction_ClaDs.txt",
                                           wcvp_file = workflow_dir + "02_adding_orders/wcvp_names_apg_aligned.rds",
                                           script_dir = script_dir,
                                           order = orders_not_in_orders_new_prior[i],
@@ -1690,7 +1690,7 @@ for i in range(len(orders_not_in_orders_new_prior)):
                                 output_file = "Clads_output_"+orders_not_in_orders_new_prior[i]+".jld2",
                                 script_dir=script_dir,
                                 done_dir = done_dir,
-                                sampling_frequency= workflow_dir+"03_distribution_data/"+orders_not_in_orders_new_prior[i]+"_sampling_fraction.txt"
+                                sampling_frequency= workflow_dir+"03_distribution_data/"+orders_not_in_orders_new_prior[i]+"_sampling_fraction_ClaDs.txt"
                              ))
     
     #Running the script to find the environmental data for the tips in the trees
