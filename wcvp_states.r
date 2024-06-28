@@ -20,15 +20,15 @@ invisible(lapply(packages, library, character.only = TRUE))
 #######################################################-- Local testing --######################################################################
 ################################################################################################################################################
 
-setwd("/home/owrisberg/Trf_models/workflow/02_adding_orders/pruning/subset_of_orders/") # srun
-input_file_tree <- "sub_phylo_Asteraceae_1.tre"
-output <- "Test_Asteraceae_1.txt"
-input_file_wcvp <- "/home/owrisberg/Trf_models/workflow/02_adding_orders/wcvp_names_apg_aligned.rds" #srun
-path_out <- "/home/owrisberg/Trf_models/workflow/03_distribution_data/" #srun
-order_in_question <- as.character("Asteraceae_1")
-apg  <- "../../../../TroRaiMo/apgweb_parsed.csv"
-renamed_occurence_file <- "/home/owrisberg/Trf_models/workflow/01_distribution_data/06_Renamed/gbif_renamed.rds" #srun
-koppen_biome_file <- "../../../../TroRaiMo/koppen_geiger_0p01.tif" #srun
+# setwd("/home/owrisberg/Trf_models/workflow/02_adding_orders/pruning/subset_of_orders/") # srun
+# input_file_tree <- "sub_phylo_Asteraceae_1.tre"
+# output <- "Test_Asteraceae_1.txt"
+# input_file_wcvp <- "/home/owrisberg/Trf_models/workflow/02_adding_orders/wcvp_names_apg_aligned.rds" #srun
+# path_out <- "/home/owrisberg/Trf_models/workflow/03_distribution_data/" #srun
+# order_in_question <- as.character("Asteraceae_1")
+# apg  <- "../../../../TroRaiMo/apgweb_parsed.csv"
+# renamed_occurence_file <- "/home/owrisberg/Trf_models/workflow/01_distribution_data/06_Renamed/gbif_renamed.rds" #srun
+# koppen_biome_file <- "../../../../TroRaiMo/koppen_geiger_0p01.tif" #srun
 
 ################################################################################################################################################
 ##############################################-- Handling Command Line arguments --#############################################################
@@ -318,8 +318,7 @@ if (all(tree$tip.label %in% renamed_occurence_subset$wcvp_taxon_name)) { # If al
   }
 }
 
-
-
 # Now I need to save the result summary dataframe to a file which can be read by ESSE
+cat("Saving the result to ", paste0(path_out, output), "\n\n")
 write.table(result_summary, file = paste0(path_out, output), sep = "\t", row.names = FALSE, col.names = TRUE, quote = FALSE)
 
