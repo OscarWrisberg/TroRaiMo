@@ -2064,7 +2064,7 @@ for i in range(len(orders_not_in_orders_new_prior)):
                                                 save_file = "Esse_output_"+orders_not_in_orders_new_prior[i]+"_"+percentages[j]+"_"+str(k)+".jld2",
                                                 script_dir=script_dir,
                                                 done_dir = done_dir,
-                                                out_states_file = "Esse_states_"+orders_not_in_orders_new_prior[i]+"_"+percentages[j]"_"+str(k), 
+                                                out_states_file = "Esse_states_"+orders_not_in_orders_new_prior[i]+"_"+percentages[j]+"_"+str(k), 
                                                 hidden_states = 1,
                                                 niter= 200000,
                                                 out_file = "Esse_output_"+orders_not_in_orders_new_prior[i]+"_hidden_states_"+percentages[j]"_"+str(k),
