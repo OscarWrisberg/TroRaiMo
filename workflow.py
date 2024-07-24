@@ -2031,18 +2031,18 @@ for i in range(len(orders_not_in_orders_new_prior)):
                                             done= "Tip_removal"+orders_not_in_orders_new_prior[i]
                                             ))
                 
-                gwf.target_from_template(name = orders[i]+"_Biome_sampling_fraction.",
+                gwf.target_from_template(name = orders_not_in_orders_new_prior[i]+"_Biome_sampling_fraction.",
                                             template=sampling_frequency_per_biome(
-                                            input_file_tree= "pruned_tree_order_"+orders[i]+"_GBMB.tre",
+                                            input_file_tree= "pruned_tree_order_"+orders_not_in_orders_new_prior[i]+"_GBMB.tre",
                                             path_in =  workflow_dir+"02_adding_orders/pruning/orders/",
                                             path_out = workflow_dir+"03_distribution_data/",
-                                            output_file = orders[i]+"_biome_sampling_fraction.txt",
+                                            output_file = orders_not_in_orders_new_prior[i]+"_biome_sampling_fraction.txt",
                                             wcvp_file = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds",
-                                            order = orders[i],
+                                            order = orders_not_in_orders_new_prior[i],
                                             script_dir= script_dir,
                                             apg = script_dir+"apgweb_parsed.csv",
                                             done_dir= done_dir,
-                                            done= orders[i]+"_biome_sampling_fraction",
+                                            done= orders_not_in_orders_new_prior[i]+"_biome_sampling_fraction",
                                             renamed_occurrences = workflow_dir+"01_distribution_data/06_Renamed/gbif_renamed.rds", 
                                             koppen_biome = script_dir+"koppen_geiger_0p01.tif",
                                             percentage= percentages[j]
