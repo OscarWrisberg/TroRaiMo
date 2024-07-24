@@ -2053,25 +2053,25 @@ for i in range(len(orders_not_in_orders_new_prior)):
                                             percentage= percentages[j]
                                             ))
 
-                for k in range(5)
-                gwf.target_from_template(name = orders_not_in_orders_new_prior[i]+"_"+str(k)+"_Esse",
-                                            template = Esse(
-                                            tree_file = orders_not_in_orders_new_prior[i]+"_Esse_tree.tre", # Input tree
-                                            tip_states_file = workflow_dir+"03_distribution_data/"+orders_not_in_orders_new_prior[i]+"_states_"+percentages[j]+"_Esse.txt", 
-                                            paleo_clim_file = data_dir+"paleoclim_area.txt", # File with paleoclimatic variables
-                                            done = orders_not_in_orders_new_prior[i]+"_"+str(k)+"_Esse",
-                                            path_in = workflow_dir+"02_adding_orders/pruning/orders/",
-                                            save_file = "Esse_output_"+orders_not_in_orders_new_prior[i]+"_"+percentages[j]+"_"+str(k)+".jld2",
-                                            script_dir=script_dir,
-                                            done_dir = done_dir,
-                                            out_states_file = "Esse_states_"+orders_not_in_orders_new_prior[i]+"_"+percentages[j]"_"+str(k), 
-                                            hidden_states = 1,
-                                            niter= 200000,
-                                            out_file = "Esse_output_"+orders_not_in_orders_new_prior[i]+"_hidden_states_"+percentages[j]"_"+str(k),
-                                            output_folder = workflow_dir+"04_results/Esse_output/",
-                                            path_out = workflow_dir+"04_results/",
-                                            biome_sampling= workflow_dir+"03_distribution_data/"+orders[i]+"_biome_sampling_fraction.txt"
-                                         ))
+                for k in range(5):
+                    gwf.target_from_template(name = orders_not_in_orders_new_prior[i]+"_"+str(k)+"_Esse",
+                                                template = Esse(
+                                                tree_file = orders_not_in_orders_new_prior[i]+"_Esse_tree.tre", # Input tree
+                                                tip_states_file = workflow_dir+"03_distribution_data/"+orders_not_in_orders_new_prior[i]+"_states_"+percentages[j]+"_Esse.txt", 
+                                                paleo_clim_file = data_dir+"paleoclim_area.txt", # File with paleoclimatic variables
+                                                done = orders_not_in_orders_new_prior[i]+"_"+str(k)+"_Esse",
+                                                path_in = workflow_dir+"02_adding_orders/pruning/orders/",
+                                                save_file = "Esse_output_"+orders_not_in_orders_new_prior[i]+"_"+percentages[j]+"_"+str(k)+".jld2",
+                                                script_dir=script_dir,
+                                                done_dir = done_dir,
+                                                out_states_file = "Esse_states_"+orders_not_in_orders_new_prior[i]+"_"+percentages[j]"_"+str(k), 
+                                                hidden_states = 1,
+                                                niter= 200000,
+                                                out_file = "Esse_output_"+orders_not_in_orders_new_prior[i]+"_hidden_states_"+percentages[j]"_"+str(k),
+                                                output_folder = workflow_dir+"04_results/Esse_output/",
+                                                path_out = workflow_dir+"04_results/",
+                                                biome_sampling= workflow_dir+"03_distribution_data/"+orders[i]+"_biome_sampling_fraction.txt"
+                                            ))
         
 ###############################################################################################################################################################
 #######################################################---  Running ESSE on the esse_clades ---################################################################
@@ -2222,7 +2222,7 @@ for i in range(len(esse_clades)):
                                                 koppen_biome = script_dir+"koppen_geiger_0p01.tif",
                                                 percentage= percentages[j]
                                                 ))
-                    for k in range(5)
+                    for k in range(5):
                         gwf.target_from_template(name = esse_clades[i]+"_"+str(k)+"_Esse",
                                                     template = Esse(
                                                     tree_file = esse_clades[i]+"_Esse_tree.tre", # Input tree
