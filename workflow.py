@@ -2463,7 +2463,7 @@ for i in range(len(sub_family_clades)):
                                                 done_dir = done_dir,
                                                 out_states_file = "Esse_states_"+sub_family_clades[i]+"_"+percentages[j]+"_"+k, 
                                                 hidden_states = 1,
-                                                niter = 200000
+                                                niter = 200000,
                                                 out_file = "Esse_output_"+sub_family_clades[i]+"_hidden_states_"+percentages[j]+"_"+k,
                                                 output_folder = workflow_dir+"04_results/Esse_output/",
                                                 path_out = workflow_dir+"04_results/",
