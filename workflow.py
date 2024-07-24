@@ -2076,47 +2076,47 @@ for i in range(len(orders_not_in_orders_new_prior)):
 orders_shorter = ["Crossosomatales","Malvales","Proteales"]
 
 for i in range(len(orders_shorter)):
-            # gwf.target_from_template(name = orders_shorter[i]+"_distribution_data.",
-            #                     template=Finding_areas_in_wcvp(
-            #                     input_file_tree= "sub_phylo_"+orders_shorter[i]+".tre",
-            #                     path_in =  workflow_dir+"02_adding_orders/pruning/subset_of_orders/",
-            #                     path_out = workflow_dir+"03_distribution_data/",
-            #                     output_file = orders_shorter[i]+"_distribution_data.txt",
-            #                     wcvp_file = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds",
-            #                     order = orders_shorter[i],
-            #                     script_dir= script_dir,
-            #                     apg = script_dir+"apgweb_parsed.csv",
-            #                     done_dir= done_dir,
-            #                     done= orders_shorter[i]+"_distribution_data",
-            #                     renamed_occurrences = workflow_dir+"01_distribution_data/06_Renamed/gbif_renamed.rds", 
-            #                     koppen_biome = script_dir+"koppen_geiger_0p01.tif"
-            #                     ))
+            gwf.target_from_template(name = orders_shorter[i]+"_distribution_data.",
+                                template=Finding_areas_in_wcvp(
+                                input_file_tree= "sub_phylo_"+orders_shorter[i]+".tre",
+                                path_in =  workflow_dir+"02_adding_orders/pruning/subset_of_orders/",
+                                path_out = workflow_dir+"03_distribution_data/",
+                                output_file = orders_shorter[i]+"_distribution_data.txt",
+                                wcvp_file = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds",
+                                order = orders_shorter[i],
+                                script_dir= script_dir,
+                                apg = script_dir+"apgweb_parsed.csv",
+                                done_dir= done_dir,
+                                done= orders_shorter[i]+"_distribution_data",
+                                renamed_occurrences = workflow_dir+"01_distribution_data/06_Renamed/gbif_renamed.rds", 
+                                koppen_biome = script_dir+"koppen_geiger_0p01.tif"
+                                ))
                         
-            # for j in range(len(percentages)):
-            #         gwf.target_from_template(name = orders_shorter[i]+"_states_converter_"+percentages[j],
-            #                                 template=states_converter(
-            #                                 path_in= workflow_dir+"03_distribution_data/",
-            #                                 tip_states_file= workflow_dir+"03_distribution_data/"+orders_shorter[i]+"_distribution_data.txt",
-            #                                 out_states_file= workflow_dir+"03_distribution_data/"+orders_shorter[i]+"_states_"+percentages[j]+".txt",
-            #                                 script_dir= script_dir,
-            #                                 done_dir= done_dir,
-            #                                 done= "States_converter_"+orders_shorter[i]+"_"+percentages[j]+"",
-            #                                 percentage_for_present= percentages[j]
-            #                                 ))
+            for j in range(len(percentages)):
+                    gwf.target_from_template(name = orders_shorter[i]+"_states_converter_"+percentages[j],
+                                            template=states_converter(
+                                            path_in= workflow_dir+"03_distribution_data/",
+                                            tip_states_file= workflow_dir+"03_distribution_data/"+orders_shorter[i]+"_distribution_data.txt",
+                                            out_states_file= workflow_dir+"03_distribution_data/"+orders_shorter[i]+"_states_"+percentages[j]+".txt",
+                                            script_dir= script_dir,
+                                            done_dir= done_dir,
+                                            done= "States_converter_"+orders_shorter[i]+"_"+percentages[j]+"",
+                                            percentage_for_present= percentages[j]
+                                            ))
                     
-            #         gwf.target_from_template(name = orders_shorter[i]+"_Sampling_fraction",
-            #                              template = sampling_frequency(
-            #                                     input_file_tree= "sub_phylo_"+orders_shorter[i]+".tre",
-            #                                     path_in =  workflow_dir+"02_adding_orders/pruning/subset_of_orders/",
-            #                                     path_out = workflow_dir+"03_distribution_data/",
-            #                                     output_file = orders_shorter[i]+"_sampling_fraction.txt",
-            #                                     wcvp_file = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds",
-            #                                     order = orders_shorter[i],
-            #                                     script_dir= script_dir,
-            #                                     apg = script_dir+"apgweb_parsed.csv",
-            #                                     done_dir= done_dir,
-            #                                     done= orders_shorter[i]+"_Sampling_fraction"
-            #                              ))
+                    gwf.target_from_template(name = orders_shorter[i]+"_Sampling_fraction",
+                                         template = sampling_frequency(
+                                                input_file_tree= "sub_phylo_"+orders_shorter[i]+".tre",
+                                                path_in =  workflow_dir+"02_adding_orders/pruning/subset_of_orders/",
+                                                path_out = workflow_dir+"03_distribution_data/",
+                                                output_file = orders_shorter[i]+"_sampling_fraction.txt",
+                                                wcvp_file = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds",
+                                                order = orders_shorter[i],
+                                                script_dir= script_dir,
+                                                apg = script_dir+"apgweb_parsed.csv",
+                                                done_dir= done_dir,
+                                                done= orders_shorter[i]+"_Sampling_fraction"
+                                         ))
                     
             
                     gwf.target_from_template(name = orders_shorter[i]+"_Tip_removal",
