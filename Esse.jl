@@ -39,6 +39,7 @@ save_file = ARGS[7]
 hidden_states = parse(Int, ARGS[8])
 output_folder = ARGS[9]
 biome_sampling = ARGS[10]
+niter_arg = parse(Int,ARGS[11])
 
 
 # Print the command line arguments
@@ -52,6 +53,7 @@ println("Save file: ", save_file, "\n")
 println("Hidden states: ", hidden_states, "\n")
 println("Output folder: ", output_folder, "\n")
 println("Biome sampling: ", biome_sampling, "\n")
+println("Number of iterations is: ", niter, "\n\n\n")
 
 # Open file with biome sampling sample_fractions
 sampling_freq = readdlm(biome_sampling, Float64, header = true)
@@ -85,13 +87,14 @@ out_file = joinpath(output_folder, out_file)
 out_states = joinpath(output_folder, out_states_file)
 
 # Running Esse with the following parameters
-println("Running ESSE with the following parameters:")
-println("Tree file: $tree")
-println("out_file: $out_file")
-println("Hidden states: $hidden_states")
-println("Paleo data file: $paleo_data")
-println("Tip states file: $states")
-println("Out states file: $out_states")
+println("\n\n Running ESSE with the following parameters: \n")
+println("Tree file: $tree \n")
+println("out_file: $out_file \n")
+println("Hidden states: $hidden_states \n")
+println("Paleo data file: $paleo_data \n")
+println("Tip states file: $states \n")
+println("The numbe of iterations is $niter_arg")
+println("Out states file: $out_states \n\n")
 
 # Running the ESSE model in parallel 
 time_infer = @elapsed Tapestree.esse(tree, # Full path to the tree
@@ -106,7 +109,7 @@ time_infer = @elapsed Tapestree.esse(tree, # Full path to the tree
 	mc = "mh", # Metropolis-Hastings
 	ntakew = 200, # Number of iterations from Nburn to tune the window
 	ncch = processors, # number of cores for the parallel run
-	niter = 200_000, # Number of iterations
+	niter = niter_arg, # Number of iterations
 	nthin = 100, # Frequency at which to record the state
 	dt = 0.8, # Temperature for the annealing of the chains
 	nburn = 20_000, # Number of iterations to use in the burn in

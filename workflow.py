@@ -1360,7 +1360,7 @@ def states_converter(path_in,tip_states_file, out_states_file, script_dir, done_
 ##############################################################
 ################---- Runnning ESSE model  ----################
 ##############################################################
-def Esse(path_in, tree_file,tip_states_file,paleo_clim_file, out_states_file, out_file, hidden_states, script_dir, done_dir, done, save_file, output_folder, path_out, biome_sampling):
+def Esse(path_in, tree_file,tip_states_file,paleo_clim_file, out_states_file, out_file, hidden_states, script_dir, done_dir, done, save_file, output_folder, path_out, biome_sampling,niter):
     """ Function for running the ESSE model on the tree of each order. """
     inputs = [path_in+tree_file,tip_states_file,paleo_clim_file, biome_sampling]
     outputs = [output_folder+out_file+".log", done_dir+done]
@@ -1389,7 +1389,7 @@ def Esse(path_in, tree_file,tip_states_file,paleo_clim_file, out_states_file, ou
     date
     echo using {processors} processors, {memory} gb-RAM and {hidden_states} hidden states.
 
-    srun --unbuffered julia {script_dir}Esse.jl {processors} {tree_file} {tip_states_file} {paleo_clim_file} {out_states_file} {out_file} {save_file} {hidden_states} {output_folder} {biome_sampling}
+    srun --unbuffered julia {script_dir}Esse.jl {processors} {tree_file} {tip_states_file} {paleo_clim_file} {out_states_file} {out_file} {save_file} {hidden_states} {output_folder} {biome_sampling} {niter}
 
     echo Ended the Julia script at:
     date
@@ -1398,7 +1398,7 @@ def Esse(path_in, tree_file,tip_states_file,paleo_clim_file, out_states_file, ou
 
     '''.format(processors = options['cores'], memory = options['memory'], tree_file = tree_file, tip_states_file = tip_states_file, paleo_clim_file = paleo_clim_file,
                 out_states_file = out_states_file, out_file = out_file, hidden_states = hidden_states, script_dir = script_dir, path_in = path_in, biome_sampling = biome_sampling,
-                done_dir = done_dir, done = done, save_file = save_file, output_folder = output_folder, path_out = path_out)
+                done_dir = done_dir, done = done, save_file = save_file, output_folder = output_folder, path_out = path_out, niter = niter)
 
 
     return AnonymousTarget(inputs=inputs, outputs=outputs, options=options, spec=spec)
@@ -1951,9 +1951,34 @@ orders = ["Alismatales", "Apiales", "Aquifoliales", "Arecales", "Asparagales", "
 #############################################---  Running ESSE on the orders which can finish in a week ---####################################################
 ###############################################################################################################################################################
 # Orders that ran with the uniform prior 
-orders_not_in_orders_new_prior = ["Arecales","Buxales","Canellales","Celastrales","Commelinales", "Cornales", "Crossosomatales",
-                                "Cupressales", "Escalloniales", "Fagales","Geraniales","Gnetales","Huerteales","Icacinales","Malvales","Metteniusales", "Nymphaeales","Oxalidales", "Pandanales",
-                                "Pinales", "Piperales", "Proteales", "Zygophyllales"]
+orders_not_in_orders_new_prior = ["Arecales",
+                                  "Buxales",
+                                  "Canellales",
+                                  "Celastrales",
+                                  "Commelinales",
+                                  "Cornales",
+                                  #"Crossosomatales",
+                                  "Cupressales",
+                                  "Escalloniales",
+                                  "Fagales",
+                                  "Geraniales",
+                                  "Gnetales",
+                                  "Huerteales",
+                                  "Icacinales",
+                                  #"Malvales",
+                                  "Metteniusales",
+                                  "Nymphaeales",
+                                  "Oxalidales",
+                                  "Pandanales",
+                                  "Pinales",
+                                  "Piperales",
+                                  #"Proteales",
+                                  "Zygophyllales"]
+
+# These orders can not finish in a week
+# So they need to run less iterations
+#Orders
+orders_shorter = ["Crossosomatales","Malvales","Proteales"]
 
 for i in range(len(orders_not_in_orders_new_prior)):
             gwf.target_from_template(name = orders_not_in_orders_new_prior[i]+"_distribution_data_Esse.",
@@ -2040,6 +2065,7 @@ for i in range(len(orders_not_in_orders_new_prior)):
                                             done_dir = done_dir,
                                             out_states_file = "Esse_states_"+orders_not_in_orders_new_prior[i]+"_"+percentages[j], 
                                             hidden_states = 1,
+                                            niter= 200000,
                                             out_file = "Esse_output_"+orders_not_in_orders_new_prior[i]+"_hidden_states_"+percentages[j],
                                             output_folder = workflow_dir+"04_results/Esse_output/",
                                             path_out = workflow_dir+"04_results/",
@@ -2051,7 +2077,8 @@ for i in range(len(orders_not_in_orders_new_prior)):
 ###############################################################################################################################################################
 
 # This is the list of Clades resulting from my personal splitting of the orders. ( Here I need to remove)
-esse_clades = ["Aizoaceae_Phytolaccaceae_Barbeuiaceae_Lophiocarpaceae_Gisekiaceae_Sarcobataceae", # Caryophyllales
+esse_clades = [
+                #"Aizoaceae_Phytolaccaceae_Barbeuiaceae_Lophiocarpaceae_Gisekiaceae_Sarcobataceae", # Caryophyllales
                 "Alzateaceae_Crypteroniaceae_Penaeaceae", # Myrtales
                 "Araliaceae", # Apiales
                 "Asphodelaceae", # Asparagales
@@ -2059,19 +2086,19 @@ esse_clades = ["Aizoaceae_Phytolaccaceae_Barbeuiaceae_Lophiocarpaceae_Gisekiacea
                 "Berberidaceae", # Ranunculales
                 "Bignoniaceae", # Lamiales
                 "Cactaceae_Molluginaceae_Didiereaceae_Anacompserotaceae_Basellaceae_Montiaceae_Halophytaceae_Portulacaceae_Talinaceae", # Caryophyllales
-                "Calyceraceae",  # Asterales
+                #"Calyceraceae",  # Asterales
                 "Campanulaceae_Rousseaceae", # Asterales
                 "Cannabaceae", # Rosales
-                "Capparaceae", # Brassicales
+                #"Capparaceae", # Brassicales
                 "Cercidiphyllaceae_Hamamelidaceae_Daphniphyllaceae_Altingiaceae_Paeoniaceae", # Saxifragales
-                "Chrysobalanaceae_Malpighiaceae_Caryocaraceae_Balanopaceae_Elatinaceae_Centroplacaceae_Dichapetalaceae_Putranjivaceae_Euphroniaceae_Lophopyxidaceae_Trigoniaceae", # Malpighiales
-                "Cleomaceae", # Brassicales
+                #"Chrysobalanaceae_Malpighiaceae_Caryocaraceae_Balanopaceae_Elatinaceae_Centroplacaceae_Dichapetalaceae_Putranjivaceae_Euphroniaceae_Lophopyxidaceae_Trigoniaceae", # Malpighiales
+                #"Cleomaceae", # Brassicales
                 "Combretaceae", # Myrtales
-                "Crassulaceae_Aphanopetalaceae_Halograceae_Penthoraceae_Tetracarpaeaceae", # Saxifragales
-                "Dipterocarpaceae_Bixaceae_Cistaceae_Sarcoleanaceae_Muntingiaceae_Sphaerosepalaceae", # Malvales
+                #"Crassulaceae_Aphanopetalaceae_Halograceae_Penthoraceae_Tetracarpaeaceae", # Saxifragales
+                #"Dipterocarpaceae_Bixaceae_Cistaceae_Sarcoleanaceae_Muntingiaceae_Sphaerosepalaceae", # Malvales
                 "Droseraceae_Ancistrocladaceae_Drosophyllaceae_Nepenthaceae_Dioncophyllaceae", # Caryophyllales
                 "Ebenaceae", # Ericales
-                "Ericaceae_Clethraceae_Cyrillaceae", # Ericales
+                #"Ericaceae_Clethraceae_Cyrillaceae", # Ericales
                 "Gentianaceae", # Gentianales
                 "Goodeniaceae", # Asterales
                 "Juncaceae", # Poales
@@ -2084,8 +2111,8 @@ esse_clades = ["Aizoaceae_Phytolaccaceae_Barbeuiaceae_Lophiocarpaceae_Gisekiacea
                 "Monimiaceae", # Laurales
                 "Moraceae", # Rosales
                 "Ochnaceae_Clusiaceae_Erythroxylaceae_Podostemaceae_Bonnetiaceae_Rhizophoraceae_Calophyllaceae_Hypericaceae_Ctenolophonaceae_Irvingiaceae_Pandaceae", # Malpighiales
-                "Orobanchaceae_Phrymaceae_Mazaceae_Paulowniaceae", # Lamiales
-                "Papaveraceae", # Ranunculales
+                #"Orobanchaceae_Phrymaceae_Mazaceae_Paulowniaceae", # Lamiales
+                #"Papaveraceae", # Ranunculales
                 "Passifloraceae", # Malpighiales
                 "Pentaphylacaceae_Sladeniaceae", # Ericales
                 "Pittosporaceae", # Apiales
@@ -2102,7 +2129,7 @@ esse_clades = ["Aizoaceae_Phytolaccaceae_Barbeuiaceae_Lophiocarpaceae_Gisekiacea
                 "Sapotaceae", # Ericales
                 "Saxifragaceae_Iteaceae_Grossulariaceae", # Saxifragales
                 "Scrophulariaceae", # Lamiales
-                "Simaroubaceae", # Sapindales
+                #"Simaroubaceae", # Sapindales
                 "Styracaceae_Diapensiaceae_Symplocaceae", # Ericales
                 "Theaceae", # Ericales
                 "Thymelaeaceae", # Malvales
@@ -2113,6 +2140,14 @@ esse_clades = ["Aizoaceae_Phytolaccaceae_Barbeuiaceae_Lophiocarpaceae_Gisekiacea
                 "Violaceae_Goupiaceae", # Malpighiales
                 "Xyridaceae_Eriocaulaceae", # Poales
                 ]
+
+# These orders can not finish in a week
+# So they need to run less iterations
+# Families
+families_shorter = ["Aizoaceae_Phytolaccaceae_Barbeuiaceae_Lophiocarpaceae_Gisekiaceae_Sarcobataceae","Calyceraceae","Capparaceae",
+"Chrysobalanaceae_Malpighiaceae_Caryocaraceae_Balanopaceae_Elatinaceae_Centroplacaceae_Dichapetalaceae_Putranjivaceae_Euphroniaceae_Lophopyxidaceae_Trigoniaceae",
+"Cleomaceae","Crassulaceae_Aphanopetalaceae_Halograceae_Penthoraceae_Tetracarpaeaceae","Dipterocarpaceae_Bixaceae_Cistaceae_Sarcoleanaceae_Muntingiaceae_Sphaerosepalaceae",
+"Ericaceae_Clethraceae_Cyrillaceae","Orobanchaceae_Phrymaceae_Mazaceae_Paulowniaceae","Papaveraceae","Simaroubaceae"]
 
 for i in range(len(esse_clades)):
                 # gwf.target_from_template(name = esse_clades[i]+"_distribution_data.",
@@ -2199,6 +2234,7 @@ for i in range(len(esse_clades)):
                                                 done_dir = done_dir,
                                                 out_states_file = "Esse_states_"+esse_clades[i]+"_"+percentages[j], 
                                                 hidden_states = 1,
+                                                niter = 200000,
                                                 out_file = "Esse_output_"+esse_clades[i]+"_hidden_states_"+percentages[j],
                                                 output_folder = workflow_dir+"04_results/Esse_output/",
                                                 path_out = workflow_dir+"04_results/",
@@ -2217,14 +2253,14 @@ for i in range(len(esse_clades)):
 
 sub_family_clades = ["Acanthaceae_Martyniaceae_Pedaliaceae_1",
                      "Acanthaceae_Martyniaceae_Pedaliaceae_2",
-                     "Acanthaceae_Martyniaceae_Pedaliaceae_3",
+                     #"Acanthaceae_Martyniaceae_Pedaliaceae_3",
                      "Amaryllidaceae_1",
-                     "Amaryllidaceae_2",
+                     #"Amaryllidaceae_2",
                      "Anacardiaceae_Burseraceae_Kirkiaceae_1",
                      "Anacardiaceae_Burseraceae_Kirkiaceae_2",
                      "Apiaceae_1","Apiaceae_2",
                      "Apiaceae_3",
-                     "Apiaceae_4",
+                     #"Apiaceae_4",
                      "Apiaceae_5",
                      "Apiaceae_6",
                      "Apocynaceae_1",
@@ -2248,12 +2284,12 @@ sub_family_clades = ["Acanthaceae_Martyniaceae_Pedaliaceae_1",
                      "Asteraceae_8",
                      "Asteraceae_9",
                      "Brassicaceae_1",
-                     "Brassicaceae_2",
-                     "Brassicaceae_3",
+                     #"Brassicaceae_2",
+                     #"Brassicaceae_3",
                      "Brassicaceae_4",
                      "Bromeliaceae_1",
                      "Bromeliaceae_2",
-                     "Caryophyllaceae_Achatocarpaceae_Amaranthaceae_1",
+                     #"Caryophyllaceae_Achatocarpaceae_Amaranthaceae_1",
                      "Caryophyllaceae_Achatocarpaceae_Amaranthaceae_2",
                      "Cyperaceae_1",
                      "Cyperaceae_2",
@@ -2266,7 +2302,7 @@ sub_family_clades = ["Acanthaceae_Martyniaceae_Pedaliaceae_1",
                      "Fabaceae_12",
                      "Fabaceae_13",
                      "Fabaceae_1",
-                     "Fabaceae_2",
+                     #"Fabaceae_2",
                      "Fabaceae_3",
                      "Fabaceae_4",
                      "Fabaceae_5",
@@ -2290,16 +2326,16 @@ sub_family_clades = ["Acanthaceae_Martyniaceae_Pedaliaceae_1",
                      "Melastomataceae_1",
                      "Melastomataceae_2",
                      "Myrtaceae_1",
-                     "Myrtaceae_2",
+                     #"Myrtaceae_2",
                      "Myrtaceae_3",
                      "Orchidaceae_10",
                      "Orchidaceae_11",
                      "Orchidaceae_12",
                      "Orchidaceae_13",
                      "Orchidaceae_14",
-                     "Orchidaceae_15",
+                     #"Orchidaceae_15",
                      "Orchidaceae_16",
-                     "Orchidaceae_1",
+                     #"Orchidaceae_1",
                      "Orchidaceae_2",
                      "Orchidaceae_3",
                      "Orchidaceae_4",
@@ -2311,28 +2347,35 @@ sub_family_clades = ["Acanthaceae_Martyniaceae_Pedaliaceae_1",
                      "Phyllanthaceae_Picodendraceae_Linaceae_Ixonanthaceae_1",
                      "Phyllanthaceae_Picodendraceae_Linaceae_Ixonanthaceae_2",
                      "Phyllanthaceae_Picodendraceae_Linaceae_Ixonanthaceae_3",
-                     "Plantaginaceae_1",
+                     #"Plantaginaceae_1",
                      "Plantaginaceae_2",
                      "Plantaginaceae_3",
-                     "Poaceae_1",
-                     "Poaceae_2",
+                     #"Poaceae_1",
+                     #"Poaceae_2",
                      "Poaceae_3",
-                     "Poaceae_4",
+                     #"Poaceae_4",
                      "Poaceae_5",
                      "Poaceae_6",
                      "Poaceae_7",
-                     "Ranunculaceae_1",
-                     "Ranunculaceae_2",
+                     #"Ranunculaceae_1",
+                     #"Ranunculaceae_2",
                      "Ranunculaceae_3",
                      "Rosaceae_1",
-                     "Rosaceae_2",
+                     #"Rosaceae_2",
                      "Rosaceae_3",
-                     "Rosaceae_4",
+                     #"Rosaceae_4",
                      "Rosaceae_5",
-                     "Rubiaceae_1",
+                     #"Rubiaceae_1",
                      "Rubiaceae_2",
                      "Rubiaceae_3",
                      ]
+
+
+# These orders can not finish in a week
+# So they need to run less iterations
+# sub-family
+sub_families_shorter = ["Acanthaceae_Martyniaceae_Pedaliaceae_3","Amaryllidaceae_2","Apiaceae_4","Brassicaceae_2","Brassicaceae_3","Caryophyllaceae_Achatocarpaceae_Amaranthaceae_1",
+"Fabaceae_2","Myrtaceae_2","Orchidaceae_15","Orchidaceae_1","Plantaginaceae_1","Poaceae_1","Poaceae_2","Poaceae_4","Ranunculaceae_1","Ranunculaceae_2","Rosaceae_2","Rosaceae_4","Rubiaceae_1"]
 
 for i in range(len(sub_family_clades)):
             # gwf.target_from_template(name = sub_family_clades[i]+"_distribution_data.",
@@ -2407,19 +2450,21 @@ for i in range(len(sub_family_clades)):
                                                 percentage= percentages[j]
                                                 ))
                         
-                    gwf.target_from_template(name = sub_family_clades[i]+"_Esse",
+                    for k in range(5):
+                        gwf.target_from_template(name = sub_family_clades[i]+"_"+k+"_Esse",
                                                 template = Esse(
                                                 tree_file = sub_family_clades[i]+"_Esse_tree.tre", # Input tree
                                                 tip_states_file = workflow_dir+"03_distribution_data/"+sub_family_clades[i]+"_states_"+percentages[j]+".txt", 
                                                 paleo_clim_file = data_dir+"paleoclim_area.txt", # File with paleoclimatic variables
-                                                done = sub_family_clades[i]+"_Esse",
+                                                done = sub_family_clades[i]+"_Esse_"+k,
                                                 path_in = workflow_dir+"02_adding_orders/pruning/subset_of_orders/",
-                                                save_file = "Esse_output_"+sub_family_clades[i]+"_"+percentages[j]+".jld2",
+                                                save_file = "Esse_output_"+sub_family_clades[i]+"_"+percentages[j]+"_"+k+".jld2",
                                                 script_dir=script_dir,
                                                 done_dir = done_dir,
-                                                out_states_file = "Esse_states_"+sub_family_clades[i]+"_"+percentages[j], 
+                                                out_states_file = "Esse_states_"+sub_family_clades[i]+"_"+percentages[j]+"_"+k, 
                                                 hidden_states = 1,
-                                                out_file = "Esse_output_"+sub_family_clades[i]+"_hidden_states_"+percentages[j],
+                                                niter = 200000
+                                                out_file = "Esse_output_"+sub_family_clades[i]+"_hidden_states_"+percentages[j]+"_"+k,
                                                 output_folder = workflow_dir+"04_results/Esse_output/",
                                                 path_out = workflow_dir+"04_results/",
                                                 biome_sampling = workflow_dir+"03_distribution_data/"+sub_family_clades[i]+"_biome_sampling_fraction.txt"

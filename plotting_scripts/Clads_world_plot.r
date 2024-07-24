@@ -10,6 +10,7 @@ library(dplyr)
 library(maps)
 library(gridExtra)
 library(data.table)
+library(cowplot)
 
 #################################################################################################################################################
 # Example Data
@@ -238,8 +239,6 @@ distribution_data_merged_sorted <- distribution_data_merged_sorted[!distribution
 
 distribution_data_merged <- distribution_data_merged_sorted
 
-
-
 # save this distribution_data_merged for later use
 saveRDS(distribution_data_merged, "/home/owrisberg/Trf_models/workflow/01_distribution_data/06_Renamed/distribution_data_merged.rds")
 distribution_data_merged <- readRDS("/home/au543206/GenomeDK/Trf_models/workflow/01_distribution_data/06_Renamed/distribution_data_merged.rds")
@@ -362,7 +361,7 @@ data_for_plot$lat_band <- factor(data_for_plot$lat_band, levels = desired_order)
 
 
 # Create the violin plot
-violin_plot <- ggplot(data_for_plot, aes(x = log(lambda.x), y = lat_band, fill = in_tropical_rainforest90)) +
+violin_plot <- ggplot(data_for_plot, aes(x = log10(lambda.x), y = lat_band, fill = in_tropical_rainforest90)) +
 	geom_violin(scale = "width", adjust = 1, alpha = 0.6) +
 	scale_fill_manual(values = c("TRUE" = "chartreuse", "FALSE" = "deeppink")) +
 	theme_minimal() +
@@ -371,11 +370,9 @@ violin_plot <- ggplot(data_for_plot, aes(x = log(lambda.x), y = lat_band, fill =
     panel.grid.minor = element_blank(),  # Remove minor grid lines
     panel.background = element_blank()) +  # Remove panel background
 	labs(x = expression(lambda ~ "(lineages/myr)"), y = "Latitude") +
-	theme(panel.background = element_rect(fill = "transparent", color = NA),
-				axis.text.y = element_text(size = 10, color = "black"))
+	theme(panel.background = element_rect(fill = "transparent", color = NA), axis.text.y = element_text(size = 10, color = "black"))
 
 plot(violin_plot)
-
 
 # Create the boxplot
 boxplot <- ggplot(data_for_plot, aes(x = log(lambda.x), y = lat_band, fill = as.factor(in_tropical_rainforest90))) +
@@ -389,11 +386,8 @@ boxplot <- ggplot(data_for_plot, aes(x = log(lambda.x), y = lat_band, fill = as.
     panel.background = element_blank()  # Remove panel background
   ) +
   labs(x = expression(lambda ~ "log((lineages/myr)")), y = "Latitude") +
-  theme(
-    panel.background = element_rect(fill = "transparent", color = NA),
-    axis.text.y = element_text(size = 10, color = "black")
-  )
-
+  theme(panel.background = element_rect(fill = "transparent", color = NA), axis.text.y = element_text(size = 10, color = "black"))
+    
 plot(boxplot)
 
 
@@ -457,7 +451,21 @@ print(combined_plot_box)
 
 
 
+# Combine the plots
+combined_plot_box <- ggdraw() +
+  draw_plot(map_plot, 0, 0, 1, 1) +
+  draw_plot(boxplot, 0, 0.19, 1, 0.51, hjust = 0, vjust = 0)
 
+# Plot
+print(combined_plot_box)
+
+# Combine the plots
+combined_plot_box <- ggdraw() +
+  draw_plot(map_plot, 0, 0, 1, 1) +
+  draw_plot(boxplot, 0, 0, 1, 0.9, hjust = 0, vjust = 0)
+
+# Plot
+print(combined_plot_box)
 
 
 
@@ -485,6 +493,80 @@ head(tropical_species_not_in_tropics)
 dim(tropical_species_not_in_tropics) # 117 species. 
 tropical_species_not_in_tropics$wcvp_taxon_name
 
+# Can i now split these species into different latitude bands?
+# Create a dataframe to store the data
+data_for_plot_tropical_species_not_in_tropics <- data_for_plot[data_for_plot$wcvp_taxon_name %in% tropical_species_not_in_tropics$wcvp_taxon_name, ] # This holds all the rows where the species name is one of the problematic species names
+head(data_for_plot_tropical_species_not_in_tropics)
+
+# Now I want to find the rows in this dataset where the lat_band is not -30_-20, -20_-10, -10_0, 0_10, 10_20, 20_30
+problems <- (data_for_plot_tropical_species_not_in_tropics[!data_for_plot_tropical_species_not_in_tropics$lat_band %in% c("-30_-20","-20_-10", "-10_0", "0_10", "10_20","20_30"),])
+problems[,c(1,2)]
+dim(problems)
+
+data_for_plot_no_problem <- data_for_plot
+
+# doing it with for loop
+for (i in seq_along(problems$wcvp_taxon_name)) {
+	problem_sp <- problems$wcvp_taxon_name[i]
+	lat_band <- problems$lat_band[i]
+	data_for_plot_no_problem <- subset(data_for_plot_no_problem, !(wcvp_taxon_name == problem_sp & lat_band == lat_band))
+}
+
+# check if the rows are removed
+problems_still_in_data_for_plot <- problems[problems$wcvp_taxon_name %in% data_for_plot_no_problem$wcvp_taxon_name & problems$lat_band %in% data_for_plot_no_problem$lat_band, ]
+problems_still_in_data_for_plot[,c(1,2)]
+
+# update data_for_plot_counts aswell.
+data_for_plot_counts_90 <- data_for_plot_no_problem %>%
+	group_by(lat_band, in_tropical_rainforest90) %>%
+	summarize(count = n())
+
+# Create the boxplot
+boxplot_no_problems <- ggplot(data_for_plot_no_problems, aes(x = log(lambda.x), y = lat_band, fill = as.factor(in_tropical_rainforest90))) +
+  geom_boxplot(alpha = 0.6) +
+  scale_fill_manual(values = c("TRUE" = "chartreuse", "FALSE" = "deeppink"),
+  					labels = c("TRUE" = "TRF", "FALSE" = "Non TRF")) +
+  theme_minimal() +
+  theme(
+    panel.grid.major = element_blank(),  # Remove major grid lines
+    panel.grid.minor = element_blank(),  # Remove minor grid lines
+    panel.background = element_blank()  # Remove panel background
+  ) +
+  labs(x = expression("log((lineages/myr)"), y = "Latitude") +
+  #ggtitle("Tip rate speciation across latitudinal bands") +
+  theme(
+    legend.position = "none",
+    legend.title = element_blank(),
+    legend.text = element_text(size = 10),
+    legend.key = element_rect(fill = NA, color = NA),
+    legend.key.size = unit(1.5, "lines"),
+    panel.background = element_rect(fill = "transparent", color = NA),
+    axis.text.y = element_text(size = 10, color = "black")) +
+ 	geom_text(data = data_for_plot_counts_90, aes(label = count, x = 9, y = lat_band),
+            position = position_dodge(width = 0.75), vjust = -0.5, color = "black", size = 3) +
+	annotate("text", x = 9.3, y = 13, label = "No. species",
+           hjust = 1, vjust = 1, size = 4, color = "black")
+	
+
+plot(boxplot_no_problems)
 
 
-#######################################
+# Combine the plots
+combined_plot_box <- ggdraw() +
+  draw_plot(map_plot, 0, 0, 1, 1) +
+  draw_plot(boxplot_no_problems, 0, 0.05, 1, 0.85, hjust = 0, vjust = 0)
+
+
+# Save the plot
+pdf(file = file.path(output_folder,"Clads_world_map.pdf"),
+    width = 10,
+    height = 6)
+
+print(combined_plot_box)
+
+dev.off()
+
+
+# Setting output folder
+output_folder <- "/home/au543206/GenomeDK/Trf_models/workflow/05_figures"
+

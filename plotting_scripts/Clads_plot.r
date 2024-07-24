@@ -17,6 +17,9 @@ if (any(installed_packages == FALSE)) {
 # Packages loading
 invisible(lapply(packages, library, character.only = TRUE))
 
+# Setting output folder
+output_folder <- "/home/au543206/GenomeDK/Trf_models/workflow/05_figures"
+
 #########################################################################################################################
 ############################################ Loading ClaDs runs on orders  ##############################################
 #########################################################################################################################
@@ -248,7 +251,7 @@ densityplot60 <- ggplot(distribution_data_merged, aes(x = lambda, fill = in_trop
 	xlab("Tip Rate Speciation") +
 	theme_ipsum() +
 	labs(title = "60%") +
-	theme(legend.position = "none") +
+	theme(legend.position = "bottom") +
 	scale_x_log10()
 
 densityplot70 <- ggplot(distribution_data_merged, aes(x = lambda, fill = in_tropical_rainforest70)) +
@@ -283,7 +286,7 @@ densityplot90 <- ggplot(distribution_data_merged, aes(x = lambda, fill = in_trop
 
 # Combine all density plots into one grid
 prow <- plot_grid(densityplot60, densityplot70, densityplot80, densityplot90, labels = c("A", "B", "C", "D"), label_size = 12, label_fontface = "bold")
-
+prow
 
 #
 # extract a legend that is laid out horizontally
@@ -319,52 +322,72 @@ boxplot60 <- ggplot(distribution_data_merged, aes(x = in_tropical_rainforest60, 
 	scale_x_discrete(labels = c("Not in TRF", "In TRF")) +
 	ylab("Tip Rate Speciation (log10)") +
 	xlab("") +
-	theme_ipsum() +
 	labs(title = "60%") +
-	theme(legend.position = "none")
+	theme(legend.position = "bottom")+
+	geom_text(data = data.frame(in_tropical_rainforest60 = c("TRUE", "FALSE"),
+            n = c(sum(distribution_data_merged$in_tropical_rainforest60 == TRUE), sum(distribution_data_merged$in_tropical_rainforest60 == FALSE))
+          ),
+          aes(label = n, x = in_tropical_rainforest60, y = 4),
+          vjust = -0.5, color = "black", size = 4)
+
 
 boxplot70 <- ggplot(distribution_data_merged, aes(x = in_tropical_rainforest70, y = log10(lambda))) +
 	geom_boxplot(fill = c(non_trfcol, trfcol), color = "black") +
 	scale_x_discrete(labels = c("Not in TRF", "In TRF")) +
 	ylab("Tip Rate Speciation (log10)") +
 	xlab("") +
-	theme_ipsum() +
 	labs(title = "70%") +
-	theme(legend.position = "none") 
+	theme(legend.position = "none") +
+	geom_text(data = data.frame(in_tropical_rainforest70 = c("TRUE", "FALSE"),
+        n = c(sum(distribution_data_merged$in_tropical_rainforest70 == TRUE), sum(distribution_data_merged$in_tropical_rainforest70 == FALSE))
+      ),
+      aes(label = n, x = in_tropical_rainforest70, y = 4),
+      vjust = -0.5, color = "black", size = 4)
+
+
 
 boxplot80 <- ggplot(distribution_data_merged, aes(x = in_tropical_rainforest80, y = log10(lambda))) +
 	geom_boxplot(fill = c(non_trfcol, trfcol), color = "black") +
 	scale_x_discrete(labels = c("Not in TRF", "In TRF")) +
 	ylab("Tip Rate Speciation (log10)") +
 	xlab("") +
-	theme_ipsum() +
 	labs(title = "80%") +
-	theme(legend.position = "none") 
+	theme(legend.position = "none") +
+	geom_text(data = data.frame(in_tropical_rainforest80 = c("TRUE", "FALSE"),
+        n = c(sum(distribution_data_merged$in_tropical_rainforest80 == TRUE), sum(distribution_data_merged$in_tropical_rainforest80 == FALSE))
+      ),
+      aes(label = n, x = in_tropical_rainforest80, y = 4),
+      vjust = -0.5, color = "black", size = 4)
 
 boxplot90 <- ggplot(distribution_data_merged, aes(x = in_tropical_rainforest90, y = log10(lambda))) +
 	geom_boxplot(fill = c(non_trfcol, trfcol), color = "black") +
 	scale_x_discrete(labels = c("Not in TRF", "In TRF")) +
 	ylab("Tip Rate Speciation (log10)") +
 	xlab("") +
-	theme_ipsum() +
 	labs(title = "90%") +
-	theme(legend.position = "none") 
+	theme(legend.position = "none") +
+	geom_text(data = data.frame(in_tropical_rainforest90 = c("TRUE", "FALSE"),
+        n = c(sum(distribution_data_merged$in_tropical_rainforest90 == TRUE), sum(distribution_data_merged$in_tropical_rainforest90 == FALSE))
+      ),
+      aes(label = n, x = in_tropical_rainforest90, y = 4),
+      vjust = -0.5, color = "black", size = 4)
 
 # Combine all boxplots into one grid
 prow <- plot_grid(boxplot60, boxplot70, boxplot80, boxplot90, labels = c("A", "B", "C", "D"), label_size = 12, label_fontface = "bold")
+prow
+
+# create a pdf plot.
+# Save the plot
+pdf(file = file.path(output_folder,"Clads_Biome_classification.pdf"),
+    width = 10,
+    height = 10)
+
+print(prow)
+
+dev.off()
 
 
-#
-# extract a legend that is laid out horizontally
-legend_b <- get_legend(
-  boxplot60 + 
-    guides(color = guide_legend(nrow = 1)) +
-    theme(legend.position = "bottom")
-)
 
-# add the legend underneath the row we made earlier. Give it 10%
-# of the height of one plot (via rel_heights).
-plot_grid(prow, legend_b, ncol = 1, rel_heights = c(1, .1))
 
 
 ## Make a short script that counts the number of species in each of the trees in these two foldes
@@ -434,3 +457,41 @@ folder_path <- "/home/au543206/GenomeDK/Trf_models/workflow/02_adding_orders/pru
 														   lambda = CladsOutput$lambdatip_map,
 														   extinction = CladsOutput$eps_map
 														   ))
+
+
+
+
+# Calculate counts of TRUE and FALSE in in_tropical_rainforest70
+count_true <- sum(distribution_data_merged$in_tropical_rainforest70 == TRUE)
+count_true
+count_false <- sum(distribution_data_merged$in_tropical_rainforest70 == FALSE)
+count_false
+
+
+# Boxplots of tip rate speciation in tropical rainforest
+boxplot70 <- ggplot(distribution_data_merged, aes(x = in_tropical_rainforest70, y = log10(lambda))) +
+  geom_boxplot(aes(fill = in_tropical_rainforest70), color = "black") +
+  scale_x_discrete(labels = c("Not in TRF", "In TRF")) +
+  scale_fill_manual(values = c("Not in TRF" = non_trfcol, "In TRF" = trfcol)) +
+  ylab("Tip Rate Speciation (log10)") +
+  xlab("") +
+  labs(title = "70%") +
+  theme(legend.position = "none") +  # Assuming you don't want a legend for this plot
+  geom_text(data = data.frame(
+              in_tropical_rainforest70 = c("TRUE", "FALSE"),
+              n = c(count_true, count_false)
+            ),
+            aes(label = n, x = in_tropical_rainforest70, y = Inf),
+            vjust = -0.5, color = "black", size = 3)
+
+
+boxplot70 <- ggplot(distribution_data_merged, aes(x = in_tropical_rainforest70, y = log10(lambda))) +
+	geom_boxplot(fill = c(non_trfcol, trfcol), color = "black") +
+	scale_x_discrete(labels = c("Not in TRF", "In TRF")) +
+	ylab("Tip Rate Speciation (log10)") +
+	xlab("") +
+	labs(title = "70%") +
+	theme(legend.position = "none") +
+
+
+boxplot70
