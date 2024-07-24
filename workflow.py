@@ -2067,7 +2067,7 @@ for i in range(len(orders_not_in_orders_new_prior)):
                                                 out_states_file = "Esse_states_"+orders_not_in_orders_new_prior[i]+"_"+percentages[j]+"_"+str(k), 
                                                 hidden_states = 1,
                                                 niter= 200000,
-                                                out_file = "Esse_output_"+orders_not_in_orders_new_prior[i]+"_hidden_states_"+percentages[j]"_"+str(k),
+                                                out_file = "Esse_output_"+orders_not_in_orders_new_prior[i]+"_hidden_states_"+percentages[j]+"_"+str(k),
                                                 output_folder = workflow_dir+"04_results/Esse_output/",
                                                 path_out = workflow_dir+"04_results/",
                                                 biome_sampling= workflow_dir+"03_distribution_data/"+orders[i]+"_biome_sampling_fraction.txt"
