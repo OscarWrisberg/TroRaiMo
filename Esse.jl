@@ -53,7 +53,7 @@ println("Save file: ", save_file, "\n")
 println("Hidden states: ", hidden_states, "\n")
 println("Output folder: ", output_folder, "\n")
 println("Biome sampling: ", biome_sampling, "\n")
-println("Number of iterations is: ", niter, "\n\n\n")
+println("Number of iterations is: ", niter_arg, "\n\n\n")
 
 # Open file with biome sampling sample_fractions
 sampling_freq = readdlm(biome_sampling, Float64, header = true)
