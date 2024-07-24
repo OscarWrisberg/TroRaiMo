@@ -1975,11 +1975,6 @@ orders_not_in_orders_new_prior = ["Arecales",
                                   #"Proteales",
                                   "Zygophyllales"]
 
-# These orders can not finish in a week
-# So they need to run less iterations
-#Orders
-orders_shorter = ["Crossosomatales","Malvales","Proteales"]
-
 for i in range(len(orders_not_in_orders_new_prior)):
             gwf.target_from_template(name = orders_not_in_orders_new_prior[i]+"_distribution_data_Esse.",
                                 template=Finding_areas_in_wcvp(
@@ -2072,6 +2067,107 @@ for i in range(len(orders_not_in_orders_new_prior)):
                                                 path_out = workflow_dir+"04_results/",
                                                 biome_sampling= workflow_dir+"03_distribution_data/"+orders[i]+"_biome_sampling_fraction.txt"
                                             ))
+                    
+
+# Running Esse on the problematic orders
+# These orders can not finish in a week
+# So they need to run less iterations
+#Orders
+orders_shorter = ["Crossosomatales","Malvales","Proteales"]
+
+for i in range(len(orders_shorter)):
+            # gwf.target_from_template(name = orders_shorter[i]+"_distribution_data.",
+            #                     template=Finding_areas_in_wcvp(
+            #                     input_file_tree= "sub_phylo_"+orders_shorter[i]+".tre",
+            #                     path_in =  workflow_dir+"02_adding_orders/pruning/subset_of_orders/",
+            #                     path_out = workflow_dir+"03_distribution_data/",
+            #                     output_file = orders_shorter[i]+"_distribution_data.txt",
+            #                     wcvp_file = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds",
+            #                     order = orders_shorter[i],
+            #                     script_dir= script_dir,
+            #                     apg = script_dir+"apgweb_parsed.csv",
+            #                     done_dir= done_dir,
+            #                     done= orders_shorter[i]+"_distribution_data",
+            #                     renamed_occurrences = workflow_dir+"01_distribution_data/06_Renamed/gbif_renamed.rds", 
+            #                     koppen_biome = script_dir+"koppen_geiger_0p01.tif"
+            #                     ))
+                        
+            # for j in range(len(percentages)):
+            #         gwf.target_from_template(name = orders_shorter[i]+"_states_converter_"+percentages[j],
+            #                                 template=states_converter(
+            #                                 path_in= workflow_dir+"03_distribution_data/",
+            #                                 tip_states_file= workflow_dir+"03_distribution_data/"+orders_shorter[i]+"_distribution_data.txt",
+            #                                 out_states_file= workflow_dir+"03_distribution_data/"+orders_shorter[i]+"_states_"+percentages[j]+".txt",
+            #                                 script_dir= script_dir,
+            #                                 done_dir= done_dir,
+            #                                 done= "States_converter_"+orders_shorter[i]+"_"+percentages[j]+"",
+            #                                 percentage_for_present= percentages[j]
+            #                                 ))
+                    
+            #         gwf.target_from_template(name = orders_shorter[i]+"_Sampling_fraction",
+            #                              template = sampling_frequency(
+            #                                     input_file_tree= "sub_phylo_"+orders_shorter[i]+".tre",
+            #                                     path_in =  workflow_dir+"02_adding_orders/pruning/subset_of_orders/",
+            #                                     path_out = workflow_dir+"03_distribution_data/",
+            #                                     output_file = orders_shorter[i]+"_sampling_fraction.txt",
+            #                                     wcvp_file = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds",
+            #                                     order = orders_shorter[i],
+            #                                     script_dir= script_dir,
+            #                                     apg = script_dir+"apgweb_parsed.csv",
+            #                                     done_dir= done_dir,
+            #                                     done= orders_shorter[i]+"_Sampling_fraction"
+            #                              ))
+                    
+            
+                    gwf.target_from_template(name = orders_shorter[i]+"_Tip_removal",
+                                                template = rem_tips(
+                                                input_file_tree = "sub_phylo_"+orders_shorter[i]+".tre",
+                                                distribution_file= workflow_dir+"03_distribution_data/"+orders_shorter[i]+"_states_"+percentages[j]+".txt",
+                                                output_file = orders_shorter[i]+"_Esse_tree.tre",
+                                                path_in = workflow_dir+"02_adding_orders/pruning/subset_of_orders/",
+                                                order = orders_shorter[i],
+                                                script_dir= script_dir,
+                                                done_dir= done_dir,
+                                                done= "Tip_removal"+orders_shorter[i]
+                                                ))
+                    
+                    gwf.target_from_template(name = orders_shorter[i]+"_Biome_sampling_fraction.",
+                                                template=sampling_frequency_per_biome(
+                                                input_file_tree= "sub_phylo_"+orders_shorter[i]+".tre",
+                                                path_in =  workflow_dir+"02_adding_orders/pruning/subset_of_orders/",
+                                                path_out = workflow_dir+"03_distribution_data/",
+                                                output_file = orders_shorter[i]+"_biome_sampling_fraction.txt",
+                                                wcvp_file = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds",
+                                                order = orders_shorter[i],
+                                                script_dir= script_dir,
+                                                apg = script_dir+"apgweb_parsed.csv",
+                                                done_dir= done_dir,
+                                                done= orders_shorter[i]+"_biome_sampling_fraction",
+                                                renamed_occurrences = workflow_dir+"01_distribution_data/06_Renamed/gbif_renamed.rds", 
+                                                koppen_biome = script_dir+"koppen_geiger_0p01.tif",
+                                                percentage= percentages[j]
+                                                ))
+                        
+                    for k in range(10):
+                        gwf.target_from_template(name = orders_shorter[i]+"_"+str(k)+"_Esse",
+                                                template = Esse(
+                                                tree_file = orders_shorter[i]+"_Esse_tree.tre", # Input tree
+                                                tip_states_file = workflow_dir+"03_distribution_data/"+orders_shorter[i]+"_states_"+percentages[j]+".txt", 
+                                                paleo_clim_file = data_dir+"paleoclim_area.txt", # File with paleoclimatic variables
+                                                done = orders_shorter[i]+"_"+str(k)+"_Esse",
+                                                path_in = workflow_dir+"02_adding_orders/pruning/subset_of_orders/",
+                                                save_file = "Esse_output_"+orders_shorter[i]+"_"+percentages[j]+"_"+str(k)+".jld2",
+                                                script_dir=script_dir,
+                                                done_dir = done_dir,
+                                                out_states_file = "Esse_states_"+orders_shorter[i]+"_"+percentages[j]+"_"+str(k), 
+                                                hidden_states = 1,
+                                                niter = 100000,
+                                                out_file = "Esse_output_"+orders_shorter[i]+"_hidden_states_"+percentages[j]+"_"+str(k),
+                                                output_folder = workflow_dir+"04_results/Esse_output/",
+                                                path_out = workflow_dir+"04_results/",
+                                                biome_sampling = workflow_dir+"03_distribution_data/"+orders_shorter[i]+"_biome_sampling_fraction.txt"
+                                             ))
+
         
 ###############################################################################################################################################################
 #######################################################---  Running ESSE on the esse_clades ---################################################################
@@ -2141,14 +2237,6 @@ esse_clades = [
                 "Violaceae_Goupiaceae", # Malpighiales
                 "Xyridaceae_Eriocaulaceae", # Poales
                 ]
-
-# These orders can not finish in a week
-# So they need to run less iterations
-# Families
-families_shorter = ["Aizoaceae_Phytolaccaceae_Barbeuiaceae_Lophiocarpaceae_Gisekiaceae_Sarcobataceae","Calyceraceae","Capparaceae",
-"Chrysobalanaceae_Malpighiaceae_Caryocaraceae_Balanopaceae_Elatinaceae_Centroplacaceae_Dichapetalaceae_Putranjivaceae_Euphroniaceae_Lophopyxidaceae_Trigoniaceae",
-"Cleomaceae","Crassulaceae_Aphanopetalaceae_Halograceae_Penthoraceae_Tetracarpaeaceae","Dipterocarpaceae_Bixaceae_Cistaceae_Sarcoleanaceae_Muntingiaceae_Sphaerosepalaceae",
-"Ericaceae_Clethraceae_Cyrillaceae","Orobanchaceae_Phrymaceae_Mazaceae_Paulowniaceae","Papaveraceae","Simaroubaceae"]
 
 for i in range(len(esse_clades)):
                 # gwf.target_from_template(name = esse_clades[i]+"_distribution_data.",
@@ -2241,6 +2329,108 @@ for i in range(len(esse_clades)):
                                                     path_out = workflow_dir+"04_results/",
                                                     biome_sampling = workflow_dir+"03_distribution_data/"+esse_clades[i]+"_biome_sampling_fraction.txt"
                                                  ))
+                        
+# Running Esse on the problematic families
+# These orders can not finish in a week
+# So they need to run less iterations
+# Families
+families_shorter = ["Aizoaceae_Phytolaccaceae_Barbeuiaceae_Lophiocarpaceae_Gisekiaceae_Sarcobataceae","Calyceraceae","Capparaceae",
+"Chrysobalanaceae_Malpighiaceae_Caryocaraceae_Balanopaceae_Elatinaceae_Centroplacaceae_Dichapetalaceae_Putranjivaceae_Euphroniaceae_Lophopyxidaceae_Trigoniaceae",
+"Cleomaceae","Crassulaceae_Aphanopetalaceae_Halograceae_Penthoraceae_Tetracarpaeaceae","Dipterocarpaceae_Bixaceae_Cistaceae_Sarcoleanaceae_Muntingiaceae_Sphaerosepalaceae",
+"Ericaceae_Clethraceae_Cyrillaceae","Orobanchaceae_Phrymaceae_Mazaceae_Paulowniaceae","Papaveraceae","Simaroubaceae"]
+
+for i in range(len(families_shorter)):
+            # gwf.target_from_template(name = families_shorter[i]+"_distribution_data.",
+            #                     template=Finding_areas_in_wcvp(
+            #                     input_file_tree= "sub_phylo_"+families_shorter[i]+".tre",
+            #                     path_in =  workflow_dir+"02_adding_orders/pruning/subset_of_orders/",
+            #                     path_out = workflow_dir+"03_distribution_data/",
+            #                     output_file = families_shorter[i]+"_distribution_data.txt",
+            #                     wcvp_file = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds",
+            #                     order = families_shorter[i],
+            #                     script_dir= script_dir,
+            #                     apg = script_dir+"apgweb_parsed.csv",
+            #                     done_dir= done_dir,
+            #                     done= families_shorter[i]+"_distribution_data",
+            #                     renamed_occurrences = workflow_dir+"01_distribution_data/06_Renamed/gbif_renamed.rds", 
+            #                     koppen_biome = script_dir+"koppen_geiger_0p01.tif"
+            #                     ))
+                        
+            # for j in range(len(percentages)):
+            #         gwf.target_from_template(name = families_shorter[i]+"_states_converter_"+percentages[j],
+            #                                 template=states_converter(
+            #                                 path_in= workflow_dir+"03_distribution_data/",
+            #                                 tip_states_file= workflow_dir+"03_distribution_data/"+families_shorter[i]+"_distribution_data.txt",
+            #                                 out_states_file= workflow_dir+"03_distribution_data/"+families_shorter[i]+"_states_"+percentages[j]+".txt",
+            #                                 script_dir= script_dir,
+            #                                 done_dir= done_dir,
+            #                                 done= "States_converter_"+families_shorter[i]+"_"+percentages[j]+"",
+            #                                 percentage_for_present= percentages[j]
+            #                                 ))
+                    
+            #         gwf.target_from_template(name = families_shorter[i]+"_Sampling_fraction",
+            #                              template = sampling_frequency(
+            #                                     input_file_tree= "sub_phylo_"+families_shorter[i]+".tre",
+            #                                     path_in =  workflow_dir+"02_adding_orders/pruning/subset_of_orders/",
+            #                                     path_out = workflow_dir+"03_distribution_data/",
+            #                                     output_file = families_shorter[i]+"_sampling_fraction.txt",
+            #                                     wcvp_file = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds",
+            #                                     order = families_shorter[i],
+            #                                     script_dir= script_dir,
+            #                                     apg = script_dir+"apgweb_parsed.csv",
+            #                                     done_dir= done_dir,
+            #                                     done= families_shorter[i]+"_Sampling_fraction"
+            #                              ))
+                    
+            
+                    gwf.target_from_template(name = families_shorter[i]+"_Tip_removal",
+                                                template = rem_tips(
+                                                input_file_tree = "sub_phylo_"+families_shorter[i]+".tre",
+                                                distribution_file= workflow_dir+"03_distribution_data/"+families_shorter[i]+"_states_"+percentages[j]+".txt",
+                                                output_file = families_shorter[i]+"_Esse_tree.tre",
+                                                path_in = workflow_dir+"02_adding_orders/pruning/subset_of_orders/",
+                                                order = families_shorter[i],
+                                                script_dir= script_dir,
+                                                done_dir= done_dir,
+                                                done= "Tip_removal"+families_shorter[i]
+                                                ))
+                    
+                    gwf.target_from_template(name = families_shorter[i]+"_Biome_sampling_fraction.",
+                                                template=sampling_frequency_per_biome(
+                                                input_file_tree= "sub_phylo_"+families_shorter[i]+".tre",
+                                                path_in =  workflow_dir+"02_adding_orders/pruning/subset_of_orders/",
+                                                path_out = workflow_dir+"03_distribution_data/",
+                                                output_file = families_shorter[i]+"_biome_sampling_fraction.txt",
+                                                wcvp_file = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds",
+                                                order = families_shorter[i],
+                                                script_dir= script_dir,
+                                                apg = script_dir+"apgweb_parsed.csv",
+                                                done_dir= done_dir,
+                                                done= families_shorter[i]+"_biome_sampling_fraction",
+                                                renamed_occurrences = workflow_dir+"01_distribution_data/06_Renamed/gbif_renamed.rds", 
+                                                koppen_biome = script_dir+"koppen_geiger_0p01.tif",
+                                                percentage= percentages[j]
+                                                ))
+                        
+                    for k in range(10):
+                        gwf.target_from_template(name = families_shorter[i]+"_"+str(k)+"_Esse",
+                                                template = Esse(
+                                                tree_file = families_shorter[i]+"_Esse_tree.tre", # Input tree
+                                                tip_states_file = workflow_dir+"03_distribution_data/"+families_shorter[i]+"_states_"+percentages[j]+".txt", 
+                                                paleo_clim_file = data_dir+"paleoclim_area.txt", # File with paleoclimatic variables
+                                                done = families_shorter[i]+"_"+str(k)+"_Esse",
+                                                path_in = workflow_dir+"02_adding_orders/pruning/subset_of_orders/",
+                                                save_file = "Esse_output_"+families_shorter[i]+"_"+percentages[j]+"_"+str(k)+".jld2",
+                                                script_dir=script_dir,
+                                                done_dir = done_dir,
+                                                out_states_file = "Esse_states_"+families_shorter[i]+"_"+percentages[j]+"_"+str(k), 
+                                                hidden_states = 1,
+                                                niter = 100000,
+                                                out_file = "Esse_output_"+families_shorter[i]+"_hidden_states_"+percentages[j]+"_"+str(k),
+                                                output_folder = workflow_dir+"04_results/Esse_output/",
+                                                path_out = workflow_dir+"04_results/",
+                                                biome_sampling = workflow_dir+"03_distribution_data/"+families_shorter[i]+"_biome_sampling_fraction.txt"
+                                             ))
 
 
 
@@ -2372,13 +2562,6 @@ sub_family_clades = ["Acanthaceae_Martyniaceae_Pedaliaceae_1",
                      "Rubiaceae_3",
                      ]
 
-
-# These orders can not finish in a week
-# So they need to run less iterations
-# sub-family
-sub_families_shorter = ["Acanthaceae_Martyniaceae_Pedaliaceae_3","Amaryllidaceae_2","Apiaceae_4","Brassicaceae_2","Brassicaceae_3","Caryophyllaceae_Achatocarpaceae_Amaranthaceae_1",
-"Fabaceae_2","Myrtaceae_2","Orchidaceae_15","Orchidaceae_1","Plantaginaceae_1","Poaceae_1","Poaceae_2","Poaceae_4","Ranunculaceae_1","Ranunculaceae_2","Rosaceae_2","Rosaceae_4","Rubiaceae_1"]
-
 for i in range(len(sub_family_clades)):
             # gwf.target_from_template(name = sub_family_clades[i]+"_distribution_data.",
             #                     template=Finding_areas_in_wcvp(
@@ -2471,6 +2654,108 @@ for i in range(len(sub_family_clades)):
                                                 path_out = workflow_dir+"04_results/",
                                                 biome_sampling = workflow_dir+"03_distribution_data/"+sub_family_clades[i]+"_biome_sampling_fraction.txt"
                                              ))
+                        
+# Running Esse on the problematic clades.
+# These orders can not finish in a week
+# So they need to run less iterations
+# sub-family
+sub_families_shorter = ["Acanthaceae_Martyniaceae_Pedaliaceae_3","Amaryllidaceae_2","Apiaceae_4","Brassicaceae_2","Brassicaceae_3","Caryophyllaceae_Achatocarpaceae_Amaranthaceae_1",
+"Fabaceae_2","Myrtaceae_2","Orchidaceae_15","Orchidaceae_1","Plantaginaceae_1","Poaceae_1","Poaceae_2","Poaceae_4","Ranunculaceae_1","Ranunculaceae_2","Rosaceae_2","Rosaceae_4","Rubiaceae_1"]
+
+
+for i in range(len(sub_families_shorter)):
+            # gwf.target_from_template(name = sub_families_shorter[i]+"_distribution_data.",
+            #                     template=Finding_areas_in_wcvp(
+            #                     input_file_tree= "sub_phylo_"+sub_families_shorter[i]+".tre",
+            #                     path_in =  workflow_dir+"02_adding_orders/pruning/subset_of_orders/",
+            #                     path_out = workflow_dir+"03_distribution_data/",
+            #                     output_file = sub_families_shorter[i]+"_distribution_data.txt",
+            #                     wcvp_file = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds",
+            #                     order = sub_families_shorter[i],
+            #                     script_dir= script_dir,
+            #                     apg = script_dir+"apgweb_parsed.csv",
+            #                     done_dir= done_dir,
+            #                     done= sub_families_shorter[i]+"_distribution_data",
+            #                     renamed_occurrences = workflow_dir+"01_distribution_data/06_Renamed/gbif_renamed.rds", 
+            #                     koppen_biome = script_dir+"koppen_geiger_0p01.tif"
+            #                     ))
+                        
+            # for j in range(len(percentages)):
+            #         gwf.target_from_template(name = sub_families_shorter[i]+"_states_converter_"+percentages[j],
+            #                                 template=states_converter(
+            #                                 path_in= workflow_dir+"03_distribution_data/",
+            #                                 tip_states_file= workflow_dir+"03_distribution_data/"+sub_families_shorter[i]+"_distribution_data.txt",
+            #                                 out_states_file= workflow_dir+"03_distribution_data/"+sub_families_shorter[i]+"_states_"+percentages[j]+".txt",
+            #                                 script_dir= script_dir,
+            #                                 done_dir= done_dir,
+            #                                 done= "States_converter_"+sub_families_shorter[i]+"_"+percentages[j]+"",
+            #                                 percentage_for_present= percentages[j]
+            #                                 ))
+                    
+            #         gwf.target_from_template(name = sub_families_shorter[i]+"_Sampling_fraction",
+            #                              template = sampling_frequency(
+            #                                     input_file_tree= "sub_phylo_"+sub_families_shorter[i]+".tre",
+            #                                     path_in =  workflow_dir+"02_adding_orders/pruning/subset_of_orders/",
+            #                                     path_out = workflow_dir+"03_distribution_data/",
+            #                                     output_file = sub_families_shorter[i]+"_sampling_fraction.txt",
+            #                                     wcvp_file = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds",
+            #                                     order = sub_families_shorter[i],
+            #                                     script_dir= script_dir,
+            #                                     apg = script_dir+"apgweb_parsed.csv",
+            #                                     done_dir= done_dir,
+            #                                     done= sub_families_shorter[i]+"_Sampling_fraction"
+            #                              ))
+                    
+            
+                    gwf.target_from_template(name = sub_families_shorter[i]+"_Tip_removal",
+                                                template = rem_tips(
+                                                input_file_tree = "sub_phylo_"+sub_families_shorter[i]+".tre",
+                                                distribution_file= workflow_dir+"03_distribution_data/"+sub_families_shorter[i]+"_states_"+percentages[j]+".txt",
+                                                output_file = sub_families_shorter[i]+"_Esse_tree.tre",
+                                                path_in = workflow_dir+"02_adding_orders/pruning/subset_of_orders/",
+                                                order = sub_families_shorter[i],
+                                                script_dir= script_dir,
+                                                done_dir= done_dir,
+                                                done= "Tip_removal"+sub_families_shorter[i]
+                                                ))
+                    
+                    gwf.target_from_template(name = sub_families_shorter[i]+"_Biome_sampling_fraction.",
+                                                template=sampling_frequency_per_biome(
+                                                input_file_tree= "sub_phylo_"+sub_families_shorter[i]+".tre",
+                                                path_in =  workflow_dir+"02_adding_orders/pruning/subset_of_orders/",
+                                                path_out = workflow_dir+"03_distribution_data/",
+                                                output_file = sub_families_shorter[i]+"_biome_sampling_fraction.txt",
+                                                wcvp_file = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds",
+                                                order = sub_families_shorter[i],
+                                                script_dir= script_dir,
+                                                apg = script_dir+"apgweb_parsed.csv",
+                                                done_dir= done_dir,
+                                                done= sub_families_shorter[i]+"_biome_sampling_fraction",
+                                                renamed_occurrences = workflow_dir+"01_distribution_data/06_Renamed/gbif_renamed.rds", 
+                                                koppen_biome = script_dir+"koppen_geiger_0p01.tif",
+                                                percentage= percentages[j]
+                                                ))
+                        
+                    for k in range(10):
+                        gwf.target_from_template(name = sub_families_shorter[i]+"_"+str(k)+"_Esse",
+                                                template = Esse(
+                                                tree_file = sub_families_shorter[i]+"_Esse_tree.tre", # Input tree
+                                                tip_states_file = workflow_dir+"03_distribution_data/"+sub_families_shorter[i]+"_states_"+percentages[j]+".txt", 
+                                                paleo_clim_file = data_dir+"paleoclim_area.txt", # File with paleoclimatic variables
+                                                done = sub_families_shorter[i]+"_"+str(k)+"_Esse",
+                                                path_in = workflow_dir+"02_adding_orders/pruning/subset_of_orders/",
+                                                save_file = "Esse_output_"+sub_families_shorter[i]+"_"+percentages[j]+"_"+str(k)+".jld2",
+                                                script_dir=script_dir,
+                                                done_dir = done_dir,
+                                                out_states_file = "Esse_states_"+sub_families_shorter[i]+"_"+percentages[j]+"_"+str(k), 
+                                                hidden_states = 1,
+                                                niter = 100000,
+                                                out_file = "Esse_output_"+sub_families_shorter[i]+"_hidden_states_"+percentages[j]+"_"+str(k),
+                                                output_folder = workflow_dir+"04_results/Esse_output/",
+                                                path_out = workflow_dir+"04_results/",
+                                                biome_sampling = workflow_dir+"03_distribution_data/"+sub_families_shorter[i]+"_biome_sampling_fraction.txt"
+                                             ))
+
             
 ###############################################################################################################################################################
 #####################################################################################################################################################################
