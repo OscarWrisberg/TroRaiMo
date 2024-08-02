@@ -2173,7 +2173,7 @@ for i in range(len(orders_shorter)):
 #######################################################---  Running ESSE on the esse_clades ---################################################################
 ###############################################################################################################################################################
 
-# This is the list of Clades resulting from my personal splitting of the orders. ( Here I need to remove)
+# This is the list of Clades resulting from my personal splitting of the orders.
 esse_clades = [
                 #"Aizoaceae_Phytolaccaceae_Barbeuiaceae_Lophiocarpaceae_Gisekiaceae_Sarcobataceae", # Caryophyllales
                 "Alzateaceae_Crypteroniaceae_Penaeaceae", # Myrtales
@@ -2385,7 +2385,7 @@ for i in range(len(families_shorter)):
             
                     gwf.target_from_template(name = families_shorter[i]+"_Tip_removal",
                                                 template = rem_tips(
-                                                input_file_tree = "sub_phylo_"+families_shorter[i]+".tre",
+                                                input_file_tree = "family_phylo_"+families_shorter[i]+".tre",
                                                 distribution_file= workflow_dir+"03_distribution_data/"+families_shorter[i]+"_states_"+percentages[j]+".txt",
                                                 output_file = families_shorter[i]+"_Esse_tree.tre",
                                                 path_in = workflow_dir+"02_adding_orders/pruning/subset_of_orders/",
