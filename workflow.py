@@ -2078,8 +2078,8 @@ orders_shorter = ["Crossosomatales","Malvales","Proteales"]
 for i in range(len(orders_shorter)):
             gwf.target_from_template(name = orders_shorter[i]+"_distribution_data.",
                                 template=Finding_areas_in_wcvp(
-                                input_file_tree= "sub_phylo_"+orders_shorter[i]+".tre",
-                                path_in =  workflow_dir+"02_adding_orders/pruning/subset_of_orders/",
+                                input_file_tree= "pruned_tree_order_"+orders_shorter[i]+"_GBMB.tre",
+                                path_in =  workflow_dir+"02_adding_orders/pruning/orders/",
                                 path_out = workflow_dir+"03_distribution_data/",
                                 output_file = orders_shorter[i]+"_distribution_data.txt",
                                 wcvp_file = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds",
@@ -2097,7 +2097,7 @@ for i in range(len(orders_shorter)):
                                             template=states_converter(
                                             path_in= workflow_dir+"03_distribution_data/",
                                             tip_states_file= workflow_dir+"03_distribution_data/"+orders_shorter[i]+"_distribution_data.txt",
-                                            out_states_file= workflow_dir+"03_distribution_data/"+orders_shorter[i]+"_states_"+percentages[j]+".txt",
+                                            out_states_file= workflow_dir+"03_distribution_data/"+orders_shorter[i]+"_states_"+percentages[j]+"_Esse.txt",
                                             script_dir= script_dir,
                                             done_dir= done_dir,
                                             done= "States_converter_"+orders_shorter[i]+"_"+percentages[j]+"",
@@ -2106,8 +2106,8 @@ for i in range(len(orders_shorter)):
                     
                     gwf.target_from_template(name = orders_shorter[i]+"_Sampling_fraction",
                                          template = sampling_frequency(
-                                                input_file_tree= "sub_phylo_"+orders_shorter[i]+".tre",
-                                                path_in =  workflow_dir+"02_adding_orders/pruning/subset_of_orders/",
+                                                input_file_tree= "pruned_tree_order_"+orders_shorter[i]+"_GBMB.tre",
+                                                path_in =  workflow_dir+"02_adding_orders/pruning/orders/",
                                                 path_out = workflow_dir+"03_distribution_data/",
                                                 output_file = orders_shorter[i]+"_sampling_fraction.txt",
                                                 wcvp_file = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds",
@@ -2121,20 +2121,21 @@ for i in range(len(orders_shorter)):
             
                     gwf.target_from_template(name = orders_shorter[i]+"_Tip_removal",
                                                 template = rem_tips(
-                                                input_file_tree = "sub_phylo_"+orders_shorter[i]+".tre",
+                                                input_file_tree = "pruned_tree_order_"+orders_shorter[i]+"_GBMB.tre",
                                                 distribution_file= workflow_dir+"03_distribution_data/"+orders_shorter[i]+"_states_"+percentages[j]+".txt",
                                                 output_file = orders_shorter[i]+"_Esse_tree.tre",
-                                                path_in = workflow_dir+"02_adding_orders/pruning/subset_of_orders/",
+                                                path_in = workflow_dir+"02_adding_orders/pruning/orders/",
                                                 order = orders_shorter[i],
                                                 script_dir= script_dir,
                                                 done_dir= done_dir,
                                                 done= "Tip_removal"+orders_shorter[i]
                                                 ))
+
                     
                     gwf.target_from_template(name = orders_shorter[i]+"_Biome_sampling_fraction.",
                                                 template=sampling_frequency_per_biome(
-                                                input_file_tree= "sub_phylo_"+orders_shorter[i]+".tre",
-                                                path_in =  workflow_dir+"02_adding_orders/pruning/subset_of_orders/",
+                                                input_file_tree= "pruned_tree_order_"+orders_shorter[i]+"_GBMB.tre",
+                                                path_in =  workflow_dir+"02_adding_orders/pruning/orders/",
                                                 path_out = workflow_dir+"03_distribution_data/",
                                                 output_file = orders_shorter[i]+"_biome_sampling_fraction.txt",
                                                 wcvp_file = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds",
@@ -2155,7 +2156,7 @@ for i in range(len(orders_shorter)):
                                                 tip_states_file = workflow_dir+"03_distribution_data/"+orders_shorter[i]+"_states_"+percentages[j]+".txt", 
                                                 paleo_clim_file = data_dir+"paleoclim_area.txt", # File with paleoclimatic variables
                                                 done = orders_shorter[i]+"_"+str(k)+"_Esse",
-                                                path_in = workflow_dir+"02_adding_orders/pruning/subset_of_orders/",
+                                                path_in = workflow_dir+"02_adding_orders/pruning/orders/",
                                                 save_file = "Esse_output_"+orders_shorter[i]+"_"+percentages[j]+"_"+str(k)+".jld2",
                                                 script_dir=script_dir,
                                                 done_dir = done_dir,
