@@ -2397,7 +2397,7 @@ for i in range(len(families_shorter)):
                     
                     gwf.target_from_template(name = families_shorter[i]+"_Biome_sampling_fraction.",
                                                 template=sampling_frequency_per_biome(
-                                                input_file_tree= "sub_phylo_"+families_shorter[i]+".tre",
+                                                input_file_tree= "family_phylo_"+families_shorter[i]+".tre",
                                                 path_in =  workflow_dir+"02_adding_orders/pruning/subset_of_orders/",
                                                 path_out = workflow_dir+"03_distribution_data/",
                                                 output_file = families_shorter[i]+"_biome_sampling_fraction.txt",
