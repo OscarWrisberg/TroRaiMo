@@ -104,7 +104,7 @@ sp_pairs_for_mrca_fabaceae <- list(list("Trifolium macraei","Parochetus communis
 								list("Indigofera humbertiana","Phylloxylon perrieri"), 	# 6
 								list("Crotalaria lebrunii","Amphiodon effusus"), # 7
 								list("Dalbergia subcymosa","Salweenia wardii"), # 7
-								list("Luetzelburgia purpurea","Vataireopsis surinamensis") # 7
+								list("Luetzelburgia purpurea","Vataireopsis surinamensis"), # 7
 								list("Ateleia standleyana","Dalbergia sericea"), # 7 
 								list("Acacia crassa","Senegalia catechu"), # 8
 								list("Inga acrocephala","Mariosousa heterophylla"), # 9
