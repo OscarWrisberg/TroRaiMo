@@ -9,12 +9,13 @@
 
 source('./node_probabilities.r')
 source('plotting_scripts/node_probabilities.r')
-
+data_dir <- "/home/au543206/GenomeDK/Trf_models/workflow/04_results/Esse_output/Esse_done_results/"
 
 #-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 # prepare data
-sf = list.files('~/data/esse/empirical_comp_raw', 
-    full.names = TRUE, recursive = TRUE, pattern = 's.*.log$') # Find the file paths of all files with the '.log' extension
+sf = list.files(data_dir, 
+    full.names = TRUE, recursive = TRUE, pattern = '*.csv') # Find the file paths of all files with the '.log' extension
+	
 
 # sf = grep('h2', sf, value = TRUE)
 

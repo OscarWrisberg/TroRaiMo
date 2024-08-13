@@ -20,20 +20,38 @@ invisible(lapply(packages, library, character.only = TRUE))
 # Setting output folder
 output_folder <- "/home/au543206/GenomeDK/Trf_models/workflow/05_figures"
 
+########################################################################################################################
+############################################## Checking for duplicates  ################################################
+########################################################################################################################
+
+# Clads on orders
+folderpath_1 <- "/home/au543206/GenomeDK/Trf_models/workflow/02_adding_orders/pruning/orders"
+file_list_1 <- list.files(folderpath_1, pattern = "Clads_output_.*\\.Rdata", full.names = TRUE)
+
+#Clads on suborders
+folderpath_2 <- "/home/au543206/GenomeDK/Trf_models/workflow/02_adding_orders/pruning/subset_of_orders"
+file_list_2 <- list.files(folderpath_2, pattern = "Clads_output_.*\\.Rdata", full.names = TRUE)
+
+# join the file lists
+file_list <- c(file_list_1, file_list_2)
+
+length(file_list)
+
 #########################################################################################################################
 ############################################ Loading ClaDs runs on orders  ##############################################
 #########################################################################################################################
 
 # Loading the ClaDs run for the runs that ran on the Orders
-# Specify the folder path
-folder_path <- "/home/au543206/GenomeDK/Trf_models/workflow/02_adding_orders/pruning/orders"
+# # Specify the folder path
+# folder_path <- "/home/au543206/GenomeDK/Trf_models/workflow/02_adding_orders/pruning/orders"
 
-# Get a list of all Rdata files in the folder
-file_list <- list.files(folder_path, pattern = "Clads_output_.*\\.Rdata", full.names = TRUE)
+# # Get a list of all Rdata files in the folder
+# file_list <- list.files(folder_path, pattern = "Clads_output_.*\\.Rdata", full.names = TRUE)
 
 # Create dataframe for tips and tip rate speciation
 clads_tip_lambda <- data.frame()
-
+tip_labels <- c()
+file_names <- c()
   
 # Loop through each file in the folder
 for (i in 1:length(file_list)) { # This loop takes atleast 2 hours to run ....
@@ -52,48 +70,11 @@ for (i in 1:length(file_list)) { # This loop takes atleast 2 hours to run ....
 
 	tree <- CladsOutput$tree
 
-	# Append the tip names and tip rate speciation to the dataframe
-	clads_tip_lambda <- rbind(clads_tip_lambda, data.frame(order = order_name,
-														   tip_label = tree$tip.label,
-														   lambda = CladsOutput$lambdatip_map,
-														   extinction = CladsOutput$eps_map
-														   ))
-	
-	# print dim of the dataframe to keep track of the progress
-	cat("The dataset contains ",dim(clads_tip_lambda)[1], " rows and ", dim(clads_tip_lambda)[2], " columns\n")
+	# Append the tip labels and file names to the vectors
+	tip_labels <- c(tip_labels, CladsOutput$tree$tip.label)
 
-	# Remove the CladsOutput object from the environment
-	rm(CladsOutput)
-}
-
-###############################################################################################################################
-############################################--- Clads on Subclades ---#########################################################
-###############################################################################################################################
-# Loading the ClaDs runs that ran on the sub_order trees
-# Specify the folder path
-folder_path <- "/home/au543206/GenomeDK/Trf_models/workflow/02_adding_orders/pruning/subset_of_orders"
-
-# Get a list of all Rdata files in the folder
-file_list <- list.files(folder_path, pattern = "Clads_output_.*\\.Rdata", full.names = TRUE)
-
-length(file_list)
-
-# Loop through each file in the folder
-for (i in 1:length(file_list)) { # This loop takes atleast 2 hours to run ....
-
-	# Keeping track of the progress
-	print(paste("Processing file", i, "of", length(file_list)))
-
-	# Extractinc the file name
-	file = file_list[i]
-
-	# Extract the order name from the file name
-	order_name <- gsub("Clads_output_(.*)\\.Rdata", "\\1", basename(file))
-	
-	# Load the Rdata file
-	load(file)
-
-	tree <- CladsOutput$tree
+	# Repeat the file name for the number of tip labels
+	file_names <- c(file_names, rep(basename(file), length(CladsOutput$tree$tip.label)))
 
 	# Append the tip names and tip rate speciation to the dataframe
 	clads_tip_lambda <- rbind(clads_tip_lambda, data.frame(order = order_name,
@@ -108,6 +89,66 @@ for (i in 1:length(file_list)) { # This loop takes atleast 2 hours to run ....
 	# Remove the CladsOutput object from the environment
 	rm(CladsOutput)
 }
+
+# Create a dataframe with the tip labels and file names
+tip_labels_df <- data.frame(tip_label = tip_labels, file_name = file_names)
+
+# Check if there are any duplicates and break if there are
+if(any(duplicated(tip_labels_df$tip_label))) {
+	print("There are duplicates in the tip labels")
+	stop()
+} else {
+	print("There are no duplicates in the tip labels")
+}
+
+
+# ###############################################################################################################################
+# ############################################--- Clads on Subclades ---#########################################################
+# ###############################################################################################################################
+# # Loading the ClaDs runs that ran on the sub_order trees
+# # Specify the folder path
+# folder_path <- "/home/au543206/GenomeDK/Trf_models/workflow/02_adding_orders/pruning/subset_of_orders"
+
+# # Get a list of all Rdata files in the folder
+# file_list <- list.files(folder_path, pattern = "Clads_output_.*\\.Rdata", full.names = TRUE)
+
+# length(file_list)
+
+# # Loop through each file in the folder
+# for (i in 1:length(file_list)) { # This loop takes atleast 2 hours to run ....
+
+# 	# Keeping track of the progress
+# 	print(paste("Processing file", i, "of", length(file_list)))
+
+# 	# Extractinc the file name
+# 	file = file_list[i]
+
+# 	# Extract the order name from the file name
+# 	order_name <- gsub("Clads_output_(.*)\\.Rdata", "\\1", basename(file))
+	
+# 	# Load the Rdata file
+# 	load(file)
+
+# 	tree <- CladsOutput$tree
+
+# 	# Append the tip names and tip rate speciation to the dataframe
+# 	clads_tip_lambda <- rbind(clads_tip_lambda, data.frame(order = order_name,
+# 														   tip_label = tree$tip.label,
+# 														   lambda = CladsOutput$lambdatip_map,
+# 														   extinction = CladsOutput$eps_map
+# 														   ))
+	
+# 	# print dim of the dataframe to keep track of the progress
+# 	cat("The dataset contains ",dim(clads_tip_lambda)[1], " rows and ", dim(clads_tip_lambda)[2], " columns\n")
+
+# 	# Remove the CladsOutput object from the environment
+# 	rm(CladsOutput)
+# }
+
+
+# Save RDS file
+saveRDS(clads_tip_lambda, file = "/home/au543206/GenomeDK/Trf_models/workflow/04_results/clads_tip_lambda.rds")
+clads_tip_lambda <- readRDS("/home/au543206/GenomeDK/Trf_models/workflow/04_results/clads_tip_lambda.rds")
 
 ###############################################################################################################################
 #############################################--- Distribution data ---#########################################################
@@ -190,10 +231,66 @@ distribution_data_merged <- distribution_data_merged_sorted
 
 # Plot
 # Add a column to the distribution data that indicates whether the proportion in tropical rainforest is greater than 70%
-distribution_data_merged$in_tropical_rainforest60 <- distribution_data_merged$proportion_in_tropical_rainforest > 0.6
-distribution_data_merged$in_tropical_rainforest70 <- distribution_data_merged$proportion_in_tropical_rainforest > 0.7
-distribution_data_merged$in_tropical_rainforest80 <- distribution_data_merged$proportion_in_tropical_rainforest > 0.8
-distribution_data_merged$in_tropical_rainforest90 <- distribution_data_merged$proportion_in_tropical_rainforest > 0.9
+distribution_data_merged$in_tropical_rainforest10 <- distribution_data_merged$proportion_in_tropical_rainforest > 0.1
+distribution_data_merged$outsode_tropical_rainforest10 <- distribution_data_merged$proportion_outside_tropical_rainforest > 0.1
+
+distribution_data_merged$in_tropical_rainforest25 <- distribution_data_merged$proportion_in_tropical_rainforest > 0.25
+distribution_data_merged$outsode_tropical_rainforest25 <- distribution_data_merged$proportion_outside_tropical_rainforest > 0.25
+
+distribution_data_merged$in_tropical_rainforest33 <- distribution_data_merged$proportion_in_tropical_rainforest > 0.33
+distribution_data_merged$outsode_tropical_rainforest33 <- distribution_data_merged$proportion_outside_tropical_rainforest > 0.33
+
+distribution_data_merged$in_tropical_rainforest50 <- distribution_data_merged$proportion_in_tropical_rainforest > 0.4
+distribution_data_merged$outsode_tropical_rainforest50 <- distribution_data_merged$proportion_outside_tropical_rainforest > 0.4
+
+
+# # Add a column showing wether the species is outside tropical rainforest at 0.33
+# distribution_data_merged$outside_tropical_rainforest33 <- distribution_data_merged$proportion_outside_tropical_rainforest > 0.33
+
+# # Now we add a column which shows either Trf, Non-trf or widespread based on the values of in_tropical_rainforest33 and outside_tropical_rainforest33
+# distribution_data_merged$biome_affiliation <- ifelse(
+#   distribution_data_merged$in_tropical_rainforest33 == TRUE & distribution_data_merged$outside_tropical_rainforest33 == FALSE,
+#   "TRF",
+#   ifelse(
+#     distribution_data_merged$outside_tropical_rainforest33 == TRUE & distribution_data_merged$in_tropical_rainforest33 == FALSE,
+#     "Non TRF",
+#     ifelse(
+#       distribution_data_merged$in_tropical_rainforest33 == TRUE & distribution_data_merged$outside_tropical_rainforest33 == TRUE,
+#       "Widespread",
+#       "Error"
+#     )
+#   )
+# )
+
+# Define the threshold values
+thresholds <- c(0.1, 0.25, 0.33, 0.4)
+
+# Iterate over each threshold value to create the corresponding columns
+for (threshold in thresholds) {
+  # Create the column names based on the threshold
+  in_trf_col <- paste0("in_tropical_rainforest", threshold * 100)
+  outside_trf_col <- paste0("outside_tropical_rainforest", threshold * 100)
+  biome_affiliation_col <- paste0("biome_affiliation_", threshold * 100)
+  
+  # Add columns to the distribution data
+  distribution_data_merged[[in_trf_col]] <- distribution_data_merged$proportion_in_tropical_rainforest > threshold
+  distribution_data_merged[[outside_trf_col]] <- distribution_data_merged$proportion_outside_tropical_rainforest > threshold
+  
+  # Add the biome affiliation column based on the conditions
+  distribution_data_merged[[biome_affiliation_col]] <- ifelse(
+    distribution_data_merged[[in_trf_col]] == TRUE & distribution_data_merged[[outside_trf_col]] == FALSE,
+    "TRF",
+    ifelse(
+      distribution_data_merged[[outside_trf_col]] == TRUE & distribution_data_merged[[in_trf_col]] == FALSE,
+      "Non TRF",
+      ifelse(
+        distribution_data_merged[[in_trf_col]] == TRUE & distribution_data_merged[[outside_trf_col]] == TRUE,
+        "Widespread",
+        "Error"
+      )
+    )
+  )
+}
 
 ################################################################################################################################
 ############################----- Density functions of tip rate speciation in tropical rainforest -----#########################
@@ -201,179 +298,193 @@ distribution_data_merged$in_tropical_rainforest90 <- distribution_data_merged$pr
 
 trfcol <- "chartreuse"
 non_trfcol <- "deeppink"
+widespread_col <- "aquamarine2"
 
-boxplot60 <- ggplot(distribution_data_merged, aes(x = in_tropical_rainforest60, y = lambda)) +
-	geom_boxplot(fill = c(non_trfcol, trfcol), color = "black") +
-	scale_x_discrete(labels = c("Not in TRF", "In TRF")) +
-	ylab("Tip Rate Speciation") +
-	xlab("") +
-	theme_ipsum() + 
-	labs(title = "60%") +
-	theme(legend.position = "none")
+cols <- met.brewer("Java", n=3, type = "discrete")
 
-boxplot70 <- ggplot(distribution_data_merged, aes(x = in_tropical_rainforest70, y = lambda)) +
-	geom_boxplot(fill = c(non_trfcol, trfcol), color = "black") +
-	scale_x_discrete(labels = c("Not in TRF", "In TRF")) +
-	ylab("Tip Rate Speciation") +
-	xlab("") +
-	theme_ipsum() +
-	labs(title = "70%") +
-	theme(legend.position = "none")
+# Change position of cols 2 and 3
+cols <- cols[c(1,3,2)]
 
-boxplot80 <- ggplot(distribution_data_merged, aes(x = in_tropical_rainforest80, y = lambda)) +
-	geom_boxplot(fill = c(non_trfcol, trfcol), color = "black") +
-	scale_x_discrete(labels = c("Not in TRF", "In TRF")) +
-	ylab("Tip Rate Speciation") +
-	xlab("") +
-	theme_ipsum() +
-	labs(title = "80%") +
-	theme(legend.position = "none")
+# print(cols)
+# boxplot60 <- ggplot(distribution_data_merged, aes(x = in_tropical_rainforest60, y = lambda)) +
+# 	geom_boxplot(fill = c(non_trfcol, trfcol), color = "black") +
+# 	scale_x_discrete(labels = c("Not in TRF", "In TRF")) +
+# 	ylab("Tip Rate Speciation") +
+# 	xlab("") +
+# 	theme_ipsum() + 
+# 	labs(title = "60%") +
+# 	theme(legend.position = "none")
 
-boxplot90 <- ggplot(distribution_data_merged, aes(x = in_tropical_rainforest90, y = lambda)) +
-	geom_boxplot(fill = c(non_trfcol, trfcol), color = "black") +
-	scale_x_discrete(labels = c("Not in TRF", "In TRF")) +
-	ylab("Tip Rate Speciation") +
-	xlab("") +
-	theme_ipsum() +
-	labs(title = "90%") +
-	theme(legend.position = "none")
+# boxplot70 <- ggplot(distribution_data_merged, aes(x = in_tropical_rainforest70, y = lambda)) +
+# 	geom_boxplot(fill = c(non_trfcol, trfcol), color = "black") +
+# 	scale_x_discrete(labels = c("Not in TRF", "In TRF")) +
+# 	ylab("Tip Rate Speciation") +
+# 	xlab("") +
+# 	theme_ipsum() +
+# 	labs(title = "70%") +
+# 	theme(legend.position = "none")
 
-# Combine all boxplots into one grid
-plot_grid(boxplot60, boxplot70, boxplot80, boxplot90, labels = c("A", "B", "C", "D"), label_size = 12, label_fontface = "bold")
+# boxplot80 <- ggplot(distribution_data_merged, aes(x = in_tropical_rainforest80, y = lambda)) +
+# 	geom_boxplot(fill = c(non_trfcol, trfcol), color = "black") +
+# 	scale_x_discrete(labels = c("Not in TRF", "In TRF")) +
+# 	ylab("Tip Rate Speciation") +
+# 	xlab("") +
+# 	theme_ipsum() +
+# 	labs(title = "80%") +
+# 	theme(legend.position = "none")
 
+# boxplot90 <- ggplot(distribution_data_merged, aes(x = in_tropical_rainforest90, y = lambda)) +
+# 	geom_boxplot(fill = c(non_trfcol, trfcol), color = "black") +
+# 	scale_x_discrete(labels = c("Not in TRF", "In TRF")) +
+# 	ylab("Tip Rate Speciation") +
+# 	xlab("") +
+# 	theme_ipsum() +
+# 	labs(title = "90%") +
+# 	theme(legend.position = "none")
 
-# Density functions of tip rate speciation in tropical rainforest
-
-densityplot60 <- ggplot(distribution_data_merged, aes(x = lambda, fill = in_tropical_rainforest60)) +
-	geom_density(alpha = 0.5) +
-	scale_fill_manual(values = c(non_trfcol, trfcol), labels = c("", "")) +
-	ylab("Density") +
-	xlab("Tip Rate Speciation") +
-	theme_ipsum() +
-	labs(title = "60%") +
-	theme(legend.position = "bottom") +
-	scale_x_log10()
-
-densityplot70 <- ggplot(distribution_data_merged, aes(x = lambda, fill = in_tropical_rainforest70)) +
-	geom_density(alpha = 0.5) +
-	scale_fill_manual(values = c(non_trfcol, trfcol), labels = c("", "")) +
-	ylab("Density") +
-	xlab("Tip Rate Speciation") +
-	theme_ipsum() +
-	labs(title = "70%") +
-	theme(legend.position = "none") +
-	scale_x_log10()
-
-densityplot80 <- ggplot(distribution_data_merged, aes(x = lambda, fill = in_tropical_rainforest80)) +
-	geom_density(alpha = 0.5) +
-	scale_fill_manual(values = c(non_trfcol, trfcol), labels = c("", "")) +
-	ylab("Density") +
-	xlab("Tip Rate Speciation") +
-	theme_ipsum() +
-	labs(title = "80%") +
-	theme(legend.position = "none") +
-	scale_x_log10()
-
-densityplot90 <- ggplot(distribution_data_merged, aes(x = lambda, fill = in_tropical_rainforest90)) +
-	geom_density(alpha = 0.5) +
-	scale_fill_manual(values = c(non_trfcol, trfcol), labels = c("", "")) +
-	ylab("Density") +
-	xlab("Tip Rate Speciation") +
-	theme_ipsum() +
-	labs(title = "90%") +
-	theme(legend.position = "none") +
-	scale_x_log10()
-
-# Combine all density plots into one grid
-prow <- plot_grid(densityplot60, densityplot70, densityplot80, densityplot90, labels = c("A", "B", "C", "D"), label_size = 12, label_fontface = "bold")
-prow
-
-#
-# extract a legend that is laid out horizontally
-legend_b <- get_legend(
-  densityplot60 + 
-    guides(color = guide_legend(nrow = 1)) +
-    theme(legend.position = "bottom")
-)
-
-# add the legend underneath the row we made earlier. Give it 10%
-# of the height of one plot (via rel_heights).
-plot_grid(prow, legend_b, ncol = 1, rel_heights = c(1, .1))
+# # Combine all boxplots into one grid
+# plot_grid(boxplot60, boxplot70, boxplot80, boxplot90, labels = c("A", "B", "C", "D"), label_size = 12, label_fontface = "bold")
 
 
-# Calculate the mean and standard deviation of the unique extinction rates
-mean_extinction <- mean(unique_extinction)
-log(mean_extinction)
-sd_extinction <- sd(unique_extinction)
-log(sd_extinction)
+# # Density functions of tip rate speciation in tropical rainforest
 
-unique_orders <- unique(clads_tip_lambda$order)
+# densityplot60 <- ggplot(distribution_data_merged, aes(x = lambda, fill = in_tropical_rainforest60)) +
+# 	geom_density(alpha = 0.5) +
+# 	scale_fill_manual(values = c(non_trfcol, trfcol), labels = c("", "")) +
+# 	ylab("Density") +
+# 	xlab("Tip Rate Speciation") +
+# 	theme_ipsum() +
+# 	labs(title = "60%") +
+# 	theme(legend.position = "bottom") +
+# 	scale_x_log10()
 
-# make a dataframe with the unique extinction rates and the orders
-extinction_per_order <- data.frame(order = unique_orders, extinction = unique_extinction)
+# densityplot70 <- ggplot(distribution_data_merged, aes(x = lambda, fill = in_tropical_rainforest70)) +
+# 	geom_density(alpha = 0.5) +
+# 	scale_fill_manual(values = c(non_trfcol, trfcol), labels = c("", "")) +
+# 	ylab("Density") +
+# 	xlab("Tip Rate Speciation") +
+# 	theme_ipsum() +
+# 	labs(title = "70%") +
+# 	theme(legend.position = "none") +
+# 	scale_x_log10()
 
-# print the dataframe sorted by extinction rate
-extinction_per_order[order(-extinction_per_order$extinction), ]
+# densityplot80 <- ggplot(distribution_data_merged, aes(x = lambda, fill = in_tropical_rainforest80)) +
+# 	geom_density(alpha = 0.5) +
+# 	scale_fill_manual(values = c(non_trfcol, trfcol), labels = c("", "")) +
+# 	ylab("Density") +
+# 	xlab("Tip Rate Speciation") +
+# 	theme_ipsum() +
+# 	labs(title = "80%") +
+# 	theme(legend.position = "none") +
+# 	scale_x_log10()
+
+# densityplot90 <- ggplot(distribution_data_merged, aes(x = lambda, fill = in_tropical_rainforest90)) +
+# 	geom_density(alpha = 0.5) +
+# 	scale_fill_manual(values = c(non_trfcol, trfcol), labels = c("", "")) +
+# 	ylab("Density") +
+# 	xlab("Tip Rate Speciation") +
+# 	theme_ipsum() +
+# 	labs(title = "90%") +
+# 	theme(legend.position = "none") +
+# 	scale_x_log10()
+
+# # Combine all density plots into one grid
+# prow <- plot_grid(densityplot60, densityplot70, densityplot80, densityplot90, labels = c("A", "B", "C", "D"), label_size = 12, label_fontface = "bold")
+# prow
+
+# #
+# # extract a legend that is laid out horizontally
+# legend_b <- get_legend(
+#   densityplot60 + 
+#     guides(color = guide_legend(nrow = 1)) +
+#     theme(legend.position = "bottom")
+# )
+
+# # add the legend underneath the row we made earlier. Give it 10%
+# # of the height of one plot (via rel_heights).
+# plot_grid(prow, legend_b, ncol = 1, rel_heights = c(1, .1))
+
+
+# # Calculate the mean and standard deviation of the unique extinction rates
+# mean_extinction <- mean(unique_extinction)
+# log(mean_extinction)
+# sd_extinction <- sd(unique_extinction)
+# log(sd_extinction)
+
+# unique_orders <- unique(clads_tip_lambda$order)
+
+# # make a dataframe with the unique extinction rates and the orders
+# extinction_per_order <- data.frame(order = unique_orders, extinction = unique_extinction)
+
+# # print the dataframe sorted by extinction rate
+# extinction_per_order[order(-extinction_per_order$extinction), ]
 
 
 # Boxplots of tip rate speciation in tropical rainforest
-boxplot60 <- ggplot(distribution_data_merged, aes(x = in_tropical_rainforest60, y = log10(lambda))) +
-	geom_boxplot(fill = c(non_trfcol, trfcol), color = "black") +
-	scale_x_discrete(labels = c("Not in TRF", "In TRF")) +
+boxplot10 <- ggplot(distribution_data_merged, aes(x = biome_affiliation_10, y = log10(lambda))) +
+	geom_boxplot(fill = cols, color = "black",) +
+	scale_x_discrete(labels = c("Not in TRF", "In TRF", "Widespread")) +
 	ylab("Tip Rate Speciation (log10)") +
 	xlab("") +
-	labs(title = "60%") +
+	labs(title = "10%") +
+	theme_minimal() +
 	theme(legend.position = "bottom")+
-	geom_text(data = data.frame(in_tropical_rainforest60 = c("TRUE", "FALSE"),
-            n = c(sum(distribution_data_merged$in_tropical_rainforest60 == TRUE), sum(distribution_data_merged$in_tropical_rainforest60 == FALSE))
+	geom_text(data = data.frame(biome_affiliation_10 = c("TRF", "Non TRF", "Widespread"),
+            n = c(sum(distribution_data_merged$biome_affiliation_10 == "TRF"), sum(distribution_data_merged$biome_affiliation_10 == "Non TRF"), sum(distribution_data_merged$biome_affiliation_10 == "Widespread"))
           ),
-          aes(label = n, x = in_tropical_rainforest60, y = 4),
+          aes(label = n, x = biome_affiliation_10, y = 4),
+          vjust = -0.5, color = "black", size = 4)
+
+# Boxplots of tip rate speciation in tropical rainforest
+boxplot25 <- ggplot(distribution_data_merged, aes(x = biome_affiliation_25, y = log10(lambda))) +
+	geom_boxplot(fill = cols, color = "black",) +
+	scale_x_discrete(labels = c("Not in TRF", "In TRF", "Widespread")) +
+	#ylab("Tip Rate Speciation (log10)") +
+	xlab("") +
+	labs(title = "25%") +
+	theme_minimal() +
+	theme(legend.position = "bottom",
+		axis.title.y = element_blank(),)+
+	geom_text(data = data.frame(biome_affiliation_25 = c("TRF", "Non TRF", "Widespread"),
+            n = c(sum(distribution_data_merged$biome_affiliation_25 == "TRF"), sum(distribution_data_merged$biome_affiliation_25 == "Non TRF"), sum(distribution_data_merged$biome_affiliation_25 == "Widespread"))
+          ),
+          aes(label = n, x = biome_affiliation_25, y = 4),
+          vjust = -0.5, color = "black", size = 4)
+
+# Boxplots of tip rate speciation in tropical rainforest
+boxplot33 <- ggplot(distribution_data_merged, aes(x = biome_affiliation_33, y = log10(lambda))) +
+	geom_boxplot(fill = cols, color = "black", ) +
+	scale_x_discrete(labels = c("Not in TRF", "In TRF", "Widespread")) +
+	ylab("Tip Rate Speciation (log10)") +
+	xlab("") +
+	labs(title = "33%") +
+	theme_minimal() +
+	theme(legend.position = "bottom")+
+	geom_text(data = data.frame(biome_affiliation_33 = c("TRF", "Non TRF", "Widespread"),
+            n = c(sum(distribution_data_merged$biome_affiliation_33 == "TRF"), sum(distribution_data_merged$biome_affiliation_33 == "Non TRF"), sum(distribution_data_merged$biome_affiliation_33 == "Widespread"))
+          ),
+          aes(label = n, x = biome_affiliation_33, y = 4),
+          vjust = -0.5, color = "black", size = 4)
+
+# Boxplots of tip rate speciation in tropical rainforest
+boxplot40 <- ggplot(distribution_data_merged, aes(x = biome_affiliation_40, y = log10(lambda))) +
+	geom_boxplot(fill = cols, color = "black", ) +
+	scale_x_discrete(labels = c("Not in TRF", "In TRF", "Widespread")) +
+	#ylab("Tip Rate Speciation (log10)") +
+	xlab("") +
+	labs(title = "40%") +
+	theme_minimal() +
+	theme(legend.position = "bottom",
+	axis.title.y = element_blank(),)+
+	geom_text(data = data.frame(biome_affiliation_40 = c("TRF", "Non TRF", "Widespread"),
+            n = c(sum(distribution_data_merged$biome_affiliation_40 == "TRF"), sum(distribution_data_merged$biome_affiliation_40 == "Non TRF"), sum(distribution_data_merged$biome_affiliation_40 == "Widespread"))
+          ),
+          aes(label = n, x = biome_affiliation_40, y = 4),
           vjust = -0.5, color = "black", size = 4)
 
 
-boxplot70 <- ggplot(distribution_data_merged, aes(x = in_tropical_rainforest70, y = log10(lambda))) +
-	geom_boxplot(fill = c(non_trfcol, trfcol), color = "black") +
-	scale_x_discrete(labels = c("Not in TRF", "In TRF")) +
-	ylab("Tip Rate Speciation (log10)") +
-	xlab("") +
-	labs(title = "70%") +
-	theme(legend.position = "none") +
-	geom_text(data = data.frame(in_tropical_rainforest70 = c("TRUE", "FALSE"),
-        n = c(sum(distribution_data_merged$in_tropical_rainforest70 == TRUE), sum(distribution_data_merged$in_tropical_rainforest70 == FALSE))
-      ),
-      aes(label = n, x = in_tropical_rainforest70, y = 4),
-      vjust = -0.5, color = "black", size = 4)
-
-
-
-boxplot80 <- ggplot(distribution_data_merged, aes(x = in_tropical_rainforest80, y = log10(lambda))) +
-	geom_boxplot(fill = c(non_trfcol, trfcol), color = "black") +
-	scale_x_discrete(labels = c("Not in TRF", "In TRF")) +
-	ylab("Tip Rate Speciation (log10)") +
-	xlab("") +
-	labs(title = "80%") +
-	theme(legend.position = "none") +
-	geom_text(data = data.frame(in_tropical_rainforest80 = c("TRUE", "FALSE"),
-        n = c(sum(distribution_data_merged$in_tropical_rainforest80 == TRUE), sum(distribution_data_merged$in_tropical_rainforest80 == FALSE))
-      ),
-      aes(label = n, x = in_tropical_rainforest80, y = 4),
-      vjust = -0.5, color = "black", size = 4)
-
-boxplot90 <- ggplot(distribution_data_merged, aes(x = in_tropical_rainforest90, y = log10(lambda))) +
-	geom_boxplot(fill = c(non_trfcol, trfcol), color = "black") +
-	scale_x_discrete(labels = c("Not in TRF", "In TRF")) +
-	ylab("Tip Rate Speciation (log10)") +
-	xlab("") +
-	labs(title = "90%") +
-	theme(legend.position = "none") +
-	geom_text(data = data.frame(in_tropical_rainforest90 = c("TRUE", "FALSE"),
-        n = c(sum(distribution_data_merged$in_tropical_rainforest90 == TRUE), sum(distribution_data_merged$in_tropical_rainforest90 == FALSE))
-      ),
-      aes(label = n, x = in_tropical_rainforest90, y = 4),
-      vjust = -0.5, color = "black", size = 4)
-
 # Combine all boxplots into one grid
-prow <- plot_grid(boxplot60, boxplot70, boxplot80, boxplot90, labels = c("A", "B", "C", "D"), label_size = 12, label_fontface = "bold")
+prow <- plot_grid(boxplot10, boxplot25, boxplot33, boxplot40, labels = c("A", "B", "C", "D"), label_size = 12, label_fontface = "bold")
 prow
 
 # create a pdf plot.
@@ -386,112 +497,62 @@ print(prow)
 
 dev.off()
 
+# ## Make a short script that counts the number of species in each of the trees in these two foldes
+
+# orders_for_count <- c("Aquifoliales", "Berberidopsidales", "Boraginales", "Bruniales", "Buxales",
+#                                 "Canellales", "Celastrales", "Chloranthales", "Commelinales", "Cornales", "Crossosomatales", "Cucurbitales",
+#                                 "Cupressales", "Dilleniales", "Dioscoreales", "Escalloniales", "Fagales", "Gunnerales", "Huerteales", "Icacinales",
+#                                 "Liliales", "Magnoliales", "Metteniusales", "Nymphaeales", "Oxalidales", "Pandanales", "Paracryphiales",
+#                                 "Pinales", "Piperales", "Proteales", "Santalales", "Vitales", "Zygophyllales", "Solanales")
+
+# orders_for_count_folder <- "/home/au543206/GenomeDK/Trf_models/workflow/02_adding_orders/pruning/orders/"
+
+# orders_subset_for_count <- c("Zingiberaceae", "Marantaceae_Cannaceae", "Costaceae", "Heliconiaceae_Lowiaceae_Strelitziaceae","Lauraceae","Monimiaceae","Poaceae",
+# "Cyperaceae","Bromeliaceae","Restionaceae","Xyridaceae_Eriocaulaceae","Juncaceae","Typhaceae","Menispermaceae","Berberidaceae","Ranunculaceae","Papaveraceae","Rosaceae",
+# "Urticaceae","Rhamnaceae_Barbeyaceae_Dirachmaceae_Elaeagnaceae","Moraceae","Ulmaceae","Cannabaceae","Anacardiaceae_Burseraceae_Kirkiaceae", "Sapindaceae","Rutaceae","Meliaceae",
+# "Simaroubaceae","Crassulaceae_Aphanopetalaceae_Halograceae_Penthoraceae_Tetracarpaeaceae", "Saxifragaceae_Iteaceae_Grossulariaceae", "Cercidiphyllaceae_Hamamelidaceae_Daphniphyllaceae_Altingiaceae_Paeoniaceae",
+# "Melastomataceae","Myrtaceae","Lythraceae_Onagraceae","Alzateaceae_Crypteroniaceae_Penaeaceae","Combretaceae","Malvaceae",
+# "Thymelaeaceae","Dipterocarpaceae_Bixaceae_Cistaceae_Sarcoleanaceae_Muntingiaceae_Sphaerosepalaceae","Salicaceae_Lacistemataceae","Euphorbiaceae",
+# "Chrysobalanaceae_Malpighiaceae_Caryocaraceae_Balanopaceae_Elatinaceae_Centroplacaceae_Dichapetalaceae_Putranjivaceae_Euphroniaceae_Lophopyxidaceae_Trigoniaceae",
+# "Phyllanthaceae_Picodendraceae_Linaceae_Ixonanthaceae",
+# "Ochnaceae_Clusiaceae_Erythroxylaceae_Podostemaceae_Bonnetiaceae_Rhizophoraceae_Calophyllaceae_Hypericaceae_Ctenolophonaceae_Irvingiaceae_Pandaceae",
+# "Passifloraceae","Violaceae_Goupiaceae","Verbenaceae_Schlegeliaceae_Lentibulariaceae_Thomandersiaceae","Lamiaceae","Acanthaceae_Martyniaceae_Pedaliaceae",
+# "Gesneriaceae_Calceolariaceae","Bignoniaceae","Orobanchaceae_Phrymaceae_Mazaceae_Paulowniaceae","Scrophulariaceae","Plantaginaceae","Rubiaceae","Apocynaceae",
+# "Loganiaceae_Gelsemiaceae","Gentianaceae","Fabaceae","Polygalaceae_Surianaceae","Sapotaceae","Polemoniaceae_Lecythidaceae_Fouquieriaceae","Ericaceae_Clethraceae_Cyrillaceae",
+# "Pentaphylacaceae_Sladeniaceae","Primulaceae","Styracaceae_Diapensiaceae_Symplocaceae","Theaceae","Ebenaceae","Balsaminaceae_Marcgraviaceae_Tetrameristaceae","Apiaceae",
+# "Araliaceae","Pittosporaceae","Asteraceae","Calyceraceae","Campanulaceae_Rousseaceae","Goodeniaceae","Menyanthaceae","Asphodelaceae","Orchidaceae","Amaryllidaceae","Iridaceae",
+# "Asparagaceae","Cactaceae_Molluginaceae_Didiereaceae_Anacompserotaceae_Basellaceae_Montiaceae_Halophytaceae_Portulacaceae_Talinaceae",
+# "Plumbaginaceae_Polygonaceae_Frankeniaceae_Tamaricaceae","Caryophyllaceae_Achatocarpaceae_Amaranthaceae",
+#  "Aizoaceae_Phytolaccaceae_Barbeuiaceae_Lophiocarpaceae_Gisekiaceae_Sarcobataceae","Droseraceae_Ancistrocladaceae_Drosophyllaceae_Nepenthaceae_Dioncophyllaceae",
+#  "Arecaceae","Brassicaceae","Resedaceae","Capparaceae","Cleomaceae")
+
+# orders_subset_for_count_folder <- "/home/au543206/GenomeDK/Trf_models/workflow/02_adding_orders/pruning/subset_of_orders/"
+
+# # Pattern pruned_tree_order_*_GBMB.tre
+
+# total_species_clads <- data.frame()
+
+# for (i in seq_along(orders_for_count)) {
+# 	order <- orders_for_count[i]
+# 	file <- paste0(orders_for_count_folder, "Clads_output_", order, ".Rdata")
+# 	data <- load(file)
+# 	cat("The number of species in ", order, " is ", length(CladsOutput$lambdatip_map), "\n")
+# 	total_species_clads <- rbind(total_species_clads, data.frame(order = order, species = length(CladsOutput$lambdatip_map)))
+# }
+
+# for (i in seq_along(orders_subset_for_count)) {
+# 	order <- orders_subset_for_count[i]
+# 	file <- paste0(orders_for_count_folder, "Clads_output_", order, ".Rdata")
+# 	data <- load(file)
+# 	cat("The number of species in ", order, " is ", length(CladsOutput$lambdatip_map), "\n")
+# 	total_species_clads <- rbind(total_species_clads, data.frame(order = order, species = length(CladsOutput$lambdatip_map)))
+# }
 
 
+# total_species_clads
+
+# sum(total_species_clads$species) #54301 species 
+
+# 37483/54301 # 69% of the species are in the orders that we have run ClaDs on
 
 
-## Make a short script that counts the number of species in each of the trees in these two foldes
-
-orders_for_count <- c("Aquifoliales", "Berberidopsidales", "Boraginales", "Bruniales", "Buxales",
-                                "Canellales", "Celastrales", "Chloranthales", "Commelinales", "Cornales", "Crossosomatales", "Cucurbitales",
-                                "Cupressales", "Dilleniales", "Dioscoreales", "Escalloniales", "Fagales", "Gunnerales", "Huerteales", "Icacinales",
-                                "Liliales", "Magnoliales", "Metteniusales", "Nymphaeales", "Oxalidales", "Pandanales", "Paracryphiales",
-                                "Pinales", "Piperales", "Proteales", "Santalales", "Vitales", "Zygophyllales", "Solanales")
-
-orders_for_count_folder <- "/home/au543206/GenomeDK/Trf_models/workflow/02_adding_orders/pruning/orders/"
-
-orders_subset_for_count <- c("Zingiberaceae", "Marantaceae_Cannaceae", "Costaceae", "Heliconiaceae_Lowiaceae_Strelitziaceae","Lauraceae","Monimiaceae","Poaceae",
-"Cyperaceae","Bromeliaceae","Restionaceae","Xyridaceae_Eriocaulaceae","Juncaceae","Typhaceae","Menispermaceae","Berberidaceae","Ranunculaceae","Papaveraceae","Rosaceae",
-"Urticaceae","Rhamnaceae_Barbeyaceae_Dirachmaceae_Elaeagnaceae","Moraceae","Ulmaceae","Cannabaceae","Anacardiaceae_Burseraceae_Kirkiaceae", "Sapindaceae","Rutaceae","Meliaceae",
-"Simaroubaceae","Crassulaceae_Aphanopetalaceae_Halograceae_Penthoraceae_Tetracarpaeaceae", "Saxifragaceae_Iteaceae_Grossulariaceae", "Cercidiphyllaceae_Hamamelidaceae_Daphniphyllaceae_Altingiaceae_Paeoniaceae",
-"Melastomataceae","Myrtaceae","Lythraceae_Onagraceae","Alzateaceae_Crypteroniaceae_Penaeaceae","Combretaceae","Malvaceae",
-"Thymelaeaceae","Dipterocarpaceae_Bixaceae_Cistaceae_Sarcoleanaceae_Muntingiaceae_Sphaerosepalaceae","Salicaceae_Lacistemataceae","Euphorbiaceae",
-"Chrysobalanaceae_Malpighiaceae_Caryocaraceae_Balanopaceae_Elatinaceae_Centroplacaceae_Dichapetalaceae_Putranjivaceae_Euphroniaceae_Lophopyxidaceae_Trigoniaceae",
-"Phyllanthaceae_Picodendraceae_Linaceae_Ixonanthaceae",
-"Ochnaceae_Clusiaceae_Erythroxylaceae_Podostemaceae_Bonnetiaceae_Rhizophoraceae_Calophyllaceae_Hypericaceae_Ctenolophonaceae_Irvingiaceae_Pandaceae",
-"Passifloraceae","Violaceae_Goupiaceae","Verbenaceae_Schlegeliaceae_Lentibulariaceae_Thomandersiaceae","Lamiaceae","Acanthaceae_Martyniaceae_Pedaliaceae",
-"Gesneriaceae_Calceolariaceae","Bignoniaceae","Orobanchaceae_Phrymaceae_Mazaceae_Paulowniaceae","Scrophulariaceae","Plantaginaceae","Rubiaceae","Apocynaceae",
-"Loganiaceae_Gelsemiaceae","Gentianaceae","Fabaceae","Polygalaceae_Surianaceae","Sapotaceae","Polemoniaceae_Lecythidaceae_Fouquieriaceae","Ericaceae_Clethraceae_Cyrillaceae",
-"Pentaphylacaceae_Sladeniaceae","Primulaceae","Styracaceae_Diapensiaceae_Symplocaceae","Theaceae","Ebenaceae","Balsaminaceae_Marcgraviaceae_Tetrameristaceae","Apiaceae",
-"Araliaceae","Pittosporaceae","Asteraceae","Calyceraceae","Campanulaceae_Rousseaceae","Goodeniaceae","Menyanthaceae","Asphodelaceae","Orchidaceae","Amaryllidaceae","Iridaceae",
-"Asparagaceae","Cactaceae_Molluginaceae_Didiereaceae_Anacompserotaceae_Basellaceae_Montiaceae_Halophytaceae_Portulacaceae_Talinaceae",
-"Plumbaginaceae_Polygonaceae_Frankeniaceae_Tamaricaceae","Caryophyllaceae_Achatocarpaceae_Amaranthaceae",
- "Aizoaceae_Phytolaccaceae_Barbeuiaceae_Lophiocarpaceae_Gisekiaceae_Sarcobataceae","Droseraceae_Ancistrocladaceae_Drosophyllaceae_Nepenthaceae_Dioncophyllaceae",
- "Arecaceae","Brassicaceae","Resedaceae","Capparaceae","Cleomaceae")
-
-orders_subset_for_count_folder <- "/home/au543206/GenomeDK/Trf_models/workflow/02_adding_orders/pruning/subset_of_orders/"
-
-# Pattern pruned_tree_order_*_GBMB.tre
-
-total_species_clads <- data.frame()
-
-for (i in seq_along(orders_for_count)) {
-	order <- orders_for_count[i]
-	file <- paste0(orders_for_count_folder, "Clads_output_", order, ".Rdata")
-	data <- load(file)
-	cat("The number of species in ", order, " is ", length(CladsOutput$lambdatip_map), "\n")
-	total_species_clads <- rbind(total_species_clads, data.frame(order = order, species = length(CladsOutput$lambdatip_map)))
-}
-
-for (i in seq_along(orders_subset_for_count)) {
-	order <- orders_subset_for_count[i]
-	file <- paste0(orders_for_count_folder, "Clads_output_", order, ".Rdata")
-	data <- load(file)
-	cat("The number of species in ", order, " is ", length(CladsOutput$lambdatip_map), "\n")
-	total_species_clads <- rbind(total_species_clads, data.frame(order = order, species = length(CladsOutput$lambdatip_map)))
-}
-
-
-total_species_clads
-
-sum(total_species_clads$species) #54301 species 
-
-37483/54301 # 69% of the species are in the orders that we have run ClaDs on
-
-
-folder_path <- "/home/au543206/GenomeDK/Trf_models/workflow/02_adding_orders/pruning/orders/"
-
-	# Append the tip names and tip rate speciation to the dataframe
-	clads_tip_lambda <- rbind(clads_tip_lambda, data.frame(order = order_name,
-														   tip_label = tree$tip.label,
-														   lambda = CladsOutput$lambdatip_map,
-														   extinction = CladsOutput$eps_map
-														   ))
-
-
-
-
-# Calculate counts of TRUE and FALSE in in_tropical_rainforest70
-count_true <- sum(distribution_data_merged$in_tropical_rainforest70 == TRUE)
-count_true
-count_false <- sum(distribution_data_merged$in_tropical_rainforest70 == FALSE)
-count_false
-
-
-# Boxplots of tip rate speciation in tropical rainforest
-boxplot70 <- ggplot(distribution_data_merged, aes(x = in_tropical_rainforest70, y = log10(lambda))) +
-  geom_boxplot(aes(fill = in_tropical_rainforest70), color = "black") +
-  scale_x_discrete(labels = c("Not in TRF", "In TRF")) +
-  scale_fill_manual(values = c("Not in TRF" = non_trfcol, "In TRF" = trfcol)) +
-  ylab("Tip Rate Speciation (log10)") +
-  xlab("") +
-  labs(title = "70%") +
-  theme(legend.position = "none") +  # Assuming you don't want a legend for this plot
-  geom_text(data = data.frame(
-              in_tropical_rainforest70 = c("TRUE", "FALSE"),
-              n = c(count_true, count_false)
-            ),
-            aes(label = n, x = in_tropical_rainforest70, y = Inf),
-            vjust = -0.5, color = "black", size = 3)
-
-
-boxplot70 <- ggplot(distribution_data_merged, aes(x = in_tropical_rainforest70, y = log10(lambda))) +
-	geom_boxplot(fill = c(non_trfcol, trfcol), color = "black") +
-	scale_x_discrete(labels = c("Not in TRF", "In TRF")) +
-	ylab("Tip Rate Speciation (log10)") +
-	xlab("") +
-	labs(title = "70%") +
-	theme(legend.position = "none") +
-
-
-boxplot70

@@ -11,6 +11,7 @@ library(maps)
 library(gridExtra)
 library(data.table)
 library(cowplot)
+library(dplyr)
 
 #################################################################################################################################################
 # Example Data
@@ -136,6 +137,9 @@ saveRDS(clads_tip_lambda, "/home/owrisberg/Trf_models/workflow/01_distribution_d
 clads_tip_lambda <- readRDS("/home/au543206/GenomeDK/Trf_models/workflow/01_distribution_data/06_Renamed/clads_tip_lambda.rds") # loading it for working locally.
 clads_tip_lambda <- readRDS("/home/owrisberg/Trf_models/workflow/01_distribution_data/06_Renamed/clads_tip_lambda.rds")
 
+# Remove the _ from the tip_label column
+clads_tip_lambda$tip_label <- gsub("_", " ", clads_tip_lambda$tip_label)
+
 ###############################################################################################################################
 ############################################--- Biome affiliations ---#########################################################
 ###############################################################################################################################
@@ -250,7 +254,26 @@ distribution_data_merged$in_tropical_rainforest70 <- distribution_data_merged$pr
 distribution_data_merged$in_tropical_rainforest80 <- distribution_data_merged$proportion_in_tropical_rainforest > 0.80
 distribution_data_merged$in_tropical_rainforest90 <- distribution_data_merged$proportion_in_tropical_rainforest > 0.90
 
-head(distribution_data_merged)
+# Add a column showing whether the species is in tropical rainforest at 0.33
+distribution_data_merged$in_tropical_rainforest33 <- distribution_data_merged$proportion_in_tropical_rainforest > 0.33
+
+# Add a column showing wether the species is outside tropical rainforest at 0.33
+distribution_data_merged$outside_tropical_rainforest33 <- distribution_data_merged$proportion_outside_tropical_rainforest > 0.33
+
+# Now we add a column which shows either Trf, Non-trf or widespread based on the values of in_tropical_rainforest33 and outside_tropical_rainforest33
+distribution_data_merged$biome_affiliation <- ifelse(
+  distribution_data_merged$in_tropical_rainforest33 == TRUE & distribution_data_merged$outside_tropical_rainforest33 == FALSE,
+  "TRF",
+  ifelse(
+    distribution_data_merged$outside_tropical_rainforest33 == TRUE & distribution_data_merged$in_tropical_rainforest33 == FALSE,
+    "Non TRF",
+    ifelse(
+      distribution_data_merged$in_tropical_rainforest33 == TRUE & distribution_data_merged$outside_tropical_rainforest33 == TRUE,
+      "Widespread",
+      "Error"
+    )
+  )
+)
 
 ###############################################################################################################################
 ############################################--- Calculating latitudes for species ---#########################################################
@@ -318,6 +341,13 @@ head(data_for_plot)
 
 ##################################################################################################################################################
 
+# Selecting colours for the plot
+cols <- met.brewer("Java", n=3, type = "discrete")
+
+#change the order of the colours
+cols <- cols[c(1,3,2)]
+
+
 data_for_plot_counts <- data.frame()
 
 # Calculate counts for each group and for each level of trf affiliation
@@ -335,6 +365,10 @@ data_for_plot_counts_80 <- data_for_plot %>%
 
 data_for_plot_counts_90 <- data_for_plot %>%
 	group_by(lat_band, in_tropical_rainforest90) %>%
+	summarize(count = n())
+
+data_for_plot_counts_biome_affiliation <- data_for_plot %>%
+	group_by(lat_band, biome_affiliation) %>%
 	summarize(count = n())
 
 
@@ -360,64 +394,63 @@ desired_order <- c("-50_-40","-40_-30","-30_-20","-20_-10","-10_0","0_10","10_20
 data_for_plot$lat_band <- factor(data_for_plot$lat_band, levels = desired_order)
 
 
-# Create the violin plot
-violin_plot <- ggplot(data_for_plot, aes(x = log10(lambda.x), y = lat_band, fill = in_tropical_rainforest90)) +
-	geom_violin(scale = "width", adjust = 1, alpha = 0.6) +
-	scale_fill_manual(values = c("TRUE" = "chartreuse", "FALSE" = "deeppink")) +
-	theme_minimal() +
-	theme(
-    panel.grid.major = element_blank(),  # Remove major grid lines
-    panel.grid.minor = element_blank(),  # Remove minor grid lines
-    panel.background = element_blank()) +  # Remove panel background
-	labs(x = expression(lambda ~ "(lineages/myr)"), y = "Latitude") +
-	theme(panel.background = element_rect(fill = "transparent", color = NA), axis.text.y = element_text(size = 10, color = "black"))
+# # Create the violin plot
+# violin_plot <- ggplot(data_for_plot, aes(x = log10(lambda.x), y = lat_band, fill = in_tropical_rainforest90)) +
+# 	geom_violin(scale = "width", adjust = 1, alpha = 0.6) +
+# 	scale_fill_manual(values = c("TRUE" = "chartreuse", "FALSE" = "deeppink")) +
+# 	theme_minimal() +
+# 	theme(
+#     panel.grid.major = element_blank(),  # Remove major grid lines
+#     panel.grid.minor = element_blank(),  # Remove minor grid lines
+#     panel.background = element_blank()) +  # Remove panel background
+# 	labs(x = expression(lambda ~ "(lineages/myr)"), y = "Latitude") +
+# 	theme(panel.background = element_rect(fill = "transparent", color = NA), axis.text.y = element_text(size = 10, color = "black"))
 
-plot(violin_plot)
+# plot(violin_plot)
 
-# Create the boxplot
-boxplot <- ggplot(data_for_plot, aes(x = log(lambda.x), y = lat_band, fill = as.factor(in_tropical_rainforest90))) +
-  geom_boxplot(alpha = 0.6) +
-  scale_fill_manual(values = c("TRUE" = "chartreuse", "FALSE" = "deeppink"),
-  labels = c("TRUE" = "TRF", "FALSE" = "Non TRF")) +
-  theme_minimal() +
-  theme(
-    panel.grid.major = element_blank(),  # Remove major grid lines
-    panel.grid.minor = element_blank(),  # Remove minor grid lines
-    panel.background = element_blank()  # Remove panel background
-  ) +
-  labs(x = expression(lambda ~ "log((lineages/myr)")), y = "Latitude") +
-  theme(panel.background = element_rect(fill = "transparent", color = NA), axis.text.y = element_text(size = 10, color = "black"))
+# # Create the boxplot
+# boxplot <- ggplot(data_for_plot, aes(x = log(lambda.x), y = lat_band, fill = as.factor(in_tropical_rainforest90))) +
+#   geom_boxplot(alpha = 0.6) +
+#   scale_fill_manual(values = c("TRUE" = "chartreuse", "FALSE" = "deeppink"),
+#   labels = c("TRUE" = "TRF", "FALSE" = "Non TRF")) +
+#   theme_minimal() +
+#   theme(
+#     panel.grid.major = element_blank(),  # Remove major grid lines
+#     panel.grid.minor = element_blank(),  # Remove minor grid lines
+#     panel.background = element_blank()  # Remove panel background
+#   ) +
+#   labs(x = expression(lambda ~ "log((lineages/myr)")), y = "Latitude") +
+#   theme(panel.background = element_rect(fill = "transparent", color = NA), axis.text.y = element_text(size = 10, color = "black"))
     
-plot(boxplot)
+# plot(boxplot)
 
 
-# Create the boxplot
-boxplot <- ggplot(data_for_plot, aes(x = log(lambda.x), y = lat_band, fill = as.factor(in_tropical_rainforest70))) +
-  geom_boxplot(alpha = 0.6) +
-  scale_fill_manual(values = c("TRUE" = "chartreuse", "FALSE" = "deeppink"),
-  					labels = c("TRUE" = "TRF", "FALSE" = "Non TRF")) +
-  theme_minimal() +
-  theme(
-    panel.grid.major = element_blank(),  # Remove major grid lines
-    panel.grid.minor = element_blank(),  # Remove minor grid lines
-    panel.background = element_blank()  # Remove panel background
-  ) +
-  labs(x = expression(lambda ~ "log((lineages/myr)"), y = "Latitude") +
-  #ggtitle("Tip rate speciation across latitudinal bands") +
-  theme(
-    legend.position = "bottom",
-    legend.title = element_blank(),
-    legend.text = element_text(size = 10),
-    legend.key = element_rect(fill = NA, color = NA),
-    legend.key.size = unit(1.5, "lines"),
-    panel.background = element_rect(fill = "transparent", color = NA),
-    axis.text.y = element_text(size = 10, color = "black")
-  ) +
-  geom_text(data = data_for_plot_counts_70, aes(label = count, x = 9, y = lat_band),
-            position = position_dodge(width = 0.75), vjust = -0.5, color = "black")
+# # Create the boxplot
+# boxplot <- ggplot(data_for_plot, aes(x = log(lambda.x), y = lat_band, fill = as.factor(in_tropical_rainforest70))) +
+#   geom_boxplot(alpha = 0.6) +
+#   scale_fill_manual(values = c("TRUE" = "chartreuse", "FALSE" = "deeppink"),
+#   					labels = c("TRUE" = "TRF", "FALSE" = "Non TRF")) +
+#   theme_minimal() +
+#   theme(
+#     panel.grid.major = element_blank(),  # Remove major grid lines
+#     panel.grid.minor = element_blank(),  # Remove minor grid lines
+#     panel.background = element_blank()  # Remove panel background
+#   ) +
+#   labs(x = expression(lambda ~ "log((lineages/myr)"), y = "Latitude") +
+#   #ggtitle("Tip rate speciation across latitudinal bands") +
+#   theme(
+#     legend.position = "bottom",
+#     legend.title = element_blank(),
+#     legend.text = element_text(size = 10),
+#     legend.key = element_rect(fill = NA, color = NA),
+#     legend.key.size = unit(1.5, "lines"),
+#     panel.background = element_rect(fill = "transparent", color = NA),
+#     axis.text.y = element_text(size = 10, color = "black")
+#   ) +
+#   geom_text(data = data_for_plot_counts_70, aes(label = count, x = 9, y = lat_band),
+#             position = position_dodge(width = 0.75), vjust = -0.5, color = "black")
 
-plot(boxplot)
-
+# plot(boxplot)
 
 
 # Find the species with a lambda.x value over 10
@@ -427,70 +460,55 @@ data_for_plot[data_for_plot$lambda.x < 10, ]$lambda.x
 
 
 
-# Combine the plots
-combined_plot <- ggplot() +
-  # World map as background
-  annotation_custom(ggplotGrob(map_plot), xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf) +
-  # Overlay violin plot
-  annotation_custom(ggplotGrob(violin_plot), xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf)
+# # Combine the plots
+# combined_plot <- ggplot() +
+#   # World map as background
+#   annotation_custom(ggplotGrob(map_plot), xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf) +
+#   # Overlay violin plot
+#   annotation_custom(ggplotGrob(violin_plot), xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf)
 
-# Plot
-print(combined_plot)
-
-
-# Combine the plots
-combined_plot_box <- ggplot() +
-  # World map as background
-  annotation_custom(ggplotGrob(map_plot), xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf) +
-  # Overlay violin plot
-  annotation_custom(ggplotGrob(boxplot), xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf)
-
-# Plot
-print(combined_plot_box)
+# # Plot
+# print(combined_plot)
 
 
+# # Combine the plots
+# combined_plot_box <- ggplot() +
+#   # World map as background
+#   annotation_custom(ggplotGrob(map_plot), xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf) +
+#   # Overlay violin plot
+#   annotation_custom(ggplotGrob(boxplot), xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf)
 
-
-# Combine the plots
-combined_plot_box <- ggdraw() +
-  draw_plot(map_plot, 0, 0, 1, 1) +
-  draw_plot(boxplot, 0, 0.19, 1, 0.51, hjust = 0, vjust = 0)
-
-# Plot
-print(combined_plot_box)
-
-# Combine the plots
-combined_plot_box <- ggdraw() +
-  draw_plot(map_plot, 0, 0, 1, 1) +
-  draw_plot(boxplot, 0, 0, 1, 0.9, hjust = 0, vjust = 0)
-
-# Plot
-print(combined_plot_box)
+# # Plot
+# print(combined_plot_box)
 
 
 
 
+# # Combine the plots
+# combined_plot_box <- ggdraw() +
+#   draw_plot(map_plot, 0, 0, 1, 1) +
+#   draw_plot(boxplot, 0, 0.19, 1, 0.51, hjust = 0, vjust = 0)
 
+# # Plot
+# print(combined_plot_box)
 
+# # Combine the plots
+# combined_plot_box <- ggdraw() +
+#   draw_plot(map_plot, 0, 0, 1, 1) +
+#   draw_plot(boxplot, 0, 0, 1, 0.9, hjust = 0, vjust = 0)
 
-
-
-
-
-
-
-
-
+# # Plot
+# print(combined_plot_box)
 
 
 # Can I find all the species which are deemed as tropical but which are located north and south of the tropics which would be north of 23.5 and south of -23.5
-tropical_species <- data_for_plot[data_for_plot$in_tropical_rainforest90 == TRUE, ]
+tropical_species <- data_for_plot[data_for_plot$biome_affiliation == "TRF", ]
 head(tropical_species)
 
 # Just find the species which dont have a lat_band = -20_-10, -10_0, 0_10, 10_20
 tropical_species_not_in_tropics <- tropical_species[!tropical_species$lat_band %in% c("-30_-20","-20_-10", "-10_0", "0_10", "10_20","20_30"), ]
 head(tropical_species_not_in_tropics)
-dim(tropical_species_not_in_tropics) # 117 species. 
+dim(tropical_species_not_in_tropics) # 1221 species. 
 tropical_species_not_in_tropics$wcvp_taxon_name
 
 # Can i now split these species into different latitude bands?
@@ -516,24 +534,33 @@ for (i in seq_along(problems$wcvp_taxon_name)) {
 problems_still_in_data_for_plot <- problems[problems$wcvp_taxon_name %in% data_for_plot_no_problem$wcvp_taxon_name & problems$lat_band %in% data_for_plot_no_problem$lat_band, ]
 problems_still_in_data_for_plot[,c(1,2)]
 
+
+
 # update data_for_plot_counts aswell.
 data_for_plot_counts_90 <- data_for_plot_no_problem %>%
 	group_by(lat_band, in_tropical_rainforest90) %>%
 	summarize(count = n())
 
+data_for_plot_counts_biome_affiliation <- data_for_plot_no_problem %>%
+	group_by(lat_band, biome_affiliation) %>%
+	summarize(count = n())
+
+head(data_for_plot_no_problem)
+
+
 # Create the boxplot
-boxplot_no_problems <- ggplot(data_for_plot_no_problems, aes(x = log(lambda.x), y = lat_band, fill = as.factor(in_tropical_rainforest90))) +
-  geom_boxplot(alpha = 0.6) +
-  scale_fill_manual(values = c("TRUE" = "chartreuse", "FALSE" = "deeppink"),
-  					labels = c("TRUE" = "TRF", "FALSE" = "Non TRF")) +
+boxplot_no_problems <- ggplot(data_for_plot_no_problem, aes(x = log(lambda.x), y = lat_band, fill = as.factor(biome_affiliation))) +
+  geom_boxplot(alpha = 1) +
+  scale_fill_manual(values = c("TRF" = cols[2], "Non TRF" = cols[1], "Widespread" = cols[3]),
+                    labels = c("TRF" = "Tropical Rainforest", "Non TRF" = "Outside Tropical Rainforest", "Widespread" = "Widespread")) +
   theme_minimal() +
   theme(
     panel.grid.major = element_blank(),  # Remove major grid lines
     panel.grid.minor = element_blank(),  # Remove minor grid lines
-    panel.background = element_blank()  # Remove panel background
+    panel.background = element_blank(),  # Remove panel background
+    axis.text.x = element_blank() # Remove the x axis text as it is not needed
   ) +
-  labs(x = expression("log((lineages/myr)"), y = "Latitude") +
-  #ggtitle("Tip rate speciation across latitudinal bands") +
+  labs(x = expression("log((lineages/myr)"), y = "") +
   theme(
     legend.position = "none",
     legend.title = element_blank(),
@@ -541,14 +568,12 @@ boxplot_no_problems <- ggplot(data_for_plot_no_problems, aes(x = log(lambda.x), 
     legend.key = element_rect(fill = NA, color = NA),
     legend.key.size = unit(1.5, "lines"),
     panel.background = element_rect(fill = "transparent", color = NA),
-    axis.text.y = element_text(size = 10, color = "black")) +
- 	geom_text(data = data_for_plot_counts_90, aes(label = count, x = 9, y = lat_band),
-            position = position_dodge(width = 0.75), vjust = -0.5, color = "black", size = 3) +
-	annotate("text", x = 9.3, y = 13, label = "No. species",
-           hjust = 1, vjust = 1, size = 4, color = "black")
-	
-
-plot(boxplot_no_problems)
+    axis.text.y = element_blank()
+  ) +
+  geom_text(data = data_for_plot_counts_biome_affiliation, aes(label = count, x = 9, y = lat_band, color = as.factor(biome_affiliation)),
+            position = position_dodge(width = 0.9), size = 2.2) + # Map color to biome_affiliation
+  scale_colour_manual(values = c("TRF" = cols[2], "Non TRF" = cols[1], "Widespread" = cols[3]))
+boxplot_no_problems
 
 
 # Combine the plots
@@ -557,8 +582,14 @@ combined_plot_box <- ggdraw() +
   draw_plot(boxplot_no_problems, 0, 0.05, 1, 0.85, hjust = 0, vjust = 0)
 
 
+# Setting output folder
+output_folder <- "/home/au543206/GenomeDK/Trf_models/workflow/05_figures" # Local
+output_folder <- "/home/owrisberg/Trf_models/workflow/05_figures" # Srun
+
+
+
 # Save the plot
-pdf(file = file.path(output_folder,"Clads_world_map.pdf"),
+pdf(file = file.path(output_folder,"Clads_world_map_test.pdf"),
     width = 10,
     height = 6)
 
@@ -567,6 +598,53 @@ print(combined_plot_box)
 dev.off()
 
 
-# Setting output folder
-output_folder <- "/home/au543206/GenomeDK/Trf_models/workflow/05_figures"
+# Can I use the data to create a vertical density plot to show the latitudinal diversity gradient of the species.
+# I can use the data_for_plot_no_problem dataframe to create a density plot of the species in each latitude band.
 
+data_for_plot_counts_biome_affiliation <- data_for_plot_counts_biome_affiliation %>%
+  mutate(lat_band = factor(lat_band, levels = sort(unique(lat_band))))
+
+density_plot <- ggplot(data_for_plot_counts_biome_affiliation, aes(x = lat_band, y = count, fill = biome_affiliation)) +
+  geom_bar(stat = "identity", color = "black", alpha = 1) +
+  theme_void() +
+  theme(
+	legend.position = "none",
+	axis.text.x = element_blank(),
+	axis.text.y = element_blank(),
+  ) +
+  labs(
+    title = "",
+    x = "",
+    y = "",
+    fill = ""
+  ) +
+  scale_fill_manual(values = c("TRF" = cols[2], "Non TRF" = cols[1], "Widespread" = cols[3])) +
+  coord_flip() +
+  scale_y_reverse()
+
+
+# Can we add the density plot to the the combined_plot_box on the right side of the boxplot using cowplot
+
+combined_plot_box_dens <- plot_grid(boxplot_no_problems, density_plot, ncol = 2, rel_widths = c(1, 0.2), align = "h", axis = "bt")
+combined_plot_box_dens
+
+# Now I need to draw the world map underneath the box plots on combined_plot_box_dens
+combined_plot_box_dens <- ggdraw() +
+  draw_plot(map_plot, 0, 0, 0.79, 1) +
+  draw_plot(combined_plot_box_dens, 0, 0.35, 1, 0.31, hjust = 0, vjust = 0)
+
+pdf(file = file.path(output_folder,"box_dens.pdf"),
+	width = 10,
+	height = 12)
+
+print(combined_plot_box_dens)
+
+dev.off()
+
+
+
+
+# Combine the plots
+combined_plot_box <- ggdraw() +
+  draw_plot(map_plot, 0, 0, 1, 1) +
+  draw_plot(boxplot, 0, 0.19, 1, 0.51, hjust = 0, vjust = 0)

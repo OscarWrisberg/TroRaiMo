@@ -1656,7 +1656,7 @@ percentages = ["0.33"]
 
 # Orders that ran with the uniform prior 
 orders_not_in_orders_new_prior = ["Aquifoliales", "Berberidopsidales", "Boraginales", "Bruniales", "Buxales",
-                                "Canellales", "Celastrales", "Chloranthales", "Commelinales", "Cornales", "Crossosomatales", "Cucurbitales",
+                                "Canellales", "Celastrales", "Chloranthales", "Commelinales", "Cornales", "Crossosomatales",
                                 "Cupressales", "Dilleniales", "Dioscoreales", "Escalloniales", "Fagales", "Gunnerales", "Huerteales", "Icacinales",
                                 "Liliales", "Magnoliales", "Metteniusales", "Nymphaeales", "Oxalidales", "Pandanales", "Paracryphiales",
                                 "Pinales", "Piperales", "Proteales", "Santalales", "Vitales", "Zygophyllales"]         

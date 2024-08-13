@@ -24,9 +24,10 @@ folder <- output_folder
 
 # List of orders
 orders <- c("Zingiberales", "Laurales","Poales","Ranunculales","Rosales","Sapindales","Saxifragales","Myrtales","Malvales","Malpighiales","Lamiales","Gentianales","Fabales",
-			"Ericales", "Apiales","Asterales","Asparagales","Caryophyllales","Arecales","Brassicales")
+			"Ericales", "Apiales","Asterales","Asparagales","Caryophyllales","Arecales","Brassicales","Cucurbitales","Solanales")
 
 # List of families to join or run on their own
+# You can find the information about the number of tips in each family in the file "family_phylo_lengths.txt"
 Zingiberales_trees <- list("Zingiberaceae", list("Marantaceae", "Cannaceae"), "Costaceae", list("Heliconiaceae", "Lowiaceae", "Strelitziaceae"))
 Laurales_trees <- list("Lauraceae","Monimiaceae")
 Poales_trees <- list("Poaceae","Cyperaceae","Bromeliaceae", "Restionaceae", list("Xyridaceae", "Eriocaulaceae"),"Juncaceae","Typhaceae")
@@ -47,11 +48,13 @@ Asparagales_trees <- list("Asphodelaceae","Orchidaceae","Amaryllidaceae","Iridac
 Caryophyllales_trees <- list(list("Cactaceae","Molluginaceae","Didiereaceae","Anacompserotaceae","Basellaceae","Montiaceae","Halophytaceae","Portulacaceae","Talinaceae"),list("Plumbaginaceae","Polygonaceae","Frankeniaceae","Tamaricaceae"),list("Caryophyllaceae","Achatocarpaceae","Amaranthaceae"),list("Aizoaceae","Phytolaccaceae","Barbeuiaceae","Lophiocarpaceae","Gisekiaceae","Sarcobataceae"),list("Droseraceae","Ancistrocladaceae","Drosophyllaceae","Nepenthaceae","Dioncophyllaceae"))
 Arecales_trees <- list("Arecaceae")
 Brassicales_trees <- list("Brassicaceae","Resedaceae","Capparaceae","Cleomaceae")
+Cucurbitales_trees <- list("Cucurbitaceae",list("Begoniaceae","Corynocarpaceae","Datiscaceae","Tetramelaceae","Coriariaceae"))
+Solanales_trees <- list("Solanaceae","Convolvulaceae")
 
 # Combine all these lists into one list
 Tree_list <- list(Zingiberales_trees, Laurales_trees, Poales_trees, Ranunculales_trees, Rosales_trees, Sapindales_trees, Saxifragales_trees, Myrtales_trees, Malvales_trees,
 				  Malpighiales_trees, Lamiales_trees, Gentiales_trees, Fabales_trees, Ericales_trees, Apiales_trees, Asterales_trees, Asparagales_trees, Caryophyllales_trees,
-				  Arecales_trees, Brassicales_trees)
+				  Arecales_trees, Brassicales_trees, Cucurbitales_trees, Solanales_trees)
 
 # Loop through all the lists in Tree_list and make sub phylogenies for each of them. 
 for (k in seq_along(Tree_list)) {
