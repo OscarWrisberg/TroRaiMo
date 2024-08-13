@@ -344,7 +344,7 @@ sp_pairs_for_plumbaginaceae_polygonaceae_frankeniaceae_tamaricaceae <- list(
 )
 
 sp_pairs_for_scrophulariaceae <- list(
-	list("Selago aspera","Aptosimum indivisum"),
+	list("Selago aspera","Aptosimum indivisum")
 ) # losing 1 species.
 
 sp_pairs_for_zingiberaceae <- list(
