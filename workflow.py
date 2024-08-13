@@ -1727,34 +1727,34 @@ for i in range(len(orders_not_in_orders_new_prior)):
 ########################################################--- ClaDs on Orders with calculated Prior ---#################################################################
 #####################################################################################################################################################################
 
-# Orders that need a to be run with a modified prior
-orders_new_prior = ["Solanales"]
+# # Orders that need a to be run with a modified prior
+# orders_new_prior = ["Solanales"]
     
-gwf.target_from_template(name = "Calculating_priors",
-                            template=Calculating_priors(
-                            done_file = "Calculating_priors",
-                            path_in = workflow_dir + "02_adding_orders/pruning/orders/",
-                            output_file = workflow_dir+"02_adding_orders/pruning/orders/priors.txt",
-                            script_dir = script_dir,
-                            done_dir = done_dir,
-                            input_folder = workflow_dir + "02_adding_orders/pruning/orders"
-                            ))
+# gwf.target_from_template(name = "Calculating_priors",
+#                             template=Calculating_priors(
+#                             done_file = "Calculating_priors",
+#                             path_in = workflow_dir + "02_adding_orders/pruning/orders/",
+#                             output_file = workflow_dir+"02_adding_orders/pruning/orders/priors.txt",
+#                             script_dir = script_dir,
+#                             done_dir = done_dir,
+#                             input_folder = workflow_dir + "02_adding_orders/pruning/orders"
+#                             ))
 
-for i in range(len(orders_new_prior)):
-    gwf.target_from_template(name = orders_new_prior[i]+"_ClaDs",
-                                template= Clads_priors(
-                                tree= "pruned_tree_order_"+orders_new_prior[i]+"_GBMB.tre",
-                                wcvp_input = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds",
-                                order = orders_new_prior[i],
-                                apg = script_dir+"apgweb_parsed.csv",
-                                done_file = orders_new_prior[i]+"_ClaDs",
-                                path_in = workflow_dir+"02_adding_orders/pruning/orders/",
-                                output_file = "Clads_output_"+orders_new_prior[i]+".jld2",
-                                script_dir=script_dir,
-                                done_dir = done_dir,
-                                sampling_frequency= workflow_dir+"03_distribution_data/"+orders_new_prior[i]+"_sampling_fraction.txt",
-                                prior_file = workflow_dir+"02_adding_orders/pruning/orders/priors.txt"
-                             ))
+# for i in range(len(orders_new_prior)):
+#     gwf.target_from_template(name = orders_new_prior[i]+"_ClaDs",
+#                                 template= Clads_priors(
+#                                 tree= "pruned_tree_order_"+orders_new_prior[i]+"_GBMB.tre",
+#                                 wcvp_input = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds",
+#                                 order = orders_new_prior[i],
+#                                 apg = script_dir+"apgweb_parsed.csv",
+#                                 done_file = orders_new_prior[i]+"_ClaDs",
+#                                 path_in = workflow_dir+"02_adding_orders/pruning/orders/",
+#                                 output_file = "Clads_output_"+orders_new_prior[i]+".jld2",
+#                                 script_dir=script_dir,
+#                                 done_dir = done_dir,
+#                                 sampling_frequency= workflow_dir+"03_distribution_data/"+orders_new_prior[i]+"_sampling_fraction.txt",
+#                                 prior_file = workflow_dir+"02_adding_orders/pruning/orders/priors.txt"
+#                              ))
     
 #####################################################################################################################################################################
 ############################################################--- ClaDs on Order subclades ---#########################################################################
@@ -1779,7 +1779,8 @@ Clads_clades = ["Aizoaceae_Phytolaccaceae_Barbeuiaceae_Lophiocarpaceae_Gisekiace
                 "Pittosporaceae","Plumbaginaceae_Polygonaceae_Frankeniaceae_Tamaricaceae","Polemoniaceae_Lecythidaceae_Fouquieriaceae","Polygalaceae_Surianaceae",
                 "Primulaceae","Resedaceae","Restionaceae","Rhamnaceae_Barbeyaceae_Dirachmaceae_Elaeagnaceae","Rutaceae","Salicaceae_Lacistemataceae","Sapindaceae",
                 "Sapotaceae","Saxifragaceae_Iteaceae_Grossulariaceae","Scrophulariaceae","Simaroubaceae","Styracaceae_Diapensiaceae_Symplocaceae","Theaceae","Thymelaeaceae","Typhaceae","Ulmaceae","Urticaceae",
-                "Verbenaceae_Schlegeliaceae_Lentibulariaceae_Thomandersiaceae","Violaceae_Goupiaceae","Xyridaceae_Eriocaulaceae","Zingiberaceae"]
+                "Verbenaceae_Schlegeliaceae_Lentibulariaceae_Thomandersiaceae","Violaceae_Goupiaceae","Xyridaceae_Eriocaulaceae","Zingiberaceae","Solanaceae","Convolvulaceae",
+                "Cucurbitaceae","Begoniaceae_Corynocarpaceae_Datiscaceae_Tetramelaceae_Coriariaceae"]
 
 for i in range(len(Clads_clades)):
     gwf.target_from_template(name = Clads_clades[i]+"_samplingfraction",
