@@ -50,7 +50,7 @@ sp_pairs_for_mrca_asteraceae <- list(list("Doniophyton weddellii","Dasyphyllum b
 								list("Guynesomia scoparia", "Inulopsis scaposa"), # 8
 								list("Erigeron primulifolius","Erigeron caucasicus"), # 8
 								list("Tracyina rostrata", "Ericameria fasciculata"), # 8
-								list("Gundlachia corymbosa","Solidago ptarmicoides") # 8
+								list("Gundlachia corymbosa","Solidago ptarmicoides"), # 8
 								list("Townsendia formosa","Grindelia fraxinipratensis"), # 8 
 								list("Duhaldea rubricaulis","Geigeria nianganensis"), # 9
 								list("Callilepis salicifolia","Helichrysum fulvescens"), # 10
