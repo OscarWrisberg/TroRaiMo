@@ -28,20 +28,20 @@ sp_pairs_for_mrca_asteraceae <- list(list("Doniophyton weddellii","Dasyphyllum b
 								list("Cardopatium corymbosum","Echinops ritrodes"), # 3
 								list("Tugarinovia mongolica","Carlina sicula"), #  3
 								list("Berardia lanuginosa","Saussurea przewalskii"), # 3
-								list("Schischkinia_albispina","Centaurea olympica"), # 3 
+								list("Schischkinia albispina","Centaurea olympica"), # 3 
 								list("Platycarphella carlinoides","Berkheya carlinopsis"), # 4
 								list("Cacosmia rugosa","Munnozia maronii"), # 4
 								list("Moquinia racemosa","Lychnophora granmogolensis"), # 4
 								list("Geropogon hybridus","Tragopogon samaritani"), # 5
 								list("Erythroseris somalensis","Pilosella fusca"), # 5
-								list("Faberia_thibetica","Crepis rhaetica"), # 5 
+								list("Faberia thibetica","Crepis rhaetica"), # 5 
 								list("Abrotanella forsteroides","Abrotanella spathulata"), # 6
 								list("Gymnodiscus capillaris","Euryops brevilobus"), # 6
 								list("Dolichoglottis lyallii", "Brachyglottis southlandica"), # 6
 								list("Capelio caledonica","Tephroseris palustris"), # 6
 								list("Hasteola robusta","Senecio laetevirens"), # 6 
 								list("Doronicum stenoglossum","Artemisia eriopoda"), # 7
-								list("Pachystegia insignis","Olearia_lirata"), # 8
+								list("Pachystegia insignis","Olearia lirata"), # 8
 								list("Mairia purpurata","Nardophyllum chiliotrichoides"), # 8
 								list("Pteronia glomerata","Felicia cymbalarioides"), # 8
 								list("Madagaster mandrarensis","Psiadia pollicina"), # 8
@@ -176,8 +176,8 @@ sp_pairs_for_mrca_ericaceae <- list(list("Erica interrupta","Cassiope selaginoid
 
 
 sp_pairs_for_mrca_apocynaceae <- list(list("Ditassa taxifolia","Eustegia minuta"),
-									list("Huernia aspera","Heterostemma_acuminatum"),
-									list("Hoya_blashernaezii","Rhyssolobium dumosum"),
+									list("Huernia aspera","Heterostemma acuminatum"),
+									list("Hoya blashernaezii","Rhyssolobium dumosum"),
 								   list("Mandevilla sellowii","Rhabdadenia biflora"),
 								   list("Tabernaemontana contorta","Dyera costulata")
 								   ) # Were losing 36 species
@@ -218,7 +218,7 @@ sp_pairs_for_mrca_cyperaceae <- list(
 
 sp_pairs_for_mrca_iridaceae <- list(list("Iris fosteriana","Iris unguicularis"),
 									list("Moraea demissa","Dietes iridioides"),
-									list("Sisyrinchium_fuscatum","Trimezia northiana"),
+									list("Sisyrinchium fuscatum","Trimezia northiana"),
 									list("Gladiolus hirsutus", "Patersonia sericea")
 									) # were losing 2 species
 
@@ -263,9 +263,9 @@ sp_pairs_for_mrca_rosaceae <- list(list("Potentilla argaea","Potentilla hebiichi
 									) # were losing 40 species
 
 sp_pairs_for_mrca_acanthaceae_martyniaceae_pedaliaceae <- list(
-																list("Ruellia beyrichiana", "Physacanthus_nematosiphon"),
-																list("Aphelandra_fasciculata","Kudoacanthus_albonervosus"),
-																list("Barleria_lupulina","Neuracanthus umbraticus"),
+																list("Ruellia beyrichiana", "Physacanthus nematosiphon"),
+																list("Aphelandra fasciculata","Kudoacanthus albonervosus"),
+																list("Barleria lupulina","Neuracanthus umbraticus"),
 																list("Pachystachys killipii","Spathacanthus parviflorus"),
 																list("Sesamum indicum","Holubia saccata")
 																) # were losing 17 species
@@ -320,7 +320,7 @@ sp_pairs_for_ochnaceae_clusiaceae_erythroxylaceae_podostemaceae_bonnetiaceae_rhi
 	list("Irvingia gabonensis","Carallia brachiata"),
 	list("Terniopsis brevis","Hypericum fraseri"),
 	list("Garcinia verrucosa","Dystovomita paniculata"),
-	list("Bonnetia stricta","Endodesmia_calophylloides")
+	list("Bonnetia stricta","Endodesmia calophylloides")
 )
 
 sp_pairs_for_orobanchaceae_phrymaceae_mazaceae_paulowniaceae <- list(
