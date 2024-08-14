@@ -1865,7 +1865,7 @@ for i in range(len(Clads_clades)):
                              ))
 
     #Running the script to find the environmental data for the tips in the sub trees
-    gwf.target_from_template(name = Clads_clades[i]+"_distribution_data.",
+    gwf.target_from_template(name = Clads_clades[i]+"_distribution_data_ClaDs",
                                 template=Finding_areas_in_wcvp(
                                 input_file_tree= "family_phylo_"+Clads_clades[i]+".tre", # 
                                 path_in =  workflow_dir+"02_adding_orders/pruning/subset_of_orders/",
@@ -2296,7 +2296,7 @@ for k in range(len(sub_family_clades)):
                              )) 
 
  #Running the script to find the environmental data for the tips in the sub trees
-    gwf.target_from_template(name = sub_family_clades[k]+"_distribution_data.",
+    gwf.target_from_template(name = sub_family_clades[k]+"_distribution_data_ClaDs",
                                 template=Finding_areas_in_wcvp(
                                 input_file_tree= "sub_phylo_"+sub_family_clades[k]+".tre",  
                                 path_in =  workflow_dir+"02_adding_orders/pruning/subset_of_orders/",
@@ -2470,7 +2470,7 @@ for i in range(len(orders_not_in_orders_new_prior)):
 orders_shorter = ["Crossosomatales","Malvales","Proteales"]
 
 for i in range(len(orders_shorter)):
-            gwf.target_from_template(name = orders_shorter[i]+"_distribution_data.",
+            gwf.target_from_template(name = orders_shorter[i]+"_distribution_data_Esse",
                                 template=Finding_areas_in_wcvp(
                                 input_file_tree= "pruned_tree_order_"+orders_shorter[i]+"_GBMB.tre",
                                 path_in =  workflow_dir+"02_adding_orders/pruning/orders/",
@@ -2634,7 +2634,7 @@ esse_clades = [
                 ]
 
 for i in range(len(esse_clades)):
-                gwf.target_from_template(name = esse_clades[i]+"_distribution_data.",
+                gwf.target_from_template(name = esse_clades[i]+"_distribution_data_Esse",
                                             template=Finding_areas_in_wcvp(
                                             input_file_tree= "pruned_tree_family_"+esse_clades[i]+"_GBMB.tre",
                                             path_in =  workflow_dir+"02_adding_orders/pruning/families/",
@@ -2743,7 +2743,7 @@ families_shorter = [
     "Simaroubaceae"]
 
 for i in range(len(families_shorter)):
-            gwf.target_from_template(name = families_shorter[i]+"_distribution_data.",
+            gwf.target_from_template(name = families_shorter[i]+"_distribution_data_Esse",
                                 template=Finding_areas_in_wcvp(
                                 input_file_tree= "sub_phylo_"+families_shorter[i]+".tre",
                                 path_in =  workflow_dir+"02_adding_orders/pruning/subset_of_orders/",
@@ -3206,7 +3206,7 @@ sub_family_clades = [
 
 
 for i in range(len(sub_family_clades)):
-            gwf.target_from_template(name = sub_family_clades[i]+"_distribution_data.",
+            gwf.target_from_template(name = sub_family_clades[i]+"_distribution_data_Esse",
                                 template=Finding_areas_in_wcvp(
                                 input_file_tree= "sub_phylo_"+sub_family_clades[i]+".tre",
                                 path_in =  workflow_dir+"02_adding_orders/pruning/subset_of_orders/",
