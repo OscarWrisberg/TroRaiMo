@@ -1883,7 +1883,7 @@ for i in range(len(Clads_clades)):
     
     
     for j in range(len(percentages)):
-        gwf.target_from_template(name = Clads_clades[i]+"_states_converter_"+percentages[j],
+        gwf.target_from_template(name = Clads_clades[i]+"_states_converter_ClaDs_"+percentages[j],
                                 template=states_converter(
                                 path_in= workflow_dir+"03_distribution_data/",
                                 tip_states_file= workflow_dir+"03_distribution_data/"+Clads_clades[i]+"_distribution_data.txt",
@@ -2314,7 +2314,7 @@ for k in range(len(sub_family_clades)):
     
     
     for j in range(len(percentages)):
-        gwf.target_from_template(name = sub_family_clades[k]+"_states_converter_"+percentages[j],
+        gwf.target_from_template(name = sub_family_clades[k]+"_states_converter_ClaDs_"+percentages[j],
                                 template=states_converter(
                                 path_in= workflow_dir+"03_distribution_data/",
                                 tip_states_file= workflow_dir+"03_distribution_data/"+sub_family_clades[k]+"_distribution_data.txt",
@@ -2487,7 +2487,7 @@ for i in range(len(orders_shorter)):
                                 ))
                         
             for j in range(len(percentages)):
-                    gwf.target_from_template(name = orders_shorter[i]+"_states_converter_"+percentages[j],
+                    gwf.target_from_template(name = orders_shorter[i]+"_states_converter_Esse_"+percentages[j],
                                             template=states_converter(
                                             path_in= workflow_dir+"03_distribution_data/",
                                             tip_states_file= workflow_dir+"03_distribution_data/"+orders_shorter[i]+"_distribution_data.txt",
@@ -2651,7 +2651,7 @@ for i in range(len(esse_clades)):
                                             ))
 
                 for j in range(len(percentages)):
-                    gwf.target_from_template(name = esse_clades[i]+"_states_converter_"+percentages[j],
+                    gwf.target_from_template(name = esse_clades[i]+"_states_converter_Esse_"+percentages[j],
                                             template=states_converter(
                                             path_in= workflow_dir+"03_distribution_data/",
                                             tip_states_file= workflow_dir+"03_distribution_data/"+esse_clades[i]+"_distribution_data.txt",
@@ -2760,7 +2760,7 @@ for i in range(len(families_shorter)):
                                 ))
                         
             for j in range(len(percentages)):
-                    gwf.target_from_template(name = families_shorter[i]+"_states_converter_"+percentages[j],
+                    gwf.target_from_template(name = families_shorter[i]+"_states_converter_Esse_"+percentages[j],
                                             template=states_converter(
                                             path_in= workflow_dir+"03_distribution_data/",
                                             tip_states_file= workflow_dir+"03_distribution_data/"+families_shorter[i]+"_distribution_data.txt",
@@ -3223,7 +3223,7 @@ for i in range(len(sub_family_clades)):
                                 ))
                         
             for j in range(len(percentages)):
-                    gwf.target_from_template(name = sub_family_clades[i]+"_states_converter_"+percentages[j],
+                    gwf.target_from_template(name = sub_family_clades[i]+"_states_converter_Esse_"+percentages[j],
                                             template=states_converter(
                                             path_in= workflow_dir+"03_distribution_data/",
                                             tip_states_file= workflow_dir+"03_distribution_data/"+sub_family_clades[i]+"_distribution_data.txt",
