@@ -1890,7 +1890,7 @@ for i in range(len(Clads_clades)):
                                 out_states_file= workflow_dir+"03_distribution_data/"+Clads_clades[i]+"_states_"+percentages[j]+"_ClaDs.txt",
                                 script_dir= script_dir,
                                 done_dir= done_dir,
-                                done= "States_converter_"+Clads_clades[i]+"_"+percentages[j]+"",
+                                done= "States_converter_"+Clads_clades[i]+"_"+percentages[j]+"_ClaDs",
                                 percentage_for_present= percentages[j]
                                 ))
 
@@ -2321,7 +2321,7 @@ for k in range(len(sub_family_clades)):
                                 out_states_file= workflow_dir+"03_distribution_data/"+sub_family_clades[k]+"_states_"+percentages[j]+"_ClaDs.txt",
                                 script_dir= script_dir,
                                 done_dir= done_dir,
-                                done= "States_converter_"+sub_family_clades[k]+"_"+percentages[j]+"",
+                                done= "States_converter_"+sub_family_clades[k]+"_"+percentages[j]+"_ClaDs",
                                 percentage_for_present= percentages[j]
                                 ))
 
@@ -2494,7 +2494,7 @@ for i in range(len(orders_shorter)):
                                             out_states_file= workflow_dir+"03_distribution_data/"+orders_shorter[i]+"_states_"+percentages[j]+"_Esse.txt",
                                             script_dir= script_dir,
                                             done_dir= done_dir,
-                                            done= "States_converter_"+orders_shorter[i]+"_"+percentages[j]+"",
+                                            done= "States_converter_"+orders_shorter[i]+"_"+percentages[j]+"_Esse",
                                             percentage_for_present= percentages[j]
                                             ))
                     
@@ -2658,7 +2658,7 @@ for i in range(len(esse_clades)):
                                             out_states_file= workflow_dir+"03_distribution_data/"+esse_clades[i]+"_states_"+percentages[j]+"_Esse.txt",
                                             script_dir= script_dir,
                                             done_dir= done_dir,
-                                            done= "States_converter_"+esse_clades[i]+"_"+percentages[j]+"",
+                                            done= "States_converter_"+esse_clades[i]+"_"+percentages[j]+"_Esse",
                                             percentage_for_present= percentages[j]
                                             ))
 
@@ -2767,7 +2767,7 @@ for i in range(len(families_shorter)):
                                             out_states_file= workflow_dir+"03_distribution_data/"+families_shorter[i]+"_states_"+percentages[j]+"_Esse.txt",
                                             script_dir= script_dir,
                                             done_dir= done_dir,
-                                            done= "States_converter_"+families_shorter[i]+"_"+percentages[j]+"",
+                                            done= "States_converter_"+families_shorter[i]+"_"+percentages[j]+"_Esse",
                                             percentage_for_present= percentages[j]
                                             ))
                     
@@ -3230,7 +3230,7 @@ for i in range(len(sub_family_clades)):
                                             out_states_file= workflow_dir+"03_distribution_data/"+sub_family_clades[i]+"_states_"+percentages[j]+".txt",
                                             script_dir= script_dir,
                                             done_dir= done_dir,
-                                            done= "States_converter_"+sub_family_clades[i]+"_"+percentages[j]+"",
+                                            done= "States_converter_"+sub_family_clades[i]+"_"+percentages[j]+"_Esse",
                                             percentage_for_present= percentages[j]
                                             ))
                     
