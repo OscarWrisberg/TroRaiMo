@@ -1081,7 +1081,7 @@ def sampling_frequency_per_biome(input_file_tree, wcvp_file,path_out,renamed_occ
 
 def rem_tips(input_file_tree, output_file, path_in, order, script_dir, done_dir, done, distribution_file):
     """This function finds tips in a tree which is not in the climate data and removes them from the tree."""
-    inputs = [done_dir+order+"_Sampling_fraction"]
+    inputs = [done_dir+order+"_Sampling_fraction_Esse"]
     outputs = [path_in+output_file, done_dir+done]
     options = {
         'cores': 1,
@@ -1166,7 +1166,7 @@ def sampling_frequency_subclades(input_file_tree, wcvp_file, path_out, output_fi
 ##############################################################
 def Clads(tree, done_file, path_in, output_file,wcvp_input, order, apg, script_dir, done_dir, sampling_frequency):
     """ """
-    inputs = [path_in+tree,wcvp_input,apg,done_dir+"Finding_monophyletic_orders",done_dir+order+"_Sampling_fraction"]
+    inputs = [path_in+tree,wcvp_input,apg,done_dir+"Finding_monophyletic_orders",done_dir+order+"_Sampling_fraction_ClaDs"]
     outputs = [done_dir+done_file, path_in+output_file]
     options = {
         'cores': 1,
@@ -1246,7 +1246,7 @@ def Calculating_priors( done_file, path_in, output_file,script_dir, done_dir, in
 ##############################################################
 def Clads_priors(tree, done_file, path_in, output_file,wcvp_input, order, apg, script_dir, done_dir, sampling_frequency, prior_file):
     """ """
-    inputs = [path_in+tree,wcvp_input,apg,done_dir+"Finding_monophyletic_orders",done_dir+order+"_Sampling_fraction", prior_file]
+    inputs = [path_in+tree,wcvp_input,apg,done_dir+"Finding_monophyletic_orders",done_dir+order+"_Sampling_fraction_ClaDs", prior_file]
     outputs = [done_dir+done_file, path_in+output_file]
     options = {
         'cores': 1,
@@ -1284,7 +1284,7 @@ def Clads_priors(tree, done_file, path_in, output_file,wcvp_input, order, apg, s
 ##############################################################
 def Clads_subclades(tree, done_file, path_in, output_file,wcvp_input, order, script_dir, done_dir, sampling_frequency, prior_file):
     """ """
-    inputs = [path_in+tree,done_dir+"Finding_monophyletic_orders",done_dir+order+"_Sampling_fraction", prior_file]
+    inputs = [path_in+tree,done_dir+"Finding_monophyletic_orders",done_dir+order+"_Sampling_fraction_ClaDs", prior_file]
     outputs = [done_dir+done_file, path_in+"Clads_output_"+order+".Rdata"]
     options = {
         'cores': 10,
@@ -1846,7 +1846,7 @@ for i in range(len(Clads_clades)):
                                           script_dir = script_dir,
                                           apg = script_dir + "apgweb_parsed.csv",
                                           done_dir = done_dir,
-                                          done = Clads_clades[i] + "_Sampling_fraction",
+                                          done = Clads_clades[i] + "_Sampling_fraction_ClaDs",
                                           name = Clads_clades[i]
                                       ))
 
@@ -2276,7 +2276,7 @@ for k in range(len(sub_family_clades)):
                                           script_dir = script_dir,
                                           apg = script_dir + "apgweb_parsed.csv",
                                           done_dir = done_dir,
-                                          done = sub_family_clades[k] + "_Sampling_fraction",
+                                          done = sub_family_clades[k] + "_Sampling_fraction_ClaDs",
                                           name = sub_family_clades[k]
                                       ))
     
@@ -2498,7 +2498,7 @@ for i in range(len(orders_shorter)):
                                             percentage_for_present= percentages[j]
                                             ))
                     
-                    gwf.target_from_template(name = orders_shorter[i]+"_Sampling_fraction",
+                    gwf.target_from_template(name = orders_shorter[i]+"_Sampling_fraction_Esse",
                                          template = sampling_frequency(
                                                 input_file_tree= "pruned_tree_order_"+orders_shorter[i]+"_GBMB.tre",
                                                 path_in =  workflow_dir+"02_adding_orders/pruning/orders/",
@@ -2509,7 +2509,7 @@ for i in range(len(orders_shorter)):
                                                 script_dir= script_dir,
                                                 apg = script_dir+"apgweb_parsed.csv",
                                                 done_dir= done_dir,
-                                                done= orders_shorter[i]+"_Sampling_fraction"
+                                                done= orders_shorter[i]+"_Sampling_fraction_Esse"
                                          ))
                     
             
@@ -2662,7 +2662,7 @@ for i in range(len(esse_clades)):
                                             percentage_for_present= percentages[j]
                                             ))
 
-                    gwf.target_from_template(name = esse_clades[i]+"_Sampling_fraction",
+                    gwf.target_from_template(name = esse_clades[i]+"_Sampling_fraction_Esse",
                                          template = sampling_frequency(
                                                 input_file_tree= "pruned_tree_family_"+esse_clades[i]+"_GBMB.tre",
                                                 path_in =  workflow_dir+"02_adding_orders/pruning/families/",
@@ -2673,7 +2673,7 @@ for i in range(len(esse_clades)):
                                                 script_dir= script_dir,
                                                 apg = script_dir+"apgweb_parsed.csv",
                                                 done_dir= done_dir,
-                                                done= esse_clades[i]+"_Sampling_fraction"
+                                                done= esse_clades[i]+"_Sampling_fraction_Esse"
                                          ))
 
 
@@ -2771,7 +2771,7 @@ for i in range(len(families_shorter)):
                                             percentage_for_present= percentages[j]
                                             ))
                     
-                    gwf.target_from_template(name = families_shorter[i]+"_Sampling_fraction",
+                    gwf.target_from_template(name = families_shorter[i]+"_Sampling_fraction_Esse",
                                          template = sampling_frequency(
                                                 input_file_tree= "sub_phylo_"+families_shorter[i]+".tre",
                                                 path_in =  workflow_dir+"02_adding_orders/pruning/subset_of_orders/",
@@ -2782,7 +2782,7 @@ for i in range(len(families_shorter)):
                                                 script_dir= script_dir,
                                                 apg = script_dir+"apgweb_parsed.csv",
                                                 done_dir= done_dir,
-                                                done= families_shorter[i]+"_Sampling_fraction"
+                                                done= families_shorter[i]+"_Sampling_fraction_Esse"
                                          ))
                     
             
@@ -3234,7 +3234,7 @@ for i in range(len(sub_family_clades)):
                                             percentage_for_present= percentages[j]
                                             ))
                     
-                    gwf.target_from_template(name = sub_family_clades[i]+"_Sampling_fraction",
+                    gwf.target_from_template(name = sub_family_clades[i]+"_Sampling_fraction_Esse",
                                          template = sampling_frequency(
                                                 input_file_tree= "sub_phylo_"+sub_family_clades[i]+".tre",
                                                 path_in =  workflow_dir+"02_adding_orders/pruning/subset_of_orders/",
@@ -3245,7 +3245,7 @@ for i in range(len(sub_family_clades)):
                                                 script_dir= script_dir,
                                                 apg = script_dir+"apgweb_parsed.csv",
                                                 done_dir= done_dir,
-                                                done= sub_family_clades[i]+"_Sampling_fraction"
+                                                done= sub_family_clades[i]+"_Sampling_fraction_Esse"
                                          ))
                     
             
@@ -3353,7 +3353,7 @@ for i in range(len(sub_family_clades)):
 #             #                                 percentage_for_present= percentages[j]
 #             #                                 ))
                     
-#             #         gwf.target_from_template(name = sub_families_shorter[i]+"_Sampling_fraction",
+#             #         gwf.target_from_template(name = sub_families_shorter[i]+"_Sampling_fraction_Esse",
 #             #                              template = sampling_frequency(
 #             #                                     input_file_tree= "sub_phylo_"+sub_families_shorter[i]+".tre",
 #             #                                     path_in =  workflow_dir+"02_adding_orders/pruning/subset_of_orders/",
@@ -3364,7 +3364,7 @@ for i in range(len(sub_family_clades)):
 #             #                                     script_dir= script_dir,
 #             #                                     apg = script_dir+"apgweb_parsed.csv",
 #             #                                     done_dir= done_dir,
-#             #                                     done= sub_families_shorter[i]+"_Sampling_fraction"
+#             #                                     done= sub_families_shorter[i]+"_Sampling_fraction_Esse"
 #             #                              ))
                     
             
