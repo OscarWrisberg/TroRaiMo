@@ -1694,12 +1694,12 @@ for i in range(len(orders_not_in_orders_new_prior)):
                              ))
     
     #Running the script to find the environmental data for the tips in the trees
-    gwf.target_from_template(name = orders_not_in_orders_new_prior[i]+"_distribution_data_ClaDs.",
+    gwf.target_from_template(name = orders_not_in_orders_new_prior[i]+"_distribution_data",
                                 template=Finding_areas_in_wcvp(
                                 input_file_tree= "pruned_tree_order_"+orders_not_in_orders_new_prior[i]+"_GBMB.tre", # 
                                 path_in =  workflow_dir+"02_adding_orders/pruning/orders/",
                                 path_out = workflow_dir+"03_distribution_data/",
-                                output_file = orders_not_in_orders_new_prior[i]+"_distribution_data_ClaDs.txt",
+                                output_file = orders_not_in_orders_new_prior[i]+"_distribution_data_txt",
                                 wcvp_file = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds",
                                 order = orders_not_in_orders_new_prior[i],
                                 script_dir= script_dir,
@@ -1715,8 +1715,8 @@ for i in range(len(orders_not_in_orders_new_prior)):
         gwf.target_from_template(name = orders_not_in_orders_new_prior[i]+"_states_converter_ClaDs"+percentages[j],
                                 template=states_converter(
                                 path_in= workflow_dir+"03_distribution_data/",
-                                tip_states_file= workflow_dir+"03_distribution_data/"+orders_not_in_orders_new_prior[i]+"_distribution_data_ClaDs.txt",
-                                out_states_file= workflow_dir+"03_distribution_data/"+orders_not_in_orders_new_prior[i]+"_states_"+percentages[j]+"_ClaDs.txt",
+                                tip_states_file= workflow_dir+"03_distribution_data/"+orders_not_in_orders_new_prior[i]+".txt",
+                                out_states_file= workflow_dir+"03_distribution_data/"+orders_not_in_orders_new_prior[i]+"_states_"+percentages[j]+".txt",
                                 script_dir= script_dir,
                                 done_dir= done_dir,
                                 done= "States_converter_"+orders_not_in_orders_new_prior[i]+"_"+percentages[j]+"_ClaDs",
@@ -1865,12 +1865,12 @@ for i in range(len(Clads_clades)):
                              ))
 
     #Running the script to find the environmental data for the tips in the sub trees
-    gwf.target_from_template(name = Clads_clades[i]+"_distribution_data_ClaDs",
+    gwf.target_from_template(name = Clads_clades[i]+"_distribution_data",
                                 template=Finding_areas_in_wcvp(
                                 input_file_tree= "family_phylo_"+Clads_clades[i]+".tre", # 
                                 path_in =  workflow_dir+"02_adding_orders/pruning/subset_of_orders/",
                                 path_out = workflow_dir+"03_distribution_data/",
-                                output_file = Clads_clades[i]+"_distribution_data_ClaDs.txt",
+                                output_file = Clads_clades[i]+"_distribution_data.txt",
                                 wcvp_file = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds",
                                 order = Clads_clades[i],
                                 script_dir= script_dir,
@@ -2296,12 +2296,12 @@ for k in range(len(sub_family_clades)):
                              )) 
 
  #Running the script to find the environmental data for the tips in the sub trees
-    gwf.target_from_template(name = sub_family_clades[k]+"_distribution_data_ClaDs",
+    gwf.target_from_template(name = sub_family_clades[k]+"_distribution_data",
                                 template=Finding_areas_in_wcvp(
                                 input_file_tree= "sub_phylo_"+sub_family_clades[k]+".tre",  
                                 path_in =  workflow_dir+"02_adding_orders/pruning/subset_of_orders/",
                                 path_out = workflow_dir+"03_distribution_data/",
-                                output_file = sub_family_clades[k]+"_distribution_data_ClaDs.txt",
+                                output_file = sub_family_clades[k]+"_distribution_data.txt",
                                 wcvp_file = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds",
                                 order = sub_family_clades[k],
                                 script_dir= script_dir,
