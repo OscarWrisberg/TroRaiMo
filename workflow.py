@@ -1699,7 +1699,7 @@ for i in range(len(orders_not_in_orders_new_prior)):
                                 input_file_tree= "pruned_tree_order_"+orders_not_in_orders_new_prior[i]+"_GBMB.tre", # 
                                 path_in =  workflow_dir+"02_adding_orders/pruning/orders/",
                                 path_out = workflow_dir+"03_distribution_data/",
-                                output_file = orders_not_in_orders_new_prior[i]+"_distribution_data_txt",
+                                output_file = orders_not_in_orders_new_prior[i]+"_distribution_data.txt",
                                 wcvp_file = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds",
                                 order = orders_not_in_orders_new_prior[i],
                                 script_dir= script_dir,
@@ -1715,7 +1715,7 @@ for i in range(len(orders_not_in_orders_new_prior)):
         gwf.target_from_template(name = orders_not_in_orders_new_prior[i]+"_states_converter_"+percentages[j],
                                 template=states_converter(
                                 path_in= workflow_dir+"03_distribution_data/",
-                                tip_states_file= workflow_dir+"03_distribution_data/"+orders_not_in_orders_new_prior[i]+".txt",
+                                tip_states_file= workflow_dir+"03_distribution_data/"+orders_not_in_orders_new_prior[i]+"_distribution_data.txt",
                                 out_states_file= workflow_dir+"03_distribution_data/"+orders_not_in_orders_new_prior[i]+"_states_"+percentages[j]+".txt",
                                 script_dir= script_dir,
                                 done_dir= done_dir,
