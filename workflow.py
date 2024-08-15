@@ -2637,7 +2637,7 @@ for i in range(len(esse_clades)):
                 gwf.target_from_template(name = esse_clades[i]+"_distribution_data_Esse",
                                             template=Finding_areas_in_wcvp(
                                             input_file_tree= "family_phylo_"+esse_clades[i]+"_GBMB.tre",
-                                            path_in =  workflow_dir+"02_adding_orders/pruning/subset_of_orders/"",
+                                            path_in =  workflow_dir+"02_adding_orders/pruning/subset_of_orders/",
                                             path_out = workflow_dir+"03_distribution_data/",
                                             output_file = esse_clades[i]+"_distribution_data_Esse.txt",
                                             wcvp_file = workflow_dir+"02_adding_orders/wcvp_names_apg_aligned.rds",
