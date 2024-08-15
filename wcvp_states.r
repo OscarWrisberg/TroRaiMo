@@ -20,19 +20,19 @@ invisible(lapply(packages, library, character.only = TRUE))
 #######################################################-- Local testing --######################################################################
 ################################################################################################################################################
 
-setwd("/home/owrisberg/Trf_models/workflow/02_adding_orders/pruning/subset_of_orders/") # srun
-setwd("/home/au543206/GenomeDK/Trf_models/workflow/02_adding_orders/pruning/subset_of_orders") # Local
-input_file_tree <- "sub_phylo_Poaceae_9.tre"
-output <- "Test_Poaceae_9.txt"
-input_file_wcvp <- "/home/owrisberg/Trf_models/workflow/02_adding_orders/wcvp_names_apg_aligned.rds" #srun
-input_file_wcvp <- "/home/au543206/GenomeDK/Trf_models/workflow/02_adding_orders/wcvp_names_apg_aligned.rds" #Local
-path_out <- "/home/owrisberg/Trf_models/workflow/03_distribution_data/" #srun
-path_out <- "/home/au543206/GenomeDK/Trf_models/workflow/03_distribution_data/" #Local
-order_in_question <- as.character("Poaceae_9")
-apg  <- "../../../../TroRaiMo/apgweb_parsed.csv"
-renamed_occurence_file <- "/home/owrisberg/Trf_models/workflow/01_distribution_data/06_Renamed/gbif_renamed.rds" #srun
-renamed_occurence_file <- "/home/au543206/GenomeDK/Trf_models/workflow/01_distribution_data/06_Renamed/gbif_renamed.rds" #Local
-koppen_biome_file <- "../../../../TroRaiMo/koppen_geiger_0p01.tif" #srun
+# setwd("/home/owrisberg/Trf_models/workflow/02_adding_orders/pruning/subset_of_orders/") # srun
+# setwd("/home/au543206/GenomeDK/Trf_models/workflow/02_adding_orders/pruning/subset_of_orders") # Local
+# input_file_tree <- "sub_phylo_Poaceae_9.tre"
+# output <- "Test_Poaceae_9.txt"
+# input_file_wcvp <- "/home/owrisberg/Trf_models/workflow/02_adding_orders/wcvp_names_apg_aligned.rds" #srun
+# input_file_wcvp <- "/home/au543206/GenomeDK/Trf_models/workflow/02_adding_orders/wcvp_names_apg_aligned.rds" #Local
+# path_out <- "/home/owrisberg/Trf_models/workflow/03_distribution_data/" #srun
+# path_out <- "/home/au543206/GenomeDK/Trf_models/workflow/03_distribution_data/" #Local
+# order_in_question <- as.character("Poaceae_9")
+# apg  <- "../../../../TroRaiMo/apgweb_parsed.csv"
+# renamed_occurence_file <- "/home/owrisberg/Trf_models/workflow/01_distribution_data/06_Renamed/gbif_renamed.rds" #srun
+# renamed_occurence_file <- "/home/au543206/GenomeDK/Trf_models/workflow/01_distribution_data/06_Renamed/gbif_renamed.rds" #Local
+# koppen_biome_file <- "../../../../TroRaiMo/koppen_geiger_0p01.tif" #srun
 
 ################################################################################################################################################
 ##############################################-- Handling Command Line arguments --#############################################################
