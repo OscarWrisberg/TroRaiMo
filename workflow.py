@@ -1705,7 +1705,7 @@ for i in range(len(orders_not_in_orders_new_prior)):
                                 script_dir= script_dir,
                                 apg = script_dir+"apgweb_parsed.csv",
                                 done_dir= done_dir,
-                                done= orders_not_in_orders_new_prior[i]+"_distribution_data",
+                                done= orders_not_in_orders_new_prior[i]+"_distribution_data_ClaDs",
                                 renamed_occurrences = workflow_dir+"01_distribution_data/06_Renamed/gbif_renamed.rds", 
                                 koppen_biome = script_dir+"koppen_geiger_0p01.tif"
                                 ))
@@ -1876,7 +1876,7 @@ for i in range(len(Clads_clades)):
                                 script_dir= script_dir,
                                 apg = script_dir+"apgweb_parsed.csv",
                                 done_dir= done_dir,
-                                done= Clads_clades[i]+"_distribution_data",
+                                done= Clads_clades[i]+"_distribution_data_ClaDs",
                                 renamed_occurrences = workflow_dir+"01_distribution_data/06_Renamed/gbif_renamed.rds", 
                                 koppen_biome = script_dir+"koppen_geiger_0p01.tif"
                                 ))
@@ -2307,7 +2307,7 @@ for k in range(len(sub_family_clades)):
                                 script_dir= script_dir,
                                 apg = script_dir+"apgweb_parsed.csv",
                                 done_dir= done_dir,
-                                done= sub_family_clades[k]+"_distribution_data",
+                                done= sub_family_clades[k]+"_distribution_data_ClaDs",
                                 renamed_occurrences = workflow_dir+"01_distribution_data/06_Renamed/gbif_renamed.rds", 
                                 koppen_biome = script_dir+"koppen_geiger_0p01.tif"
                                 ))
@@ -2381,7 +2381,7 @@ for i in range(len(orders_not_in_orders_new_prior)):
                                 script_dir= script_dir,
                                 apg = script_dir+"apgweb_parsed.csv",
                                 done_dir= done_dir,
-                                done= orders_not_in_orders_new_prior[i]+"_distribution_data",
+                                done= orders_not_in_orders_new_prior[i]+"_distribution_data_Esse",
                                 renamed_occurrences = workflow_dir+"01_distribution_data/06_Renamed/gbif_renamed.rds", 
                                 koppen_biome = script_dir+"koppen_geiger_0p01.tif"
                                 ))
@@ -2481,7 +2481,7 @@ for i in range(len(orders_shorter)):
                                 script_dir= script_dir,
                                 apg = script_dir+"apgweb_parsed.csv",
                                 done_dir= done_dir,
-                                done= orders_shorter[i]+"_distribution_data",
+                                done= orders_shorter[i]+"_distribution_data_Esse",
                                 renamed_occurrences = workflow_dir+"01_distribution_data/06_Renamed/gbif_renamed.rds", 
                                 koppen_biome = script_dir+"koppen_geiger_0p01.tif"
                                 ))
@@ -2645,7 +2645,7 @@ for i in range(len(esse_clades)):
                                             script_dir= script_dir,
                                             apg = script_dir+"apgweb_parsed.csv",
                                             done_dir= done_dir,
-                                            done= esse_clades[i]+"_distribution_data",
+                                            done= esse_clades[i]+"_distribution_data_Esse",
                                             renamed_occurrences = workflow_dir+"01_distribution_data/06_Renamed/gbif_renamed.rds", 
                                             koppen_biome = script_dir+"koppen_geiger_0p01.tif"
                                             ))
@@ -2754,7 +2754,7 @@ for i in range(len(families_shorter)):
                                 script_dir= script_dir,
                                 apg = script_dir+"apgweb_parsed.csv",
                                 done_dir= done_dir,
-                                done= families_shorter[i]+"_distribution_data",
+                                done= families_shorter[i]+"_distribution_data_Esse",
                                 renamed_occurrences = workflow_dir+"01_distribution_data/06_Renamed/gbif_renamed.rds", 
                                 koppen_biome = script_dir+"koppen_geiger_0p01.tif"
                                 ))
@@ -3217,7 +3217,7 @@ for i in range(len(sub_family_clades)):
                                 script_dir= script_dir,
                                 apg = script_dir+"apgweb_parsed.csv",
                                 done_dir= done_dir,
-                                done= sub_family_clades[i]+"_distribution_data",
+                                done= sub_family_clades[i]+"_distribution_data_Esse",
                                 renamed_occurrences = workflow_dir+"01_distribution_data/06_Renamed/gbif_renamed.rds", 
                                 koppen_biome = script_dir+"koppen_geiger_0p01.tif"
                                 ))
