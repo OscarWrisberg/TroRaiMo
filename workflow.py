@@ -2737,9 +2737,9 @@ families_shorter = [
     "Cleomaceae",
     "Crassulaceae_Aphanopetalaceae_Halograceae_Penthoraceae_Tetracarpaeaceae",
     "Dipterocarpaceae_Bixaceae_Cistaceae_Sarcoleanaceae_Muntingiaceae_Sphaerosepalaceae",
-    "Ericaceae_Clethraceae_Cyrillaceae", # Split
-    "Orobanchaceae_Phrymaceae_Mazaceae_Paulowniaceae", # split
-    "Papaveraceae", # Split
+    #"Ericaceae_Clethraceae_Cyrillaceae", # Split
+    #"Orobanchaceae_Phrymaceae_Mazaceae_Paulowniaceae", # split
+    #"Papaveraceae", # Split
     "Simaroubaceae"]
 
 for i in range(len(families_shorter)):

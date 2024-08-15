@@ -5,7 +5,7 @@
 chooseCRANmirror(ind = 30)
 
 #Packages
-packages <- c("data.table", "ape", "phytools", "geiger", "castor", "MonoPhy", "terra", "dplyr", "ggplot2", "sp","sf")
+packages <- c("data.table", "ape", "phytools", "geiger", "MonoPhy", "terra", "dplyr", "ggplot2", "sp","sf") #  "castor"
 
 # Install packages not yet installed
 installed_packages <- packages %in% rownames(installed.packages())
@@ -20,15 +20,19 @@ invisible(lapply(packages, library, character.only = TRUE))
 #######################################################-- Local testing --######################################################################
 ################################################################################################################################################
 
-# setwd("/home/owrisberg/Trf_models/workflow/02_adding_orders/pruning/subset_of_orders/") # srun
-# input_file_tree <- "sub_phylo_Asteraceae_1.tre"
-# output <- "Test_Asteraceae_1.txt"
-# input_file_wcvp <- "/home/owrisberg/Trf_models/workflow/02_adding_orders/wcvp_names_apg_aligned.rds" #srun
-# path_out <- "/home/owrisberg/Trf_models/workflow/03_distribution_data/" #srun
-# order_in_question <- as.character("Asteraceae_1")
-# apg  <- "../../../../TroRaiMo/apgweb_parsed.csv"
-# renamed_occurence_file <- "/home/owrisberg/Trf_models/workflow/01_distribution_data/06_Renamed/gbif_renamed.rds" #srun
-# koppen_biome_file <- "../../../../TroRaiMo/koppen_geiger_0p01.tif" #srun
+setwd("/home/owrisberg/Trf_models/workflow/02_adding_orders/pruning/subset_of_orders/") # srun
+setwd("/home/au543206/GenomeDK/Trf_models/workflow/02_adding_orders/pruning/subset_of_orders") # Local
+input_file_tree <- "sub_phylo_Poaceae_9.tre"
+output <- "Test_Poaceae_9.txt"
+input_file_wcvp <- "/home/owrisberg/Trf_models/workflow/02_adding_orders/wcvp_names_apg_aligned.rds" #srun
+input_file_wcvp <- "/home/au543206/GenomeDK/Trf_models/workflow/02_adding_orders/wcvp_names_apg_aligned.rds" #Local
+path_out <- "/home/owrisberg/Trf_models/workflow/03_distribution_data/" #srun
+path_out <- "/home/au543206/GenomeDK/Trf_models/workflow/03_distribution_data/" #Local
+order_in_question <- as.character("Poaceae_9")
+apg  <- "../../../../TroRaiMo/apgweb_parsed.csv"
+renamed_occurence_file <- "/home/owrisberg/Trf_models/workflow/01_distribution_data/06_Renamed/gbif_renamed.rds" #srun
+renamed_occurence_file <- "/home/au543206/GenomeDK/Trf_models/workflow/01_distribution_data/06_Renamed/gbif_renamed.rds" #Local
+koppen_biome_file <- "../../../../TroRaiMo/koppen_geiger_0p01.tif" #srun
 
 ################################################################################################################################################
 ##############################################-- Handling Command Line arguments --#############################################################
@@ -141,7 +145,7 @@ dim(renamed_occurence_subset) # 76483
 # There is an option to add additional cleaning of the data here, but for now we will continue with the data as it is.
 
 # How many of the species in the tree are found in the renamed_occurence_subset
-cat("Out of ",length(tree$tip.label),"tips in the tree there are ",length(tree$tip.label[which(tree$tip.label %in% renamed_occurence_subset$wcvp_taxon_name)]),"of the species in the tree are found in the renamed_occurence_subset \n\n")
+cat("Out of the",length(tree$tip.label),"tips in the tree,",length(tree$tip.label[which(tree$tip.label %in% renamed_occurence_subset$wcvp_taxon_name)]),"of them are found in the renamed_occurence_subset \n\n")
 
 # Loading the Koppen biomes data
 cat("Loading the Koppen biomes data \n\n")
@@ -151,6 +155,8 @@ koppen_biome_map <- rast(koppen_biome_file)
 ##################################################################################################################################################################
 
 if (all(tree$tip.label %in% renamed_occurence_subset$wcvp_taxon_name)) { # If all the tip labels are found in the occurences use only them to create the presence absence matrix
+
+  cat("All the species in the tree are found in the renamed_occurence_subset \n\n")
 
   # Add a new column to the csv file which is Tropical rainforest or not.
   cat("Adding a new column to the csv file which is Tropical rainforest or not \n\n")
@@ -166,17 +172,27 @@ if (all(tree$tip.label %in% renamed_occurence_subset$wcvp_taxon_name)) { # If al
   # Summarize the number of occurrences which are inside and outside the tropical rainforest
   result_summary <- aggregate(renamed_occurence_subset$in_tropical_rainforest, by = list(renamed_occurence_subset$wcvp_taxon_name), FUN = function(x) c(sum(x == 1), sum(x == 0)))
 
-  # Calculate the proportion of occurrences inside the tropical rainforest biome
-  result_summary$proportion_in_tropical_rainforest <- result_summary$x[,1]/(result_summary$x[,1] + result_summary$x[,2])
-  result_summary$proportion_outside_tropical_rainforest <- result_summary$x[,2]/(result_summary$x[,1] + result_summary$x[,2])
-
+  # Splitting the second column, which is a column containing a dataframe with 2 columns, into two individual columns
+  result_summary <- cbind(result_summary[,1] , as.data.frame(result_summary[,2]))
+    
   # Changing the column names
   result_summary <- setNames(result_summary, c("wcvp_taxon_name", "occurrences_trf", "occurrences_non_trf"))
+
+  # Calculate the proportion of occurrences inside the tropical rainforest biome
+  # Calculate the proportion of occurrences inside the tropical rainforest biome
+  result_summary$proportion_in_tropical_rainforest <- result_summary$occurrences_trf/(result_summary$occurrences_trf + result_summary$occurrences_non_trf)
+  result_summary$proportion_outside_tropical_rainforest <- result_summary$occurrences_non_trf/(result_summary$occurrences_trf + result_summary$occurrences_non_trf)
+
+  # Changing the column names
+  result_summary <- setNames(result_summary, c("wcvp_taxon_name", "occurrences_trf", "occurrences_non_trf", "proportion_in_tropical_rainforest", "proportion_outside_tropical_rainforest"))
 
 ##################################################################################################################################################################
 ##################################################################################################################################################################
 
 } else { # If all the species are not found in the occurrences, see if the species missing from the occurrences are found in the WCVP
+
+  cat("Not all the species in the tree are found in the renamed_occurence_subset \n")
+
   renamed_occurence_subset <- renamed_occurence[which(renamed_occurence$wcvp_taxon_name %in% tree$tip.label),]
   cat("Not all the species in the tree are found in the renamed_occurence_subset \n")
   cat("The following species are not found in the renamed_occurence_subset: \n\n")
@@ -194,6 +210,7 @@ if (all(tree$tip.label %in% renamed_occurence_subset$wcvp_taxon_name)) { # If al
 ##################################################################################################################################################################
 
   if (all(missing_sp %in% wcvp_subset$taxon_name)) { # If all the missing species are found in the wcvp use the wcvp climate column to add the missing species to the presence absence matrix
+    cat("All the missing species are found in the wcvp dataset \n\n")
 
     # use the koppen biome maps for the species represented in the renamed_occurence_subset
     # Add a new column to the csv file which is Tropical rainforest or not.
@@ -317,6 +334,8 @@ if (all(tree$tip.label %in% renamed_occurence_subset$wcvp_taxon_name)) { # If al
     }
   }
 }
+
+result_summary
 
 # Now I need to save the result summary dataframe to a file which can be read by ESSE
 cat("Saving the result to ", paste0(path_out, output), "\n\n")
