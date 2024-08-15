@@ -2745,7 +2745,7 @@ families_shorter = [
 for i in range(len(families_shorter)):
             gwf.target_from_template(name = families_shorter[i]+"_distribution_data_Esse",
                                 template=Finding_areas_in_wcvp(
-                                input_file_tree= "sub_phylo_"+families_shorter[i]+".tre",
+                                input_file_tree= "family_phylo_"+families_shorter[i]+".tre",
                                 path_in =  workflow_dir+"02_adding_orders/pruning/subset_of_orders/",
                                 path_out = workflow_dir+"03_distribution_data/",
                                 output_file = families_shorter[i]+"_distribution_data_Esse.txt",
@@ -2758,6 +2758,7 @@ for i in range(len(families_shorter)):
                                 renamed_occurrences = workflow_dir+"01_distribution_data/06_Renamed/gbif_renamed.rds", 
                                 koppen_biome = script_dir+"koppen_geiger_0p01.tif"
                                 ))
+
                         
             for j in range(len(percentages)):
                     gwf.target_from_template(name = families_shorter[i]+"_states_converter_Esse_"+percentages[j],
@@ -2773,7 +2774,7 @@ for i in range(len(families_shorter)):
                     
                     gwf.target_from_template(name = families_shorter[i]+"_Sampling_fraction_Esse",
                                          template = sampling_frequency(
-                                                input_file_tree= "sub_phylo_"+families_shorter[i]+".tre",
+                                                input_file_tree= "family_phylo_"+families_shorter[i]+".tre",
                                                 path_in =  workflow_dir+"02_adding_orders/pruning/subset_of_orders/",
                                                 path_out = workflow_dir+"03_distribution_data/",
                                                 output_file = families_shorter[i]+"_sampling_fraction_Esse.txt",
