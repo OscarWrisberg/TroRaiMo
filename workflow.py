@@ -939,7 +939,7 @@ def Creating_family_subclades(path_out, script_dir, done_dir, done, path_in):
 def Finding_areas_in_wcvp(input_file_tree, wcvp_file,path_out, output_file, path_in, order, script_dir, apg, done_dir, done, renamed_occurrences, koppen_biome):
     """This Function creates a states file for the tips in WCVP based on the climate column."""
     inputs = [done_dir+"Finding_monophyletic_orders", renamed_occurrences]
-    outputs = [path_out+output_file]
+    outputs = [path_out+output_file, done_dir+done]
     options = {
         'cores': 2,
         'memory': '100g',
