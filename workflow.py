@@ -944,7 +944,7 @@ def Finding_areas_in_wcvp(input_file_tree, wcvp_file,path_out, output_file, path
         'cores': 2,
         'memory': '100g',
         'account':"Trf_models",
-        'walltime': "00:10:00"
+        'walltime': "00:20:00"
     }
 
     spec = '''
