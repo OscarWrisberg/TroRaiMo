@@ -3359,7 +3359,7 @@ for i in range(len(sub_family_clades)):
                                                 ))
                         
                     for k in range(5):
-                        gwf.target_from_template(name = sub_family_clades[i]+"_"+str(k)+"_Esse_GE",
+                        gwf.target_from_template(name = sub_family_clades[i]+"_"+str(k)+"_Esse",
                                                 template = Esse(
                                                 tree_file = sub_family_clades[i]+"_Esse_tree.tre", # Input tree
                                                 tip_states_file = workflow_dir+"03_distribution_data/"+sub_family_clades[i]+"_states_"+percentages[j]+"_Esse.txt", 
