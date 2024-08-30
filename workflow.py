@@ -1362,7 +1362,7 @@ def states_converter(path_in,tip_states_file, out_states_file, script_dir, done_
 ##############################################################
 def Esse(path_in, tree_file,tip_states_file,paleo_clim_file, out_states_file, out_file, hidden_states, script_dir, done_dir, done, save_file, output_folder, path_out, biome_sampling,niter):
     """ Function for running the ESSE model on the tree of each order. """
-    inputs = [path_in+tree_file,tip_states_file,paleo_clim_file, biome_sampling]
+    inputs = [path_in+tree_file,tip_states_file, biome_sampling, done_dir+"Paleo_clim_area"]
     outputs = [output_folder+out_file+".log", done_dir+done]
     options = {
         'cores': 10,

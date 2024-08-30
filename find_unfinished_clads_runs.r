@@ -42,6 +42,7 @@ file_list # length = 264 30/08/2024
 ########################################################################################################################
 ############################################## Creating the dataframe  ################################################
 ########################################################################################################################
+Unfinished_runs <- c()
 # Loop through each file in the folder
 for (i in 1:length(file_list)) {
 
@@ -58,7 +59,7 @@ for (i in 1:length(file_list)) {
 	load(file)
 
 	if ("reason_for_stop" %in% names(CladsOutput)) {
-		#print("The reason for stop is in the file")
+		print("The reason for stop is in the file")
 		if(CladsOutput$reason_for_stop == "max_time") {
 			print("The reason for stop is because the run ran out of time")
 			Unfinished_runs <- c(Unfinished_runs, order_name)
@@ -71,3 +72,12 @@ for (i in 1:length(file_list)) {
 	# Remove the CladsOutput object from the environment
 	rm(CladsOutput)
 }
+
+# Find the Cucurbitaceae run in file list
+Cucurbitaceae_run <- grep("Cucurbitaceae", file_list)
+Cucurbitaceae_run
+load(file_list[Cucurbitaceae_run])
+
+names(CladsOutput)
+
+CladsOutput$tree$tip.label
