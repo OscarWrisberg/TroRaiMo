@@ -40,6 +40,9 @@ for (i in 1:length(files_list)) {
 data_lambda <- data %>% select(lambda_A_0, lambda_B_0, lambda_W_0, taxon)
 data_lambda
 
+data_mu <- data %>% select(mu_A_0, mu_B_0, loss_A_0, loss_B_0, taxon)
+head(data_mu)
+
 # OKay so i need to melt the data so that I can plot it and what I think I need to do is combine Lambda_A_0, lambda_B_0, Lambda_W_0 into a single column
 # Reshape the data to long format
 data_lambda_long <- data_lambda %>%
@@ -90,6 +93,13 @@ p2_log <- ggplot(data_lambda_long, aes(x = value, group = lambda, fill = lambda)
 	theme(legend.position = "bottom")
 print(p2_log)
 
+# Can we test if there is a significant difference between the lambda values for the different taxons
+library(lmerTest)
+model <- lmer(value ~ lambda + (1|taxon), data = data_lambda_long)
+summary(model) # Does this model actually suggest that Trf and widespread have higher speciation rates than non_trf?
+# Yes speciation in Trf and widespread are higher than non_trf and 0
+# There are a lot of residual variation suggesting that there are plenty other factors influencing speciation rates
+# The variability in in intercepts across the taxons suggests that each taxon differ in their baseline speciation rates and supports the use of them as random effects. 
 
 
 # Now I want to try and create the same plot but with the different taxons
@@ -283,3 +293,38 @@ dev.off()
 # p_ridge_dens_log
 
 
+#########################################################################################################################
+################################################## Plotting Mu data ####################################################
+#########################################################################################################################
+
+# Reshape the data to long format
+data_mu_long <- data_mu %>%
+  pivot_longer(cols = starts_with("mu"), 
+			   names_to = "mu", 
+			   values_to = "value")
+
+# Convert mu_A_0 to Tropical Rainforest
+data_mu_long$mu <- gsub("mu_A_0", "Tropical Rainforest", data_mu_long$mu)
+
+# Convert mu_B_0 to Outside Tropical Rainforest
+data_mu_long$mu <- gsub("mu_B_0", "Outside Tropical Rainforest", data_mu_long$mu)
+
+#  Now make a density plot
+p4 <- ggplot(data=data_mu_long, aes(x=value, group=mu, fill=mu)) +
+	geom_density(adjust=1.5, alpha=.7, ) +
+	scale_fill_manual(values = c(non_trfcol,trfcol)) +
+	theme_minimal() +
+	scale_x_continuous(limits = c(0,0.5), expand = c(0,0)) +
+	theme(  legend.position = "bottom",
+			axis.text.y = element_blank(),
+			axis.title.y = element_blank()
+			) +
+	xlab("Extinction Rate") + 
+	labs(fill = "")
+
+p4
+
+# Can we test if there is a significant difference between the mu values for the different taxons
+model_mu <- lmer(value ~ mu + (1|taxon), data = data_mu_long)
+summary(model_mu) # Does this model actually suggest that Trf and widespread have higher speciation rates than non_trf?
+data_mu_long

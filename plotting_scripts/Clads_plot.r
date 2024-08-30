@@ -96,55 +96,68 @@ tip_labels_df <- data.frame(tip_label = tip_labels, file_name = file_names)
 # Check if there are any duplicates and break if there are
 if(any(duplicated(tip_labels_df$tip_label))) {
 	print("There are duplicates in the tip labels")
-	stop()
+
+	# Get the duplicated species
+	duplicated <- tip_labels_df$tip_label[duplicated(tip_labels_df$tip_label)]
+	
+	# Print the rows with duplicated species
+	print(tip_labels_df[tip_labels_df$tip_label %in% duplicated, ])
+
+	# Print the unique file names of the duplicated species
+	datasets_with_duplicates <- (unique(tip_labels_df$file_name[tip_labels_df$tip_label %in% duplicated]))
+
+	# What I want to do is find the datasets where the duplicated species are present and then remove the dataset with the most number of species in it.
+	for (dataset in datasets_with_duplicates) {
+
+		# Keep track of progress
+		print(paste("Processing dataset", dataset))
+
+		# Find the species which are in dataset
+		duplicated_species_in_dataset <- tip_labels_df[tip_labels_df$file_name == dataset,]
+		duplicated_species_in_dataset
+
+		# subset the tip_labels_df to only include the species which are present in the dataset
+		tip_labels_df_subset <- tip_labels_df[tip_labels_df$tip_label %in% duplicated_species_in_dataset$tip_label, ]
+		tip_labels_df_subset
+
+		# Find the unique datasets in tip_labels_df_subset
+		unique_datasets <- unique(tip_labels_df_subset$file_name)
+		unique_datasets
+
+		# Are there overlap with more than one dataset?
+		if (length(unique_datasets) >= 2) {
+
+			# Find the dataset with the most number of species
+			dataset_with_most_species <- names(table(tip_labels_df_subset$file_name)[which.max(table(tip_labels_df_subset$file_name))])
+			dataset_with_most_species	
+
+			# Remove the dataset with the most number of species
+			tip_labels_df <- tip_labels_df[tip_labels_df$file_name != dataset_with_most_species, ]
+		}
+
+	}
+	
+
+	# Check if there are any duplicates and break if there are
+	if(any(duplicated(tip_labels_df$tip_label))) {
+		print("There are still duplicates in the tip labels")
+		stop()
+	} else {
+		print("There are no duplicates in the tip labels")
+	}
 } else {
 	print("There are no duplicates in the tip labels")
 }
 
+# Now I need to only keep the rows in clads_tip_lambda that are in tip_labels_df
+# First I add the order an order column to the tib_labels_df
+tip_labels_df$order <- gsub("Clads_output_(.*)\\.Rdata", "\\1", tip_labels_df$file_name)
 
-# ###############################################################################################################################
-# ############################################--- Clads on Subclades ---#########################################################
-# ###############################################################################################################################
-# # Loading the ClaDs runs that ran on the sub_order trees
-# # Specify the folder path
-# folder_path <- "/home/au543206/GenomeDK/Trf_models/workflow/02_adding_orders/pruning/subset_of_orders"
+# Now I can remove all rows in clads_tip_lambda where the order is not in the tip_labels_df
+clads_tip_lambda <- clads_tip_lambda[clads_tip_lambda$order %in% tip_labels_df$order, ]
 
-# # Get a list of all Rdata files in the folder
-# file_list <- list.files(folder_path, pattern = "Clads_output_.*\\.Rdata", full.names = TRUE)
-
-# length(file_list)
-
-# # Loop through each file in the folder
-# for (i in 1:length(file_list)) { # This loop takes atleast 2 hours to run ....
-
-# 	# Keeping track of the progress
-# 	print(paste("Processing file", i, "of", length(file_list)))
-
-# 	# Extractinc the file name
-# 	file = file_list[i]
-
-# 	# Extract the order name from the file name
-# 	order_name <- gsub("Clads_output_(.*)\\.Rdata", "\\1", basename(file))
-	
-# 	# Load the Rdata file
-# 	load(file)
-
-# 	tree <- CladsOutput$tree
-
-# 	# Append the tip names and tip rate speciation to the dataframe
-# 	clads_tip_lambda <- rbind(clads_tip_lambda, data.frame(order = order_name,
-# 														   tip_label = tree$tip.label,
-# 														   lambda = CladsOutput$lambdatip_map,
-# 														   extinction = CladsOutput$eps_map
-# 														   ))
-	
-# 	# print dim of the dataframe to keep track of the progress
-# 	cat("The dataset contains ",dim(clads_tip_lambda)[1], " rows and ", dim(clads_tip_lambda)[2], " columns\n")
-
-# 	# Remove the CladsOutput object from the environment
-# 	rm(CladsOutput)
-# }
-
+# Are there any duplicates in clads_tip_lambda_test
+any(duplicated(clads_tip_lambda$tip_label))
 
 # Save RDS file
 saveRDS(clads_tip_lambda, file = "/home/au543206/GenomeDK/Trf_models/workflow/04_results/clads_tip_lambda.rds")
@@ -165,7 +178,7 @@ unique_orders
 folder_path <- "/home/au543206/GenomeDK/Trf_models/workflow/03_distribution_data/"
 
 # Get a list of all distribution files in the folder
-distribution_files <- list.files(folder_path, pattern = ".*_distribution_data\\.txt", full.names = TRUE)
+distribution_files <- list.files(folder_path, pattern = ".*_distribution_data_ClaDs\\.txt", full.names = TRUE)
 
 # Remove Typhaceae_distribution_data.txt
 distribution_files <- distribution_files[!distribution_files == "/home/au543206/GenomeDK/Trf_models/workflow/03_distribution_data//Typhaceae_distribution_data.txt"]
@@ -173,6 +186,7 @@ distribution_files <- distribution_files[!distribution_files == "/home/au543206/
 # Remove /home/au543206/GenomeDK/Trf_models/workflow/03_distribution_data//Xyridaceae_Eriocaulaceae_distribution_data.txt"
 distribution_files <- distribution_files[!distribution_files == "/home/au543206/GenomeDK/Trf_models/workflow/03_distribution_data//Xyridaceae_Eriocaulaceae_distribution_data.txt"]
 
+distribution_files
 distribution_data <- data.frame()
 
 # Loop through each file
@@ -188,7 +202,7 @@ for (i in 1:length(distribution_files)) {
 	print(file)
 
 	# Extracting the order from the file name
-	order_name <- gsub("(.*)_distribution_data\\.txt", "\\1", basename(file))
+	order_name <- gsub("(.*)_distribution_data_ClaDs\\.txt", "\\1", basename(file))
 
 	# Cheking if the order is in the ClaDs output
 	if (order_name %in% unique_orders) {
@@ -214,9 +228,6 @@ dim(clads_tip_lambda)
 # Merging the 2 datasets
 distribution_data_merged <- merge(clads_tip_lambda, distribution_data, by.x = "tip_label", by.y = "wcvp_taxon_name")
 dim(distribution_data_merged)
-
-head(clads_tip_lambda)
-head(distribution_data)
 
 # Sort the distribution_data_merged dataframe by lambda in descending order
 distribution_data_merged_sorted <- distribution_data_merged[order(-distribution_data_merged$lambda), ]
@@ -292,6 +303,13 @@ for (threshold in thresholds) {
   )
 }
 
+# Are there any duplicates in the dataset
+distribution_data_merged[which(duplicated(distribution_data_merged$tip_label)),1:2]
+
+# Save the dataset
+saveRDS(distribution_data_merged, file = "/home/au543206/GenomeDK/Trf_models/workflow/04_results/distribution_data_merged.rds")
+load("/home/au543206/GenomeDK/Trf_models/workflow/04_results/distribution_data_merged.rds")
+
 ################################################################################################################################
 ############################----- Density functions of tip rate speciation in tropical rainforest -----#########################
 ################################################################################################################################
@@ -304,121 +322,6 @@ cols <- met.brewer("Java", n=3, type = "discrete")
 
 # Change position of cols 2 and 3
 cols <- cols[c(1,3,2)]
-
-# print(cols)
-# boxplot60 <- ggplot(distribution_data_merged, aes(x = in_tropical_rainforest60, y = lambda)) +
-# 	geom_boxplot(fill = c(non_trfcol, trfcol), color = "black") +
-# 	scale_x_discrete(labels = c("Not in TRF", "In TRF")) +
-# 	ylab("Tip Rate Speciation") +
-# 	xlab("") +
-# 	theme_ipsum() + 
-# 	labs(title = "60%") +
-# 	theme(legend.position = "none")
-
-# boxplot70 <- ggplot(distribution_data_merged, aes(x = in_tropical_rainforest70, y = lambda)) +
-# 	geom_boxplot(fill = c(non_trfcol, trfcol), color = "black") +
-# 	scale_x_discrete(labels = c("Not in TRF", "In TRF")) +
-# 	ylab("Tip Rate Speciation") +
-# 	xlab("") +
-# 	theme_ipsum() +
-# 	labs(title = "70%") +
-# 	theme(legend.position = "none")
-
-# boxplot80 <- ggplot(distribution_data_merged, aes(x = in_tropical_rainforest80, y = lambda)) +
-# 	geom_boxplot(fill = c(non_trfcol, trfcol), color = "black") +
-# 	scale_x_discrete(labels = c("Not in TRF", "In TRF")) +
-# 	ylab("Tip Rate Speciation") +
-# 	xlab("") +
-# 	theme_ipsum() +
-# 	labs(title = "80%") +
-# 	theme(legend.position = "none")
-
-# boxplot90 <- ggplot(distribution_data_merged, aes(x = in_tropical_rainforest90, y = lambda)) +
-# 	geom_boxplot(fill = c(non_trfcol, trfcol), color = "black") +
-# 	scale_x_discrete(labels = c("Not in TRF", "In TRF")) +
-# 	ylab("Tip Rate Speciation") +
-# 	xlab("") +
-# 	theme_ipsum() +
-# 	labs(title = "90%") +
-# 	theme(legend.position = "none")
-
-# # Combine all boxplots into one grid
-# plot_grid(boxplot60, boxplot70, boxplot80, boxplot90, labels = c("A", "B", "C", "D"), label_size = 12, label_fontface = "bold")
-
-
-# # Density functions of tip rate speciation in tropical rainforest
-
-# densityplot60 <- ggplot(distribution_data_merged, aes(x = lambda, fill = in_tropical_rainforest60)) +
-# 	geom_density(alpha = 0.5) +
-# 	scale_fill_manual(values = c(non_trfcol, trfcol), labels = c("", "")) +
-# 	ylab("Density") +
-# 	xlab("Tip Rate Speciation") +
-# 	theme_ipsum() +
-# 	labs(title = "60%") +
-# 	theme(legend.position = "bottom") +
-# 	scale_x_log10()
-
-# densityplot70 <- ggplot(distribution_data_merged, aes(x = lambda, fill = in_tropical_rainforest70)) +
-# 	geom_density(alpha = 0.5) +
-# 	scale_fill_manual(values = c(non_trfcol, trfcol), labels = c("", "")) +
-# 	ylab("Density") +
-# 	xlab("Tip Rate Speciation") +
-# 	theme_ipsum() +
-# 	labs(title = "70%") +
-# 	theme(legend.position = "none") +
-# 	scale_x_log10()
-
-# densityplot80 <- ggplot(distribution_data_merged, aes(x = lambda, fill = in_tropical_rainforest80)) +
-# 	geom_density(alpha = 0.5) +
-# 	scale_fill_manual(values = c(non_trfcol, trfcol), labels = c("", "")) +
-# 	ylab("Density") +
-# 	xlab("Tip Rate Speciation") +
-# 	theme_ipsum() +
-# 	labs(title = "80%") +
-# 	theme(legend.position = "none") +
-# 	scale_x_log10()
-
-# densityplot90 <- ggplot(distribution_data_merged, aes(x = lambda, fill = in_tropical_rainforest90)) +
-# 	geom_density(alpha = 0.5) +
-# 	scale_fill_manual(values = c(non_trfcol, trfcol), labels = c("", "")) +
-# 	ylab("Density") +
-# 	xlab("Tip Rate Speciation") +
-# 	theme_ipsum() +
-# 	labs(title = "90%") +
-# 	theme(legend.position = "none") +
-# 	scale_x_log10()
-
-# # Combine all density plots into one grid
-# prow <- plot_grid(densityplot60, densityplot70, densityplot80, densityplot90, labels = c("A", "B", "C", "D"), label_size = 12, label_fontface = "bold")
-# prow
-
-# #
-# # extract a legend that is laid out horizontally
-# legend_b <- get_legend(
-#   densityplot60 + 
-#     guides(color = guide_legend(nrow = 1)) +
-#     theme(legend.position = "bottom")
-# )
-
-# # add the legend underneath the row we made earlier. Give it 10%
-# # of the height of one plot (via rel_heights).
-# plot_grid(prow, legend_b, ncol = 1, rel_heights = c(1, .1))
-
-
-# # Calculate the mean and standard deviation of the unique extinction rates
-# mean_extinction <- mean(unique_extinction)
-# log(mean_extinction)
-# sd_extinction <- sd(unique_extinction)
-# log(sd_extinction)
-
-# unique_orders <- unique(clads_tip_lambda$order)
-
-# # make a dataframe with the unique extinction rates and the orders
-# extinction_per_order <- data.frame(order = unique_orders, extinction = unique_extinction)
-
-# # print the dataframe sorted by extinction rate
-# extinction_per_order[order(-extinction_per_order$extinction), ]
-
 
 # Boxplots of tip rate speciation in tropical rainforest
 boxplot10 <- ggplot(distribution_data_merged, aes(x = biome_affiliation_10, y = log10(lambda))) +
@@ -555,4 +458,116 @@ dev.off()
 
 # 37483/54301 # 69% of the species are in the orders that we have run ClaDs on
 
+# print(cols)
+# boxplot60 <- ggplot(distribution_data_merged, aes(x = in_tropical_rainforest60, y = lambda)) +
+# 	geom_boxplot(fill = c(non_trfcol, trfcol), color = "black") +
+# 	scale_x_discrete(labels = c("Not in TRF", "In TRF")) +
+# 	ylab("Tip Rate Speciation") +
+# 	xlab("") +
+# 	theme_ipsum() + 
+# 	labs(title = "60%") +
+# 	theme(legend.position = "none")
 
+# boxplot70 <- ggplot(distribution_data_merged, aes(x = in_tropical_rainforest70, y = lambda)) +
+# 	geom_boxplot(fill = c(non_trfcol, trfcol), color = "black") +
+# 	scale_x_discrete(labels = c("Not in TRF", "In TRF")) +
+# 	ylab("Tip Rate Speciation") +
+# 	xlab("") +
+# 	theme_ipsum() +
+# 	labs(title = "70%") +
+# 	theme(legend.position = "none")
+
+# boxplot80 <- ggplot(distribution_data_merged, aes(x = in_tropical_rainforest80, y = lambda)) +
+# 	geom_boxplot(fill = c(non_trfcol, trfcol), color = "black") +
+# 	scale_x_discrete(labels = c("Not in TRF", "In TRF")) +
+# 	ylab("Tip Rate Speciation") +
+# 	xlab("") +
+# 	theme_ipsum() +
+# 	labs(title = "80%") +
+# 	theme(legend.position = "none")
+
+# boxplot90 <- ggplot(distribution_data_merged, aes(x = in_tropical_rainforest90, y = lambda)) +
+# 	geom_boxplot(fill = c(non_trfcol, trfcol), color = "black") +
+# 	scale_x_discrete(labels = c("Not in TRF", "In TRF")) +
+# 	ylab("Tip Rate Speciation") +
+# 	xlab("") +
+# 	theme_ipsum() +
+# 	labs(title = "90%") +
+# 	theme(legend.position = "none")
+
+# # Combine all boxplots into one grid
+# plot_grid(boxplot60, boxplot70, boxplot80, boxplot90, labels = c("A", "B", "C", "D"), label_size = 12, label_fontface = "bold")
+
+
+# # Density functions of tip rate speciation in tropical rainforest
+
+# densityplot60 <- ggplot(distribution_data_merged, aes(x = lambda, fill = in_tropical_rainforest60)) +
+# 	geom_density(alpha = 0.5) +
+# 	scale_fill_manual(values = c(non_trfcol, trfcol), labels = c("", "")) +
+# 	ylab("Density") +
+# 	xlab("Tip Rate Speciation") +
+# 	theme_ipsum() +
+# 	labs(title = "60%") +
+# 	theme(legend.position = "bottom") +
+# 	scale_x_log10()
+
+# densityplot70 <- ggplot(distribution_data_merged, aes(x = lambda, fill = in_tropical_rainforest70)) +
+# 	geom_density(alpha = 0.5) +
+# 	scale_fill_manual(values = c(non_trfcol, trfcol), labels = c("", "")) +
+# 	ylab("Density") +
+# 	xlab("Tip Rate Speciation") +
+# 	theme_ipsum() +
+# 	labs(title = "70%") +
+# 	theme(legend.position = "none") +
+# 	scale_x_log10()
+
+# densityplot80 <- ggplot(distribution_data_merged, aes(x = lambda, fill = in_tropical_rainforest80)) +
+# 	geom_density(alpha = 0.5) +
+# 	scale_fill_manual(values = c(non_trfcol, trfcol), labels = c("", "")) +
+# 	ylab("Density") +
+# 	xlab("Tip Rate Speciation") +
+# 	theme_ipsum() +
+# 	labs(title = "80%") +
+# 	theme(legend.position = "none") +
+# 	scale_x_log10()
+
+# densityplot90 <- ggplot(distribution_data_merged, aes(x = lambda, fill = in_tropical_rainforest90)) +
+# 	geom_density(alpha = 0.5) +
+# 	scale_fill_manual(values = c(non_trfcol, trfcol), labels = c("", "")) +
+# 	ylab("Density") +
+# 	xlab("Tip Rate Speciation") +
+# 	theme_ipsum() +
+# 	labs(title = "90%") +
+# 	theme(legend.position = "none") +
+# 	scale_x_log10()
+
+# # Combine all density plots into one grid
+# prow <- plot_grid(densityplot60, densityplot70, densityplot80, densityplot90, labels = c("A", "B", "C", "D"), label_size = 12, label_fontface = "bold")
+# prow
+
+# #
+# # extract a legend that is laid out horizontally
+# legend_b <- get_legend(
+#   densityplot60 + 
+#     guides(color = guide_legend(nrow = 1)) +
+#     theme(legend.position = "bottom")
+# )
+
+# # add the legend underneath the row we made earlier. Give it 10%
+# # of the height of one plot (via rel_heights).
+# plot_grid(prow, legend_b, ncol = 1, rel_heights = c(1, .1))
+
+
+# # Calculate the mean and standard deviation of the unique extinction rates
+# mean_extinction <- mean(unique_extinction)
+# log(mean_extinction)
+# sd_extinction <- sd(unique_extinction)
+# log(sd_extinction)
+
+# unique_orders <- unique(clads_tip_lambda$order)
+
+# # make a dataframe with the unique extinction rates and the orders
+# extinction_per_order <- data.frame(order = unique_orders, extinction = unique_extinction)
+
+# # print the dataframe sorted by extinction rate
+# extinction_per_order[order(-extinction_per_order$extinction), ]

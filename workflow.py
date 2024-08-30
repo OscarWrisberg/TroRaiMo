@@ -2462,6 +2462,26 @@ for i in range(len(orders_not_in_orders_new_prior)):
                                                 biome_sampling= workflow_dir+"03_distribution_data/"+orders[i]+"_biome_sampling_fraction.txt"
                                             ))
                     
+                for k in range(5):
+                    gwf.target_from_template(name = orders_not_in_orders_new_prior[i]+"_"+str(k)+"_Esse_G",
+                                                template = Esse(
+                                                tree_file = orders_not_in_orders_new_prior[i]+"_Esse_tree.tre", # Input tree
+                                                tip_states_file = workflow_dir+"03_distribution_data/"+orders_not_in_orders_new_prior[i]+"_states_"+percentages[j]+"_Esse.txt", 
+                                                paleo_clim_file = "NaN", # File with paleoclimatic variables
+                                                done = orders_not_in_orders_new_prior[i]+"_"+str(k)+"_Esse_G",
+                                                path_in = workflow_dir+"02_adding_orders/pruning/orders/",
+                                                save_file = "Esse_output_G_"+orders_not_in_orders_new_prior[i]+"_"+percentages[j]+"_"+str(k)+".jld2",
+                                                script_dir=script_dir,
+                                                done_dir = done_dir,
+                                                out_states_file = "Esse_states_G_"+orders_not_in_orders_new_prior[i]+"_"+percentages[j]+"_"+str(k), 
+                                                hidden_states = 1,
+                                                niter= 200000,
+                                                out_file = "Esse_output_G_"+orders_not_in_orders_new_prior[i]+"_hidden_states_"+percentages[j]+"_"+str(k),
+                                                output_folder = workflow_dir+"04_results/Esse_output/",
+                                                path_out = workflow_dir+"04_results/",
+                                                biome_sampling= workflow_dir+"03_distribution_data/"+orders[i]+"_biome_sampling_fraction.txt"
+                                            ))
+                    
 
 # Running Esse on the problematic orders
 # These orders can not finish in a week
@@ -2558,6 +2578,26 @@ for i in range(len(orders_shorter)):
                                                 hidden_states = 1,
                                                 niter = 100000,
                                                 out_file = "Esse_output_"+orders_shorter[i]+"_hidden_states_"+percentages[j]+"_"+str(k),
+                                                output_folder = workflow_dir+"04_results/Esse_output/",
+                                                path_out = workflow_dir+"04_results/",
+                                                biome_sampling = workflow_dir+"03_distribution_data/"+orders_shorter[i]+"_biome_sampling_fraction.txt"
+                                             ))
+                        
+                    for k in range(10):
+                        gwf.target_from_template(name = orders_shorter[i]+"_"+str(k)+"_Esse_G",
+                                                template = Esse(
+                                                tree_file = orders_shorter[i]+"_Esse_tree.tre", # Input tree
+                                                tip_states_file = workflow_dir+"03_distribution_data/"+orders_shorter[i]+"_states_"+percentages[j]+"_Esse.txt", 
+                                                paleo_clim_file = "NaN", # File with paleoclimatic variables
+                                                done = orders_shorter[i]+"_"+str(k)+"_Esse_G",
+                                                path_in = workflow_dir+"02_adding_orders/pruning/orders/",
+                                                save_file = "Esse_output_G_"+orders_shorter[i]+"_"+percentages[j]+"_"+str(k)+".jld2",
+                                                script_dir=script_dir,
+                                                done_dir = done_dir,
+                                                out_states_file = "Esse_states_G_"+orders_shorter[i]+"_"+percentages[j]+"_"+str(k), 
+                                                hidden_states = 1,
+                                                niter = 100000,
+                                                out_file = "Esse_output_G_"+orders_shorter[i]+"_hidden_states_"+percentages[j]+"_"+str(k),
                                                 output_folder = workflow_dir+"04_results/Esse_output/",
                                                 path_out = workflow_dir+"04_results/",
                                                 biome_sampling = workflow_dir+"03_distribution_data/"+orders_shorter[i]+"_biome_sampling_fraction.txt"
@@ -2724,6 +2764,25 @@ for i in range(len(esse_clades)):
                                                     path_out = workflow_dir+"04_results/",
                                                     biome_sampling = workflow_dir+"03_distribution_data/"+esse_clades[i]+"_biome_sampling_fraction.txt"
                                                  ))
+                    for k in range(5):
+                        gwf.target_from_template(name = esse_clades[i]+"_"+str(k)+"_Esse_G",
+                                                    template = Esse(
+                                                    tree_file = esse_clades[i]+"_Esse_tree.tre", # Input tree
+                                                    tip_states_file = workflow_dir+"03_distribution_data/"+esse_clades[i]+"_states_"+percentages[j]+"_Esse.txt", 
+                                                    paleo_clim_file = "NaN", # File with paleoclimatic variables
+                                                    done = esse_clades[i]+"_"+str(k)+"_Esse_G",
+                                                    path_in = workflow_dir+"02_adding_orders/pruning/subset_of_orders/",
+                                                    save_file = "Esse_output_G_"+esse_clades[i]+"_"+percentages[j]+"_"+str(k)+".jld2",
+                                                    script_dir=script_dir,
+                                                    done_dir = done_dir,
+                                                    out_states_file = "Esse_states_G_"+esse_clades[i]+"_"+percentages[j]+"_"+str(k), 
+                                                    hidden_states = 1,
+                                                    niter = 200000,
+                                                    out_file = "Esse_output_G_"+esse_clades[i]+"_hidden_states_"+percentages[j]+"_"+str(k),
+                                                    output_folder = workflow_dir+"04_results/Esse_output/",
+                                                    path_out = workflow_dir+"04_results/",
+                                                    biome_sampling = workflow_dir+"03_distribution_data/"+esse_clades[i]+"_biome_sampling_fraction.txt"
+                                                 ))
                         
 # Running Esse on the problematic families
 # These orders can not finish in a week
@@ -2835,6 +2894,26 @@ for i in range(len(families_shorter)):
                                                 path_out = workflow_dir+"04_results/",
                                                 biome_sampling = workflow_dir+"03_distribution_data/"+families_shorter[i]+"_biome_sampling_fraction.txt"
                                              ))
+                    for k in range(10):
+                        gwf.target_from_template(name = families_shorter[i]+"_"+str(k)+"_Esse_G",
+                                                template = Esse(
+                                                tree_file = families_shorter[i]+"_Esse_tree.tre", # Input tree
+                                                tip_states_file = workflow_dir+"03_distribution_data/"+families_shorter[i]+"_states_"+percentages[j]+"_Esse.txt", 
+                                                paleo_clim_file = "NaN", # File with paleoclimatic variables
+                                                done = families_shorter[i]+"_"+str(k)+"_Esse_G",
+                                                path_in = workflow_dir+"02_adding_orders/pruning/subset_of_orders/",
+                                                save_file = "Esse_output_G_"+families_shorter[i]+"_"+percentages[j]+"_"+str(k)+".jld2",
+                                                script_dir=script_dir,
+                                                done_dir = done_dir,
+                                                out_states_file = "Esse_states_G_"+families_shorter[i]+"_"+percentages[j]+"_"+str(k), 
+                                                hidden_states = 1,
+                                                niter = 100000,
+                                                out_file = "Esse_output_G_"+families_shorter[i]+"_hidden_states_"+percentages[j]+"_"+str(k),
+                                                output_folder = workflow_dir+"04_results/Esse_output/",
+                                                path_out = workflow_dir+"04_results/",
+                                                biome_sampling = workflow_dir+"03_distribution_data/"+families_shorter[i]+"_biome_sampling_fraction.txt"
+                                             ))    
+
 
 
 
@@ -3280,7 +3359,7 @@ for i in range(len(sub_family_clades)):
                                                 ))
                         
                     for k in range(5):
-                        gwf.target_from_template(name = sub_family_clades[i]+"_"+str(k)+"_Esse",
+                        gwf.target_from_template(name = sub_family_clades[i]+"_"+str(k)+"_Esse_GE",
                                                 template = Esse(
                                                 tree_file = sub_family_clades[i]+"_Esse_tree.tre", # Input tree
                                                 tip_states_file = workflow_dir+"03_distribution_data/"+sub_family_clades[i]+"_states_"+percentages[j]+"_Esse.txt", 
@@ -3294,6 +3373,26 @@ for i in range(len(sub_family_clades)):
                                                 hidden_states = 1,
                                                 niter = 200000,
                                                 out_file = "Esse_output_"+sub_family_clades[i]+"_hidden_states_"+percentages[j]+"_"+str(k),
+                                                output_folder = workflow_dir+"04_results/Esse_output/",
+                                                path_out = workflow_dir+"04_results/",
+                                                biome_sampling = workflow_dir+"03_distribution_data/"+sub_family_clades[i]+"_biome_sampling_fraction.txt"
+                                             ))
+
+                    for k in range(5):
+                        gwf.target_from_template(name = sub_family_clades[i]+"_"+str(k)+"_Esse_G",
+                                                template = Esse(
+                                                tree_file = sub_family_clades[i]+"_Esse_tree.tre", # Input tree
+                                                tip_states_file = workflow_dir+"03_distribution_data/"+sub_family_clades[i]+"_states_"+percentages[j]+"_Esse.txt", 
+                                                paleo_clim_file = "NaN", # File with paleoclimatic variables
+                                                done = sub_family_clades[i]+"_"+str(k)+"_Esse_G",
+                                                path_in = workflow_dir+"02_adding_orders/pruning/subset_of_orders/",
+                                                save_file = "Esse_output_G_"+sub_family_clades[i]+"_"+percentages[j]+"_"+str(k)+".jld2",
+                                                script_dir=script_dir,
+                                                done_dir = done_dir,
+                                                out_states_file = "Esse_states_G_"+sub_family_clades[i]+"_"+percentages[j]+"_"+str(k), 
+                                                hidden_states = 1,
+                                                niter = 200000,
+                                                out_file = "Esse_output_G_"+sub_family_clades[i]+"_hidden_states_"+percentages[j]+"_"+str(k),
                                                 output_folder = workflow_dir+"04_results/Esse_output/",
                                                 path_out = workflow_dir+"04_results/",
                                                 biome_sampling = workflow_dir+"03_distribution_data/"+sub_family_clades[i]+"_biome_sampling_fraction.txt"

@@ -64,35 +64,49 @@ esse_runs_list
 # We probably need to check all the different combinations of the runs to find the best combination which provides us with the most amount of runs that have converged.
 # We can use the gelman.diag function from the coda package to check for convergence.
 
+# Establish a list to store the data
 data <- list()
+
 # Looping through each order/family/subfamily
 for (i in 1:length(esse_runs_list)) {
-	print(paste(i,"/",length(esse_runs_list)))
+	print(paste(i, "/", length(esse_runs_list)))
+
 	# Looping through each of the runs for the current order/family/subfamily
 	esse_fam_list <- list()
 
 	for (j in 1:length(esse_runs_list[[i]])) {
-		
-		# Checking if is null
+
+		# Checking if it is null
 		if (is.null(esse_runs_list[[i]][[j]])) {
 			next
 		}
 
-  		# Read the data
-  		data_raw <- read.table(esse_runs_list[[i]][[j]], header = TRUE)
+		# Checking the length of esse_runs_list[[i]]
+		if (length(esse_runs_list[[i]]) != 5 && length(esse_runs_list[[i]]) != 10) {
+			print("Not the right number of runs")
+			next
+		}
 
-		# data as mcmc object
+		# Read the data
+		data_raw <- read.table(esse_runs_list[[i]][[j]], header = TRUE)
+
+		# Convert data to mcmc object
 		data_mcmc <- as.mcmc(data_raw)
 
 		# Append the data to the list
-		esse_fam_list[[j]] <- data_mcmc[]
-
+		esse_fam_list[[j]] <- data_mcmc
 	}
-	# Convert to mcmc list
-	esse_fam_list <- mcmc.list(esse_fam_list)
-	data[[i]] <- esse_fam_list
-}
 
+	# Check if esse_fam_list has consistent mcmc objects
+	if (length(esse_fam_list) > 0) {
+		tryCatch({
+			esse_fam_list <- mcmc.list(esse_fam_list)
+			data[[i]] <- esse_fam_list
+		}, error = function(e) {
+			print(paste("Error combining MCMC chains for index", i, ": ", e$message))
+		})
+	}
+}
 
 
 # Can we now calculate the Gelman score for each of the runs?
@@ -105,6 +119,7 @@ for (i in 1:length(data)){
 	print(paste(i,"/",length(data)))
 
 	if (length(data[[i]]) < 2) {
+		print(paste("Esse runs for", esse_runs_info[i], "have less than 2 runs."))
 		next
 	}
 	
@@ -122,12 +137,12 @@ for (i in 1:length(data)){
 			combined_data <- rbind(combined_data, data[[i]][[j]])
 		}
 		write.csv(combined_data, paste0("/home/au543206/GenomeDK/Trf_models/workflow/04_results/Esse_output/Esse_done_results/combined_esse_runs_", esse_runs_names[[i]], ".csv"), row.names = FALSE)
-		did_converge <- c(did_converge, esse_runs_info[i])
+		did_converge <- c(did_converge, esse_runs_names[i])
 
 	} else {
 		# If not converged, display a warning message
 		#print(paste("Esse runs for", esse_runs_info[i], "have not converged."))
-		did_not_converge <- c(did_not_converge, esse_runs_info[i])
+		did_not_converge <- c(did_not_converge, esse_runs_names[i])
 		print(esse_runs_names[[i]])
 		print(paste(gelman_score$psrf[[12,2]],gelman_score$psrf[[13,2]]))
 
@@ -135,8 +150,8 @@ for (i in 1:length(data)){
 }
 
 # Print the number of runs that did and did not converge
-did_converge
-did_not_converge
+did_converge # 88 on 30/08/2024
+did_not_converge # 45 on 30/08/2024
 
 
 ####################################################################################
@@ -183,7 +198,6 @@ for(i in 1:length(did_converge)){
 
 # Can we now calculate the ESS scores for each of these runs?
 # We can use the effectiveSize function from the coda package to calculate the ESS scores.
-
 for (i in 1:length(did_converge)){
 	print(paste(i,"/",length(did_converge), ":", did_converge[i]))
 
