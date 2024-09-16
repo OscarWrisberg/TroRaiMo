@@ -306,9 +306,11 @@ for (threshold in thresholds) {
 # Are there any duplicates in the dataset
 distribution_data_merged[which(duplicated(distribution_data_merged$tip_label)),1:2]
 
+dim(distribution_data_merged)
+
 # Save the dataset
 saveRDS(distribution_data_merged, file = "/home/au543206/GenomeDK/Trf_models/workflow/04_results/distribution_data_merged.rds")
-load("/home/au543206/GenomeDK/Trf_models/workflow/04_results/distribution_data_merged.rds")
+readRDS("/home/au543206/GenomeDK/Trf_models/workflow/04_results/distribution_data_merged.rds")
 
 ################################################################################################################################
 ############################----- Density functions of tip rate speciation in tropical rainforest -----#########################

@@ -13,17 +13,6 @@ library(data.table)
 library(cowplot)
 library(dplyr)
 
-#################################################################################################################################################
-# Example Data
-set.seed(123)  # For reproducibility
-latitudes <- rep(seq(-50, 70, by = 10), each = 40)  # Double the number of entries for each belt
-lambda_values <- c(rnorm(260, mean = 1, sd = 0.5), rnorm(260, mean = 2, sd = 0.5))  # Adjusted number of values
-biomes <- rep(c("Non-Trf", "Trf"), each = 260)  # Adjusted biomes 280
-biomes <- sample(biomes)
-
-# Create data frame
-data <- data.frame(latitudes, lambda_values, biomes)
-#################################################################################################################################################
 # Now I need to gather my own data and prepare it for the plot.
 
 # I need to use the code which loads all the tip rate speciation from all the trees.
@@ -173,7 +162,13 @@ distribution_files <- distribution_files[!distribution_files == "/home/owrisberg
 # Remove /home/au543206/GenomeDK/Trf_models/workflow/03_distribution_data//Xyridaceae_Eriocaulaceae_distribution_data.txt"
 distribution_files <- distribution_files[!distribution_files == "/home/owrisberg/Trf_models/workflow/03_distribution_data/Xyridaceae_Eriocaulaceae_distribution_data.txt"]
 
+# Remove Asteraceae_13_distribution_data.txt
+distribution_files <- distribution_files[!distribution_files == "/home/owrisberg/Trf_models/workflow/03_distribution_data/Asteraceae_13_distribution_data.txt"]
+
 distribution_data <- data.frame()
+column_names <- c("wcvp_taxon_name", "occurrences_trf", "occurrences_non_trf", "proportion_in_tropical_rainforest", "proportion_outside_tropical_rainforest")
+
+names(distribution_data) <- column_names
 
 # Loop through each file
 for (i in 1:length(distribution_files)) {
@@ -194,6 +189,11 @@ for (i in 1:length(distribution_files)) {
 	if (order_name %in% unique_orders) {
 		# Load the distribution file
 		distribution_data_raw <- fread(file)
+
+		# if the column names are not 
+		if (!all(names(distribution_data_raw) %in% column_names)) {
+			names(distribution_data_raw) <- column_names
+		}
 		
 		# Append the distribution data to the distribution data frame
 		distribution_data <- rbind(distribution_data, distribution_data_raw)
@@ -246,6 +246,7 @@ distribution_data_merged <- distribution_data_merged_sorted
 # save this distribution_data_merged for later use
 saveRDS(distribution_data_merged, "/home/owrisberg/Trf_models/workflow/01_distribution_data/06_Renamed/distribution_data_merged.rds")
 distribution_data_merged <- readRDS("/home/au543206/GenomeDK/Trf_models/workflow/01_distribution_data/06_Renamed/distribution_data_merged.rds")
+distribution_data_merged <- readRDS("/home/owrisberg/Trf_models/workflow/01_distribution_data/06_Renamed/distribution_data_merged.rds")
 
 # Add a column to the distribution data that indicates whether the proportion in tropical rainforest is greater than 70%
 distribution_data_merged$in_tropical_rainforest50 <- distribution_data_merged$proportion_in_tropical_rainforest > 0.50
@@ -330,6 +331,7 @@ for (i in 1:(length(latitudinal_bands) - 1)) {
 
 saveRDS(data_for_plot, "/home/owrisberg/Trf_models/workflow/01_distribution_data/06_Renamed/data_for_plot.rds") # Saving the data_for_plot dataframe when working on the server
 data_for_plot <- readRDS("/home/au543206/GenomeDK/Trf_models/workflow/01_distribution_data/06_Renamed/data_for_plot.rds") # loading it for working locally.
+data_for_plot <- readRDS("/home/owrisberg/Trf_models/workflow/01_distribution_data/06_Renamed/data_for_plot.rds")
 
 head(data_for_plot)
 head(distribution_data_merged)
@@ -641,10 +643,44 @@ print(combined_plot_box_dens)
 
 dev.off()
 
-
-
-
 # Combine the plots
 combined_plot_box <- ggdraw() +
   draw_plot(map_plot, 0, 0, 1, 1) +
   draw_plot(boxplot, 0, 0.19, 1, 0.51, hjust = 0, vjust = 0)
+
+
+# Can we do a simple test to see if there is a correlation between the lambda values and the latitude bands
+# I would do this by creating a new dataframe which only includes the lambda values and the latitude bands
+head(data_for_plot)
+data_for_correlation <- data_for_plot[,c(1,2,3)]
+
+# Can we now calculate the mean lambda value for each latitude band
+mean_lambda <- data_for_correlation %>%
+  group_by(lat_band) %>%
+  summarize(mean_lambda = mean(lambda.x))
+
+mean_lambda
+
+# Can we convert the lat band to abselute latitude values
+mean_lambda$lat_band_abs <- (c(40,30,20,10,0,0,10,20,30,40,50,60))
+
+mean_lambda
+
+# Is there a linear relationship between the latitude and the mean lambda values
+cor_test <- cor(mean_lambda$mean_lambda, mean_lambda$lat_band_abs)
+summary(lm(mean_lambda$mean_lambda ~ mean_lambda$lat_band_abs))
+
+# Can we plot the mean lambda values against the latitude bands
+ggplot(mean_lambda, aes(x = lat_band_abs, y = mean_lambda)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = TRUE) +
+  labs(x = "Absolute Latitude", y = "Mean Tip Speciation Rate") +
+  theme_minimal() +
+  theme(
+	panel.background = element_blank()  # Remove panel background
+  )
+
+# Save as png
+ggsave(file = file.path(output_folder, "mean_lambda_vs_latitude.png"), width = 10, height = 6)
+
+output_folder

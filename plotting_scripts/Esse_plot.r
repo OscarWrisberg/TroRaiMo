@@ -80,16 +80,6 @@ file_Arecales <- "/home/au543206/GenomeDK/Trf_models/workflow/04_results/Esse_ou
 file_Zingiberales <- "/home/au543206/GenomeDK/Trf_models/workflow/04_results/Esse_output/Esse_output_Zingiberales_hidden_states_0.1.log"
 
 
-
-esse_raw <- fread(file_Zingiberales)
-
-esse_raw_mcmc <- as_draws(esse_raw)
-summarise_draws(esse_raw)
-
-esse_test_mcmc <- coda::as.mcmc(esse_raw)
-as.shinystan(esse_test_mcmc)
-
-
 lambda_A_0 <- coda::as.mcmc(esse_raw$lambda_A_0)
 lambda_B_0 <- coda::as.mcmc(esse_raw$lambda_B_0)
 lambda_W_0 <- coda::as.mcmc(esse_raw$lambda_W_0)
